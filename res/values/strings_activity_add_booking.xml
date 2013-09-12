@@ -1,0 +1,30 @@
+<resources>
+	<string name="bookingmembership">programme.name</string>
+    <string name="bookingaction">ACTIONS</string>
+    <string name="bookingtype">Booking Type</string>
+    <string name="bookingselect">></string>
+    <string name="bookingcheckin">Check In</string>
+    <string name="bookingcancel">Cancel</string>
+    <string name="bookingnoshow">No Show</string>
+    <string name="bookingreschedule">Reschedule</string>
+    <string name="bookingcommunicate">COMMUNICATE</string>
+    <string name="bookingreminder">Send Reminder</string>
+    <string name="bookingsms">SMS</string>
+    <string name="bookingcall">Call</string>
+    <string name="bookingAddH">Add Booking</string>
+    <string name="bookingNameH">Name</string>
+    <string name="addBookingName">Select Member</string>
+    <string name="bookingDateH">Date</string>
+    <string name="addbookingDate">Set Date</string>
+    <string name="bookingStartTimeH">Start Time</string>
+    <string name="bookingEndTimeH">End Time</string>
+    <string name="bookingEndTime">Set End Time</string>
+    <string name="bookingTypeH">Booking Type</string>
+    <string name="bookingResourceH">Resource</string>
+    <string name="bookingaccept">Accept</string>
+    <string name="bookingNotesL">Notes</string>
+    <string name="bookingMembershipH">Membership</string>
+    <string name="bookingMembership">No Member Selected</string>
+    <string name="bookingfor">Booking\'s For: </string>
+    
+</resources>

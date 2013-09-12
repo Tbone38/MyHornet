@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.treshna.hornet"
+    android:versionCode="105"
+    android:versionName="0.05" >
+
+    <uses-sdk
+        android:minSdkVersion="10"
+        android:targetSdkVersion="18" />
+
+    <uses-permission android:name="android.permission.NFC" />
+    
+    <!-- Keeps the processor from sleeping when a message is received. -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.treshna.hornet" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application
+        android:allowBackup="true"
+        android:allowClearUserData="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <service android:name="com.treshna.hornet.GCMIntentService" />
+
+        <provider
+            android:name="com.treshna.hornet.HornetContentProvider"
+            android:authorities="com.treshna.hornet"
+            android:exported="true" >
+        </provider>
+
+        <activity
+            android:name="com.treshna.hornet.MainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.nfc.action.TECH_DISCOVERED" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+           
+
+            <meta-data
+                android:name="android.nfc.action.TECH_DISCOVERED"
+                android:resource="@xml/nfc_tech_filter" />
+        </activity>
+        <activity
+            android:name="com.treshna.hornet.DisplayResultsActivity"
+            android:label="@string/app_name" >
+             <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <meta-data
+                android:name="android.nfc.action.TECH_DISCOVERED"
+                android:resource="@xml/nfc_tech_filter" />
+        </activity>
+        <activity
+            android:name="com.treshna.hornet.SettingsActivity"
+            android:label="@string/title_activity_settings" >
+        </activity>
+        <activity
+            android:name="com.treshna.hornet.CameraWrapper"
+            android:label="@string/title_activity_camera_wrapper"
+            android:parentActivityName="com.treshna.hornet.DisplayResultsActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.treshna.hornet.DisplayResultsActivity" />
+        </activity>
+        <activity
+            android:name="com.treshna.hornet.HornetRFIDReader"
+            android:label="@string/title_activity_rfid_reader"
+            android:parentActivityName="com.treshna.hornet.DisplayResultsActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.treshna.hornet.DisplayResultsActivity" />
+        </activity>
+
+        <service android:name="com.treshna.hornet.HornetDBService" >
+        </service>
+
+        <activity
+            android:name="com.treshna.hornet.MemberDetails"
+            android:label="@string/title_activity_member_info"
+            android:parentActivityName="DisplayResultsActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="DisplayResultsActivity" />
+        </activity>
+        <activity
+            android:name="com.treshna.hornet.AddMember"
+            android:label="@string/title_activity_add_member"
+            android:parentActivityName="com.treshna.hornet.DisplayResultsActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.treshna.hornet.DisplayResultsActivity" />
+        </activity>
+        <activity
+            android:name="com.treshna.hornet.BookingsSlidePager"
+            android:label="@string/title_activity_display_results"
+            android:parentActivityName="com.treshna.hornet.DisplayResultsActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.treshna.hornet.DisplayResultsActivity" />
+        </activity>
+        <activity
+            android:name="com.treshna.hornet.BookingPage"
+            android:label="@string/title_activity_add_booking"
+            android:parentActivityName="BookingsSlidePager" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="BookingsSlidePager" />
+        </activity>
+        <activity
+            android:name="com.treshna.hornet.MemberFind"
+            android:label="@string/title_activity_member_find"
+            android:parentActivityName="com.treshna.hornet.DisplayResultsActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.treshna.hornet.DisplayResultsActivity" />
+        </activity>
+    </application>
+
+</manifest>

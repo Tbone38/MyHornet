@@ -1,0 +1,13 @@
+INSTALLATION INSTRUCTION:
+
+Copy the Hornet.apk file onto the device, OR install from the google-play store, it should detect and install automatically.
+
+On first run, navigate to the applications settings: menu--->Settings
+
+check that the username, password, database name, and IP address are the same as in the shell.conf file in the gymmaster installation directory.
+
+if the ip address is 127.0.0.1 OR 'localhost', then you'll need to find the IP address of the PC you're on.
+
+a full sync to the database should be run once a month, and will use about 25 Mb's of data.
+
+a refresh use's about 5mb's each time it's run. if you have it set to sync every 3 minutes, than it'll use 100mb's an hour. Please keep this in mind when setting the sync times.

@@ -1,0 +1,482 @@
+package com.treshna.hornet;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import android.annotation.TargetApi;
+import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.content.res.Configuration;
+import android.database.Cursor;
+import android.os.Build;
+import android.os.Bundle;
+import android.preference.CheckBoxPreference;
+import android.preference.ListPreference;
+import android.preference.Preference;
+import android.preference.Preference.OnPreferenceChangeListener;
+import android.preference.PreferenceActivity;
+import android.preference.PreferenceCategory;
+import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
+import android.widget.Toast;
+
+/**
+ * A {@link PreferenceActivity} that presents a set of application settings. On
+ * handset devices, settings are presented as a single list. On tablets,
+ * settings are split by category, with category headers shown to the left of
+ * the list of settings.
+ * <p>
+ * See <a href="http://developer.android.com/design/patterns/settings.html">
+ * Android Design: Settings</a> for design guidelines and the <a
+ * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
+ * API Guide</a> for more information on developing a Settings UI.
+ */
+public class SettingsActivity extends PreferenceActivity {
+	/**
+	 * Determines whether to always show the simplified settings UI, where
+	 * settings are presented in a single list. When false, settings are shown
+	 * as a master/detail two-pane view on tablets. When true, a single pane is
+	 * shown on tablets.
+	 */
+	private static final boolean ALWAYS_SIMPLE_PREFS = true; //TODO: fix the fragments here;
+	private static Context ctx;
+
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		ctx = this;
+		Services.setContext(this);
+		setupSimplePreferencesScreen();
+	}
+	
+	private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        @Override //when the server sync finishes, it sends out a broadcast.
+        public void onReceive(Context context, Intent intent) {
+        	System.out.println("*INTENT RECIEVED*");
+           SettingsActivity.this.receivedBroadcast(intent);
+        }
+    };
+
+	/**
+	 * Shows the simplified settings UI if the device configuration if the
+	 * device configuration dictates that a simplified, single-pane UI should be
+	 * shown.
+	 */
+	@SuppressWarnings("deprecation")
+	private void setupSimplePreferencesScreen() {
+		if (!isSimplePreferences(this)) {
+			return;
+		}
+		
+		// In the simplified UI, fragments are not used at all and we instead
+		// use the older PreferenceActivity APIs.
+
+		// Add 'general' preferences.
+		addPreferencesFromResource(R.xml.pref_general);
+		Preference clear = createClearData();
+		getPreferenceScreen().addPreference(clear);
+		Preference sync = createClearSync();
+		getPreferenceScreen().addPreference(sync);
+		Preference collect = createCollectData();
+		getPreferenceScreen().addPreference(collect);
+		createView();
+		//createView();
+		
+		// Add 'notifications' preferences, and a corresponding header.
+		PreferenceCategory fakeHeader = new PreferenceCategory(this);
+		fakeHeader.setTitle(R.string.pref_header_display);
+		getPreferenceScreen().addPreference(fakeHeader);
+		addPreferencesFromResource(R.xml.pref_display);
+
+		// Add 'data and sync' preferences, and a corresponding header.
+		fakeHeader = new PreferenceCategory(this);
+		fakeHeader.setTitle(R.string.pref_header_data_sync);
+		getPreferenceScreen().addPreference(fakeHeader);
+		addPreferencesFromResource(R.xml.pref_data_sync);
+		
+		createDebugOpt();
+		// Bind the summaries of EditText/List/Dialog/Ringtone preferences to
+		// their values. When their values change, their summaries are updated
+		// to reflect the new value, per the Android Design guidelines.
+		bindPreferenceSummaryToValue(findPreference("address"));
+		bindPreferenceSummaryToValue(findPreference("port"));
+		bindPreferenceSummaryToValue(findPreference("database"));
+		bindPreferenceSummaryToValue(findPreference("username"));
+		bindPreferenceSummaryToValue(findPreference("password"));
+		bindPreferenceSummaryToValue(findPreference("door"));
+		//bindPreferenceSummaryToValue(findPreference("resourcelist"));
+		bindPreferenceSummaryToValue(findPreference("sync_frequency"));
+	}
+	
+	protected void receivedBroadcast(Intent intent) {
+		//restart the application.
+		if (intent.getBooleanExtra(Services.Statics.IS_RESTART, false) == true) {
+			Intent i = getBaseContext().getPackageManager()
+		             .getLaunchIntentForPackage( getBaseContext().getPackageName() );
+			i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(i);
+		}
+	}
+	
+	@Override
+	protected void onResume(){
+		super.onResume();
+		
+		IntentFilter iff = new IntentFilter();
+	    iff.addAction("com.treshna.hornet.serviceBroadcast");
+	    this.registerReceiver(this.mBroadcastReceiver,iff);
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		this.unregisterReceiver(this.mBroadcastReceiver);
+	}
+
+	private Preference createClearData() {
+		Preference clearData = new Preference(this);
+		clearData.setKey("clear");
+		clearData.setTitle("Clear Application Data");
+		clearData.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+            	clearData();            	
+            		Intent i = getPackageManager().getLaunchIntentForPackage( DisplayResultsActivity.getContext().getPackageName() );
+                	i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                	startActivity(i);	
+            	return true;
+        }});
+		return clearData;
+	}
+	
+	private Preference createClearSync() {
+		Preference clearSync = new Preference(this);
+		clearSync.setKey("clearsync");
+		clearSync.setTitle("Clear Last Sync Time");
+		clearSync.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+			@Override
+			public boolean onPreferenceClick(Preference preference) {
+				SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ctx);
+				Editor e = preferences.edit();
+				e.putString("b_lastsync", String.valueOf(3));
+				e.commit();
+				
+				return true;
+			}
+		});
+		
+		return clearSync;
+	}
+	
+	public static Context getContext(){
+		return ctx;
+	}
+	
+	private Preference createCollectData(){
+		Preference collectData = new Preference(this);
+		collectData.setKey("collect");
+		collectData.setTitle("Get Database Settings");
+		collectData.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+			
+			@Override
+			public boolean onPreferenceClick(Preference preference) {
+				collectData();				
+				return true;
+		}});
+		
+		return collectData;
+	}
+	private void collectData(){
+		Intent updateInt = new Intent(this, HornetDBService.class);
+		updateInt.putExtra(Services.Statics.KEY, Services.Statics.FIRSTRUN);
+	 	this.startService(updateInt);
+	}
+	
+	private void createView() {
+		
+		//getPreferenceManager().findPreference(key)
+		/*******Adds Bookings settings*******/
+		ContentResolver contentResolver = this.getContentResolver();
+		Cursor cur = null;
+		PreferenceCategory category = new PreferenceCategory(this);
+		category.setTitle("Bookings");
+		getPreferenceScreen().addPreference(category);
+		
+		
+		/***Resources***/
+		ListPreference resource = new ListPreference(this);
+		resource.setTitle(getString(R.string.pref_title_resource));
+		resource.setKey("resourcelist");
+		
+		List<String> entries = new ArrayList<String>();
+		List<String> entryValues = new ArrayList<String>();
+		//String selectedid = Services.getAppSettings(this, "companylist");
+		//cur = getResource(Integer.parseInt(selectedid), contentResolver);
+		cur = contentResolver.query(ContentDescriptor.Resource.CONTENT_URI, null, null, null, null);
+		while (cur.moveToNext()) {
+			entries.add(cur.getString(2));
+			entryValues.add(cur.getString(0));
+		}
+		cur.close();
+		String[] entriesA = new String[entries.size()];
+		String[] entryValuesA = new String[entryValues.size()];
+		for (int i=0;i<entries.size();i+=1) {
+			entriesA[i] = entries.get(i);
+			entryValuesA[i] = entryValues.get(i);
+		}
+		resource.setEntries(entriesA);
+		resource.setEntryValues(entryValuesA);
+		resource.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+
+			@Override
+			public boolean onPreferenceChange(Preference preference, Object newValue) {
+				System.out.print("\n\n"+newValue);
+				buildTimeSlot((String)newValue);
+				return true;
+			}
+			
+		});
+		category.addPreference(resource);
+		
+       
+		/*******End Bookings settings*******/
+	}
+	
+	private void createDebugOpt(){
+		PreferenceCategory debug = new PreferenceCategory(this);
+		debug.setTitle("Debug Options");
+		getPreferenceScreen().addPreference(debug);
+		// progress on
+		CheckBoxPreference progress = new CheckBoxPreference(this);
+		progress.setKey("progress");
+		progress.setTitle("Progress Box Visible");
+		progress.setSummary("Checking this ensures sync progress is displayed on screen");
+		progress.setChecked(false);
+		debug.addPreference(progress);
+		// debug toasts on
+		CheckBoxPreference toast = new CheckBoxPreference(this);
+		toast.setKey("toast");
+		toast.setTitle("Show Toasts");
+		toast.setSummary("Checking displays sync results in a toast on screen");
+		toast.setChecked(true);
+		debug.addPreference(toast);
+		// Image errors.
+		CheckBoxPreference image = new CheckBoxPreference(this);
+		image.setKey("image");
+		image.setTitle("Fix Image error");
+		image.setSummary("Checking this will fix any \"Error: Column description... Position:77\" type toasts, check it if you do not see any member photos after sync.");
+		image.setChecked(false);
+		debug.addPreference(image);
+	}
+	
+	private static void clearData(){
+		Editor editor = PreferenceManager.getDefaultSharedPreferences(DisplayResultsActivity.getContext()).edit();
+		editor.clear();
+		editor.commit();
+		//does this break things?
+		ContentResolver contentResolver =  DisplayResultsActivity.getContext().getContentResolver();
+		contentResolver.delete(ContentDescriptor.DROPTABLE_URI, null, null);
+		Toast.makeText(DisplayResultsActivity.getContext(), "Data Cleared, restarting Application.", Toast.LENGTH_LONG).show();
+		//return result;
+	}
+	
+	
+	private void buildTimeSlot(String value){
+		Intent updateInt = new Intent(this, HornetDBService.class);
+		updateInt.putExtra(Services.Statics.KEY, Services.Statics.RESOURCESELECTED);
+		updateInt.putExtra("newtime", value);
+	 	this.startService(updateInt);
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public boolean onIsMultiPane() {
+		return isXLargeTablet(this) && !isSimplePreferences(this);
+	}
+
+	/**
+	 * Helper method to determine if the device has an extra-large screen. For
+	 * example, 10" tablets are extra-large.
+	 */
+	private static boolean isXLargeTablet(Context context) {
+		return (context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
+	}
+
+	/**
+	 * Determines whether the simplified settings UI should be shown. This is
+	 * true if this is forced via {@link #ALWAYS_SIMPLE_PREFS}, or the device
+	 * doesn't have newer APIs like {@link PreferenceFragment}, or the device
+	 * doesn't have an extra-large screen. In these cases, a single-pane
+	 * "simplified" settings UI should be shown.
+	 */
+	private static boolean isSimplePreferences(Context context) {
+		return ALWAYS_SIMPLE_PREFS;
+				/*|| Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB
+				|| !isXLargeTablet(context);*/
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	public void onBuildHeaders(List<Header> target) {
+		if (!isSimplePreferences(this)) {
+			loadHeadersFromResource(R.xml.pref_headers, target);
+			/*
+			 * This is the code that builds headers/fragments.
+			 */
+		}
+	}
+
+	/**
+	 * A preference value change listener that updates the preference's summary
+	 * to reflect its new value.
+	 */
+	private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
+		@Override
+		public boolean onPreferenceChange(Preference preference, Object value) {
+			String stringValue = value.toString();
+
+			if (preference instanceof ListPreference) {
+				// For list preferences, look up the correct display value in
+				// the preference's 'entries' list.
+				ListPreference listPreference = (ListPreference) preference;
+				int index = listPreference.findIndexOfValue(stringValue);
+
+				// Set the summary to reflect the new value.
+				preference
+						.setSummary(index >= 0 ? listPreference.getEntries()[index]
+								: null);
+
+			}  else {
+				// For all other preferences, set the summary to the value's
+				// simple string representation.
+				preference.setSummary(stringValue);
+			}
+			return true;
+		}
+	};
+
+	/**
+	 * Binds a preference's summary to its value. More specifically, when the
+	 * preference's value is changed, its summary (line of text below the
+	 * preference title) is updated to reflect the value. The summary is also
+	 * immediately updated upon calling this method. The exact display format is
+	 * dependent on the type of preference.
+	 * 
+	 * @see #sBindPreferenceSummaryToValueListener
+	 */
+	private static void bindPreferenceSummaryToValue(Preference preference) {
+		// Set the listener to watch for value changes.
+		preference
+				.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
+
+		// Trigger the listener immediately with the preference's
+		// current value.
+		if (preference.getKey().compareTo("password") == 0) {
+			String pass = PreferenceManager.getDefaultSharedPreferences(
+					preference.getContext()).getString(preference.getKey(),
+					"");
+			String stars = "";
+			for (int i=0; i<pass.length(); i+=1){
+				stars += "*";
+			}
+			pass = "";
+			sBindPreferenceSummaryToValueListener.onPreferenceChange(
+					preference, stars);
+		} else {
+			sBindPreferenceSummaryToValueListener.onPreferenceChange(
+				preference,
+				PreferenceManager.getDefaultSharedPreferences(
+						preference.getContext()).getString(preference.getKey(),
+						""));
+		}
+	}
+
+	/**
+	 * This fragment shows general preferences only. It is used when the
+	 * activity is showing a two-pane settings UI.
+	 */
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	public static class GeneralPreferenceFragment extends PreferenceFragment {
+		@Override
+		public void onCreate(Bundle savedInstanceState) {
+			super.onCreate(savedInstanceState);
+			addPreferencesFromResource(R.xml.pref_general);
+		
+			// Bind the summaries of EditText/List/Dialog/Ringtone preferences
+			// to their values. When their values change, their summaries are
+			// updated to reflect the new value, per the Android Design
+			// guidelines.
+			bindPreferenceSummaryToValue(findPreference("address"));
+			bindPreferenceSummaryToValue(findPreference("port"));
+			bindPreferenceSummaryToValue(findPreference("database"));
+			bindPreferenceSummaryToValue(findPreference("username"));
+			bindPreferenceSummaryToValue(findPreference("password"));
+			bindPreferenceSummaryToValue(findPreference("door"));
+			//bindPreferenceSummaryToValue(findPreference("resourcelist"));
+			//bindPreferenceSummaryToValue(findPreference("date"));
+		}
+	}
+	
+	/**
+	 * This fragment shows booking preferences only. It is used when the
+	 * activity is showing a two-pane settings UI.
+	 */
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	public static class BookingPreferenceFragment extends PreferenceFragment {
+		@Override
+		public void onCreate(Bundle savedInstanceState) {
+			super.onCreate(savedInstanceState);
+			addPreferencesFromResource(R.xml.pref_bookings);
+			
+			
+			// Bind the summaries of EditText/List/Dialog/Ringtone preferences
+			// to their values. When their values change, their summaries are
+			// updated to reflect the new value, per the Android Design
+			// guidelines.
+		}
+	}
+
+	/**
+	 * This fragment shows notification preferences only. It is used when the
+	 * activity is showing a two-pane settings UI.
+	 */
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	public static class NotificationPreferenceFragment extends
+			PreferenceFragment {
+		@Override
+		public void onCreate(Bundle savedInstanceState) {
+			super.onCreate(savedInstanceState);
+			addPreferencesFromResource(R.xml.pref_display);
+
+			// Bind the summaries of EditText/List/Dialog/Ringtone preferences
+			// to their values. When their values change, their summaries are
+			// updated to reflect the new value, per the Android Design
+			// guidelines.
+		}
+	}
+
+	/**
+	 * This fragment shows data and sync preferences only. It is used when the
+	 * activity is showing a two-pane settings UI.
+	 */
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	public static class DataSyncPreferenceFragment extends PreferenceFragment {
+		@Override
+		public void onCreate(Bundle savedInstanceState) {
+			super.onCreate(savedInstanceState);
+			addPreferencesFromResource(R.xml.pref_data_sync);
+
+			// Bind the summaries of EditText/List/Dialog/Ringtone preferences
+			// to their values. When their values change, their summaries are
+			// updated to reflect the new value, per the Android Design
+			// guidelines.
+			bindPreferenceSummaryToValue(findPreference("sync_frequency"));
+		}
+	}
+}

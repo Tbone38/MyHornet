@@ -1,0 +1,18 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <!--
+         A 'parent' preference, which enables/disables child preferences (below)
+         when checked/unchecked.
+    -->
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="show_doorname"
+        android:title="@string/pref_title_show_doorname" />
+
+    <!-- NOTE: This preference will be enabled only when the checkbox above is checked. -->
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="show_membership"
+        android:title="@string/pref_title_show_membership" />
+
+</PreferenceScreen>

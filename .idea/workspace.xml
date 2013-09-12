@@ -1,0 +1,1523 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="9bde22c4-8469-4d1d-86ed-841808d73963" name="Default" comment="">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/HEAD" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/assets/getMember.sql" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/BookingDetails$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/BookingDetails$10.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/BookingDetails$11.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/BookingDetails$2.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/BookingDetails$3.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/BookingDetails$4.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/BookingDetails$5.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/BookingDetails$6.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/BookingDetails$7.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/BookingDetails$8.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/BookingDetails$9.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/BookingDetails$DatePickerFragment.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/BookingDetails$TimePickerFragment.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/BookingDetails.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/BookingPageFragment$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/BookingPageFragment$2.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/BookingPageFragment$3.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/BookingPageFragment$OnCalChangeListener.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/BookingPageFragment.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/BookingsViewAdapter.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/ContentDescriptor$Membership$Trigger.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/DisplayResultsActivity$MyListFragment.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/GCMIntentService.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/HornetDBService$1$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/HornetDBService$1$2.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/HornetDBService$2$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/HornetDBService$3$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/HornetDBService$4$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/HornetDBService$5$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/HornetDBService$8.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/ListViewAdapter.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/MemberInfo$GalleryAdapter.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/MemberInfo$GalleryItemClickHandler.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/MemberInfo.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/config" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/description" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/hooks/applypatch-msg.sample" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/hooks/commit-msg.sample" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/hooks/post-update.sample" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/hooks/pre-applypatch.sample" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/hooks/pre-commit.sample" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/hooks/pre-rebase.sample" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/hooks/prepare-commit-msg.sample" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/hooks/update.sample" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/info/exclude" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/gcm.jar" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/.classpath" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/.project" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/AndroidManifest.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/README.md" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/AndroidManifest.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/R.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/android/support/v4/app/Watson$OnCreateOptionsMenuListener.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/android/support/v4/app/Watson$OnOptionsItemSelectedListener.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/android/support/v4/app/Watson$OnPrepareOptionsMenuListener.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/android/support/v4/app/Watson.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/ActionBarSherlock$Implementation.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/ActionBarSherlock$OnActionModeFinishedListener.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/ActionBarSherlock$OnActionModeStartedListener.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/ActionBarSherlock$OnCreateOptionsMenuListener.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/ActionBarSherlock$OnCreatePanelMenuListener.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/ActionBarSherlock$OnMenuItemSelectedListener.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/ActionBarSherlock$OnOptionsItemSelectedListener.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/ActionBarSherlock$OnPrepareOptionsMenuListener.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/ActionBarSherlock$OnPreparePanelListener.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/ActionBarSherlock.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/BuildConfig.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/R$attr.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/R$bool.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/R$color.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/R$dimen.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/R$drawable.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/R$id.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/R$integer.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/R$layout.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/R$string.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/R$style.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/R$styleable.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/R.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/app/ActionBar$LayoutParams.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/app/ActionBar$OnMenuVisibilityListener.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/app/ActionBar$OnNavigationListener.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/app/ActionBar$Tab.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/app/ActionBar$TabListener.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/app/ActionBar.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/app/SherlockActivity.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/app/SherlockDialogFragment.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/app/SherlockExpandableListActivity.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/app/SherlockFragment.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/app/SherlockFragmentActivity.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/app/SherlockListActivity.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/app/SherlockListFragment.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/app/SherlockPreferenceActivity.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/ActionBarSherlockCompat$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/ActionBarSherlockCompat$ActionModeCallbackWrapper.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/ActionBarSherlockCompat.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/ActionBarSherlockNative$ActionModeCallbackWrapper.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/ActionBarSherlockNative$ActionModeWrapper.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/ActionBarSherlockNative.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/ResourcesCompat.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/app/ActionBarImpl$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/app/ActionBarImpl$2.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/app/ActionBarImpl$ActionModeImpl.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/app/ActionBarImpl$TabImpl.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/app/ActionBarImpl.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/app/ActionBarWrapper$TabWrapper.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/app/ActionBarWrapper.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/nineoldandroids/animation/Animator$AnimatorListener.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/nineoldandroids/animation/Animator.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/nineoldandroids/animation/AnimatorListenerAdapter.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/nineoldandroids/animation/AnimatorSet$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/nineoldandroids/animation/AnimatorSet$AnimatorSetListener.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/nineoldandroids/animation/AnimatorSet$Builder.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/nineoldandroids/animation/AnimatorSet$Dependency.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/nineoldandroids/animation/AnimatorSet$DependencyListener.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/nineoldandroids/animation/AnimatorSet$Node.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/nineoldandroids/animation/AnimatorSet.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/nineoldandroids/animation/FloatEvaluator.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/nineoldandroids/animation/FloatKeyframeSet.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/nineoldandroids/animation/IntEvaluator.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/nineoldandroids/animation/IntKeyframeSet.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/nineoldandroids/animation/Keyframe$FloatKeyframe.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/nineoldandroids/animation/Keyframe$IntKeyframe.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/nineoldandroids/animation/Keyframe$ObjectKeyframe.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/nineoldandroids/animation/Keyframe.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/nineoldandroids/animation/KeyframeSet.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/nineoldandroids/animation/ObjectAnimator.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/nineoldandroids/animation/PropertyValuesHolder$FloatPropertyValuesHolder.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/nineoldandroids/animation/PropertyValuesHolder$IntPropertyValuesHolder.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/nineoldandroids/animation/PropertyValuesHolder.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/nineoldandroids/animation/TypeEvaluator.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/nineoldandroids/animation/ValueAnimator$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/nineoldandroids/animation/ValueAnimator$2.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/nineoldandroids/animation/ValueAnimator$3.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/nineoldandroids/animation/ValueAnimator$4.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/nineoldandroids/animation/ValueAnimator$5.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/nineoldandroids/animation/ValueAnimator$AnimationHandler.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/nineoldandroids/animation/ValueAnimator$AnimatorUpdateListener.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/nineoldandroids/animation/ValueAnimator.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/nineoldandroids/view/NineViewGroup.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/nineoldandroids/view/animation/AnimatorProxy.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/nineoldandroids/widget/NineFrameLayout.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/nineoldandroids/widget/NineHorizontalScrollView.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/nineoldandroids/widget/NineLinearLayout.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/view/ActionProviderWrapper.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/view/StandaloneActionMode.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/view/View_HasStateListenerSupport.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/view/View_OnAttachStateChangeListener.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/view/menu/ActionMenu.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/view/menu/ActionMenuItem.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/view/menu/ActionMenuItemView.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/view/menu/ActionMenuPresenter$ActionButtonSubmenu.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/view/menu/ActionMenuPresenter$HasPermanentMenuKey.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/view/menu/ActionMenuPresenter$OpenOverflowRunnable.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/view/menu/ActionMenuPresenter$OverflowMenuButton.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/view/menu/ActionMenuPresenter$OverflowPopup.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/view/menu/ActionMenuPresenter$PopupPresenterCallback.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/view/menu/ActionMenuPresenter$SavedState$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/view/menu/ActionMenuPresenter$SavedState.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/view/menu/ActionMenuPresenter.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/view/menu/ActionMenuView$ActionMenuChildView.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/view/menu/ActionMenuView$LayoutParams.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/view/menu/ActionMenuView.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/view/menu/BaseMenuPresenter.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/view/menu/ListMenuItemView.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/view/menu/MenuBuilder$Callback.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/view/menu/MenuBuilder$ItemInvoker.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/view/menu/MenuBuilder.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/view/menu/MenuItemImpl.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/view/menu/MenuItemWrapper$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/view/menu/MenuItemWrapper.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/view/menu/MenuPopupHelper$ExpandedIndexObserver.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/view/menu/MenuPopupHelper$MenuAdapter.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/view/menu/MenuPopupHelper.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/view/menu/MenuPresenter$Callback.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/view/menu/MenuPresenter.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/view/menu/MenuView$ItemView.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/view/menu/MenuView.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/view/menu/MenuWrapper.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/view/menu/SubMenuBuilder.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/view/menu/SubMenuWrapper.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/AbsActionBarView$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/AbsActionBarView$VisibilityAnimListener.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/AbsActionBarView.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/ActionBarContainer.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/ActionBarContextView$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/ActionBarContextView.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/ActionBarView$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/ActionBarView$2.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/ActionBarView$3.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/ActionBarView$ExpandedActionViewMenuPresenter.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/ActionBarView$HomeView.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/ActionBarView$SavedState$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/ActionBarView$SavedState.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/ActionBarView.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/CapitalizingButton.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/CapitalizingTextView.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/CollapsibleActionViewWrapper.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/FakeDialogPhoneWindow.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/IcsAbsSpinner$RecycleBin.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/IcsAbsSpinner$SavedState$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/IcsAbsSpinner$SavedState.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/IcsAbsSpinner.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/IcsAdapterView$AdapterContextMenuInfo.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/IcsAdapterView$AdapterDataSetObserver.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/IcsAdapterView$OnItemLongClickListener.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/IcsAdapterView$OnItemSelectedListener.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/IcsAdapterView$SelectionNotifier.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/IcsAdapterView.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/IcsColorDrawable.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/IcsLinearLayout.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/IcsListPopupWindow$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/IcsListPopupWindow$DropDownListView.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/IcsListPopupWindow$ListSelectorHider.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/IcsListPopupWindow$PopupDataSetObserver.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/IcsListPopupWindow$PopupScrollListener.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/IcsListPopupWindow$PopupTouchInterceptor.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/IcsListPopupWindow$ResizePopupRunnable.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/IcsListPopupWindow.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/IcsProgressBar$AccessibilityEventSender.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/IcsProgressBar$RefreshProgressRunnable.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/IcsProgressBar$SavedState$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/IcsProgressBar$SavedState.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/IcsProgressBar.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/IcsSpinner$DropDownAdapter.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/IcsSpinner$DropdownPopup$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/IcsSpinner$DropdownPopup.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/IcsSpinner$SpinnerPopup.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/IcsSpinner.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/IcsView.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/ScrollingTabContainerView$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/ScrollingTabContainerView$TabAdapter.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/ScrollingTabContainerView$TabClickListener.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/ScrollingTabContainerView$TabView.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/ScrollingTabContainerView$VisibilityAnimListener.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/internal/widget/ScrollingTabContainerView.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/view/ActionMode$Callback.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/view/ActionMode.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/view/ActionProvider$SubUiVisibilityListener.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/view/ActionProvider.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/view/CollapsibleActionView.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/view/Menu.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/view/MenuInflater$InflatedOnMenuItemClickListener.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/view/MenuInflater$MenuState.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/view/MenuInflater.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/view/MenuItem$OnActionExpandListener.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/view/MenuItem$OnMenuItemClickListener.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/view/MenuItem.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/view/SubMenu.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/view/Window$Callback.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/view/Window.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/ActivityChooserModel$ActivityChooserModelClient.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/ActivityChooserModel$ActivityResolveInfo.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/ActivityChooserModel$ActivitySorter.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/ActivityChooserModel$DefaultSorter.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/ActivityChooserModel$HistoricalRecord.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/ActivityChooserModel$HistoryLoader$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/ActivityChooserModel$HistoryLoader.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/ActivityChooserModel$HistoryPersister.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/ActivityChooserModel$OnChooseActivityListener.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/ActivityChooserModel.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/ActivityChooserView$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/ActivityChooserView$2.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/ActivityChooserView$3.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/ActivityChooserView$ActivityChooserViewAdapter.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/ActivityChooserView$Callbacks.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/ActivityChooserView$SetActivated.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/ActivityChooserView.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/SearchView$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/SearchView$10.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/SearchView$11.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/SearchView$12.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/SearchView$2.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/SearchView$3.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/SearchView$4.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/SearchView$5.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/SearchView$6.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/SearchView$7.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/SearchView$8.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/SearchView$9.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/SearchView$OnCloseListener.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/SearchView$OnQueryTextListener.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/SearchView$OnSuggestionListener.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/SearchView$SearchAutoComplete.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/SearchView.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/ShareActionProvider$OnShareTargetSelectedListener.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/ShareActionProvider$ShareAcitivityChooserModelPolicy.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/ShareActionProvider$ShareMenuItemOnMenuItemClickListener.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/ShareActionProvider.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/SuggestionsAdapter$ChildViewCache.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/classes/com/actionbarsherlock/widget/SuggestionsAdapter.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/library.jar" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__ab_bottom_solid_dark_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__ab_bottom_solid_inverse_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__ab_bottom_solid_light_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__ab_bottom_transparent_dark_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__ab_bottom_transparent_light_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__ab_share_pack_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__ab_share_pack_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__ab_solid_dark_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__ab_solid_light_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__ab_solid_shadow_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__ab_stacked_solid_dark_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__ab_stacked_solid_light_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__ab_stacked_transparent_dark_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__ab_stacked_transparent_light_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__ab_transparent_dark_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__ab_transparent_light_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__btn_cab_done_default_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__btn_cab_done_default_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__btn_cab_done_focused_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__btn_cab_done_focused_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__btn_cab_done_pressed_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__btn_cab_done_pressed_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__cab_background_bottom_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__cab_background_bottom_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__cab_background_top_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__cab_background_top_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__dialog_full_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__dialog_full_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__ic_ab_back_holo_dark.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__ic_ab_back_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__ic_cab_done_holo_dark.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__ic_cab_done_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__ic_clear_disabled.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__ic_clear_normal.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__ic_clear_search_api_disabled_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__ic_clear_search_api_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__ic_go.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__ic_go_search_api_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__ic_menu_moreoverflow_normal_holo_dark.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__ic_menu_moreoverflow_normal_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__ic_menu_share_holo_dark.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__ic_menu_share_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__ic_search.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__ic_search_api_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__ic_voice_search.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__ic_voice_search_api_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__list_activated_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__list_divider_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__list_divider_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__list_focused_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__list_longpressed_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__list_pressed_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__list_pressed_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__list_selector_disabled_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__list_selector_disabled_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__menu_dropdown_panel_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__menu_dropdown_panel_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__progress_bg_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__progress_bg_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__progress_primary_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__progress_primary_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__progress_secondary_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__progress_secondary_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__spinner_48_inner_holo.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__spinner_48_outer_holo.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__spinner_ab_default_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__spinner_ab_default_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__spinner_ab_disabled_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__spinner_ab_disabled_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__spinner_ab_focused_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__spinner_ab_focused_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__spinner_ab_pressed_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__spinner_ab_pressed_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__tab_selected_focused_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__tab_selected_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__tab_selected_pressed_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__tab_unselected_pressed_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__textfield_search_default_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__textfield_search_default_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__textfield_search_right_default_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__textfield_search_right_default_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__textfield_search_right_selected_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__textfield_search_right_selected_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__textfield_search_selected_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-hdpi/abs__textfield_search_selected_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__ab_bottom_solid_dark_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__ab_bottom_solid_inverse_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__ab_bottom_solid_light_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__ab_bottom_transparent_dark_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__ab_bottom_transparent_light_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__ab_share_pack_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__ab_share_pack_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__ab_solid_dark_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__ab_solid_light_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__ab_solid_shadow_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__ab_stacked_solid_dark_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__ab_stacked_solid_light_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__ab_stacked_transparent_dark_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__ab_stacked_transparent_light_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__ab_transparent_dark_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__ab_transparent_light_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__btn_cab_done_default_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__btn_cab_done_default_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__btn_cab_done_focused_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__btn_cab_done_focused_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__btn_cab_done_pressed_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__btn_cab_done_pressed_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__cab_background_bottom_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__cab_background_bottom_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__cab_background_top_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__cab_background_top_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__dialog_full_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__dialog_full_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__ic_ab_back_holo_dark.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__ic_ab_back_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__ic_cab_done_holo_dark.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__ic_cab_done_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__ic_clear_disabled.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__ic_clear_normal.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__ic_clear_search_api_disabled_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__ic_clear_search_api_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__ic_go.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__ic_go_search_api_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__ic_menu_moreoverflow_normal_holo_dark.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__ic_menu_moreoverflow_normal_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__ic_menu_share_holo_dark.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__ic_menu_share_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__ic_search.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__ic_search_api_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__ic_voice_search.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__ic_voice_search_api_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__list_activated_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__list_divider_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__list_divider_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__list_focused_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__list_longpressed_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__list_pressed_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__list_pressed_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__list_selector_disabled_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__list_selector_disabled_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__menu_dropdown_panel_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__menu_dropdown_panel_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__progress_bg_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__progress_bg_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__progress_primary_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__progress_primary_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__progress_secondary_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__progress_secondary_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__spinner_48_inner_holo.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__spinner_48_outer_holo.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__spinner_ab_default_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__spinner_ab_default_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__spinner_ab_disabled_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__spinner_ab_disabled_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__spinner_ab_focused_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__spinner_ab_focused_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__spinner_ab_pressed_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__spinner_ab_pressed_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__tab_selected_focused_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__tab_selected_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__tab_selected_pressed_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__tab_unselected_pressed_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__textfield_search_default_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__textfield_search_default_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__textfield_search_right_default_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__textfield_search_right_default_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__textfield_search_right_selected_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__textfield_search_right_selected_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__textfield_search_selected_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-mdpi/abs__textfield_search_selected_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__ab_bottom_solid_dark_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__ab_bottom_solid_inverse_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__ab_bottom_solid_light_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__ab_bottom_transparent_dark_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__ab_bottom_transparent_light_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__ab_share_pack_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__ab_share_pack_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__ab_solid_dark_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__ab_solid_light_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__ab_solid_shadow_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__ab_stacked_solid_dark_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__ab_stacked_solid_light_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__ab_stacked_transparent_dark_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__ab_stacked_transparent_light_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__ab_transparent_dark_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__ab_transparent_light_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__btn_cab_done_default_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__btn_cab_done_default_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__btn_cab_done_focused_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__btn_cab_done_focused_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__btn_cab_done_pressed_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__btn_cab_done_pressed_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__cab_background_bottom_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__cab_background_bottom_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__cab_background_top_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__cab_background_top_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__dialog_full_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__dialog_full_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__ic_ab_back_holo_dark.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__ic_ab_back_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__ic_cab_done_holo_dark.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__ic_cab_done_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__ic_clear_disabled.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__ic_clear_search_api_disabled_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__ic_clear_search_api_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__ic_go.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__ic_go_search_api_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__ic_menu_moreoverflow_normal_holo_dark.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__ic_menu_moreoverflow_normal_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__ic_menu_share_holo_dark.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__ic_menu_share_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__ic_search.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__ic_search_api_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__ic_voice_search.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__ic_voice_search_api_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__list_activated_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__list_divider_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__list_divider_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__list_focused_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__list_longpressed_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__list_pressed_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__list_pressed_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__list_selector_disabled_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__list_selector_disabled_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__menu_dropdown_panel_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__menu_dropdown_panel_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__progress_bg_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__progress_bg_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__progress_primary_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__progress_primary_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__progress_secondary_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__progress_secondary_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__spinner_48_inner_holo.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__spinner_48_outer_holo.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__spinner_ab_default_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__spinner_ab_default_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__spinner_ab_disabled_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__spinner_ab_disabled_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__spinner_ab_focused_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__spinner_ab_focused_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__spinner_ab_pressed_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__spinner_ab_pressed_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__tab_selected_focused_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__tab_selected_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__tab_selected_pressed_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__tab_unselected_pressed_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__textfield_search_default_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__textfield_search_default_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__textfield_search_right_default_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__textfield_search_right_default_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__textfield_search_right_selected_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__textfield_search_right_selected_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__textfield_search_selected_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/bin/res/drawable-xhdpi/abs__textfield_search_selected_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/gen/com/actionbarsherlock/BuildConfig.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/gen/com/actionbarsherlock/R.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/libs/android-support-v4.jar" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/pom.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/project.properties" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/color/abs__primary_text_disable_only_holo_dark.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/color/abs__primary_text_disable_only_holo_light.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/color/abs__primary_text_holo_dark.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/color/abs__primary_text_holo_light.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__ab_bottom_solid_dark_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__ab_bottom_solid_inverse_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__ab_bottom_solid_light_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__ab_bottom_transparent_dark_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__ab_bottom_transparent_light_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__ab_share_pack_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__ab_share_pack_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__ab_solid_dark_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__ab_solid_light_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__ab_solid_shadow_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__ab_stacked_solid_dark_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__ab_stacked_solid_light_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__ab_stacked_transparent_dark_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__ab_stacked_transparent_light_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__ab_transparent_dark_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__ab_transparent_light_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__btn_cab_done_default_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__btn_cab_done_default_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__btn_cab_done_focused_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__btn_cab_done_focused_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__btn_cab_done_pressed_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__btn_cab_done_pressed_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__cab_background_bottom_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__cab_background_bottom_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__cab_background_top_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__cab_background_top_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__dialog_full_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__dialog_full_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__ic_ab_back_holo_dark.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__ic_ab_back_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__ic_cab_done_holo_dark.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__ic_cab_done_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__ic_clear_disabled.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__ic_clear_normal.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__ic_clear_search_api_disabled_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__ic_clear_search_api_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__ic_go.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__ic_go_search_api_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__ic_menu_moreoverflow_normal_holo_dark.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__ic_menu_moreoverflow_normal_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__ic_menu_share_holo_dark.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__ic_menu_share_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__ic_search.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__ic_search_api_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__ic_voice_search.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__ic_voice_search_api_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__list_activated_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__list_divider_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__list_divider_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__list_focused_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__list_longpressed_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__list_pressed_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__list_pressed_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__list_selector_disabled_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__list_selector_disabled_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__menu_dropdown_panel_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__menu_dropdown_panel_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__progress_bg_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__progress_bg_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__progress_primary_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__progress_primary_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__progress_secondary_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__progress_secondary_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__spinner_48_inner_holo.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__spinner_48_outer_holo.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__spinner_ab_default_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__spinner_ab_default_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__spinner_ab_disabled_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__spinner_ab_disabled_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__spinner_ab_focused_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__spinner_ab_focused_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__spinner_ab_pressed_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__spinner_ab_pressed_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__tab_selected_focused_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__tab_selected_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__tab_selected_pressed_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__tab_unselected_pressed_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__textfield_search_default_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__textfield_search_default_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__textfield_search_right_default_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__textfield_search_right_default_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__textfield_search_right_selected_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__textfield_search_right_selected_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__textfield_search_selected_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-hdpi/abs__textfield_search_selected_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__ab_bottom_solid_dark_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__ab_bottom_solid_inverse_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__ab_bottom_solid_light_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__ab_bottom_transparent_dark_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__ab_bottom_transparent_light_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__ab_share_pack_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__ab_share_pack_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__ab_solid_dark_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__ab_solid_light_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__ab_solid_shadow_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__ab_stacked_solid_dark_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__ab_stacked_solid_light_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__ab_stacked_transparent_dark_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__ab_stacked_transparent_light_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__ab_transparent_dark_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__ab_transparent_light_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__btn_cab_done_default_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__btn_cab_done_default_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__btn_cab_done_focused_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__btn_cab_done_focused_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__btn_cab_done_pressed_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__btn_cab_done_pressed_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__cab_background_bottom_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__cab_background_bottom_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__cab_background_top_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__cab_background_top_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__dialog_full_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__dialog_full_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__ic_ab_back_holo_dark.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__ic_ab_back_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__ic_cab_done_holo_dark.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__ic_cab_done_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__ic_clear_disabled.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__ic_clear_normal.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__ic_clear_search_api_disabled_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__ic_clear_search_api_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__ic_go.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__ic_go_search_api_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__ic_menu_moreoverflow_normal_holo_dark.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__ic_menu_moreoverflow_normal_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__ic_menu_share_holo_dark.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__ic_menu_share_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__ic_search.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__ic_search_api_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__ic_voice_search.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__ic_voice_search_api_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__list_activated_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__list_divider_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__list_divider_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__list_focused_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__list_longpressed_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__list_pressed_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__list_pressed_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__list_selector_disabled_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__list_selector_disabled_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__menu_dropdown_panel_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__menu_dropdown_panel_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__progress_bg_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__progress_bg_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__progress_primary_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__progress_primary_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__progress_secondary_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__progress_secondary_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__spinner_48_inner_holo.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__spinner_48_outer_holo.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__spinner_ab_default_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__spinner_ab_default_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__spinner_ab_disabled_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__spinner_ab_disabled_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__spinner_ab_focused_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__spinner_ab_focused_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__spinner_ab_pressed_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__spinner_ab_pressed_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__tab_selected_focused_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__tab_selected_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__tab_selected_pressed_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__tab_unselected_pressed_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__textfield_search_default_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__textfield_search_default_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__textfield_search_right_default_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__textfield_search_right_default_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__textfield_search_right_selected_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__textfield_search_right_selected_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__textfield_search_selected_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-mdpi/abs__textfield_search_selected_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-v11/abs__progress_medium_holo.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__ab_bottom_solid_dark_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__ab_bottom_solid_inverse_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__ab_bottom_solid_light_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__ab_bottom_transparent_dark_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__ab_bottom_transparent_light_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__ab_share_pack_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__ab_share_pack_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__ab_solid_dark_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__ab_solid_light_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__ab_solid_shadow_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__ab_stacked_solid_dark_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__ab_stacked_solid_light_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__ab_stacked_transparent_dark_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__ab_stacked_transparent_light_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__ab_transparent_dark_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__ab_transparent_light_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__btn_cab_done_default_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__btn_cab_done_default_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__btn_cab_done_focused_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__btn_cab_done_focused_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__btn_cab_done_pressed_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__btn_cab_done_pressed_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__cab_background_bottom_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__cab_background_bottom_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__cab_background_top_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__cab_background_top_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__dialog_full_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__dialog_full_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__ic_ab_back_holo_dark.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__ic_ab_back_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__ic_cab_done_holo_dark.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__ic_cab_done_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__ic_clear_disabled.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__ic_clear_search_api_disabled_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__ic_clear_search_api_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__ic_go.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__ic_go_search_api_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__ic_menu_moreoverflow_normal_holo_dark.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__ic_menu_moreoverflow_normal_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__ic_menu_share_holo_dark.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__ic_menu_share_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__ic_search.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__ic_search_api_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__ic_voice_search.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__ic_voice_search_api_holo_light.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__list_activated_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__list_divider_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__list_divider_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__list_focused_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__list_longpressed_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__list_pressed_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__list_pressed_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__list_selector_disabled_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__list_selector_disabled_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__menu_dropdown_panel_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__menu_dropdown_panel_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__progress_bg_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__progress_bg_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__progress_primary_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__progress_primary_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__progress_secondary_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__progress_secondary_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__spinner_48_inner_holo.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__spinner_48_outer_holo.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__spinner_ab_default_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__spinner_ab_default_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__spinner_ab_disabled_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__spinner_ab_disabled_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__spinner_ab_focused_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__spinner_ab_focused_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__spinner_ab_pressed_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__spinner_ab_pressed_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__tab_selected_focused_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__tab_selected_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__tab_selected_pressed_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__tab_unselected_pressed_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__textfield_search_default_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__textfield_search_default_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__textfield_search_right_default_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__textfield_search_right_default_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__textfield_search_right_selected_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__textfield_search_right_selected_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__textfield_search_selected_holo_dark.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable-xhdpi/abs__textfield_search_selected_holo_light.9.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable/abs__activated_background_holo_dark.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable/abs__activated_background_holo_light.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable/abs__btn_cab_done_holo_dark.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable/abs__btn_cab_done_holo_light.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable/abs__ic_clear.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable/abs__ic_clear_holo_light.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable/abs__ic_menu_moreoverflow_holo_dark.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable/abs__ic_menu_moreoverflow_holo_light.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable/abs__item_background_holo_dark.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable/abs__item_background_holo_light.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable/abs__list_selector_background_transition_holo_dark.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable/abs__list_selector_background_transition_holo_light.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable/abs__list_selector_holo_dark.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable/abs__list_selector_holo_light.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable/abs__progress_horizontal_holo_dark.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable/abs__progress_horizontal_holo_light.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable/abs__progress_medium_holo.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable/abs__search_dropdown_dark.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable/abs__search_dropdown_light.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable/abs__spinner_ab_holo_dark.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable/abs__spinner_ab_holo_light.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable/abs__tab_indicator_ab_holo.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable/abs__textfield_searchview_holo_dark.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable/abs__textfield_searchview_holo_light.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable/abs__textfield_searchview_right_holo_dark.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/drawable/abs__textfield_searchview_right_holo_light.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/layout-large/abs__action_mode_close_item.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/layout-v14/sherlock_spinner_dropdown_item.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/layout-v14/sherlock_spinner_item.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/layout-xlarge/abs__screen_action_bar.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/layout-xlarge/abs__screen_action_bar_overlay.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/layout/abs__action_bar_home.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/layout/abs__action_bar_tab.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/layout/abs__action_bar_tab_bar_view.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/layout/abs__action_bar_title_item.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/layout/abs__action_menu_item_layout.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/layout/abs__action_menu_layout.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/layout/abs__action_mode_bar.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/layout/abs__action_mode_close_item.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/layout/abs__activity_chooser_view.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/layout/abs__activity_chooser_view_list_item.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/layout/abs__dialog_title_holo.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/layout/abs__list_menu_item_checkbox.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/layout/abs__list_menu_item_icon.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/layout/abs__list_menu_item_layout.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/layout/abs__list_menu_item_radio.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/layout/abs__popup_menu_item_layout.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/layout/abs__screen_action_bar.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/layout/abs__screen_action_bar_overlay.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/layout/abs__screen_simple.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/layout/abs__screen_simple_overlay_action_mode.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/layout/abs__search_dropdown_item_icons_2line.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/layout/abs__search_view.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/layout/abs__simple_dropdown_hint.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/layout/sherlock_spinner_dropdown_item.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/layout/sherlock_spinner_item.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/values-land/abs__dimens.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/values-large-hdpi-1024x600/abs__dimens.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/values-large-land-hdpi-1024x600/abs__dimens.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/values-large-land-mdpi-1024x600/abs__dimens.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/values-large-mdpi-1024x600/abs__dimens.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/values-large/abs__dimens.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/values-sw600dp/abs__bools.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/values-sw600dp/abs__dimens.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/values-v11/abs__themes.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/values-v14/abs__styles.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/values-v14/abs__themes.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/values-w360dp/abs__dimens.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/values-w480dp/abs__bools.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/values-w480dp/abs__config.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/values-w500dp/abs__dimens.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/values-w600dp/abs__dimens.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/values-xlarge/abs__dimens.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/values/abs__attrs.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/values/abs__bools.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/values/abs__colors.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/values/abs__config.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/values/abs__dimens.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/values/abs__ids.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/values/abs__strings.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/values/abs__styles.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/res/values/abs__themes.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/android/support/v4/app/Watson.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/ActionBarSherlock.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/app/ActionBar.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/app/SherlockActivity.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/app/SherlockDialogFragment.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/app/SherlockExpandableListActivity.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/app/SherlockFragment.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/app/SherlockFragmentActivity.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/app/SherlockListActivity.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/app/SherlockListFragment.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/app/SherlockPreferenceActivity.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/ActionBarSherlockCompat.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/ActionBarSherlockNative.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/ResourcesCompat.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/app/ActionBarImpl.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/app/ActionBarWrapper.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/nineoldandroids/animation/Animator.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/nineoldandroids/animation/AnimatorListenerAdapter.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/nineoldandroids/animation/AnimatorSet.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/nineoldandroids/animation/FloatEvaluator.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/nineoldandroids/animation/FloatKeyframeSet.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/nineoldandroids/animation/IntEvaluator.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/nineoldandroids/animation/IntKeyframeSet.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/nineoldandroids/animation/Keyframe.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/nineoldandroids/animation/KeyframeSet.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/nineoldandroids/animation/ObjectAnimator.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/nineoldandroids/animation/PropertyValuesHolder.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/nineoldandroids/animation/TypeEvaluator.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/nineoldandroids/animation/ValueAnimator.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/nineoldandroids/view/NineViewGroup.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/nineoldandroids/view/animation/AnimatorProxy.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/nineoldandroids/widget/NineFrameLayout.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/nineoldandroids/widget/NineHorizontalScrollView.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/nineoldandroids/widget/NineLinearLayout.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/view/ActionProviderWrapper.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/view/StandaloneActionMode.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/view/View_HasStateListenerSupport.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/view/View_OnAttachStateChangeListener.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/view/menu/ActionMenu.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/view/menu/ActionMenuItem.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/view/menu/ActionMenuItemView.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/view/menu/ActionMenuPresenter.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/view/menu/ActionMenuView.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/view/menu/BaseMenuPresenter.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/view/menu/ListMenuItemView.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/view/menu/MenuBuilder.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/view/menu/MenuItemImpl.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/view/menu/MenuItemWrapper.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/view/menu/MenuPopupHelper.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/view/menu/MenuPresenter.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/view/menu/MenuView.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/view/menu/MenuWrapper.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/view/menu/SubMenuBuilder.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/view/menu/SubMenuWrapper.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/widget/AbsActionBarView.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/widget/ActionBarContainer.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/widget/ActionBarContextView.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/widget/ActionBarView.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/widget/CapitalizingButton.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/widget/CapitalizingTextView.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/widget/CollapsibleActionViewWrapper.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/widget/FakeDialogPhoneWindow.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/widget/IcsAbsSpinner.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/widget/IcsAdapterView.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/widget/IcsColorDrawable.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/widget/IcsLinearLayout.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/widget/IcsListPopupWindow.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/widget/IcsProgressBar.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/widget/IcsSpinner.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/widget/IcsView.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/internal/widget/ScrollingTabContainerView.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/view/ActionMode.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/view/ActionProvider.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/view/CollapsibleActionView.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/view/Menu.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/view/MenuInflater.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/view/MenuItem.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/view/SubMenu.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/view/Window.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/widget/ActivityChooserModel.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/widget/ActivityChooserView.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/widget/SearchView.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/widget/ShareActionProvider.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/src/com/actionbarsherlock/widget/SuggestionsAdapter.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/library/test/com/actionbarsherlock/internal/ManifestParsingTest.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/com/treshna/hornet/BookingDetails.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/com/treshna/hornet/BookingPageFragment.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/com/treshna/hornet/BookingsViewAdapter.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/com/treshna/hornet/GCMIntentService.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/com/treshna/hornet/ListViewAdapter.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/com/treshna/hornet/MemberInfo.java" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/BookingDetailsFragment.class" afterPath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/BookingDetailsFragment.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/BookingsListFragment$1.class" afterPath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/BookingsListFragment$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/BookingsListFragment$2.class" afterPath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/BookingsListFragment$2.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/BookingsListFragment$3.class" afterPath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/BookingsListFragment$3.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/BookingsListFragment.class" afterPath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/BookingsListFragment.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/Hornet.apk" afterPath="$PROJECT_DIR$/bin/Hornet.apk" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/HornetDBService$1.class" afterPath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/HornetDBService$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/HornetDBService$2.class" afterPath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/HornetDBService$2.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/HornetDBService$3.class" afterPath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/HornetDBService$3.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/HornetDBService$4.class" afterPath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/HornetDBService$4.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/HornetDBService$5.class" afterPath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/HornetDBService$5.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/HornetDBService$6.class" afterPath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/HornetDBService$6.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/HornetDBService$7.class" afterPath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/HornetDBService$7.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/HornetDBService.class" afterPath="$PROJECT_DIR$/bin/classes/com/treshna/hornet/HornetDBService.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes.dex" afterPath="$PROJECT_DIR$/bin/classes.dex" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/resources.ap_" afterPath="$PROJECT_DIR$/bin/resources.ap_" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/treshna/hornet/BookingDetailsFragment.java" afterPath="$PROJECT_DIR$/src/com/treshna/hornet/BookingDetailsFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/treshna/hornet/BookingsListFragment.java" afterPath="$PROJECT_DIR$/src/com/treshna/hornet/BookingsListFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/com/treshna/hornet/BuildConfig.java" afterPath="$PROJECT_DIR$/gen/com/treshna/hornet/BuildConfig.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/treshna/hornet/HornetDBService.java" afterPath="$PROJECT_DIR$/src/com/treshna/hornet/HornetDBService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/com/treshna/hornet/Manifest.java" afterPath="$PROJECT_DIR$/gen/com/treshna/hornet/Manifest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/com/treshna/hornet/R.java" afterPath="$PROJECT_DIR$/gen/com/treshna/hornet/R.java" />
+    </list>
+    <ignored path="Hornet.iws" />
+    <ignored path=".idea/workspace.xml" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
+  <component name="CompilerWorkspaceConfiguration">
+    <option name="USE_COMPILE_SERVER" value="false" />
+  </component>
+  <component name="CreatePatchCommitExecutor">
+    <option name="PATCH_PATH" value="" />
+  </component>
+  <component name="DaemonCodeAnalyzer">
+    <disable_hints />
+  </component>
+  <component name="DebuggerManager">
+    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
+    <breakpoint_any default_suspend_policy="SuspendAll" default_condition_enabled="true">
+      <breakpoint>
+        <option name="NOTIFY_CAUGHT" value="true" />
+        <option name="NOTIFY_UNCAUGHT" value="true" />
+        <option name="ENABLED" value="false" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint>
+        <option name="NOTIFY_CAUGHT" value="true" />
+        <option name="NOTIFY_UNCAUGHT" value="true" />
+        <option name="ENABLED" value="false" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+    </breakpoint_any>
+    <breakpoint_rules />
+    <ui_properties />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
+  <component name="FavoritesManager">
+    <favorites_list name="Hornet" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf>
+      <file leaf-file-name="BookingDetailsFragment.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/treshna/hornet/BookingDetailsFragment.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="232" column="12" selection-start="9875" selection-end="9875" vertical-scroll-proportion="0.0" vertical-offset="3480" max-vertical-offset="6180">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SettingsActivity.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/com/treshna/hornet/SettingsActivity.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="292" column="12" selection-start="10754" selection-end="10754" vertical-scroll-proportion="0.47134936" vertical-offset="3615" max-vertical-offset="6240">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FindManager">
+    <FindUsagesManager>
+      <setting name="OPEN_NEW_TAB" value="false" />
+    </FindUsagesManager>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitLogSettings">
+    <option name="myDateState">
+      <MyDateState />
+    </option>
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="changedFiles">
+      <list>
+        <option value="$PROJECT_DIR$/src/com/treshna/hornet/BookingDetailsFragment.java" />
+        <option value="$PROJECT_DIR$/src/com/treshna/hornet/SettingsActivity.java" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="x" value="10" />
+    <option name="y" value="33" />
+    <option name="width" value="1660" />
+    <option name="height" value="1010" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="false">
+    <OptionsSetting value="true" id="Add" />
+    <OptionsSetting value="true" id="Remove" />
+    <OptionsSetting value="true" id="Checkout" />
+    <OptionsSetting value="true" id="Update" />
+    <OptionsSetting value="true" id="Status" />
+    <OptionsSetting value="true" id="Edit" />
+    <ConfirmationsSetting value="2" id="Add" />
+    <ConfirmationsSetting value="0" id="Remove" />
+  </component>
+  <component name="ProjectReloadState">
+    <option name="STATE" value="0" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1" splitterProportion="0.5">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Hornet" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Hornet" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Hornet" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Hornet" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Hornet" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="hornet" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+      <pane id="PackagesPane" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="GoToFile.includeJavaFiles" value="false" />
+    <property name="project.structure.last.edited" value="SDKs" />
+    <property name="project.structure.proportion" value="0.0" />
+    <property name="options.splitter.main.proportions" value="0.3" />
+    <property name="recentsLimit" value="5" />
+    <property name="MemberChooser.sorted" value="false" />
+    <property name="options.lastSelected" value="preferences.sourceCode" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="MemberChooser.copyJavadoc" value="false" />
+    <property name="GoToClass.toSaveIncludeLibraries" value="false" />
+    <property name="FullScreen" value="false" />
+    <property name="MemberChooser.showClasses" value="true" />
+    <property name="GoToClass.includeLibraries" value="false" />
+    <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="options.searchVisible" value="true" />
+  </component>
+  <component name="RunManager" selected="Android Application.Hornet">
+    <configuration default="true" type="Remote" factoryName="Remote">
+      <option name="USE_SOCKET_TRANSPORT" value="true" />
+      <option name="SERVER_MODE" value="false" />
+      <option name="SHMEM_ADDRESS" value="javadebug" />
+      <option name="HOST" value="localhost" />
+      <option name="PORT" value="5005" />
+      <method />
+    </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <method />
+    </configuration>
+    <configuration default="true" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="JUnit" factoryName="JUnit">
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
+      <method />
+    </configuration>
+    <configuration default="true" type="AndroidRunConfigurationType" factoryName="Android Application">
+      <module name="" />
+      <option name="ACTIVITY_CLASS" value="" />
+      <option name="MODE" value="default_activity" />
+      <option name="DEPLOY" value="true" />
+      <option name="TARGET_SELECTION_MODE" value="EMULATOR" />
+      <option name="PREFERRED_AVD" value="" />
+      <option name="USE_COMMAND_LINE" value="true" />
+      <option name="COMMAND_LINE" value="" />
+      <option name="WIPE_USER_DATA" value="false" />
+      <option name="DISABLE_BOOT_ANIMATION" value="false" />
+      <option name="NETWORK_SPEED" value="full" />
+      <option name="NETWORK_LATENCY" value="none" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <method />
+    </configuration>
+    <configuration default="false" name="Hornet" type="AndroidRunConfigurationType" factoryName="Android Application">
+      <module name="Hornet" />
+      <option name="ACTIVITY_CLASS" value="" />
+      <option name="MODE" value="default_activity" />
+      <option name="DEPLOY" value="true" />
+      <option name="TARGET_SELECTION_MODE" value="EMULATOR" />
+      <option name="PREFERRED_AVD" value="" />
+      <option name="USE_COMMAND_LINE" value="true" />
+      <option name="COMMAND_LINE" value="" />
+      <option name="WIPE_USER_DATA" value="false" />
+      <option name="DISABLE_BOOT_ANIMATION" value="false" />
+      <option name="NETWORK_SPEED" value="full" />
+      <option name="NETWORK_LATENCY" value="none" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <RunnerSettings RunnerId="AndroidDebugRunner" />
+      <ConfigurationWrapper RunnerId="AndroidDebugRunner" />
+      <method />
+    </configuration>
+    <list size="1">
+      <item index="0" class="java.lang.String" itemvalue="Android Application.Hornet" />
+    </list>
+    <configuration name="&lt;template&gt;" type="TestNG" default="true" selected="false">
+      <option name="MAIN_CLASS_NAME" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+    </configuration>
+    <configuration name="&lt;template&gt;" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" default="true" selected="false">
+      <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m -ea" />
+    </configuration>
+    <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
+      <Host>localhost</Host>
+      <Port>5050</Port>
+    </configuration>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false" />
+  <component name="SvnConfiguration" maxAnnotateRevisions="500" myUseAcceleration="nothing" myAutoUpdateAfterCommit="false" cleanupOnStartRun="false" SSL_PROTOCOLS="sslv3">
+    <option name="USER" value="" />
+    <option name="PASSWORD" value="" />
+    <option name="mySSHConnectionTimeout" value="30000" />
+    <option name="mySSHReadTimeout" value="30000" />
+    <option name="LAST_MERGED_REVISION" />
+    <option name="MERGE_DRY_RUN" value="false" />
+    <option name="MERGE_DIFF_USE_ANCESTRY" value="true" />
+    <option name="UPDATE_LOCK_ON_DEMAND" value="false" />
+    <option name="IGNORE_SPACES_IN_MERGE" value="false" />
+    <option name="CHECK_NESTED_FOR_QUICK_MERGE" value="false" />
+    <option name="IGNORE_SPACES_IN_ANNOTATE" value="true" />
+    <option name="SHOW_MERGE_SOURCES_IN_ANNOTATE" value="true" />
+    <option name="FORCE_UPDATE" value="false" />
+    <option name="IGNORE_EXTERNALS" value="false" />
+    <myIsUseDefaultProxy>false</myIsUseDefaultProxy>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="9bde22c4-8469-4d1d-86ed-841808d73963" name="Default" comment="" />
+      <created>1378351624205</created>
+      <updated>1378351624205</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="10" y="33" width="1660" height="1010" extended-state="0" />
+    <editor active="false" />
+    <layout>
+      <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32914287" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32914287" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24969843" sideWeight="0.67085713" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3293979" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+    </layout>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="myTodoPanelSettings">
+      <TodoPanelSettings />
+    </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/com/treshna/hornet/BookingDetailsFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="232" column="12" selection-start="9875" selection-end="9875" vertical-scroll-proportion="0.0" vertical-offset="3480" max-vertical-offset="6570">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/treshna/hornet/BookingDetailsFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="201" column="28" selection-start="8682" selection-end="8682" vertical-scroll-proportion="0.0" vertical-offset="3015" max-vertical-offset="6570">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/treshna/hornet/BookingDetailsFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="36" column="13" selection-start="1082" selection-end="1082" vertical-scroll-proportion="0.0" vertical-offset="540" max-vertical-offset="6570">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/.name">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="814" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/treshna/hornet/MainActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="4" column="18" selection-start="85" selection-end="85" vertical-scroll-proportion="0.10830325" vertical-offset="0" max-vertical-offset="2895">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/treshna/hornet/BookingDetailsFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="232" column="12" selection-start="9875" selection-end="9875" vertical-scroll-proportion="0.0" vertical-offset="3480" max-vertical-offset="6180">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/treshna/hornet/SettingsActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="292" column="12" selection-start="10754" selection-end="10754" vertical-scroll-proportion="0.47134936" vertical-offset="3615" max-vertical-offset="6240">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ArtifactsStructureConfigurable.UI">
+        <settings>
+          <artifact-editor />
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="FacetStructureConfigurable.UI">
+        <settings>
+          <last-edited>Android</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="GlobalLibrariesConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="JdkListConfigurable.UI">
+        <settings>
+          <last-edited>Android SDK</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ModuleStructureConfigurable.UI">
+        <settings>
+          <last-edited>Hornet</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+                <option value="0.5" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectJDKs.UI">
+        <settings>
+          <last-edited>Android 4.2.2 Platform</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectLibrariesConfigurable.UI">
+        <settings>
+          <last-edited>dexedLibs</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>
+
