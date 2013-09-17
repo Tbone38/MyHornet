@@ -245,8 +245,8 @@ public class AddMember extends NFCActivity implements OnClickListener{
 			TextView label = (TextView) this.findViewById(R.id.labelGender);
 			label.setTextColor(Color.BLACK);
 		}
-		
-		EditText memberStreet = (EditText) this.findViewById(R.id.memberStreet);
+		/******************* probably don't need street, city, postal************************/
+		/*EditText memberStreet = (EditText) this.findViewById(R.id.memberStreet);
 		if (memberStreet.getText().toString().compareTo("") == 0) {
 			result = false;
 			emptyFields.add("memberStreet");
@@ -273,6 +273,24 @@ public class AddMember extends NFCActivity implements OnClickListener{
 			emptyFields.add(String.valueOf(R.id.labelPostal));
 		} else {
 			TextView label = (TextView) this.findViewById(R.id.labelPostal);
+			label.setTextColor(Color.BLACK);
+		}*/
+		/**** REPLACE above with phone (need either home or cell) ****/
+		
+		EditText memberHome = (EditText) this.findViewById(R.id.memberHomePhone);
+		if (memberHome.getText().toString().compareTo("") == 0) {
+			EditText memberCell = (EditText) this.findViewById(R.id.memberCellPhone);
+			if (memberCell.getText().toString().compareTo("") ==0) {
+				//neither home or cell are set. which one should I highlight?
+				result = false;
+				emptyFields.add("memberCellPhone");
+				emptyFields.add(String.valueOf(R.id.labelCellPhone));
+			} else {
+				TextView label = (TextView) this.findViewById(R.id.labelCellPhone);
+				label.setTextColor(Color.BLACK);
+			}
+		} else {
+			TextView label = (TextView) this.findViewById(R.id.labelCellPhone);
 			label.setTextColor(Color.BLACK);
 		}
 		
@@ -354,6 +372,7 @@ public class AddMember extends NFCActivity implements OnClickListener{
 		viewlist.add(R.id.labelPostal);
 		viewlist.add(R.id.labelEmail);
 		viewlist.add(R.id.labelSignupType);
+		viewlist.add(R.id.labelCellPhone);
 		for (int i = 0; i<viewlist.size(); i+=1){
 			TextView label = (TextView) this.findViewById(viewlist.get(i));
 			label.setTextColor(Color.BLACK);

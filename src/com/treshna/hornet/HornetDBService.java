@@ -40,7 +40,7 @@ public class HornetDBService extends Service {
     private JDBCConnection connection = null;
     private String imageWhereQuery = "";
     private String statusMessage = "";
-    private Handler handler;
+    private static Handler handler;
     private static int currentCall;
     private String resourceid;
     Context ctx;
@@ -179,11 +179,7 @@ public class HornetDBService extends Service {
 		  // bookingImages();
 		   Services.stopProgress(handler, currentCall);
 		   Services.showToast(getApplicationContext(), statusMessage, handler);
-		   try {
-			   Thread.sleep(1000); // wait 1 sec for the progress bar to leave.
-		   } catch (InterruptedException e) {
-			   
-		   }
+		  
 		   Intent bcIntent = new Intent();
 		   
 		   if (result >= 0) {
@@ -280,6 +276,7 @@ public class HornetDBService extends Service {
  	    */
  	   case (Services.Statics.RESOURCESELECTED):{
  		  thread.is_networking = true;
+ 		 Services.showProgress(Services.getContext(), "Setting up resource", handler, currentCall);
  		   	   resourceid = theResource;
  		   	/*new Thread(new Runnable() {
  				   public void run() {*/ 
@@ -287,11 +284,16 @@ public class HornetDBService extends Service {
 			   setTime(); 
 			   setDate();
 			   updateOpenHours();
+			   Services.stopProgress(handler, currentCall);
 			  thread.is_networking = false;
  				   //}}).start();
  				   break;
  	   }
  	   }
+    }
+    
+    public static Handler getHandler(){
+    	return handler;
     }
     
     @SuppressLint("SimpleDateFormat")
@@ -1089,8 +1091,12 @@ public class HornetDBService extends Service {
     	java.sql.Date tomorrow = new java.sql.Date(cal.getTime().getTime());
     	long this_sync = new Date().getTime();
     	long last_sync = Long.parseLong(Services.getAppSettings(ctx, "b_lastsync"));
+    	int lastrid = Integer.decode(Services.getAppSettings(ctx, "last_rid"));
     	
     	int resourceid = Integer.decode(Services.getAppSettings(this, "resourcelist"));
+    	if (lastrid != resourceid) {
+    		last_sync = 3;
+    	}
     	if (resourceid < 0 ) {
     		statusMessage = "please set resource in the application settings";
     		return -1;
@@ -1224,6 +1230,7 @@ public class HornetDBService extends Service {
     	connection.closeConnection();
     	System.out.print("\n\nBookingCount:"+result);
     	System.out.print("\n\nBookings sync'd at:"+this_sync+"\n\n");
+    	Services.setPreference(ctx, "last_rid", String.valueOf(resourceid));
     	Services.setPreference(ctx, "b_lastsync", String.valueOf(this_sync));//String.valueOf(System.currentTimeMillis())
     	return result;
     }

@@ -3,7 +3,6 @@ package com.treshna.hornet;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 
 import android.annotation.TargetApi;
@@ -26,7 +25,6 @@ import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -37,7 +35,6 @@ public class BookingsSlidePager extends FragmentActivity  implements BookingsLis
 	private static int NUM_PAGES = 7; //?
 	
 	private Map<Integer, BookingsListFragment> fragmentlist = new HashMap<Integer, BookingsListFragment>();
-	
     private ViewPager mPager;
     private PagerAdapter mPagerAdapter;
     private Date date;
@@ -130,8 +127,15 @@ public class BookingsSlidePager extends FragmentActivity  implements BookingsLis
 		 	this.startService(bookings);
 		 	
 		 	//just change the cursor.
-		 	BookingsListFragment page = fragmentlist.get(2);
-		 	page.loadermanager.restartLoader(0, null, page);
+		 	BookingsListFragment page = fragmentlist.get(mPager.getCurrentItem());
+		 	if (page != null) {
+		 		page.loadermanager.restartLoader(0, null, page);
+		 	} else {
+		 		//page is null, what should I do instead?
+		 		Intent i = new Intent(this, BookingsSlidePager.class);
+		       	startActivity(i);
+		       	this.finish();
+		 	}
 		 
     	}
     }
@@ -139,10 +143,21 @@ public class BookingsSlidePager extends FragmentActivity  implements BookingsLis
     protected void receivedBroadcast(Intent intent) {
     	if (intent.getBooleanExtra(Services.Statics.IS_SUCCESSFUL, false) == true) {
     		/* The above if ensures that the fragment has the correct bundle details?
-    		 * 
     		 */
-    		BookingsListFragment page = fragmentlist.get(2);
-		 	page.loadermanager.restartLoader(0, null, page);
+    		if (Services.getProgress() != null && Services.getProgress().isShowing()) {
+        		Services.getProgress().dismiss();
+        		Services.setProgress(null);
+        	}
+    		BookingsListFragment page = fragmentlist.get(mPager.getCurrentItem());
+    		if (page != null) {
+    			page.loadermanager.restartLoader(0, null, page);
+    		} else {
+    			// orientation changed/or page otherwise couln't be found,
+    			// instead just restart the activity intent.
+    			Intent i = new Intent(this, BookingsSlidePager.class);
+		       	startActivity(i);
+		       	this.finish();
+    		}
     	}
 	}
     
@@ -164,12 +179,20 @@ public class BookingsSlidePager extends FragmentActivity  implements BookingsLis
     	IntentFilter iff = new IntentFilter();
 	    iff.addAction("com.treshna.hornet.serviceBroadcast");
 	    this.registerReceiver(this.mBroadcastReceiver,iff);
+	    if (Services.getProgress() != null ) {
+    		Services.getProgress().show();
+    	}
     }
     
     @Override
 	protected void onPause() {
-		super.onPause();
+		//super.onPause();
+    	if (Services.getProgress() != null && Services.getProgress().isShowing()) {
+    		Services.getProgress().dismiss();
+    		//Services.setProgress(null);
+    	}
 		this.unregisterReceiver(this.mBroadcastReceiver);
+		super.onPause();
 	}
 	 
 	@Override

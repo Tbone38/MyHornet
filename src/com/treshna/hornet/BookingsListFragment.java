@@ -8,7 +8,6 @@ import java.util.Locale;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.ContentResolver;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
@@ -42,9 +41,6 @@ public class BookingsListFragment extends ListFragment implements OnClickListene
     //TODO: refresh adapter on sync completion.
     // using cursor adapter ?
     
-	
-	private static ContentResolver contentResolver = null;
-    private static Cursor cur = null;
     private SimpleCursorAdapter mAdapter;
     private Date date;
     private Date newdate;
@@ -65,7 +61,10 @@ public class BookingsListFragment extends ListFragment implements OnClickListene
 	@SuppressWarnings("deprecation")
 	@SuppressLint("NewApi")
 	private void setDate(){
-		contentResolver = getActivity().getContentResolver();
+		if (getActivity() == null) { //?
+			return;
+		}
+		//contentResolver = getActivity().getContentResolver();
         int position = getArguments().getInt(Services.Statics.KEY);
         System.out.print("\n\nPosition::"+position);
         Calendar cal = Calendar.getInstance();
@@ -290,7 +289,7 @@ public class BookingsListFragment extends ListFragment implements OnClickListene
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-		cur = cursor;
+		//cur = cursor;
 		if(cursor.isClosed()) {
            System.out.print("\n\nCursor Closed");
             Activity activity = getActivity();

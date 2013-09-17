@@ -126,7 +126,9 @@ public class SettingsActivity extends PreferenceActivity {
 	@Override
 	protected void onResume(){
 		super.onResume();
-		
+		if (Services.getProgress() != null && Services.getProgress().isShowing()) {
+    		Services.getProgress().show();
+		}
 		IntentFilter iff = new IntentFilter();
 	    iff.addAction("com.treshna.hornet.serviceBroadcast");
 	    this.registerReceiver(this.mBroadcastReceiver,iff);
@@ -136,6 +138,10 @@ public class SettingsActivity extends PreferenceActivity {
 	protected void onPause() {
 		super.onPause();
 		this.unregisterReceiver(this.mBroadcastReceiver);
+		if (Services.getProgress() != null && Services.getProgress().isShowing()) {
+    		Services.getProgress().dismiss();
+    		//Services.setProgress(null);
+    	}
 	}
 
 	private Preference createClearData() {

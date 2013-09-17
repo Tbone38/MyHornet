@@ -277,22 +277,26 @@
     	android:layout_height="wrap_content"
     	android:text="@string/labelSignupType"
     	android:layout_below="@+id/memberinfoH"
+    	android:visibility="gone"
    	/>
 	<RadioGroup android:layout_width="fill_parent" 
       android:layout_height="wrap_content"
       android:layout_below="@id/labelSignupType" 
       android:orientation="horizontal"
-      android:id="@+id/memberSignupType">
+      android:id="@+id/memberSignupType"
+      >
      <RadioButton
 	    android:id="@+id/radioMember"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
-	    android:text="@string/radioMember"  />
+	    android:text="@string/radioMember"
+	    android:visibility="gone"  />
      <RadioButton
 	    android:id="@+id/radioProspect"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
-	    android:text="@string/radioProspect"  />
+	    android:text="@string/radioProspect"
+	    android:visibility="gone"  />
     </RadioGroup>
 	
 	<TextView

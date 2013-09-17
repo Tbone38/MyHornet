@@ -139,10 +139,7 @@ public class Services {
 	public static Context getContext(){
 		return theCtx;
 	}
-		/* The below toasts/Progress functions are broken,
-		 * Using them causes the database-service to die.
-		 * Not really sure why....
-		 */
+		
 	public static void showToast(final Context ctx, final String message, Handler handler) {
 		
 		DEBUG = PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean("toast", true);
@@ -159,7 +156,11 @@ public class Services {
 	public static void showProgress(final Context ctx, final String message, Handler handler, int call) {
 		
 		DEBUG = PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean("progress", false);
-		
+		if (progress != null) {
+			//Services.stopProgress(handler, call);
+			Services.getProgress().dismiss();
+			Services.setProgress(null);
+		}
 		if (DEBUG == true && progress == null) { 
 			System.out.print("\n\nHandler:"+handler);
 			handler.post(new Runnable() {  
@@ -172,16 +173,26 @@ public class Services {
 	}
 	
 	public static void stopProgress(Handler handler, final int call){
-		handler.post(new Runnable() {  
+		
+		/*handler.post(new Runnable() {  
 			@Override  
 			public void run() {
 				if (progress != null && progress.isShowing()){
-					//if (CurCall == call) {
-						progress.dismiss();
-						progress = null;
-			//		}
-				}
-			}});
+					progress.dismiss();
+					//progress = null;
+				} 
+			}});*/
+		if (progress != null & progress.isShowing()) {
+			progress.dismiss();
+		}
+		progress = null;
+	}
+	
+	public static ProgressDialog getProgress(){
+		return progress;
+	}
+	public static void setProgress(ProgressDialog prog){
+		progress = prog;
 	}
 	
 	
