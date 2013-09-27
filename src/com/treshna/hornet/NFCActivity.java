@@ -84,25 +84,40 @@ public class NFCActivity extends FragmentActivity {
     @Override 
     public void onNewIntent(Intent intent){
     	if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1){
+    		int rowid; 
+    		Tag tag;
+    		String id;
+    		String[] techlist;
+    		ContentResolver contentResolver;
+    		Date today;
+    		SimpleDateFormat format;
+    		ContentValues values;
+    		
 	    	System.out.print("intent Started"); 
 	           	// get the tag object for the discovered tag
-	    	Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-	    	String [] techlist = tag.getTechList();
+	    	tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+	    	techlist = tag.getTechList();
+	    	
 	    	for (int i=0;i<techlist.length; i+=1){
 	    		System.out.print("\n\n"+techlist[i]);	
 	    	}
-	    	String id = getID(tag);
-	    	ContentResolver contentResolver = getContentResolver();
-	    	Date today = new Date();
-	    	SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS", Locale.US);       
+	    	
+	    	id = getID(tag);
+	    	contentResolver = getContentResolver();
+	    	today = new Date();
+	    	format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS", Locale.US);       
 	       
-	    	ContentValues values = new ContentValues();
+	    	values = new ContentValues();
 	    	values.put(ContentDescriptor.Swipe.Cols.ID, id);
 	    	values.put(ContentDescriptor.Swipe.Cols.DOOR, Services.getAppSettings(this, "door"));
 	    	values.put(ContentDescriptor.Swipe.Cols.DATETIME, format.format(today));
-	    	contentResolver.insert(ContentDescriptor.Swipe.CONTENT_URI, values);
+	    	rowid = Integer.parseInt(contentResolver.insert(ContentDescriptor.Swipe.CONTENT_URI, values).getLastPathSegment());
+
+	    	values = new ContentValues();
+	    	values.put(ContentDescriptor.PendingUploads.Cols.TABLEID, ContentDescriptor.TableIndex.Values.Swipe.getKey());
+	    	values.put(ContentDescriptor.PendingUploads.Cols.ROWID, rowid);
+	    	contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, values);
 	    	//start sync here as well
-	
 
 			Intent updateInt = new Intent(this, HornetDBService.class);
 			updateInt.putExtra(Services.Statics.KEY, Services.Statics.SWIPE);
