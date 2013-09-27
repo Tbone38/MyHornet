@@ -37,6 +37,7 @@ public class PagerContainer extends FrameLayout implements ViewPager.OnPageChang
 	 
 	private ViewPager mPager;
 	boolean mNeedsRedraw = false;
+	boolean isPagingEnabled = true;
 	 
 	public PagerContainer(Context context) {
 		super(context);
@@ -71,10 +72,14 @@ public class PagerContainer extends FrameLayout implements ViewPager.OnPageChang
 		try {
 			mPager = (ViewPager) getChildAt(0);
 			mPager.setOnPageChangeListener(this);
+			//mPager.setClipToPadding(false);
+			//mPager.setPageMargin(30);
+			
 		} catch (Exception e) {
 			throw new IllegalStateException("The root child of PagerContainer must be a ViewPager");
-			}
 		}
+		super.onFinishInflate();
+	}
 		 
 	public ViewPager getViewPager() {
 		return mPager;
@@ -93,16 +98,17 @@ public class PagerContainer extends FrameLayout implements ViewPager.OnPageChang
 	public boolean onTouchEvent(MotionEvent ev) {
 		//We capture any touches not already handled by the ViewPager
 		// to implement scrolling from a touch outside the pager bounds.
+		
 		switch (ev.getAction()) {
-		case MotionEvent.ACTION_DOWN:
-			mInitialTouch.x = (int)ev.getX();
-			mInitialTouch.y = (int)ev.getY();
-		default:
-			ev.offsetLocation(mCenter.x - mInitialTouch.x, mCenter.y - mInitialTouch.y);
-		break;
-	}
-	 
-	return mPager.dispatchTouchEvent(ev);
+			case MotionEvent.ACTION_DOWN:
+				mInitialTouch.x = (int)ev.getX();
+				mInitialTouch.y = (int)ev.getY();
+			default:
+				ev.offsetLocation(mCenter.x - mInitialTouch.x, mCenter.y - mInitialTouch.y);
+				break;
+		}
+	
+	 	return mPager.dispatchTouchEvent(ev);
 	}
 	 
 	@Override
@@ -113,10 +119,14 @@ public class PagerContainer extends FrameLayout implements ViewPager.OnPageChang
 	}
 	 
 	@Override
-	public void onPageSelected(int position) { }
+	public void onPageSelected(int position) {	}
 	 
 	@Override
 	public void onPageScrollStateChanged(int state) {
 		mNeedsRedraw = (state != ViewPager.SCROLL_STATE_IDLE);
 	}
+	
+	public void setPagingEnabled(boolean b) {
+        this.isPagingEnabled = b;
+    }
 }

@@ -1,8 +1,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-	 <item
-        android:id="@+id/action_scan"
-        android:orderInCategory="100"
-        android:title="@string/action_scan"/>
+	 <item 
+	     android:id="@+id/action_createclass"
+	     android:orderInCategory="100"
+	     android:title="CREATE CLASS"/>
 	 <item
         android:id="@+id/action_visitors"
         android:orderInCategory="200"

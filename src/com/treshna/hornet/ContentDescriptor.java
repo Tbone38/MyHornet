@@ -73,6 +73,11 @@ public class ContentDescriptor {
 	     matcher.addURI(authority, BookingTime.PATH_FOR_ID, BookingTime.PATH_FOR_ID_TOKEN);
 	     matcher.addURI(authority, BookingTime.PATH_FOR_JOIN, BookingTime.PATH_FOR_JOIN_TOKEN);
 	     
+	     matcher.addURI(authority, TableIndex.PATH, TableIndex.PATH_TOKEN);
+	     matcher.addURI(authority, TableIndex.PATH_FOR_ID, TableIndex.PATH_FOR_ID_TOKEN);
+	     matcher.addURI(authority, PendingUploads.PATH, PendingUploads.PATH_TOKEN);
+	     matcher.addURI(authority, PendingUploads.PATH_FOR_ID, PendingUploads.PATH_FOR_ID_TOKEN);
+	     
 	     matcher.addURI(authority, DROPTABLE, TOKEN_DROPTABLE);
 	     
 	     return matcher;
@@ -290,6 +295,7 @@ public class ContentDescriptor {
 	 			public static final String CHECKIN = "checkin";
 	 			public static final String OFFSET = "offset"; // == resource.period
 	 			public static final String IS_UPLOADED = "is_uploaded"; //has the booking been uploaded?
+	 			public static final String CLASSID ="classid";
 	 		}
 	 	}
 	 	
@@ -521,22 +527,89 @@ public class ContentDescriptor {
 	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.class";
 	 		
 	 		public static class Cols implements BaseColumns {
-	 			public static final String ID = "id";
+	 			public static final String CID = "cid";
 	 			public static final String NAME = "name";
-	 			public static final String DESC = "description";
 	 			public static final String MAX_ST = "max_students";
-	 			public static final String MAX_WL = "max_waitinglist";
-	 			public static final String MAX_BH = "max_bookahead";
-	 			public static final String PRICE = "price";
-	 			public static final String ONLINE = "onlinebook";
 	 			public static final String FREQ = "frequency";
 	 			public static final String SDATE = "startdate";
 	 			public static final String STIME = "starttime";
 	 			public static final String ETIME = "endtime";
 	 			public static final String RID = "resourceid";
-	 			public static final String BTID = "bookingtypeid";
-	 			public static final String RESULT = "resultstatus";
 	 			public static final String LASTUPDATED = "lastupdated";
+	 		}
+	 	}
+	 	
+	 	public static class TableIndex {
+	 		public static final String NAME = "TableIndex";
+	 		public static final String PATH = "TableIndex";
+	 		public static final int PATH_TOKEN = 10;
+	 		public static final String PATH_FOR_ID = "TableIndex/*";
+	 		public static final int PATH_FOR_ID_TOKEN = 11;
+	 		
+	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
+	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.tableindex";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.tableindex";
+	 		
+	 		public static class Cols implements BaseColumns {
+	 			public static final String NAME = "name";
+	 		}
+	 		/**
+	 		 * key (id's) used for referencing each table-name.
+	 		 * @author callum
+	 		 */
+	 		public static enum Values {
+	 			Booking(1), Class(2), Swipe(3),Membership(4) /*when adding memberships*/,
+	 					Pending(5) /*when adding members/prospects*/,Image(6);
+	 			
+	 			private final int key;
+	 			
+	 			Values(int key) {
+	 				this.key = key;
+	 			}
+	 			
+	 			public static final int getLength(){
+	 				return Values.values().length;
+	 			}
+	 			
+	 			/*public static final int getKey(Values v) {
+	 				return v.key;
+	 			}*/
+	 			
+	 			public static final Values getValue(int id){
+	 				for (Values v : Values.values()){
+	 					if (v.key == id) {
+	 						return v;
+	 					}
+	 				}
+	 				return null;
+	 			}
+	 			
+	 			public int getKey() {
+	 				return this.key;
+	 			}
+	 		}
+	 	}
+	 	
+	 	//TODO: move more uploads here:
+	 	//		-Member
+	 	//		-Image
+	 	//		-Swipe
+	 	//		-Booking
+	 	public static class PendingUploads {
+	 		public static final String NAME = "PendingUploads";
+	 		public static final String PATH = "PendingUploads";
+	 		public static final int PATH_TOKEN = 12;
+	 		public static final String PATH_FOR_ID = "PendingUploads/*";
+	 		public static final int PATH_FOR_ID_TOKEN = 13;
+	 		
+	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
+	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.pendinguploads";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.pendinguploads";
+	 		
+	 		public static class Cols implements BaseColumns {
+	 			public static final String ROWID = "rowid";
+	 			public static final String TABLEID = "tableid";
+	 			//timestamp, probably not neccissary.
 	 		}
 	 	}
 }

@@ -12,6 +12,7 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
@@ -394,6 +395,66 @@ public class JDBCConnection {
     	pStatement.setString(16, booking.get(ContentDescriptor.Booking.Cols.OFFSET));
     	//todo last-updated
     	pStatement.setDate(17, new java.sql.Date(Long.valueOf(booking.get(ContentDescriptor.Booking.Cols.LASTUPDATED))));
+    	return pStatement.executeUpdate();
+    }
+    
+    public ResultSet uploadClass(String name, int max_students) throws SQLException {
+    	ResultSet rs;
+    	
+    	pStatement = con.prepareStatement("INSERT INTO class (name, max_students) VALUES (?, ?) RETURNING id;");
+    	pStatement.setString(1, name);
+    	pStatement.setInt(2, max_students);
+    	
+    	rs = pStatement.executeQuery();
+    	return rs;
+    }
+    
+    public int uploadRecurrence(String freq, String startdate, String starttime, String endtime, int cid, int rid)
+    	throws SQLException{
+    	String enddate;
+    	SimpleDateFormat format;
+    	
+    	if (freq == null) {
+    		//not recurring, set enddate to startdate + 1; ?
+    		Calendar cal;
+    		Date date = null;
+    		
+    		cal = Calendar.getInstance();
+    		format = new SimpleDateFormat("yyyyMMdd", Locale.US);
+    		try {
+				date = format.parse(startdate);
+			} catch (ParseException e) {}
+    		cal.setTime(date);
+    		cal.add(Calendar.DATE, 1);
+    		enddate = Services.dateFormat(cal.getTime().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyy-MM-dd");
+    		freq = "1 day";
+    	} else {
+    		enddate = null;
+    	}
+    	
+    	pStatement = con.prepareStatement("INSERT INTO recurrence (freq, startdate, enddate, starttime, endtime,"
+    			+ "resourceid, classid ) VALUES (?::INTERVAL, ?::DATE, ?::DATE, ?::TIME WITHOUT TIME ZONE, "
+    			+ "?::TIME WITHOUT TIME ZONE, ?::INTEGER , ? );");
+    	
+    	pStatement.setString(1, freq);
+    	pStatement.setString(2, Services.dateFormat(startdate, "yyyyMMdd", "yyyy-MM-dd"));
+    	if (enddate == null) {
+    		pStatement.setNull(3, java.sql.Types.DATE);
+    	} else {
+    		pStatement.setString(3, enddate);
+    	}
+    	pStatement.setString(4, starttime);
+    	pStatement.setString(5, endtime);
+    	if (rid < 0) {
+    		pStatement.setNull(6, java.sql.Types.INTEGER);
+    	} else {
+    		pStatement.setInt(6, rid);
+    	}
+    	pStatement.setInt(7, cid);
+    	
+    	
+    	//pStatement.setNull(1, java.sql.Types.INTEGER);
+    	
     	return pStatement.executeUpdate();
     }
     

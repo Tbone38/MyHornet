@@ -68,7 +68,7 @@ public class HornetDBService extends Service {
 	   resourceid = intent.getStringExtra("newtime"); 
 	   /**
 	    * magical queue-ing, used to enforce one network operation at a time.
-	    * TODO: move the connection.open & connection.close to into the switch cases. 
+	    * 
 	    */
 	   
 	   if (thread == null) {
@@ -113,6 +113,7 @@ public class HornetDBService extends Service {
 			if (result == true) { //If database query was successful, then look for images; else show toast.
 				visitorImages();
 			}
+			uploadClass();
 			uploadBookings();
 			uploadMember();
 			getMemberID();
@@ -138,6 +139,7 @@ public class HornetDBService extends Service {
 			thread.is_networking = true;
 			
 			int count = 0;
+			uploadClass();
 			uploadBookings();
 			cur = contentResolver.query(ContentDescriptor.Image.CONTENT_URI, null, null, null, null);
 			cur.moveToFirst();
@@ -449,6 +451,7 @@ public class HornetDBService extends Service {
 	        				contentResolver.update(Membership.CONTENT_URI, val, Membership.Cols.MSID+" = ?",
 	        						new String[] {rs.getString("membershipid")});
 	        			}
+	        			cur.close();
         			}
         			
         			insertCount = insertCount + 1;
@@ -1638,6 +1641,94 @@ public class HornetDBService extends Service {
     	return result;
     }
     
+    
+    private int uploadClass(){
+    	int result = 0;
+    	ArrayList<String> idlist;
+    	
+    	idlist = new ArrayList<String>();
+    	
+    	cur = contentResolver.query(ContentDescriptor.PendingUploads.CONTENT_URI, null, ContentDescriptor.PendingUploads.Cols.TABLEID+" = ?",
+    			new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Class.getKey())}, null);
+    	
+    	while (cur.moveToNext())
+    	{
+    		idlist.add(cur.getString(cur.getColumnIndex(ContentDescriptor.PendingUploads.Cols.ROWID)));
+    	}
+    	cur.close();
+    	
+    	try {
+    		connection.openConnection();
+    	} catch (Exception e) {
+    		//could not open connection.
+    		statusMessage = e.getLocalizedMessage();
+    		return -1;
+    	}
+    	
+    	for (int i = 0; i < idlist.size(); i +=1) {
+    		String name, freq, sdate, stime, etime;
+    		int cid, rid, max_st, rowid;
+    		ResultSet rs;
+    		
+    		cur = contentResolver.query(ContentDescriptor.Class.CONTENT_URI, null, ContentDescriptor.Class.Cols._ID+" = ?",
+    				new String[] {idlist.get(i)}, null);
+    		
+    		cur.moveToFirst();
+    		rowid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Class.Cols._ID));
+    		name = cur.getString(cur.getColumnIndex(ContentDescriptor.Class.Cols.NAME));
+    		max_st = cur.getInt(cur.getColumnIndex(ContentDescriptor.Class.Cols.MAX_ST));
+    		
+    		sdate = cur.getString(cur.getColumnIndex(ContentDescriptor.Class.Cols.SDATE));
+    		stime = cur.getString(cur.getColumnIndex(ContentDescriptor.Class.Cols.STIME));
+    		etime = cur.getString(cur.getColumnIndex(ContentDescriptor.Class.Cols.ETIME));
+    		
+    		if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Class.Cols.FREQ))) {
+    			freq = cur.getString(cur.getColumnIndex(ContentDescriptor.Class.Cols.FREQ));
+    		} else {
+    			freq = null;
+    		}
+    		
+    		if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Class.Cols.RID))) {
+    			rid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Class.Cols.RID));
+    		} else {
+    			rid = -1;
+    		}
+    		
+    		cur.close();
+    		
+    		try {
+    			rs = connection.uploadClass(name, max_st);
+    			rs.next(); //move to first
+        		cid = rs.getInt(1);
+    		} catch (Exception e) {
+    			//error occured with sql on upload class.
+    			e.printStackTrace();
+    			statusMessage = e.getLocalizedMessage();
+    			return -2;
+    		}
+    		connection.closePreparedStatement();
+    		
+    		try {
+    			connection.uploadRecurrence(freq, sdate, stime, etime, cid, rid);
+    		} catch (Exception e) {
+    			//error occured with sql on upload recurring;
+    			e.printStackTrace();
+    			statusMessage = e.getLocalizedMessage();
+    			return -3;
+    		}
+    		connection.closePreparedStatement();
+    		
+    		//if we got here the inserts must've been successful. so remove the pending upload.
+    		contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, ContentDescriptor.PendingUploads.Cols.TABLEID+" = ? AND "
+    				+ContentDescriptor.PendingUploads.Cols.ROWID+" = ?", new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Class.getKey()),
+    					String.valueOf(rowid)});
+    		
+    		result += 1;
+    	}
+    	connection.closeConnection();
+    	
+    	return result;
+    }
     /**TODO
     private int getClasses() {
     	int result = 0;

@@ -96,8 +96,6 @@ public class Services {
 	 
 	 public static String getAppSettings(Context context, String key){
 		 System.out.println("Getting App Settings");
-		 //116.90.140.12 = Internet, 192.168.2.2 = LAN address
-		 //g_ifeelgood & g_callum
 		 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 		 return (preferences.getString(key, "-1"));
 	}

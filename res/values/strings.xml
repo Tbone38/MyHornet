@@ -10,7 +10,6 @@
     <string name="action_bookings">Bookings</string>
     <string name="action_add">Add Member</string>
     <string name="action_findMember">Find Member</string>
-    
     <string name="button_content_query">Show Last Access</string>
     <string name="button_scan_tag">Scan Tag</string>
     <string name="title_activity_display_results">Displaying Results</string>
@@ -31,7 +30,7 @@
     <string name="title_activity_add_booking">AddBooking</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_member_find">Find Member</string>
-    
     <string name="plusmember">+</string>
+    <string name="title_activity_class_create">Create Class</string>
 
 </resources>

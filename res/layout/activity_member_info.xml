@@ -11,17 +11,12 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MemberDetails" >  
-	<com.treshna.hornet.PagerContainer
-	    android:id="@+id/pagercontainer"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:background="@color/gym" >
     <android.support.v4.view.ViewPager
     	android:id="@+id/gallery"
-    	android:layout_width="150dp"
-    	android:layout_height="150dp"
-    	android:layout_gravity="center_horizontal"/>
-	</com.treshna.hornet.PagerContainer>   
+    	android:layout_width="match_parent"
+    	android:layout_height="180dp"
+    	android:layout_gravity="center"
+    	android:background="@color/gym"/>  
     <TextView
     	android:id="@+id/memberDetailsH"
         android:padding="3dp"
@@ -33,7 +28,7 @@
         android:layout_width="match_parent"
     	android:layout_height="wrap_content"
         android:textIsSelectable="false"
-        android:layout_below="@id/pagercontainer"
+        android:layout_below="@id/gallery"        
     />
      
     <TextView android:id="@+id/memberName"

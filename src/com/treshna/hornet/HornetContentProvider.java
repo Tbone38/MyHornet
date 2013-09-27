@@ -133,6 +133,16 @@ public class HornetContentProvider extends ContentProvider {
         	getContext().getContentResolver().notifyChange(uri, null);
         	return rows;
         }
+        case ContentDescriptor.TableIndex.PATH_TOKEN:{
+        	int rows = db.delete(ContentDescriptor.TableIndex.NAME, selection, selectionArgs);
+        	getContext().getContentResolver().notifyChange(uri, null);
+        	return rows;
+        }
+        case ContentDescriptor.PendingUploads.PATH_TOKEN:{
+        	int rows = db.delete(ContentDescriptor.PendingUploads.NAME, selection, selectionArgs);
+        	getContext().getContentResolver().notifyChange(uri, null);
+        	return rows;
+        }
         
         case ContentDescriptor.TOKEN_DROPTABLE:{ //special case, drops tables/deletes database.
         	FileHandler fh = new FileHandler(ctx);
@@ -239,6 +249,16 @@ public class HornetContentProvider extends ContentProvider {
             	long id = db.insert(ContentDescriptor.BookingTime.NAME, null, values);
             	getContext().getContentResolver().notifyChange(uri, null);
             	return ContentDescriptor.BookingTime.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
+            }
+            case ContentDescriptor.TableIndex.PATH_TOKEN:{ //shouldn't be used, tableindex isn't added via the contentProvider
+            	long id = db.insert(ContentDescriptor.TableIndex.NAME, null, values);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return ContentDescriptor.TableIndex.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
+            }
+            case ContentDescriptor.PendingUploads.PATH_TOKEN:{
+            	long id = db.insert(ContentDescriptor.PendingUploads.NAME, null, values);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return ContentDescriptor.PendingUploads.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
             }
             
             default: {
@@ -350,7 +370,8 @@ public class HornetContentProvider extends ContentProvider {
             	selection = selection +" "+ContentDescriptor.Time.Cols.ID+" = "+uri.getLastPathSegment();
             	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
             }/********/
-            case ContentDescriptor.Time.PATH_FOR_JOIN_TOKEN:{ //this might be broken.
+            //the below query is probably incredibly inefficient.
+            case ContentDescriptor.Time.PATH_FOR_JOIN_TOKEN:{ 
             	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
             	builder.setTables(ContentDescriptor.Time.NAME
             			+" t LEFT OUTER JOIN "+ContentDescriptor.BookingTime.NAME
@@ -383,7 +404,7 @@ public class HornetContentProvider extends ContentProvider {
             	return builder.query(db, projection, selection, null, "_id", null, sortOrder);
             }
             //another special case
-            case ContentDescriptor.Booking.PATH_JOIN_TOKEN:{ //TODO: add the booking_time combo table to it.
+            case ContentDescriptor.Booking.PATH_JOIN_TOKEN:{ 
             	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
             	builder.setTables(ContentDescriptor.Booking.NAME+" b LEFT JOIN "
             			+ContentDescriptor.Time.NAME+" t1 ON (b."+ContentDescriptor.Booking.Cols.STIMEID
@@ -448,6 +469,12 @@ public class HornetContentProvider extends ContentProvider {
             	builder.setTables(ContentDescriptor.Class.NAME);
             	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
             }
+            case ContentDescriptor.Class.PATH_FOR_ID_TOKEN:{
+            	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+            	builder.setTables(ContentDescriptor.Class.NAME);
+            	selection = selection+" "+ContentDescriptor.Class.Cols._ID+" = "+ uri.getLastPathSegment();
+            	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+            }
             
             case ContentDescriptor.Membership.PATH_TOKEN:{
             	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
@@ -462,6 +489,18 @@ public class HornetContentProvider extends ContentProvider {
             			+ContentDescriptor.BookingTime.Cols.BID+" = b."
             			+ContentDescriptor.Booking.Cols.BID+")");
             	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);	
+            }
+            
+            case ContentDescriptor.TableIndex.PATH_TOKEN:{
+            	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+            	builder.setTables(ContentDescriptor.TableIndex.NAME);
+            	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+            }
+            
+            case ContentDescriptor.PendingUploads.PATH_TOKEN:{
+            	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+            	builder.setTables(ContentDescriptor.PendingUploads.NAME);
+            	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
             }
             
             default: throw new UnsupportedOperationException("URI: " + uri + " not supported.");
@@ -558,6 +597,17 @@ public class HornetContentProvider extends ContentProvider {
             	getContext().getContentResolver().notifyChange(uri, null);
             	return result;
             }
+            case ContentDescriptor.TableIndex.PATH_TOKEN:{
+            	int result = db.update(ContentDescriptor.TableIndex.NAME, values, selection, selectionArgs);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return result;
+            }
+            case ContentDescriptor.PendingUploads.PATH_TOKEN:{
+            	int result = db.update(ContentDescriptor.PendingUploads.NAME, values, selection, selectionArgs);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return result;
+            }
+            
             default: {
                 throw new UnsupportedOperationException("URI: " + uri + " not supported.");
             }

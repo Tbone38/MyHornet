@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="createclassname">Class Name</string>
+    <string name="createclassdate">Class Date</string>
+    <string name="classdatedefault">Select Date</string>
+    <string name="createclasstime">Class Time</string>
+    <string name="classstarttimedefault">Select Start Time</string>
+    <string name="classmidtime"> - </string>
+    <string name="classendtimedefault">Select End Time</string>
+    <string name="createclassrepeating">Repeat Weekly</string>
+    <string name="createclassmemberlimit">Member Limit</string>
+    <string name="createclassresource">Resource</string>
+    <string name="classresourcedefault">Select Resource</string>
+</resources>

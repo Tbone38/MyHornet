@@ -210,6 +210,11 @@ public class DisplayResultsActivity extends ListActivity {
 	    case android.R.id.home:
 			NavUtils.navigateUpFromSameTask(this);
 			return true;
+	    case (R.id.action_createclass):{
+	    	Intent i = new Intent(this, ClassCreate.class);
+	    	startActivity(i);
+	    	return true;
+	    }
 	    case (R.id.action_settings):
 	    	Intent settingsIntent = new Intent(this, SettingsActivity.class);
 	    	startActivity(settingsIntent);

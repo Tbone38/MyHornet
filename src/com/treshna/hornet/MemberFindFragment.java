@@ -108,8 +108,8 @@ public class MemberFindFragment extends ListFragment implements LoaderManager.Lo
 		addMember.setClickable(true);
 		addMember.setOnClickListener(this);
 		
-		// TODO 	- Sort up the member & membership join 		- WHICH JOIN?
-		//			- handle Bookings differently				- TODO:
+		// TODO 	- Sort up the member & membership join 		- DONE
+		//			- handle Bookings differently				- DONE
 		//			-
 		if (is_booking) {
 			mAdapter = new MemberFindAdapter(parent,R.layout.member_find_row, null, from, to, true, mCallback);

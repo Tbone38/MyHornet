@@ -1,5 +1,12 @@
 package com.treshna.hornet;
 
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
 import com.treshna.hornet.ContentDescriptor.Booking;
 import com.treshna.hornet.ContentDescriptor.BookingTime;
 import com.treshna.hornet.ContentDescriptor.Bookingtype;
@@ -11,19 +18,14 @@ import com.treshna.hornet.ContentDescriptor.Member;
 import com.treshna.hornet.ContentDescriptor.Membership;
 import com.treshna.hornet.ContentDescriptor.OpenTime;
 import com.treshna.hornet.ContentDescriptor.Pending;
+import com.treshna.hornet.ContentDescriptor.PendingUploads;
 import com.treshna.hornet.ContentDescriptor.Programme;
 import com.treshna.hornet.ContentDescriptor.Resource;
 import com.treshna.hornet.ContentDescriptor.ResultStatus;
 import com.treshna.hornet.ContentDescriptor.Swipe;
+import com.treshna.hornet.ContentDescriptor.TableIndex;
 import com.treshna.hornet.ContentDescriptor.Time;
 import com.treshna.hornet.ContentDescriptor.Visitor;
-
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 public class HornetDatabase extends SQLiteOpenHelper {
 	
@@ -151,12 +153,34 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		db.execSQL("CREATE TABLE "+ContentDescriptor.ResultStatus.NAME+" ("+ContentDescriptor.ResultStatus.Cols.ID+" INTEGER PRIMARY KEY, "
 				+ContentDescriptor.ResultStatus.Cols.NAME+" TEXT, "+ContentDescriptor.ResultStatus.Cols.COLOUR+" TEXT );");
 		
-		db.execSQL("CREATE TABLE "+Class.NAME+" ("+Class.Cols._ID+" INTEGER PRIMARY KEY, "
-				+Class.Cols.ID+" INTEGER, "+Class.Cols.NAME+" TEXT, "+Class.Cols.DESC+" TEXT, "
-				+Class.Cols.MAX_BH+" INTEGER, "+Class.Cols.MAX_ST+" INTEGER, "+Class.Cols.MAX_WL+" INTEGER, "
-				+Class.Cols.PRICE+" TEXT, "+Class.Cols.ONLINE+" INTEGER, "+Class.Cols.FREQ+" INTEGER, "
-				+Class.Cols.SDATE+" TEXT, "+Class.Cols.STIME+" TEXT, "+Class.Cols.ETIME+" TEXT, "
-				+Class.Cols.RID+" INTEGER, "+Class.Cols.BTID+" INTEGER, "+Class.Cols.RESULT+" INTEGER );");
+		db.execSQL("CREATE TABLE "+ContentDescriptor.Class.NAME+" ("+ContentDescriptor.Class.Cols._ID+" INTEGER PRIMARY KEY, "
+				+ContentDescriptor.Class.Cols.CID+" INTEGER, "+ContentDescriptor.Class.Cols.NAME+" TEXT, "
+				+ContentDescriptor.Class.Cols.SDATE+" INTEGER, "+ContentDescriptor.Class.Cols.FREQ+" TEXT, "
+				+ContentDescriptor.Class.Cols.STIME+" TEXT, "+ContentDescriptor.Class.Cols.ETIME+" TEXT, "
+				+ContentDescriptor.Class.Cols.MAX_ST+" INTEGER, "+ContentDescriptor.Class.Cols.RID+" INTEGER, "
+				+ContentDescriptor.Class.Cols.LASTUPDATED+" NUMERIC "
+				+");");
+		
+		/* TODO:
+		 * 	Consider adding a pending-uploads table that takes:
+		 * 		- an id (representing the table the pending upload is in),
+		 * 		- a row id (for the row in the table)
+		 * 		- a timestamp (?)
+		 * 
+		 * something like 	tableid 1 = booking (upload booking)
+		 * 					tableid 2 = class
+		 * 					tableid 3 = swipe
+		 * 					tableid 4 = member
+		 * 					tableid 5 = image
+		 */
+		db.execSQL("CREATE TABLE "+ContentDescriptor.TableIndex.NAME+" ("+ContentDescriptor.TableIndex.Cols._ID+" INTEGER PRIMARY KEY, "
+				+ContentDescriptor.TableIndex.Cols.NAME+" TEXT "
+				+");");
+		
+		db.execSQL("CREATE TABLE "+PendingUploads.NAME+" ("+PendingUploads.Cols._ID+" INTEGER PRIMARY KEY, "
+				+PendingUploads.Cols.TABLEID+" INTEGER, "+PendingUploads.Cols.ROWID+" INTEGER, "
+				+"FOREIGN KEY ("+PendingUploads.Cols.TABLEID+") REFERENCES "+TableIndex.NAME+" ("+TableIndex.Cols._ID+") "
+				+");");
 		
 		repopulateTable(db);
 	}
@@ -233,7 +257,16 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		}
 		
 		
-		
+		{
+			ContentValues values = new ContentValues();
+			for (int i=1; i <=ContentDescriptor.TableIndex.Values.getLength(); i +=1) {
+				values.put(ContentDescriptor.TableIndex.Cols._ID, i);
+				values.put(ContentDescriptor.TableIndex.Cols.NAME, ContentDescriptor.TableIndex.Values.getValue(i).toString());
+				
+				db.insert(ContentDescriptor.TableIndex.NAME, null, values);
+			}
+			
+		}
 				
 		/*cur = db.query(ContentDescriptor.Pending.NAME, null, null, null, null, null, null);
 		cur.moveToFirst();

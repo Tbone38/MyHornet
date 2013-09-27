@@ -502,9 +502,12 @@ public class MemberDetails extends NFCActivity implements OnClickListener {
 		gallery.setCurrentItem(0);
 		gallery.setPageMargin(85);*/
 		
-		 PagerContainer mContainer = (PagerContainer) findViewById(R.id.pagercontainer);
+		/* PagerContainer mContainer = (PagerContainer) findViewById(R.id.pagercontainer);
+		 mContainer.setPagingEnabled(false);
 		 
-		 ViewPager pager = mContainer.getViewPager();
+		 ViewPager pager = mContainer.getViewPager();*/
+		ViewPager pager = (ViewPager) findViewById(R.id.gallery);
+		
 		 ImageAdapter adapter = new ImageAdapter(this, images, memberID);
 		 pager.setAdapter(adapter);
 		 //Necessary or the pager will only have one extra page to show
@@ -512,12 +515,12 @@ public class MemberDetails extends NFCActivity implements OnClickListener {
 		 pager.setOffscreenPageLimit(adapter.getCount());
 		 //A little space between pages
 		 pager.setPageMargin(15);
+		 pager.setClipToPadding(false);
+		 pager.setOverScrollMode(View.OVER_SCROLL_ALWAYS);
 		  
 		 //If hardware acceleration is enabled, you should also remove
 		 // clipping on the pager for its children.
-		 pager.setClipChildren(false);
-		
-		//gallery.setOnItemClickListener(new GalleryItemClickHandler(this));
+		 //pager.setClipChildren(false);
 		
 	}
 
@@ -533,11 +536,11 @@ public class MemberDetails extends NFCActivity implements OnClickListener {
 	
 	@Override
 	public void onClick(View v) {//id == column from cursor.
-		//todo: set up edit(s) id range.
+		
 		switch(v.getId()) {
-		case (130):
-		case (131):
-		case (132):{
+		case (107): //if contacting doesn't work, ensure these numbers match the phone-row id. (100 +i)
+		case (108):
+		case (109):{
 				String ph ="tel:"+ v.getTag().toString();
 				Intent intent = new Intent(Intent.ACTION_DIAL); //ACTION_DIAL, OR ACTION_CALL
 				intent.setData(Uri.parse(ph));
@@ -619,56 +622,10 @@ public class MemberDetails extends NFCActivity implements OnClickListener {
 	    }
 	}
 	
-	/***************************/
-	//public class GalleryItemClickHandler implements OnItemClickListener {
-	public class GalleryItemClickHandler implements OnClickListener {
-		private Context context;
-		public GalleryItemClickHandler(Context c){
-			this.context = c;
-		}
-		
-		/*@SuppressWarnings("unchecked")
-		@Override
-		public void onItemClick(AdapterView<?> arg0, View v, int arg2,
-				long arg3) {
-			List<String> tagInfo = null;
-			String memberid, rowid, fileDir, selection, date, message;
-			Intent camera;
-			Cursor cur;
-			ContentResolver cResolver = this.context.getContentResolver();
-			if (v.getTag() instanceof List<?>) {
-				tagInfo = (List<String>) v.getTag();
-			}
-			memberid = tagInfo.get(0);
-			rowid = tagInfo.get(1);
-			fileDir = tagInfo.get(2);
-			if (fileDir.compareTo("-1") == 0){
-				camera = new Intent(this.context, CameraWrapper.class);
-				camera.putExtra(VisitorsViewAdapter.EXTRA_ID,memberid);
-				this.context.startActivity(camera);
-			} else {
-				
-				selection = ContentDescriptor.Image.Cols.ID+" = "+rowid
-						+" AND "+ContentDescriptor.Image.Cols.MID+" = "+memberid;
-				cur = cResolver.query(ContentDescriptor.Image.CONTENT_URI, null, selection, null, null);
-				if (cur.getCount() <= 0) return;
-				cur.moveToFirst();
-				date = Services.dateFormat(cur.getString(2), "dd MMM yy hh:mm:ss aa", "yyyy-MM-dd");
-				message = "Image Taken: "+date+ "\nImage Description: "+cur.getString(3);
-   				Toast.makeText(this.context, message, Toast.LENGTH_LONG).show();
-			}			
-		}*/
-
-		@Override
-		public void onClick(View arg0) {
-			// TODO Auto-generated method stub
-			
-		}
-		
-	}
+	
 	/***************************/
 	/**
-	 * TODO: swap this with a ViewPager (see bookings list for an example).
+	 * TODO: fix the broken swiping.
 	 */
 	//public class ImageAdapter extends FragmentStatePagerAdapter {
 	public class ImageAdapter extends PagerAdapter {
@@ -685,24 +642,7 @@ public class MemberDetails extends NFCActivity implements OnClickListener {
 			this.ctx = c;
 		}
 
-		//@Override
-		/*public Fragment getItem(int position) {
-			ImageFragment imageFragment = new ImageFragment();
-			Bundle bdl = new Bundle(3);
-            bdl.putString(Services.Statics.KEY, imageList.get(position));
-            bdl.putInt("position", position);
-            bdl.putString("memberid", memberID);
-            imageFragment.setArguments(bdl);
-            
-			return imageFragment;
-		}*/
 		
-		/*@Override
-		public float getPageWidth (int position){
-			return 0.33f;
-		}*/
-		
-
 		@Override
 		public int getCount() {
 			return imageList.size();
@@ -710,15 +650,14 @@ public class MemberDetails extends NFCActivity implements OnClickListener {
 		
 		@Override
 		public Object instantiateItem(ViewGroup container, int position) {
-			//TODO: add the onClick listener back in here;
-			// fix the width/spacing.
+			
 			RelativeLayout rootView = new RelativeLayout(ctx);
+			RelativeLayout.LayoutParams rlayout = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			
 			
 			ImageView img = new ImageView(ctx);
-			int padding = 5;
-			img.setPadding(padding, padding, padding, padding);
-			img.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-			
+			int padding = 7;
+			img.setPadding(padding, padding, padding, padding);			
 			img.setId(position);
 			
 			List<String> tagInfo = new ArrayList<String>();
@@ -735,7 +674,8 @@ public class MemberDetails extends NFCActivity implements OnClickListener {
 				imgText.setText(R.string.button_add_picture);
 				imgText.setTextSize(18);
 				imgText.setGravity(Gravity.CENTER);
-				RelativeLayout.LayoutParams rlayout = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+				rlayout = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+				
 				rlayout.addRule(RelativeLayout.ALIGN_LEFT, img.getId());
 				rlayout.addRule(RelativeLayout.ALIGN_TOP, img.getId());
 				rlayout.addRule(RelativeLayout.ALIGN_RIGHT, img.getId());
@@ -745,10 +685,7 @@ public class MemberDetails extends NFCActivity implements OnClickListener {
 				imgText.setLayoutParams(rlayout);
 				imgText.bringToFront();
 				img.setPadding(5, 5, 5, 5);
-			    img.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-			    rlayout = new RelativeLayout.LayoutParams(300, 300);
-			    rlayout.addRule(RelativeLayout.CENTER_IN_PARENT);
-				img.setLayoutParams(rlayout);
+			    
 				try {
 					imgFile = File.createTempFile("img", null);
 				} catch (IOException e) {
@@ -761,12 +698,15 @@ public class MemberDetails extends NFCActivity implements OnClickListener {
 			final BitmapFactory.Options options = new BitmapFactory.Options();
 		    options.inJustDecodeBounds = true;
 		    BitmapFactory.decodeFile(imgFile.getAbsolutePath(), options);
-		    options.inSampleSize = Services.calculateInSampleSize(options,300, 300);
+		    options.inSampleSize = Services.calculateInSampleSize(options,500, 450);
 		    options.inJustDecodeBounds = false;
 		    Bitmap bm = BitmapFactory.decodeFile(imgFile.getAbsolutePath(), options);
 		    img.setImageBitmap(bm);
-		    img.setPadding(5, 5, 5, 5);
-		    img.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+		    //img.setPadding(5, 5, 5, 5);
+		    rlayout = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+		    rlayout.addRule(RelativeLayout.CENTER_VERTICAL);
+			img.setLayoutParams(rlayout);
+		  
 		    rootView.addView(img);
 		    if (imgText == null){
 		    	rootView.setTag(tagInfo);
