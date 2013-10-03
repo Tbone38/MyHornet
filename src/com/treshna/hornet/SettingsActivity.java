@@ -78,10 +78,7 @@ public class SettingsActivity extends PreferenceActivity {
 
 		// Add 'general' preferences.
 		addPreferencesFromResource(R.xml.pref_general);
-		Preference clear = createClearData();
-		getPreferenceScreen().addPreference(clear);
-		Preference sync = createClearSync();
-		getPreferenceScreen().addPreference(sync);
+		
 		Preference collect = createCollectData();
 		getPreferenceScreen().addPreference(collect);
 		createView();
@@ -100,6 +97,10 @@ public class SettingsActivity extends PreferenceActivity {
 		addPreferencesFromResource(R.xml.pref_data_sync);
 		
 		createDebugOpt();
+		Preference clear = createClearData();
+		getPreferenceScreen().addPreference(clear);
+		Preference sync = createClearSync();
+		getPreferenceScreen().addPreference(sync);
 		// Bind the summaries of EditText/List/Dialog/Ringtone preferences to
 		// their values. When their values change, their summaries are updated
 		// to reflect the new value, per the Android Design guidelines.
@@ -186,7 +187,7 @@ public class SettingsActivity extends PreferenceActivity {
 	private Preference createCollectData(){
 		Preference collectData = new Preference(this);
 		collectData.setKey("collect");
-		collectData.setTitle("Get Database Settings");
+		collectData.setTitle("Download Database");
 		collectData.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 			
 			@Override

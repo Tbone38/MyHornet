@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger>
+
+    <dataSet config="main" >
+        <source path="/home/callum/work/workspace/Hornet/assets" >
+            <file
+                name="clinicmaster.sql"
+                path="/home/callum/work/workspace/Hornet/assets/clinicmaster.sql" />
+            <file
+                name="bookings.sql"
+                path="/home/callum/work/workspace/Hornet/assets/bookings.sql" />
+            <file
+                name="noDescImageQuery.sql"
+                path="/home/callum/work/workspace/Hornet/assets/noDescImageQuery.sql" />
+            <file
+                name="callumLastVisitors130416.sql"
+                path="/home/callum/work/workspace/Hornet/assets/callumLastVisitors130416.sql" />
+            <file
+                name="face-plain.png"
+                path="/home/callum/work/workspace/Hornet/assets/face-plain.png" />
+            <file
+                name="face-sad.png"
+                path="/home/callum/work/workspace/Hornet/assets/face-sad.png" />
+            <file
+                name="testQuery.sql"
+                path="/home/callum/work/workspace/Hornet/assets/testQuery.sql" />
+            <file
+                name="task-due.png"
+                path="/home/callum/work/workspace/Hornet/assets/task-due.png" />
+            <file
+                name="face-smile.png"
+                path="/home/callum/work/workspace/Hornet/assets/face-smile.png" />
+            <file
+                name="multiImageQuery.sql"
+                path="/home/callum/work/workspace/Hornet/assets/multiImageQuery.sql" />
+        </source>
+    </dataSet>
+    <dataSet config="debug" >
+        <source path="/home/callum/work/workspace/Hornet/build-types/debug/assets" />
+    </dataSet>
+
+</merger>

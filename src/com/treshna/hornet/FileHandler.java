@@ -12,6 +12,7 @@ import java.io.InputStream;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.util.Log;
 
 /**
  * @author callum
@@ -21,13 +22,16 @@ public class FileHandler {
 
 	
 	private Context context;
+	private static final String TAG = "filehandler";
 
     //Constructor
 	public FileHandler(Context ctx) {
         this.context = ctx;}
 	
 	public String readFile(int fileSize, String fileDir){
-		System.out.println("Fetching Data");
+		//System.out.println("Fetching Data");
+		
+		Log.v(TAG+".readfile", "Fetching Data");
   	  	AssetManager am = context.getResources().getAssets();
   	  	InputStream is = null;
 		try {
@@ -51,7 +55,8 @@ public class FileHandler {
 	}
 	
 	public byte[] readImage(int fileSize, String fileName){
-		System.out.println("Fetching Image");
+		//System.out.println("Fetching Image");
+		Log.v(TAG+".readimage", "Fetching Image");
   	  	InputStream is = null;
 		try {
 			File file = new File(context.getExternalFilesDir(null), fileName+".jpg");
@@ -78,7 +83,8 @@ public class FileHandler {
 	}
 	
 	public void writeFile(byte[] fileInput, String fileName) {
-		System.out.println("writing Data");
+		//System.out.println("writing Data");
+		Log.v(TAG+".writefile", "writing data");
 		try{
 			File imageFile = new File(context.getExternalFilesDir(null), fileName+".jpg");
 			if (imageFile.exists()) {
@@ -94,7 +100,8 @@ public class FileHandler {
 	}
 	
 	public boolean renameFile(String fromName, String toName){
-		System.out.print("\n Moving File");
+		//System.out.print("\n Moving File");
+		Log.v(TAG+".renamefile", "Moving File");
 		boolean result = false;
 		File sdcard = context.getExternalFilesDir(null);
 		File from = new File(sdcard, fromName+".jpg");

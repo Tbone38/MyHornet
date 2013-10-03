@@ -32,5 +32,8 @@
     <string name="title_activity_member_find">Find Member</string>
     <string name="plusmember">+</string>
     <string name="title_activity_class_create">Create Class</string>
+    <string name="leftarrow">&#60;</string>
+    <string name="rightarrow">&#62;</string>
+    <string name="title_activity_membership_hold">Hold Membership</string>
 
 </resources>

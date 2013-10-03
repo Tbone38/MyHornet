@@ -296,6 +296,7 @@ public class ContentDescriptor {
 	 			public static final String OFFSET = "offset"; // == resource.period
 	 			public static final String IS_UPLOADED = "is_uploaded"; //has the booking been uploaded?
 	 			public static final String CLASSID ="classid";
+	 			public static final String PARENTID = "parentid";
 	 		}
 	 	}
 	 	

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/listRow"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    tools:context=".DisplayResultsActivity" >
+    
+    <RelativeLayout
+        android:id="@+id/imagewrapper"
+        android:layout_width="wrap_content"
+        android:layout_height="120dp">
+		<ImageView android:id="@+id/image"
+		     android:contentDescription="@string/image_description"
+		     android:layout_alignParentTop="true"
+		     android:layout_width="120sp"
+		     android:layout_height="120sp" />
+	
+	     <TextView
+		    android:id="@+id/imageText"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_alignLeft="@+id/image"
+		    android:layout_alignTop="@+id/image"
+		    android:layout_alignRight="@+id/image"
+		    android:layout_alignBottom="@+id/image"
+		    android:layout_margin="1dp"
+		    android:gravity="center"
+		    android:text="@string/button_add_picture" />
+	</RelativeLayout>
+     <TextView android:id="@+id/name"
+        android:padding="3dp"
+     	android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_width="wrap_content"
+     	android:layout_height="wrap_content"
+        android:textIsSelectable="false"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@id/imagewrapper"/>
+    
+     <ImageView android:id="@+id/smiley"
+        android:contentDescription="@string/smiley_description"
+        android:layout_alignTop="@id/name"
+        android:layout_alignBottom="@id/name"
+        android:layout_alignParentRight="true"
+     	android:layout_width="wrap_content"
+     	android:layout_height="wrap_content" />
+      
+      <ImageView android:id="@+id/task"
+        android:contentDescription="@string/task_description"
+        android:layout_toLeftOf="@id/smiley"
+        android:layout_alignTop="@id/smiley"
+        android:layout_alignBottom="@id/smiley"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content" />
+     
+     <TextView android:id="@+id/time"
+        android:textSize="16sp"
+        android:padding="3dp"
+        android:layout_width="wrap_content"
+     	android:layout_height="wrap_content"
+        android:textIsSelectable="false"
+        android:layout_toRightOf="@id/imagewrapper"
+        android:layout_below="@id/name" />
+    
+     <TextView android:id="@+id/deny"
+        android:textSize="16sp"
+        android:padding="3dp"
+        android:layout_width="wrap_content"
+     	android:layout_height="wrap_content"
+        android:textIsSelectable="false"
+        android:layout_toRightOf="@id/imagewrapper"
+        android:layout_below="@id/time" /> 
+</RelativeLayout>
+<!-- From: file:/home/callum/work/workspace/Hornet/res/layout/visitor_list.xml -->

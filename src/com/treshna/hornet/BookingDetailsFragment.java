@@ -161,11 +161,14 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 				}
 				i +=1;
 			}
+			if (pos >= typelist.size()) pos = typelist.size() -1;
+			
 			ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(ctx,
 					android.R.layout.simple_spinner_item, typelist);
 				dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 				typespinner.setAdapter(dataAdapter);
 				typespinner.setSelection(pos);
+				
 				typespinner.setOnItemSelectedListener(new OnItemSelectedListener(){
 					@Override
 					public void onItemSelected(AdapterView<?> parent, View view,

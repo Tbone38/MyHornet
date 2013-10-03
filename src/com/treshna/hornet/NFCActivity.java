@@ -17,8 +17,10 @@ import android.nfc.tech.NfcA;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 
 public class NFCActivity extends FragmentActivity {
+	private static final String TAG = "com.treshna.hornet.NFCActivity";
 	//NfcAdapter mNfcAdapter;
 	private String[][] mTechLists;
 	private PendingIntent pendingIntent;
@@ -61,22 +63,22 @@ public class NFCActivity extends FragmentActivity {
 		}
 	}
 	
-	@SuppressLint("DefaultLocale")
 	public final String getID(Tag tag){
     	StringBuilder sb = new StringBuilder();
        	for (byte b : tag.getId()) {
        		sb.append(String.format("%02X", b));
        	}
-       	System.out.println("**TAG ID: "+sb.toString());
+       	//System.out.println("**TAG ID: "+sb.toString());
        	String cardID = null;
        	if(tag.getId().length == 4) {
-       		String temp = sb.toString().substring(0, sb.toString().length() - 2).toLowerCase();
+       		String temp = sb.toString().substring(0, sb.toString().length() - 2).toLowerCase(Locale.US);
     	   	cardID = "Mx"+temp;
        	} else if(tag.getId().length == 7){
-       		String temp = sb.toString().toLowerCase();
+       		String temp = sb.toString().toLowerCase(Locale.US);
        		cardID = "Mv"+temp;
        	}
-       	System.out.println(cardID);
+       	//System.out.println(cardID);
+       	Log.v(TAG, "Got tag with Serial: "+cardID);
     	return cardID;
     }
 	
@@ -93,13 +95,16 @@ public class NFCActivity extends FragmentActivity {
     		SimpleDateFormat format;
     		ContentValues values;
     		
-	    	System.out.print("intent Started"); 
+	    	//System.out.print("intent Started");
+    		Log.v(TAG, "NFC Intent Started.");
 	           	// get the tag object for the discovered tag
 	    	tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 	    	techlist = tag.getTechList();
 	    	
+	    	Log.v(TAG, "Detected Tag's techlist:");
 	    	for (int i=0;i<techlist.length; i+=1){
-	    		System.out.print("\n\n"+techlist[i]);	
+	    		//System.out.print("\n\n"+techlist[i]);
+	    		Log.v(TAG, techlist[i]);
 	    	}
 	    	
 	    	id = getID(tag);

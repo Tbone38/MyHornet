@@ -1,16 +1,23 @@
 package com.treshna.hornet;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import com.treshna.hornet.MemberFindFragment.OnMemberSelectListener;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.IntentFilter.MalformedMimeTypeException;
 import android.database.Cursor;
+import android.nfc.NfcAdapter;
+import android.nfc.Tag;
+import android.nfc.tech.NfcA;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -18,6 +25,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,7 +38,6 @@ public class BookingPage extends FragmentActivity implements OnMemberSelectListe
 	
 	private String bookingID;
 	private String starttime;
-	
 	private String selectedID;
 	private String selectedMS;
 	private String selectedMSID;
@@ -39,6 +46,12 @@ public class BookingPage extends FragmentActivity implements OnMemberSelectListe
 	RadioGroup rg;
 	ContentResolver contentResolver;
 	
+	private String[][] mTechLists;
+	private PendingIntent pendingIntent;
+	private IntentFilter[] intentFiltersArray;
+	private static final String TAG = "com.treshna.hornet.BookingPage";
+	private TagFoundListener tagFoundListener;
+	int classid = 0;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,16 +68,54 @@ public class BookingPage extends FragmentActivity implements OnMemberSelectListe
 		setContentView(R.layout.booking_page);
 		
 		if (Integer.parseInt(bookingID) > 0) {
-			//setContentView(R.layout.booking_details);
+			Cursor cur;
+			
 			bookingID = tagInfo.get(1);
-			BookingDetailsFragment f = new BookingDetailsFragment();
-			Bundle bdl = new Bundle(1);
-			System.out.print("\n\nPage BookingID:"+bookingID);
-            bdl.putString(Services.Statics.KEY, bookingID);
-            f.setArguments(bdl);
-			ft.add(R.id.bookingframe, f);
-			bookingID = tagInfo.get(1);
-			//showBooking();
+			
+			cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI,null, 
+					ContentDescriptor.Booking.Cols.BID+" = "+bookingID, null, null);
+			if (cur.moveToFirst()) {
+				classid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Booking.Cols.CLASSID));
+				System.out.print("\n\n** CLASS ID:"+classid+" **\n\n");
+			}
+			
+			if (classid > 0) {
+				//it's a class, show the class-booking page instead.
+				ClassDetailsFragment f;
+				Bundle bdl;
+				
+				if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1){
+					
+					pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+					mTechLists = new String[][] { new String[] {NfcA.class.getName()}};
+					IntentFilter tag = new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
+				    try {
+				        tag.addDataType("*/*");
+				    } catch (MalformedMimeTypeException e) {
+				        throw new RuntimeException("Tag mime type fail", e);
+				    }
+				    intentFiltersArray = new IntentFilter[] {tag};
+				}
+				
+				f = new ClassDetailsFragment();
+				tagFoundListener = (TagFoundListener) f;
+				bdl = new Bundle(1);
+				bdl.putString(Services.Statics.KEY, bookingID);
+				f.setArguments(bdl);
+				ft.add(R.id.bookingframe, f);
+			} else {
+			
+				//setContentView(R.layout.booking_details);
+				bookingID = tagInfo.get(1);
+				BookingDetailsFragment f = new BookingDetailsFragment();
+				Bundle bdl = new Bundle(1);
+				System.out.print("\n\nPage BookingID:"+bookingID);
+	            bdl.putString(Services.Statics.KEY, bookingID);
+	            f.setArguments(bdl);
+				ft.add(R.id.bookingframe, f);
+				//bookingID = tagInfo.get(1);
+				//showBooking();
+			}
 		} else {
 			//add Member!
 			//setContentView(R.layout.booking_add);
@@ -82,6 +133,29 @@ public class BookingPage extends FragmentActivity implements OnMemberSelectListe
 		setupActionBar();
 	}
 
+	@Override
+	public void onPause(){
+		super.onPause();
+		if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1){
+			if (classid > 0) {
+				NfcAdapter mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+				if (mNfcAdapter != null) mNfcAdapter.disableForegroundDispatch(this);
+			}
+		}
+	}
+	
+	@Override
+	public void onResume(){
+		super.onResume();
+		if (classid > 0) {
+			if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(this.getIntent().getAction())){
+				this.onNewIntent(this.getIntent());
+			}
+			NfcAdapter mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+			if (mNfcAdapter != null) mNfcAdapter.enableForegroundDispatch(this, pendingIntent, intentFiltersArray, mTechLists);
+		}
+	}
+	
 	/**
 	 * Set up the {@link android.app.ActionBar}, if the API is available.
 	 */
@@ -241,7 +315,39 @@ public class BookingPage extends FragmentActivity implements OnMemberSelectListe
         });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+	}
+	public final String getID(Tag tag){
+    	StringBuilder sb = new StringBuilder();
+       	for (byte b : tag.getId()) {
+       		sb.append(String.format("%02X", b));
+       	}
+       	System.out.println("**TAG ID: "+sb.toString());
+       	String cardID = null;
+       	if(tag.getId().length == 4) {
+       		String temp = sb.toString().substring(0, sb.toString().length() - 2).toLowerCase(Locale.US);
+    	   	cardID = "Mx"+temp;
+       	} else if(tag.getId().length == 7){
+       		String temp = sb.toString().toLowerCase(Locale.US);
+       		cardID = "Mv"+temp;
+       	}
+       	System.out.println(cardID);
+    	return cardID;
+    }
+	
+	@Override
+	protected void onNewIntent(Intent i) {
+		String id;
+		Tag card;
 		
+		card = i.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+		id = getID(card);
 		
+		Log.v(TAG, "\n\n\ncard.serial:"+id);
+		tagFoundListener.onNewTag(id);
+	}
+	
+	public interface TagFoundListener {
+	    public void onNewTag(String serial);
+
 	}
 }

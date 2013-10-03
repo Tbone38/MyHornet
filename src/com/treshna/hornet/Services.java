@@ -15,6 +15,7 @@ import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.util.TypedValue;
 import android.widget.Toast;
 
@@ -24,6 +25,7 @@ public class Services {
 	private static boolean DEBUG;
 	private static ProgressDialog progress;
 	private static Context theCtx;
+	private static final String TAG = "Services";
 	
 	/*
 	 *  This function changes the format of a dateString. It requires the dateString, 
@@ -95,7 +97,8 @@ public class Services {
 	
 	 
 	 public static String getAppSettings(Context context, String key){
-		 System.out.println("Getting App Settings");
+		 //System.out.println("Getting App Settings");
+		 Log.v(TAG, "Getting App Setting: "+key);
 		 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 		 return (preferences.getString(key, "-1"));
 	}
@@ -160,30 +163,28 @@ public class Services {
 			Services.setProgress(null);
 		}
 		if (DEBUG == true && progress == null) { 
-			System.out.print("\n\nHandler:"+handler);
+			//System.out.print("\n\nHandler:"+handler);
 			handler.post(new Runnable() {  
 					@Override  
 					public void run() {
-						System.out.print("\n\nContext:"+ctx);
+						//System.out.print("\n\nContext:"+ctx);
+						Log.v(TAG+".showProgress", "Progress Bar Context:"+ctx);
 						progress = ProgressDialog.show(ctx, "Syncing", message, true);//breaking here.
 			}});
 		}
 	}
 	
 	public static void stopProgress(Handler handler, final int call){
-		
-		/*handler.post(new Runnable() {  
-			@Override  
-			public void run() {
-				if (progress != null && progress.isShowing()){
-					progress.dismiss();
-					//progress = null;
-				} 
-			}});*/
-		if (progress != null & progress.isShowing()) {
-			progress.dismiss();
+		try {
+			if (progress != null && progress.isShowing()) {
+				progress.dismiss();
+			}
+			progress = null;
+		} catch (IllegalArgumentException e) {
+			//the window wasn't attached.
+			progress = null;
+			Log.e(TAG, e.getMessage());
 		}
-		progress = null;
 	}
 	
 	public static ProgressDialog getProgress(){
@@ -202,6 +203,7 @@ public class Services {
 		public static final int FIRSTRUN = 10;
 		public static final int RESOURCESELECTED = 11;
 		public static final int NEWDATABASE = 12;
+		public static final int CLASSSWIPE = 5;
 		//used for referencing various bundles and stuff stored in intents;
 		public static final String KEY = "key";
 		public static final String IS_BOOKING = "booking";
@@ -211,5 +213,6 @@ public class Services {
 		
 		public static final String IS_SUCCESSFUL = "com.treshna.hornet.is_successful";
 		public static final String IS_RESTART = "com.treshna.hornet.is_restart";
+		public static final String IS_CLASSSWIPE = "com.treshna.hornet.class_swipe";
 	}
 }

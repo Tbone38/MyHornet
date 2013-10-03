@@ -2,7 +2,7 @@
 	 <item 
 	     android:id="@+id/action_createclass"
 	     android:orderInCategory="100"
-	     android:title="CREATE CLASS"/>
+	     android:title="@string/action_classCreate"/>
 	 <item
         android:id="@+id/action_visitors"
         android:orderInCategory="200"

@@ -287,7 +287,7 @@ public class HornetContentProvider extends ContentProvider {
                 		+"LEFT OUTER JOIN "+ContentDescriptor.Membership.NAME+" ms "
                 		+"ON (m."+ContentDescriptor.Member.Cols.MID+" = ms."+ContentDescriptor.Membership.Cols.MID
                 		+")");
-                return builder.query(db, projection, selection, selectionArgs, ContentDescriptor.Member.Cols.MID, null, sortOrder);
+                return builder.query(db, projection, selection, selectionArgs, "m."+ContentDescriptor.Member.Cols.MID, null, sortOrder);
             }
             case ContentDescriptor.Member.PATH_FOR_ID_TOKEN:{
                 SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
@@ -381,7 +381,7 @@ public class HornetContentProvider extends ContentProvider {
             			+" LEFT OUTER JOIN "+ContentDescriptor.Booking.NAME
             			+" b ON (bt."+ContentDescriptor.BookingTime.Cols.BID
             			+" = b."+ContentDescriptor.Booking.Cols.BID+")"
-            			+" AND "+selectionArgs[1]
+            			+" AND "+selectionArgs[1]//+selectionArgs[2]
             			);
             			selection = "t."+ContentDescriptor.Time.Cols.ID+" >= ("
             					+"SELECT ot."+ContentDescriptor.OpenTime.Cols.OPENID+" FROM "

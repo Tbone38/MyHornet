@@ -40,7 +40,7 @@ public class MemberDetails extends NFCActivity implements OnClickListener {
 	Cursor cur;
 	ContentResolver contentResolver;
 	String COLOUR = "#FF5FBDBC";
-	
+	ViewPager mPager;
 	String memberships;
 	
 	@SuppressWarnings("deprecation")
@@ -493,34 +493,28 @@ public class MemberDetails extends NFCActivity implements OnClickListener {
 			}
 		}
 		images.add("-1");
-		/* Deprecated? */
-		//Gallery gallery = (Gallery) findViewById(R.id.gallery);
-		/*ViewPager gallery = (ViewPager) findViewById(R.id.gallery);
-		ImageAdapter gAdapter = new ImageAdapter(this, getSupportFragmentManager(), images, memberID);
-		gallery.setOffscreenPageLimit(6);
-		gallery.setAdapter(gAdapter);
-		gallery.setCurrentItem(0);
-		gallery.setPageMargin(85);*/
 		
-		/* PagerContainer mContainer = (PagerContainer) findViewById(R.id.pagercontainer);
-		 mContainer.setPagingEnabled(false);
-		 
-		 ViewPager pager = mContainer.getViewPager();*/
-		ViewPager pager = (ViewPager) findViewById(R.id.gallery);
+		mPager = (ViewPager) findViewById(R.id.gallery);
 		
 		 ImageAdapter adapter = new ImageAdapter(this, images, memberID);
-		 pager.setAdapter(adapter);
+		 mPager.setAdapter(adapter);
 		 //Necessary or the pager will only have one extra page to show
 		 // make this at least however many pages you can see
-		 pager.setOffscreenPageLimit(adapter.getCount());
+		 mPager.setOffscreenPageLimit(adapter.getCount());
 		 //A little space between pages
-		 pager.setPageMargin(15);
-		 pager.setClipToPadding(false);
-		 pager.setOverScrollMode(View.OVER_SCROLL_ALWAYS);
+		 mPager.setPageMargin(15);
+		 mPager.setClipToPadding(false);
+		 mPager.setOverScrollMode(View.OVER_SCROLL_ALWAYS);
+		 //mPager.set
 		  
-		 //If hardware acceleration is enabled, you should also remove
-		 // clipping on the pager for its children.
-		 //pager.setClipChildren(false);
+		TextView moveleft, moveright;
+		moveleft = (TextView) this.findViewById(R.id.moveimageLeft);
+		moveleft.setClickable(true);
+		moveleft.setOnClickListener(this);
+		
+		moveright = (TextView) this.findViewById(R.id.moveimageRight);
+		moveright.setClickable(true);
+		moveright.setOnClickListener(this);
 		
 	}
 
@@ -554,6 +548,17 @@ public class MemberDetails extends NFCActivity implements OnClickListener {
 				startActivity(intent);
 				break;
 				}
+		case (R.id.moveimageLeft):{
+			if (mPager.getCurrentItem() > 0) {
+				mPager.setCurrentItem(mPager.getCurrentItem()-1);
+			}
+			break;
+			}
+		case (R.id.moveimageRight):{
+			if (mPager.getCurrentItem() < (mPager.getChildCount()-1)) {
+				mPager.setCurrentItem(mPager.getCurrentItem()+1);
+			}
+		}
 		}
 	}
 	

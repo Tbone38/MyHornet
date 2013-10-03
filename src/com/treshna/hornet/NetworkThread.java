@@ -15,7 +15,7 @@ public class NetworkThread extends Thread {
 			while (is_networking) {
 				try {
 					Thread.sleep(15000); //check if network is free every 15 seconds.
-				} catch (Exception e) { //interrupted   
+				} catch (InterruptedException e) { //interrupted   
 				}
 			}
 			if (queue.peek() != null) {

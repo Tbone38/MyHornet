@@ -1,5 +1,6 @@
 package com.treshna.hornet;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Calendar;
@@ -15,11 +16,13 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.Toast;
 
 public class PollingHandler extends BroadcastReceiver {
+	public static final String POLLING_START = "polling_start";
 	private Context context = null;
-	private PendingIntent pintent = null;
+	private static PendingIntent pintent = null;
 	private AlarmManager alarm = null;
 	private Calendar cal = Calendar.getInstance();
 	private String message;
@@ -31,6 +34,7 @@ public class PollingHandler extends BroadcastReceiver {
 	private boolean isPolling = true;
 	
 	private static long start_time;
+	private static final String TAG = "com.treshna.hornet.pollingHandler";
 	
 	public PollingHandler(Context context, PendingIntent pIntent) {
 		this.context = context;
@@ -70,7 +74,8 @@ public class PollingHandler extends BroadcastReceiver {
 			makeToast();
 			stopPolling(true);
 		}
-		System.out.print("\nConnection Status: "+conStatus+"\n");
+		//System.out.print("\nConnection Status: "+conStatus+"\n");
+		Log.v(TAG, "Connection Status: "+conStatus);
 	}
 	
 	public boolean startService() {
@@ -92,7 +97,8 @@ public class PollingHandler extends BroadcastReceiver {
 		 ConnectivityManager connectivityManager = (ConnectivityManager) this.context.getSystemService(Context.CONNECTIVITY_SERVICE);
 		 NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
 		 boolean result = activeNetworkInfo != null && activeNetworkInfo.isConnected();
-		 System.out.print("\nConnection Status: "+result+"\n");
+		 //System.out.print("\nConnection Status: "+result+"\n");
+		 Log.v(TAG, "Connection Status: "+result);
 		 return result;
 	}
 	
@@ -107,18 +113,16 @@ public class PollingHandler extends BroadcastReceiver {
 		}
 		
 		this.serverExists = gdt.serverExists;
-		System.out.print("\nServer Status: "+serverExists+"\n");
+		//System.out.print("\nServer Status: "+serverExists+"\n");
+		Log.v(TAG, "Server Status: "+serverExists);
 		return this.serverExists;
 	}
 	/**
-	 * Once polling has been running for 3 hours, then turn it off.
+	 * sets the alarm manager to start sync's based on settings configuration.
 	 */
 	private void setPolling() {
-		/*polling has been running for 3 hours, turn off polling */
-		if (start_time != 0 && start_time > (start_time + ( 180 * 60 * 1000))) {
-			Services.setPreference(context, "sync_frequency", "-1");
-			stopPolling(false);
-		}
+		
+		
 		//does this needs to ramp up? It shouldn't ever be called in a situation where it'll fail.
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 		int pollingInterval = Integer.parseInt(preferences.getString("sync_frequency", "-1"));
@@ -129,6 +133,9 @@ public class PollingHandler extends BroadcastReceiver {
 		}
 		stopPolling(true);
 		start_time = cal.getTimeInMillis();
+		
+		preferences.edit().putLong(POLLING_START, start_time).commit();
+		//set starttime in app preferences.
 		alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, start_time, (long) (pollingInterval*60*1000), pintent);
 		isPolling = true;
 	}
@@ -163,10 +170,13 @@ public class PollingHandler extends BroadcastReceiver {
 				 server = InetAddress.getByName(preferences.getString("address", "-1"));	  
 			} catch (UnknownHostException e) {
 				this.serverExists = false;
+				return;
 			}
 			if (server == null) { 
-				System.out.print("\n\n **inetAddress threw an exception");
+				//System.out.print("\n\n **inetAddress threw an exception");
+				Log.e(TAG, "**inetAddress threw an exception");
 				this.serverExists = false;
+				return;
 			}
 			/* wait up to 10 seconds for a response,
 			 * as the function is called before the wireless has correctly reconnected,
@@ -184,9 +194,12 @@ public class PollingHandler extends BroadcastReceiver {
 				}
 				if (serverExists) return;
 				
-			} catch (Exception e) {
-				System.out.print("\n\n **isReachable() threw an exception");
+			} catch (IOException e) {
+				//System.out.print("\n\n **isReachable() threw an exception");
+				Log.e(TAG, "**isReachable() threw an exception");
 				this.serverExists = false;
+			} catch (InterruptedException e) {
+				//the sleep was interupted.
 			}
 			this.serverExists = false;
 	    }

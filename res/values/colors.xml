@@ -13,6 +13,7 @@
     <color name="lightgrey">#FFD3D3D3</color>
     <color name="orangered">#FFFF4500</color>
     <color name="slategrey">#FF708090</color>
-     <color name="greyout">#FFC4C4C4</color>
-     <color name="bookingname">#F0C4C4C4</color>
+    <color name="greyout">#FFC4C4C4</color>
+    <color name="bookingname">#F0C4C4C4</color>
+    <color name="overlay">#A0FFFFFF</color>
 </resources>

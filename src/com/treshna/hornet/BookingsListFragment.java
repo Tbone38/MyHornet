@@ -15,6 +15,7 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,6 +47,7 @@ public class BookingsListFragment extends ListFragment implements OnClickListene
     private Date newdate;
     private View root;
     public LoaderManager loadermanager;
+    private static final String TAG = "BookingsListFragment";
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -66,7 +68,8 @@ public class BookingsListFragment extends ListFragment implements OnClickListene
 		}
 		//contentResolver = getActivity().getContentResolver();
         int position = getArguments().getInt(Services.Statics.KEY);
-        System.out.print("\n\nPosition::"+position);
+        //System.out.print("\n\nPosition::"+position);
+        Log.v(TAG, "Booking List Page Position:"+position);
         Calendar cal = Calendar.getInstance();
         Date time = new Date(getArguments().getLong("date")); 
         cal.setTime(time);
@@ -279,7 +282,8 @@ public class BookingsListFragment extends ListFragment implements OnClickListene
 			String today = format.format(date);
 			String selection = "bt."+ContentDescriptor.BookingTime.Cols.RID+" = "+rid+" AND "//+ContentDescriptor.Booking.Cols.RESULT+" > 5 AND "
 	       			+"bt."+ContentDescriptor.BookingTime.Cols.ARRIVAL+" = "+today;
-	       	String[] where = {today, ContentDescriptor.Booking.Cols.RESULT+" > 5 "};
+	       	String[] where = {today, ContentDescriptor.Booking.Cols.RESULT+" > 5 ", 
+	       			" AND b."+ContentDescriptor.Booking.Cols.PARENTID+" <= 0"};
 	 
 	       	return new CursorLoader(getActivity(), ContentDescriptor.Time.TIME_BOOKING_URI, null, selection, where, "_id ASC");
 		}

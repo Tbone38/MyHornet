@@ -30,7 +30,7 @@ import com.treshna.hornet.ContentDescriptor.Visitor;
 public class HornetDatabase extends SQLiteOpenHelper {
 	
 	 public static final String DATABASE_NAME="hornet.db";
-	 private static final int DATABASE_VERSION = 80;
+	 private static final int DATABASE_VERSION = 81;
 	 
 	 public HornetDatabase (Context context) {
 		 super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -113,6 +113,7 @@ public class HornetDatabase extends SQLiteOpenHelper {
 				+Booking.Cols.MSID+" INTEGER, "+Booking.Cols.CHECKIN+" NUMERIC, " //timestamp ?
 				+Booking.Cols.RID+" INTEGER, "+Booking.Cols.ARRIVAL+" INTEGER, "
 				+Booking.Cols.OFFSET+" TEXT, "+Booking.Cols.IS_UPLOADED+" INTEGER DEFAULT 1, "
+				+Booking.Cols.CLASSID+" INTEGER DEFAULT 0, "+Booking.Cols.PARENTID+" INTEGER DEFAULT 0, "
 				+"FOREIGN KEY ("+Booking.Cols.STIMEID
 				+") REFERENCES "+ContentDescriptor.Time.NAME+" ("+ContentDescriptor.Time.Cols.ID+") "
 				//+" FOREIGN KEY ("+Booking.Cols.ARRIVAL+") REFERENCES "+ContentDescriptor.Date.NAME+" ("
@@ -228,6 +229,8 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS "+OpenTime.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+Date.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+Class.NAME);
+		db.execSQL("DROP TABLE IF EXISTS "+TableIndex.NAME);
+		db.execSQL("DROP TABLE IF EXISTS "+PendingUploads.NAME);
 	}
 	
 	private void repopulateTable(SQLiteDatabase db) {

@@ -18,6 +18,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
+import android.util.Log;
+
 /**
  * @author callum
  * This class uses JDBC to connect to a server.
@@ -35,6 +37,7 @@ public class JDBCConnection {
     private Connection con = null;
     private Statement statement;
     private PreparedStatement pStatement;
+    private static final String TAG = "com.treshna.hornet.JDBCConnection";
     
     private String getConnectionUrl() {
             return new String("jdbc:postgresql://" + Address + ":" + Port + "/" + Database);
@@ -79,16 +82,18 @@ public class JDBCConnection {
             if (Type.compareTo("PostgreSQL") == 0) {
             	Class.forName("org.postgresql.Driver");
             }
-            System.out.println("Start Connection");
+            //System.out.println("Start Connection");
+            Log.v(TAG, "Starting Connection");
             con = DriverManager.getConnection(getConnectionUrl(), properties);
     }
     
     public void closeConnection(){
     	 if (con != null) {
     		 try {
-            	System.out.println("Closing Connection");
+            	//System.out.println("Closing Connection");
+    			 Log.v(TAG, "Closing Connection");
             	con.close();
-             } catch (Exception e) {
+             } catch (SQLException e) {
                //shouldn't occur, if it does not a concern.
              } finally {
                 con = null;
@@ -230,7 +235,9 @@ public class JDBCConnection {
     }
     public ResultSet getResource() throws SQLException {
     	ResultSet rs = null;
-    	pStatement = con.prepareStatement("select resource.id, resource.name, resource.companyid, resourcetype.name, resourcetype.period FROM resource LEFT JOIN resourcetype"
+    	pStatement = con.prepareStatement("select resource.id as resourceid, resource.name as resourcename, "
+    			+ "resource.companyid as resourcecompanyid, resourcetype.name as resourcetypename, "
+    			+ "resourcetype.period as resourcetypeperiod FROM resource LEFT JOIN resourcetype"
     			+" ON (resource.resourcetypeid = resourcetype.id);");
     	rs = pStatement.executeQuery();
     	return rs;
@@ -246,11 +253,13 @@ public class JDBCConnection {
     	
     	ResultSet rs = null;
     	if (last_sync > 0) {
-    		System.out.print("\n\nGetting Bookings with update After "+new java.sql.Date(last_sync));
+    		//System.out.print("\n\nGetting Bookings with update After "+new java.sql.Date(last_sync));
+    		Log.v(TAG, "Getting Bookings with update Afrer "+new java.sql.Timestamp(last_sync));
 	    	pStatement = con.prepareStatement("SELECT resourceid, booking.firstname, booking.surname, "
 	    			+"CASE WHEN bookingtype.externalname IS NOT NULL THEN bookingtype.externalname ELSE bookingtype.name END AS bookingname, "
 	    			+"booking.startid, booking.endid, booking.arrival, booking.id AS bookingid, bookingtype.id AS bookingtypeid, booking.endtime, booking.notes, booking.result, "
-	    			+"booking.memberid, booking.lastupdate AS bookinglastupdate, booking.membershipid, booking.checkin FROM booking "
+	    			+"booking.memberid, booking.lastupdate AS bookinglastupdate, booking.membershipid, booking.checkin, "
+	    			+ "booking.classname, booking.classid, booking.parentid FROM booking "
 	    			+"LEFT JOIN bookingtype ON (booking.bookingtypeid = bookingtype.id) "
 	    			+"WHERE booking.arrival BETWEEN ?::date AND ?::date AND booking.resourceid = ? AND booking.lastupdate > ? ORDER BY booking.id DESC;");
 	    	// removing resourceid break things ?
@@ -262,7 +271,8 @@ public class JDBCConnection {
     		pStatement = con.prepareStatement("SELECT resourceid, booking.firstname, booking.surname, "
 	    			+"CASE WHEN bookingtype.externalname IS NOT NULL THEN bookingtype.externalname ELSE bookingtype.name END AS bookingname, "
 	    			+"booking.startid, booking.endid, booking.arrival, booking.id AS bookingid, bookingtype.id AS bookingtypeid, booking.endtime, booking.notes, booking.result, "
-	    			+"booking.memberid, booking.lastupdate AS bookinglastupdate, booking.membershipid, booking.checkin FROM booking "
+	    			+"booking.memberid, booking.lastupdate AS bookinglastupdate, booking.membershipid, booking.checkin,"
+	    			+ " booking.classname, booking.classid, booking.parentid FROM booking "
 	    			+"LEFT JOIN bookingtype ON (booking.bookingtypeid = bookingtype.id) "
 	    			+"WHERE booking.arrival BETWEEN ?::date AND ?::date AND booking.resourceid = ? ORDER BY booking.id DESC;"); // AND booking.resourceid = ?
     		
@@ -286,7 +296,13 @@ public class JDBCConnection {
     	pStatement.setString(2, notes);
     	pStatement.setInt(3, bookingtypeid);
     	pStatement.setDate(4, new java.sql.Date(lastupdate));
-    	pStatement.setDate(5, new java.sql.Date(checkin));
+    	if (checkin <= 0) { //TODO: check this works.
+    		pStatement.setNull(5, java.sql.Types.TIMESTAMP);
+    	} else {
+    		//pStatement.setDate(5, new java.sql.Date(checkin));
+    		pStatement.setTimestamp(5, new java.sql.Timestamp(checkin));
+    		Log.v(TAG, "updating Booking "+bookingID+", with checkin time: "+new java.sql.Date(checkin));
+    	}
     	pStatement.setInt(6, bookingID);
     	
     	result = pStatement.executeUpdate();
@@ -395,6 +411,8 @@ public class JDBCConnection {
     	pStatement.setString(16, booking.get(ContentDescriptor.Booking.Cols.OFFSET));
     	//todo last-updated
     	pStatement.setDate(17, new java.sql.Date(Long.valueOf(booking.get(ContentDescriptor.Booking.Cols.LASTUPDATED))));
+    	
+    	Log.v(TAG, "Upload Bookings Query:"+pStatement.toString());
     	return pStatement.executeUpdate();
     }
     
@@ -427,7 +445,7 @@ public class JDBCConnection {
     		cal.setTime(date);
     		cal.add(Calendar.DATE, 1);
     		enddate = Services.dateFormat(cal.getTime().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyy-MM-dd");
-    		freq = "1 day";
+    		freq = "0 day";
     	} else {
     		enddate = null;
     	}
@@ -452,11 +470,31 @@ public class JDBCConnection {
     	}
     	pStatement.setInt(7, cid);
     	
-    	
-    	//pStatement.setNull(1, java.sql.Types.INTEGER);
-    	
     	return pStatement.executeUpdate();
     }
+    
+    public ResultSet findCardBySerial(String serial) throws SQLException {
+    	ResultSet rs;
+    	
+    	pStatement = con.prepareStatement("SELECT id FROM idcard WHERE serial = ?;");
+    	pStatement.setString(1, serial);
+    	Log.v(TAG, pStatement.toString());
+    	rs = pStatement.executeQuery();
+    	
+    	return rs;
+    }
+    
+    public ResultSet findMemberByCard(int cardno) throws SQLException {
+    	ResultSet rs;
+    	
+    	pStatement = con.prepareStatement("select id as membershipid, memberid from membership where cardno = ?");
+    	pStatement.setInt(1, cardno);
+    	Log.v(TAG, pStatement.toString());
+    	rs = pStatement.executeQuery();
+    	
+    	return rs;
+    }
+    
     
     public ResultSet startStatementQuery(String query) throws SQLException {
     	ResultSet rs = null;
