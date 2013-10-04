@@ -27,8 +27,7 @@
     <string name="heading_member_details">Membership Information</string>
     <string name="heading_member_contact">Contact Details</string>
     <string name="title_activity_add_member">Sign Up</string>
-    <string name="title_activity_add_booking">AddBooking</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_add_booking">Add Booking</string>
     <string name="title_activity_member_find">Find Member</string>
     <string name="plusmember">+</string>
     <string name="title_activity_class_create">Create Class</string>
