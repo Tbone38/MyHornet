@@ -210,6 +210,8 @@ public class Services {
 		public static final String IS_BOOKING_F = "firstname";
 		public static final String IS_BOOKING_S = "surname";
 		public static final String MSID = "membershipid";
+		public static String PREF_NAME = "addMember";
+		public static String PREF_KEY = "memberType";
 		
 		public static final String IS_SUCCESSFUL = "com.treshna.hornet.is_successful";
 		public static final String IS_RESTART = "com.treshna.hornet.is_restart";

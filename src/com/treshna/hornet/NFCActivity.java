@@ -4,7 +4,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -16,10 +15,10 @@ import android.nfc.Tag;
 import android.nfc.tech.NfcA;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 
-public class NFCActivity extends FragmentActivity {
+public class NFCActivity extends ActionBarActivity {
 	private static final String TAG = "com.treshna.hornet.NFCActivity";
 	//NfcAdapter mNfcAdapter;
 	private String[][] mTechLists;

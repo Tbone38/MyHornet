@@ -11,11 +11,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.CheckBox;
@@ -46,7 +51,8 @@ public class ClassCreate extends NFCActivity implements OnClickListener{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.class_create);
-		
+		ActionBar actionBar = getSupportActionBar();
+	    actionBar.setDisplayHomeAsUpEnabled(true);
 		//TODO:
 		//	- setup date-selector. 				-- DONE
 		datePicker = new DatePickerFragment();
@@ -131,9 +137,62 @@ public class ClassCreate extends NFCActivity implements OnClickListener{
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.class_create, menu);
+		getMenuInflater().inflate(R.menu.not_main, menu);
 		return true;
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    // Handle item selection
+	    switch (item.getItemId()) {
+	    case android.R.id.home:
+			NavUtils.navigateUpFromSameTask(this);
+			return true;
+	    case (R.id.action_home):{
+	    	Intent i = new Intent (this, MainActivity.class);
+	    	startActivity(i);
+	    	return true;
+	    }
+	    case (R.id.action_createclass):{
+	    	Intent i = new Intent(this, ClassCreate.class);
+	    	startActivity(i);
+	    	return true;
+	    }
+	    case (R.id.action_settings):
+	    	Intent settingsIntent = new Intent(this, SettingsActivity.class);
+	    	startActivity(settingsIntent);
+	    	return true;
+	    case (R.id.action_update): {
+	    	SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+		 	if (Integer.parseInt(preferences.getString("sync_frequency", "-1")) == -1) {
+		 		Services.setPreference(this, "sync_frequency", "5");
+		 	}
+		 	PollingHandler polling = Services.getPollingHandler();
+	    	polling.startService();
+	    	return true;
+	    }
+	    case (R.id.action_halt): {
+	    	PollingHandler polling = Services.getPollingHandler();
+	    	polling.stopPolling(false);
+	    	Services.setPreference(this, "sync_frequency", "-1");
+	    	return true;
+	    }
+	    case (R.id.action_bookings):{
+	    	Intent bookings = new Intent(this, HornetDBService.class);
+			bookings.putExtra(Services.Statics.KEY, Services.Statics.BOOKING);
+		 	this.startService(bookings);
+	    	
+		 	Intent intent = new Intent(this, BookingsSlidePager.class);
+	       	startActivity(intent);
+	       	return true;
+	    }
+	    case (R.id.action_addMember):{
+	    	Intent intent = new Intent(this, MemberAdd.class);
+	    	startActivity(intent);
+	    	return true;
+	    }	    
+	    default:
+	    	return super.onOptionsItemSelected(item);
+	    }
 	}
 	
 	private void buildResourceAlert(){

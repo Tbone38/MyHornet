@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import com.treshna.hornet.MemberFindFragment.OnMemberSelectListener;
-
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.ContentResolver;
@@ -21,10 +19,11 @@ import android.nfc.tech.NfcA;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -34,7 +33,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 
-public class BookingPage extends FragmentActivity implements OnMemberSelectListener{
+public class BookingPage extends ActionBarActivity implements OnMemberSelectListener{
 	
 	private String bookingID;
 	private String starttime;
@@ -58,6 +57,8 @@ public class BookingPage extends FragmentActivity implements OnMemberSelectListe
 		super.onCreate(savedInstanceState);
 		Intent intent = getIntent();
 		Services.setContext(this);
+		ActionBar actionBar = getSupportActionBar();
+	    actionBar.setDisplayHomeAsUpEnabled(true);
 		ArrayList<String> tagInfo = intent.getStringArrayListExtra(Services.Statics.KEY);
 		bookingID = tagInfo.get(0);
 		
@@ -102,7 +103,7 @@ public class BookingPage extends FragmentActivity implements OnMemberSelectListe
 				bdl = new Bundle(1);
 				bdl.putString(Services.Statics.KEY, bookingID);
 				f.setArguments(bdl);
-				ft.add(R.id.bookingframe, f);
+				ft.add(R.id.booking_frame, f);
 			} else {
 			
 				//setContentView(R.layout.booking_details);
@@ -112,7 +113,7 @@ public class BookingPage extends FragmentActivity implements OnMemberSelectListe
 				System.out.print("\n\nPage BookingID:"+bookingID);
 	            bdl.putString(Services.Statics.KEY, bookingID);
 	            f.setArguments(bdl);
-				ft.add(R.id.bookingframe, f);
+				ft.add(R.id.booking_frame, f);
 				//bookingID = tagInfo.get(1);
 				//showBooking();
 			}
@@ -125,12 +126,11 @@ public class BookingPage extends FragmentActivity implements OnMemberSelectListe
 			System.out.print("\n\nSTART ID:"+starttime);
             bdl.putString(Services.Statics.KEY, starttime);
             f.setArguments(bdl);
-			ft.add(R.id.bookingframe,f);
+			ft.add(R.id.booking_frame,f);
 			//addBooking(tagInfo.get(1), savedInstanceState);
 		}
 		ft.commit();
 		// Show the Up button in the action bar.
-		setupActionBar();
 	}
 
 	@Override
@@ -156,23 +156,12 @@ public class BookingPage extends FragmentActivity implements OnMemberSelectListe
 		}
 	}
 	
-	/**
-	 * Set up the {@link android.app.ActionBar}, if the API is available.
-	 */
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-	private void setupActionBar() {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			getActionBar().setDisplayHomeAsUpEnabled(true);
-		}
-	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
+		getMenuInflater().inflate(R.menu.not_main, menu);
 		return true;
 	}
-
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    // Handle item selection
@@ -180,13 +169,19 @@ public class BookingPage extends FragmentActivity implements OnMemberSelectListe
 	    case android.R.id.home:
 			NavUtils.navigateUpFromSameTask(this);
 			return true;
+	    case (R.id.action_home):{
+	    	Intent i = new Intent (this, MainActivity.class);
+	    	startActivity(i);
+	    	return true;
+	    }
+	    case (R.id.action_createclass):{
+	    	Intent i = new Intent(this, ClassCreate.class);
+	    	startActivity(i);
+	    	return true;
+	    }
 	    case (R.id.action_settings):
 	    	Intent settingsIntent = new Intent(this, SettingsActivity.class);
 	    	startActivity(settingsIntent);
-	    	return true;
-	    case (R.id.action_scan):
-	    	Intent scanIntent = new Intent(this, HornetRFIDReader.class);
-	    	startActivity(scanIntent);
 	    	return true;
 	    case (R.id.action_update): {
 	    	SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -203,12 +198,6 @@ public class BookingPage extends FragmentActivity implements OnMemberSelectListe
 	    	Services.setPreference(this, "sync_frequency", "-1");
 	    	return true;
 	    }
-	    case (R.id.action_visitors):{
-	    	Intent intent = new Intent(this, DisplayResultsActivity.class);
-			intent.putExtra(Services.Statics.KEY,DisplayResultsActivity.LASTVISITORS); 
-			startActivity(intent);
-	    	return true;
-	    }
 	    case (R.id.action_bookings):{
 	    	Intent bookings = new Intent(this, HornetDBService.class);
 			bookings.putExtra(Services.Statics.KEY, Services.Statics.BOOKING);
@@ -219,15 +208,10 @@ public class BookingPage extends FragmentActivity implements OnMemberSelectListe
 	       	return true;
 	    }
 	    case (R.id.action_addMember):{
-	    	Intent intent = new Intent(this, AddMember.class);
+	    	Intent intent = new Intent(this, MemberAdd.class);
 	    	startActivity(intent);
 	    	return true;
-	    }
-	    case (R.id.action_findMember):{
-	    	Intent i = new Intent(this, MemberFind.class);
-	    	startActivity(i);
-	    	return true;
-	    }
+	    }	    
 	    default:
 	    	return super.onOptionsItemSelected(item);
 	    }
@@ -302,7 +286,7 @@ public class BookingPage extends FragmentActivity implements OnMemberSelectListe
                 bdl.putString(Services.Statics.IS_BOOKING_S, sname);
                 bdl.putString(Services.Statics.MSID, selectedMSID);
                 f.setArguments(bdl);
-                ft.replace(R.id.bookingframe, f);
+                ft.replace(R.id.booking_frame, f);
         		ft.commit();
         		frm.popBackStack();
             }

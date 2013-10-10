@@ -23,6 +23,8 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -41,7 +43,10 @@ public class MemberDetails extends NFCActivity implements OnClickListener {
 	ContentResolver contentResolver;
 	String COLOUR = "#FF5FBDBC";
 	ViewPager mPager;
-	String memberships;
+	ArrayList<ArrayList<String>> memberships;
+	String memberID;
+	
+	private static final String TAG = "MemberDetails";
 	
 	@SuppressWarnings("deprecation")
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN) 
@@ -50,19 +55,29 @@ public class MemberDetails extends NFCActivity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		Services.setContext(this);
 		setContentView(R.layout.activity_member_info);
+		ActionBar actionBar = getSupportActionBar();
+	    actionBar.setDisplayHomeAsUpEnabled(true);
 		Intent intent = getIntent();
 		
 		contentResolver = this.getContentResolver();
 		ArrayList<String> tagInfo = (ArrayList<String>) intent.getStringArrayListExtra(VisitorsViewAdapter.EXTRA_ID);
-		String memberID = tagInfo.get(0);
+		memberID = tagInfo.get(0);
 		String visitDate = tagInfo.get(1);
 		
 		cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols.MID+" = ?",
 				new String[] {memberID}, null);
-		memberships ="";
+	
+		memberships = new ArrayList<ArrayList<String>>();
 		if (cur.getCount() > 0) {
 			while (cur.moveToNext()) {
-				memberships += cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PNAME))+" \n";
+				ArrayList<String> membership = new ArrayList<String>();
+				membership.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MSID)));
+				membership.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PNAME)));
+				membership.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.VISITS)));
+				membership.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MSSTART)));
+				membership.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.EXPIRERY)));
+				
+				memberships.add(membership);
 			}
 		}
 		cur.close();
@@ -135,79 +150,303 @@ public class MemberDetails extends NFCActivity implements OnClickListener {
 		number.setLayoutParams(llparams);
 		memberDetails.addView(number);
 		
-		
-		if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PNAME)) 
-				&& cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PNAME)).compareTo("") != 0) {
-			TextView membershipH = new TextView(this);
-			membershipH.setPadding(Services.convertdpToPxl(this, 35), 0, 0, 0);
-			membershipH.setText("Membership");
-			membershipH.setTextSize(13);
-			membershipH.setLayoutParams(llparams);
-			memberInfo.addView(membershipH);
-			
-			TextView membershipT = new TextView(this);
-			membershipT.setPadding(Services.convertdpToPxl(this, 45), 0, 0, 0);
-			membershipT.setText(memberships);//cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PNAME))
-			membershipT.setTextSize(18);
-			membershipT.setLayoutParams(llparams);
-			memberInfo.addView(membershipT);
-		} else {
-			System.out.print("\n\nNo Membership");
+		/**
+		 * membership details, for each membership.
+		 */
+		if (memberships.size() == 0) {
+			TextView membershipH = (TextView) findViewById(R.id.memberinfoH);
+			membershipH.setVisibility(View.GONE);
 		}
+		for (int i=0;i <memberships.size(); i +=1) {
+			int null_count = 0;
+			/**
+			 * 1 = no membership name
+			 * 2 = no started date
+			 * 4 = no expirery
+			 * 8 = no visits to date
+			 */
+			ArrayList<String> member = memberships.get(i);
+			RelativeLayout msWindow = new RelativeLayout(this); //todo make this a relative layout
+			llparams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+			llparams.setMargins(7, 7, 7, 7);
+			msWindow.setLayoutParams(llparams);
+			msWindow.setBackgroundColor(Color.LTGRAY);
+			//msWindow.setOrientation(LinearLayout.VERTICAL);
 			
-		if (cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.VISITS)) != null) {
-			if (cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.VISITS)).compareTo("null") != 0) {
-				TextView visitsH = new TextView(this);
-				visitsH.setPadding(Services.convertdpToPxl(this, 35), 0, 0, 0);
-				visitsH.setText("Visits to Date");
-				visitsH.setTextSize(13);
-				visitsH.setLayoutParams(llparams);
-				memberInfo.addView(visitsH);
+			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+			if (member.get(1) != null && member.get(1).compareTo("") != 0) {
+				TextView membershipH = new TextView(this);
+				membershipH.setPadding(Services.convertdpToPxl(this, 35), 0, 0, 0);
+				membershipH.setText("Membership");
+				membershipH.setTextSize(13);
+				membershipH.setId(55000);
+				membershipH.setLayoutParams(params);
+				//memberInfo.addView(membershipH);
+				msWindow.addView(membershipH);
 				
-				TextView visitsT = new TextView(this);
-				visitsT.setPadding(Services.convertdpToPxl(this, 45), 0, 0, 0);
-				visitsT.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.VISITS)));
-				visitsT.setTextSize(18);
-				visitsT.setLayoutParams(llparams);
-				memberInfo.addView(visitsT);
-		}	}
-		if (cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MSSTART)) != null) {
-			if (cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MSSTART)).compareTo("null") != 0) {
-				String date = Services.dateFormat(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MSSTART)), "yyyy-MM-dd", "dd MMM yy");
+				TextView membershipT = new TextView(this);
+				membershipT.setPadding(Services.convertdpToPxl(this, 45), 0, 0, 0);
+				membershipT.setText(member.get(1));
+				membershipT.setTextSize(18);
+				membershipT.setId(55001); 
+				params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
+				params.addRule(RelativeLayout.BELOW, 55000);
+				params.setMargins(3, 3, 3, 3);
+				membershipT.setLayoutParams(params);
+				//memberInfo.addView(membershipT);
+				msWindow.addView(membershipT);
+			} else {
+				Log.v(TAG+".createview", "No Membership");
+				null_count += 1;
+			}
+			
+			if ( member.get(3) != null && member.get(3).compareTo("null") != 0) {
+				String date = Services.dateFormat(member.get(3), "yyyy-MM-dd", "dd MMM yy");
 				
 				TextView memberSH = new TextView(this);
 				memberSH.setPadding(Services.convertdpToPxl(this, 35), 0, 0, 0);
 				memberSH.setText("Membership Started");
 				memberSH.setTextSize(13);
-				memberSH.setLayoutParams(llparams);
-				memberInfo.addView(memberSH);
+				memberSH.setId(55002);
+				params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+				params.addRule(RelativeLayout.BELOW, 55001);
+				params.setMargins(3, 3, 3, 3);
+				memberSH.setLayoutParams(params);
+				//memberInfo.addView(memberSH);
+				msWindow.addView(memberSH);
 				
 				TextView memberST = new TextView(this);
 				memberST.setPadding(Services.convertdpToPxl(this, 45), 0, 0, 0);
 				memberST.setText(date);
 				memberST.setTextSize(18);
-				memberST.setLayoutParams(llparams);
-				memberInfo.addView(memberST);
-
-		}	}
-		if (cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.EXPIRERY)) != null) {
-			if (cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.EXPIRERY)).compareTo("null") != 0) {
+				memberST.setId(55003);
+				params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+				params.addRule(RelativeLayout.BELOW, 55002);
+				params.setMargins(3, 3, 3, 3);
+				memberST.setLayoutParams(params);
+				//memberInfo.addView(memberST);
+				msWindow.addView(memberST);
+			} else {
+				null_count += 2;
+			}
+			
+			if (member.get(4) != null && member.get(4).compareTo("null") != 0) {
 				
 				TextView memberEH = new TextView(this);
 				memberEH.setPadding(Services.convertdpToPxl(this, 35), 0, 0, 0);
 				memberEH.setText("Membership Expires");
 				memberEH.setTextSize(13);
-				memberEH.setLayoutParams(llparams);
-				memberInfo.addView(memberEH);
+				memberEH.setId(55004);
+				params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+				params.addRule(RelativeLayout.BELOW, 55001);
+				params.addRule(RelativeLayout.RIGHT_OF, 55002);
+				params.setMargins(3, 3, 3, 3);
+				memberEH.setLayoutParams(params);
+				//memberInfo.addView(memberEH);
+				msWindow.addView(memberEH);
+				
 				String date = Services.dateFormat(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.EXPIRERY)), "yyyy-MM-dd", "dd MMM yy");
 				TextView memberET = new TextView(this);
 				memberET.setPadding(Services.convertdpToPxl(this, 45), 0, 0, 0);
 				memberET.setText(date);
 				memberET.setTextSize(18);
-				memberET.setLayoutParams(llparams);
-				memberInfo.addView(memberET);
+				memberET.setId(55005);
+				params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+				params.addRule(RelativeLayout.BELOW, 55004);
+				params.addRule(RelativeLayout.RIGHT_OF, 55003);
+				params.addRule(RelativeLayout.ALIGN_LEFT, 55004);
+				params.setMargins(3, 3, 3, 3);
+				memberET.setLayoutParams(params);
+				//memberInfo.addView(memberET);
+				msWindow.addView(memberET);
+			} else {
+				null_count += 4;
+			}
+			
+			if (member.get(2) != null && member.get(2).compareTo("null") != 0) {
+				int below = 55005;
+				TextView visitsH = new TextView(this);
+				visitsH.setPadding(15, 15, 15, 15);
+				visitsH.setText("Visits to Date");
+				visitsH.setTextSize(18);
+				visitsH.setId(55006);
+				params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+				View v = (View) msWindow.findViewById(55005);
+				if (v == null) {
+					below = 55003;
+				}
+				params.addRule(RelativeLayout.BELOW, below);
+				params.setMargins(3, 3, 3, 3);
+				visitsH.setLayoutParams(params);
+				//memberInfo.addView(visitsH);
+				msWindow.addView(visitsH);
 				
-		}	}
+				TextView visitsT = new TextView(this);
+				visitsT.setPadding(15, 15, 15, 15);
+				visitsT.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.VISITS)));
+				visitsT.setTextSize(18);
+				visitsT.setId(55007);
+				params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+				params.addRule(RelativeLayout.BELOW, below);
+				params.addRule(RelativeLayout.RIGHT_OF, 55006);
+				params.setMargins(3, 3, 3, 3);
+				visitsT.setLayoutParams(params);
+				//memberInfo.addView(visitsT);
+				msWindow.addView(visitsT);
+			} else {
+				null_count +=8;
+			}
+			
+			//add hold/edit membership button here.
+			/*if (null_count < 8  && member.get(0) != null && member.get(0).compareTo("null") != 0) {
+				Log.v(TAG, "creating HOLD Button.");
+				TextView hold = new TextView(this);
+				hold.setId(55008);
+				hold.setTag(member.get(0));
+				hold.setPadding(15, 15, 15, 15);
+				hold.setText("Hold");
+				hold.setTextSize(20);
+				hold.setTextColor(Color.parseColor("#FF5FBDBC"));
+				hold.setGravity(Gravity.CENTER);
+				
+				params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+				params.addRule(RelativeLayout.BELOW, 55005);
+				params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
+				params.addRule(RelativeLayout.ALIGN_TOP, 55007);
+				//params.addRule(RelativeLayout.ALIGN_BOTTOM, 55007);
+				params.setMargins(3, 3, 13, 3);
+				hold.setLayoutParams(params);
+				hold.setClickable(true);
+				hold.setOnClickListener(this);
+				
+				msWindow.addView(hold);
+			}*/
+			
+			
+			memberInfo.addView(msWindow);
+		}
+		
+		LinearLayout notesGroup = (LinearLayout) this.findViewById(R.id.membernotes);
+		if (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.NOTES)) != null) {
+			if (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.NOTES)).compareTo("null") != 0) {
+				
+				TextView notesT = new TextView(this);
+				notesT.setPadding(Services.convertdpToPxl(this, 45), 0, 0, 0);
+				notesT.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.NOTES)));
+				notesT.setTextSize(18);
+				notesT.setLayoutParams(llparams);
+				notesGroup.addView(notesT);
+		} 	}
+		/*
+		 * The Below If-Statements might(?) hard crash the system if the item (e.g. string(17))
+		 * is Null. Easiest Solution is nested IF's (see above), though best would be 
+		 * to better handle null data on entry to database-cache. (so that it's an empty string)
+		 */
+		if ((cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.TASK1)) == null) 
+				|| (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.TASK1)).compareTo("null") == 0)
+				|| (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.TASK1)).length() == 0)){
+			
+			TextView tasks = new TextView(this);
+			tasks.setPadding(Services.convertdpToPxl(this, 35), 0, 0, 0);
+			tasks.setText("No Pending Tasks");
+			tasks.setTextSize(13);
+			tasks.setLayoutParams(llparams);
+			notesGroup.addView(tasks);
+			
+		} else {
+			TextView tasksH = new TextView(this);
+			tasksH.setPadding(Services.convertdpToPxl(this, 35), 0, 0, 0);
+			tasksH.setText("Tasks");
+			tasksH.setTextSize(13);
+			tasksH.setLayoutParams(llparams);
+			notesGroup.addView(tasksH);
+			
+			int l;
+			for(l=12;l<=14;l+=1){ //cur.getColumnIndex(ContentDescriptor.Member.Cols.TASK1)
+				if (cur.getString(l) != null) {
+					TextView tasks = new TextView(this);
+					tasks.setPadding(45, 0, 0, 10);
+					tasks.setText(cur.getString(l));
+					tasks.setTextSize(16);
+					llparams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+					llparams.setMargins(0, 0, 0, 5);
+					tasks.setLayoutParams(llparams);
+					notesGroup.addView(tasks);
+				}
+			}			
+			
+		}
+		if ((cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.BOOK1)) == null) 
+				|| (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.BOOK1)).compareTo("null") == 0) 
+				|| (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.BOOK1)).length() == 0)){
+			
+			TextView bookings = new TextView(this);
+			bookings.setPadding(Services.convertdpToPxl(this, 35), 0, 0, 0);
+			bookings.setText("No Pending Bookings");
+			bookings.setTextSize(13);
+			bookings.setLayoutParams(llparams);
+			notesGroup.addView(bookings);
+
+		} else {
+			TextView bookingsH = new TextView(this);
+			bookingsH.setPadding(Services.convertdpToPxl(this, 35), 0, 0, 0);
+			bookingsH.setText("Bookings");
+			bookingsH.setTextSize(13);
+			bookingsH.setLayoutParams(llparams);
+			notesGroup.addView(bookingsH);
+			
+			int l;
+			for(l=15;l<=17;l+=1){ //cur.getColumnIndex(ContentDescriptor.Member.Cols.BOOK1)
+				if (cur.getString(l) != null) {
+					TextView bookings = new TextView(this);
+					bookings.setPadding(45, 0, 0, 0);
+					bookings.setText(cur.getString(l));
+					bookings.setTextSize(16);
+					llparams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+					llparams.setMargins(0, 0, 0, 5);
+					bookings.setLayoutParams(llparams);
+					notesGroup.addView(bookings);
+				}
+			}
+		}
+		
+		if (visitDate != null && visitDate.compareTo("") == 0) { //fix this
+			TextView visitTH = new TextView(this);
+			visitTH.setPadding(Services.convertdpToPxl(this, 35), 0, 0, 0);
+			visitTH.setText("Visit Time");
+			visitTH.setTextSize(13);
+			visitTH.setLayoutParams(llparams);
+			notesGroup.addView(visitTH);
+			
+			TextView visitT = new TextView(this);
+			visitT.setPadding(Services.convertdpToPxl(this, 45), 0, 0, 0);
+			visitDate = Services.dateFormat(visitDate, "yyyy-MM-dd HH:mm", "dd MMM yy 'at' HH:mm aa");
+			visitT.setText(visitDate);
+			visitT.setTextSize(18);
+			visitT.setLayoutParams(llparams);
+			notesGroup.addView(visitT);
+		}
+		
+		if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.LASTVISIT)) 
+				&& cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.LASTVISIT)).compareTo("") != 0) {
+			String lastVisit = Services.dateFormat(cur.getString(19), "yyyy-MM-dd HH:mm", "dd MMM yy 'at' HH:mm aa");
+			
+			TextView lastVH = new TextView(this);
+			lastVH.setPadding(Services.convertdpToPxl(this, 35), 0, 0, 0);
+			lastVH.setText("Previous Visit");
+			lastVH.setTextSize(13);
+			lastVH.setLayoutParams(llparams);
+			notesGroup.addView(lastVH);
+			
+			TextView lastVT = new TextView(this);
+			lastVT.setPadding(Services.convertdpToPxl(this, 45), 0, 0, 0);
+			lastVT.setText(lastVisit);
+			lastVT.setTextSize(18);
+			lastVT.setLayoutParams(llparams);
+			notesGroup.addView(lastVT);
+		}
+		
+		
 		
 		/*
 		 * Dynamically build Views & Buttons as required.
@@ -349,131 +588,6 @@ public class MemberDetails extends NFCActivity implements OnClickListener {
 				layout.addView(row);
 		} }
 
-		if (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.NOTES)) != null) {
-			if (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.NOTES)).compareTo("null") != 0) {
-				
-				TextView notesH = new TextView(this);
-				notesH.setPadding(Services.convertdpToPxl(this, 35), 0, 0, 0);
-				notesH.setText("Notes");
-				notesH.setTextSize(13);
-				notesH.setLayoutParams(llparams);
-				memberInfo.addView(notesH);
-				
-				TextView notesT = new TextView(this);
-				notesT.setPadding(Services.convertdpToPxl(this, 45), 0, 0, 0);
-				notesT.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.NOTES)));
-				notesT.setTextSize(18);
-				notesT.setLayoutParams(llparams);
-				memberInfo.addView(notesT);
-		} 	}
-		/*
-		 * The Below If-Statements might(?) hard crash the system if the item (e.g. string(17))
-		 * is Null. Easiest Solution is nested IF's (see above), though best would be 
-		 * to better handle null data on entry to database-cache. (so that it's an empty string)
-		 */
-		if ((cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.TASK1)) == null) 
-				|| (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.TASK1)).compareTo("null") == 0)
-				|| (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.TASK1)).length() == 0)){
-			
-			TextView tasks = new TextView(this);
-			tasks.setPadding(Services.convertdpToPxl(this, 35), 0, 0, 0);
-			tasks.setText("No Pending Tasks");
-			tasks.setTextSize(13);
-			tasks.setLayoutParams(llparams);
-			memberInfo.addView(tasks);
-			
-		} else {
-			TextView tasksH = new TextView(this);
-			tasksH.setPadding(Services.convertdpToPxl(this, 35), 0, 0, 0);
-			tasksH.setText("Tasks");
-			tasksH.setTextSize(13);
-			tasksH.setLayoutParams(llparams);
-			memberInfo.addView(tasksH);
-			
-			int l;
-			for(l=12;l<=14;l+=1){ //cur.getColumnIndex(ContentDescriptor.Member.Cols.TASK1)
-				if (cur.getString(l) != null) {
-					TextView tasks = new TextView(this);
-					tasks.setPadding(45, 0, 0, 10);
-					tasks.setText(cur.getString(l));
-					tasks.setTextSize(16);
-					llparams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-					llparams.setMargins(0, 0, 0, 5);
-					tasks.setLayoutParams(llparams);
-					memberInfo.addView(tasks);
-				}
-			}			
-			
-		}
-		if ((cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.BOOK1)) == null) 
-				|| (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.BOOK1)).compareTo("null") == 0) 
-				|| (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.BOOK1)).length() == 0)){
-			
-			TextView bookings = new TextView(this);
-			bookings.setPadding(Services.convertdpToPxl(this, 35), 0, 0, 0);
-			bookings.setText("No Pending Bookings");
-			bookings.setTextSize(13);
-			bookings.setLayoutParams(llparams);
-			memberInfo.addView(bookings);
-
-		} else {
-			TextView bookingsH = new TextView(this);
-			bookingsH.setPadding(Services.convertdpToPxl(this, 35), 0, 0, 0);
-			bookingsH.setText("Bookings");
-			bookingsH.setTextSize(13);
-			bookingsH.setLayoutParams(llparams);
-			memberInfo.addView(bookingsH);
-			
-			int l;
-			for(l=15;l<=17;l+=1){ //cur.getColumnIndex(ContentDescriptor.Member.Cols.BOOK1)
-				if (cur.getString(l) != null) {
-					TextView bookings = new TextView(this);
-					bookings.setPadding(45, 0, 0, 0);
-					bookings.setText(cur.getString(l));
-					bookings.setTextSize(16);
-					llparams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-					llparams.setMargins(0, 0, 0, 5);
-					bookings.setLayoutParams(llparams);
-					memberInfo.addView(bookings);
-				}
-			}
-		}
-		
-		if (visitDate != null && visitDate.compareTo("") == 0) { //fix this
-			TextView visitTH = new TextView(this);
-			visitTH.setPadding(Services.convertdpToPxl(this, 35), 0, 0, 0);
-			visitTH.setText("Visit Time");
-			visitTH.setTextSize(13);
-			visitTH.setLayoutParams(llparams);
-			memberInfo.addView(visitTH);
-			
-			TextView visitT = new TextView(this);
-			visitT.setPadding(Services.convertdpToPxl(this, 45), 0, 0, 0);
-			visitDate = Services.dateFormat(visitDate, "yyyy-MM-dd HH:mm", "dd MMM yy 'at' HH:mm aa");
-			visitT.setText(visitDate);
-			visitT.setTextSize(18);
-			visitT.setLayoutParams(llparams);
-			memberInfo.addView(visitT);
-		}
-		
-		if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.LASTVISIT)) 
-				&& cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.LASTVISIT)).compareTo("") != 0) {
-			String lastVisit = Services.dateFormat(cur.getString(19), "yyyy-MM-dd HH:mm", "dd MMM yy 'at' HH:mm aa");
-			
-			TextView lastVH = new TextView(this);
-			lastVH.setPadding(Services.convertdpToPxl(this, 35), 0, 0, 0);
-			lastVH.setText("Previous Visit");
-			lastVH.setTextSize(13);
-			lastVH.setLayoutParams(llparams);
-			memberInfo.addView(lastVH);
-			
-			TextView lastVT = new TextView(this);
-			lastVT.setPadding(Services.convertdpToPxl(this, 45), 0, 0, 0);
-			lastVT.setText(lastVisit);
-			lastVT.setTextSize(18);
-			lastVT.setLayoutParams(llparams);
-			memberInfo.addView(lastVT);
-		}
 		
 		cur.close();
 		String[] projection = {ContentDescriptor.Image.Cols.ID};
@@ -558,13 +672,25 @@ public class MemberDetails extends NFCActivity implements OnClickListener {
 			if (mPager.getCurrentItem() < (mPager.getChildCount()-1)) {
 				mPager.setCurrentItem(mPager.getCurrentItem()+1);
 			}
+			break;
+		}
+		case (55008):{
+			String membershipid = null;
+			if (v.getTag() instanceof String) {
+				membershipid = (String) v.getTag();
+			}
+			Intent i = new Intent(this, MembershipHold.class);
+			i.putExtra(Services.Statics.KEY, memberID);
+			i.putExtra(Services.Statics.MSID, membershipid);
+			startActivity(i);
+			break;
 		}
 		}
 	}
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.main, menu);
+		getMenuInflater().inflate(R.menu.not_main, menu);
 		return true;
 	}
 	@Override
@@ -574,13 +700,19 @@ public class MemberDetails extends NFCActivity implements OnClickListener {
 	    case android.R.id.home:
 			NavUtils.navigateUpFromSameTask(this);
 			return true;
+	    case (R.id.action_home):{
+	    	Intent i = new Intent (this, MainActivity.class);
+	    	startActivity(i);
+	    	return true;
+	    }
+	    case (R.id.action_createclass):{
+	    	Intent i = new Intent(this, ClassCreate.class);
+	    	startActivity(i);
+	    	return true;
+	    }
 	    case (R.id.action_settings):
 	    	Intent settingsIntent = new Intent(this, SettingsActivity.class);
 	    	startActivity(settingsIntent);
-	    	return true;
-	    case (R.id.action_scan):
-	    	Intent scanIntent = new Intent(this, HornetRFIDReader.class);
-	    	startActivity(scanIntent);
 	    	return true;
 	    case (R.id.action_update): {
 	    	SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -597,12 +729,6 @@ public class MemberDetails extends NFCActivity implements OnClickListener {
 	    	Services.setPreference(this, "sync_frequency", "-1");
 	    	return true;
 	    }
-	    case (R.id.action_visitors):{
-	    	Intent intent = new Intent(this, DisplayResultsActivity.class);
-			intent.putExtra(Services.Statics.KEY,DisplayResultsActivity.LASTVISITORS); 
-			startActivity(intent);
-	    	return true;
-	    }
 	    case (R.id.action_bookings):{
 	    	Intent bookings = new Intent(this, HornetDBService.class);
 			bookings.putExtra(Services.Statics.KEY, Services.Statics.BOOKING);
@@ -613,15 +739,10 @@ public class MemberDetails extends NFCActivity implements OnClickListener {
 	       	return true;
 	    }
 	    case (R.id.action_addMember):{
-	    	Intent intent = new Intent(this, AddMember.class);
+	    	Intent intent = new Intent(this, MemberAdd.class);
 	    	startActivity(intent);
 	    	return true;
-	    }
-	    case (R.id.action_findMember):{
-	    	Intent i = new Intent(this, MemberFind.class);
-	    	startActivity(i);
-	    	return true;
-	    }
+	    }	    
 	    default:
 	    	return super.onOptionsItemSelected(item);
 	    }

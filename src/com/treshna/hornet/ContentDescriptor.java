@@ -530,7 +530,11 @@ public class ContentDescriptor {
 	 		public static class Cols implements BaseColumns {
 	 			public static final String CID = "cid";
 	 			public static final String NAME = "name";
+	 			public static final String DESC = "description";
 	 			public static final String MAX_ST = "max_students";
+	 			public static final String ONLINE = "online_booking";
+	 			//public static final String PRICE = "price";
+	 			/***********Creation/booking stuff***********/
 	 			public static final String FREQ = "frequency";
 	 			public static final String SDATE = "startdate";
 	 			public static final String STIME = "starttime";

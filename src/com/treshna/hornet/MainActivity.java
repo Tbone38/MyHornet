@@ -1,126 +1,76 @@
 package com.treshna.hornet;
 
+import java.util.Date;
 
-import android.annotation.TargetApi;
-import android.app.ActionBar;
-import android.app.PendingIntent;
+import com.treshna.hornet.R.color;
+
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBar.Tab;
+import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
 
-public class MainActivity extends NFCActivity {
-	public int DOOR;
-    private Cursor cur = null; 
-    private static Context context;
+
+public class MainActivity extends NFCActivity implements BookingsListFragment.OnCalChangeListener{
 	
+	private static Tab membertab;
+	private static Tab visitortab;
+	private static Tab bookingtab;
+	private static Context context;
 	
-    static public String PREF_NAME = "addMember";
-	static public String PREF_KEY = "memberType";
-	
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		if (savedInstanceState != null)
+	    {
+			savedInstanceState.remove ("android:support:fragments");
+	    }
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
-		Services.setContext(this);
-		System.out.println("App Started");
-		
+		this.setContentView(R.layout.main_activity);
+		this.setTitle("GymMaster");
+		this.setTitleColor(color.gym);
 		context = getApplicationContext();
-		DOOR = Integer.parseInt(Services.getAppSettings(this, "door"));
-		if (DOOR == -1){
-			TextView tview = (TextView) this.findViewById(R.id.welcome);
-			tview.setText("This is your first time running the application, \n Please visits the settings"
-					+" option before continuing buttons");
-		}
-		
-		Intent updateInt = new Intent(this, HornetDBService.class);
-		updateInt.putExtra(Services.Statics.KEY, Services.Statics.LASTVISITORS);
-		PendingIntent pintent = PendingIntent.getService(this, 0, updateInt, PendingIntent.FLAG_UPDATE_CURRENT);
-		//polling = new PollingHandler(this, pintent);
-		Services.setPollingHandler(this, pintent);
-		startReciever();
 		
 		
-		SharedPreferences memberAdd = this.getSharedPreferences(PREF_NAME, MODE_PRIVATE);
-		if (memberAdd.getInt(PREF_KEY, -1) == -1) {
-			SharedPreferences.Editor editor = memberAdd.edit();
-			editor.putInt(PREF_KEY, -1);
-			editor.commit();
-		}
+		ActionBar ab = getSupportActionBar();
+		ab.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+		ab.setDisplayShowTitleEnabled(false);
 		
-		 if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-		        final ActionBar actionBar = getActionBar();
-		        actionBar.setDisplayShowHomeEnabled(true);
-		        
-		 }
-	}
-	public void startReciever(){
-		IntentFilter intentFilter = new IntentFilter();
-		intentFilter.addAction(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION);
-		registerReceiver(Services.getPollingHandler(), intentFilter);
-	}
-	
-	@Override
-	public void onStop() {
-		super.onStop();
-	    if(cur != null) cur.close();
-	    try {
-	    	unregisterReceiver(Services.getPollingHandler()); //?
-	     } catch (Exception e) {
-	    	 //doesn't matter.
-	     }
-	}
-	 
-	@Override
-	protected void onStart() {
-	     super.onStart();
-	     //getAppSettings(this);
+		membertab = ab.newTab()
+                .setText("Find Member")
+                .setTabListener(new TabListener<MemberFindFragment>(
+                        this, "findmember", MemberFindFragment.class));
+		ab.addTab(membertab);
+		
+		visitortab = ab.newTab()
+				.setText("Last Visitors")
+				.setTabListener(new TabListener<LastVisitorsFragment>(
+						this, "lastvisitors", LastVisitorsFragment.class));
+		ab.addTab(visitortab);
+		/**
+		 * TODO: refactor bookings so that they work from a tab.
+		 *  (too hard basket atm).
+		bookingtab = ab.newTab()
+				.setText("Bookings")
+				.setTabListener(new TabListener<BookingsSlideFragment>(
+						this, "bookings", BookingsSlideFragment.class));
+		ab.addTab(bookingtab);*/
+		
+		Log.v("MainActivity", "Finished onCreate");
 	}
 	
-	@Override
-	protected void onRestart() {
-		super.onRestart();
-		DOOR = Integer.parseInt(Services.getAppSettings(this, "door"));
-		//unregisterReceiver(polling);
-		startReciever();
-	}
-	
-	public static Context getContext(){
-		return context;
-	}
-	
-
-	public void lastVisitorsList(View view) {
-		System.out.println("Query ALL Content Provider Button Pressed");
-		Intent intent = new Intent(this, DisplayResultsActivity.class);
-		intent.putExtra(Services.Statics.KEY,DisplayResultsActivity.LASTVISITORS); 
-		startActivity(intent);
-	}
-	
-	public void scanTag(View view) {
-		if ((Build.VERSION.RELEASE.startsWith("1")) ||(Build.VERSION.RELEASE.startsWith("2"))) {
-			Toast.makeText(getApplicationContext(),
-	        		"This phone is not NFC enabled\n\r", Toast.LENGTH_LONG).show();
-		} else {
-			Intent intent = new Intent(this, HornetRFIDReader.class);
-			startActivity(intent);
-		}
-	}
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
@@ -129,35 +79,31 @@ public class MainActivity extends NFCActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    // Handle item selection
 	    switch (item.getItemId()) {
+	    case android.R.id.home:
+			NavUtils.navigateUpFromSameTask(this);
+			return true;
+	    case (R.id.action_createclass):{
+	    	Intent i = new Intent(this, ClassCreate.class);
+	    	startActivity(i);
+	    	return true;
+	    }
 	    case (R.id.action_settings):
 	    	Intent settingsIntent = new Intent(this, SettingsActivity.class);
 	    	startActivity(settingsIntent);
 	    	return true;
-	    case (R.id.action_scan):
-	    	Intent scanIntent = new Intent(this, HornetRFIDReader.class);
-	    	startActivity(scanIntent);
-	    	return true;
-	    case (R.id.action_update):
+	    case (R.id.action_update): {
 	    	SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 		 	if (Integer.parseInt(preferences.getString("sync_frequency", "-1")) == -1) {
 		 		Services.setPreference(this, "sync_frequency", "5");
 		 	}
-		 	Intent updateInt = new Intent(this, HornetDBService.class);
-			updateInt.putExtra(Services.Statics.KEY, Services.Statics.LASTVISITORS);
-		 //	this.startService(updateInt);
-	    	startReciever();
-	    	PollingHandler polling = Services.getPollingHandler();
+		 	PollingHandler polling = Services.getPollingHandler();
 	    	polling.startService();
 	    	return true;
-	    case (R.id.action_halt):
-	    	PollingHandler poll = Services.getPollingHandler();
-	    	poll.stopPolling(false);
+	    }
+	    case (R.id.action_halt): {
+	    	PollingHandler polling = Services.getPollingHandler();
+	    	polling.stopPolling(false);
 	    	Services.setPreference(this, "sync_frequency", "-1");
-	    	return true;
-	    case (R.id.action_visitors):{
-	    	Intent intent = new Intent(this, DisplayResultsActivity.class);
-			intent.putExtra(Services.Statics.KEY,DisplayResultsActivity.LASTVISITORS); 
-			startActivity(intent);
 	    	return true;
 	    }
 	    case (R.id.action_bookings):{
@@ -170,18 +116,91 @@ public class MainActivity extends NFCActivity {
 	       	return true;
 	    }
 	    case (R.id.action_addMember):{
-	    	Intent intent = new Intent(this, AddMember.class);
+	    	Intent intent = new Intent(this, MemberAdd.class);
 	    	startActivity(intent);
 	    	return true;
 	    }
-	    case (R.id.action_findMember):{
-	    	Intent i = new Intent(this, MemberFind.class);
-	    	startActivity(i);
-	    	return true;
-	    }
-	    
 	    default:
 	    	return super.onOptionsItemSelected(item);
 	    }
 	}
+	
+	public static int getContentViewCompat() {
+	    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH ?
+	               android.R.id.content : R.id.action_bar_activity_content;
+	}
+	
+	public static Context getContext(){
+		return context;
+	}
+	
+	public static class TabListener<T extends Fragment> implements ActionBar.TabListener {
+	    private Fragment mFragment;
+	    private final ActionBarActivity mActivity;
+	    private final String mTag;
+	    private final Class<T> mClass;
+
+	    /** Constructor used each time a new tab is created.
+	      * @param activity  The host Activity, used to instantiate the fragment
+	      * @param tag  The identifier tag for the fragment
+	      * @param clz  The fragment's Class, used to instantiate the fragment
+	      */
+	    public TabListener(ActionBarActivity activity, String tag, Class<T> clz) {
+	        mActivity = activity;
+	        mTag = tag;
+	        mClass = clz;
+	        Log.i("TabListener", "Creating Fragment:"+mTag);
+	        mFragment = mActivity.getSupportFragmentManager().findFragmentByTag(mTag);
+            if (mFragment != null && !mFragment.isDetached()) {
+            	Log.d("TabListener", "Fragment already existsed and was visible.");
+                FragmentTransaction ft = mActivity.getSupportFragmentManager().beginTransaction();
+                ft.remove(mFragment);
+                ft.commit();
+                mFragment = null;
+            }
+	        
+	    }
+
+	    /* The following are each of the ActionBar.TabListener callbacks */
+
+	    public void onTabSelected(Tab tab, FragmentTransaction ft) {
+	        // Check if the fragment is already initialized
+	    	 mFragment = mActivity.getSupportFragmentManager().findFragmentByTag(mTag);
+	         if (mFragment == null) {
+	            // If not, instantiate and add it to the activity
+	        	//mActivity.getSupportFragmentManager().executePendingTransactions();
+	            mFragment = Fragment.instantiate(mActivity, mClass.getName());
+	            Log.i("TabListener", "Adding Fragment:"+mTag);
+	          
+	            ft.replace(getContentViewCompat(), mFragment, mTag);
+	        } else {
+	            // If it exists, simply attach it in order to show it
+	        	//mActivity.getSupportFragmentManager().executePendingTransactions();
+	        	Log.i("TabListener", "Attaching Fragment:"+mTag);
+	        	ft.replace(getContentViewCompat(), mFragment, mTag);
+	        }
+	    }
+
+	    public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+	    	mFragment = mActivity.getSupportFragmentManager().findFragmentByTag(mTag);
+	    	if (mFragment != null) {
+	            // Detach the fragment, because another one is being attached
+	    		//mActivity.getSupportFragmentManager().executePendingTransactions();
+	    		Log.i("TabListener", "Detaching Fragment:"+mTag);
+	    		ft.detach(mFragment);
+	        } else {
+	        	Log.i("TabListener", "Fragment not dettached, for tab:"+tab.getText());
+	        }
+	    }
+
+	    public void onTabReselected(Tab tab, FragmentTransaction ft) {
+	        // User selected the already selected tab. Usually do nothing.
+	    }
+	}
+
+	@Override
+	public void onDateChange(Date date) {
+				
+	}
+		
 }

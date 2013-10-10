@@ -357,7 +357,7 @@ public class JDBCConnection {
     
     public ResultSet getClasses() throws SQLException {
     	ResultSet rs = null;
-    	pStatement = con.prepareStatement("SELECT * FROM class;");
+    	pStatement = con.prepareStatement("SELECT id, name, max_students,  description, price, onlinebook FROM class;");
     	rs = pStatement.executeQuery();
     	return rs;
     }
@@ -402,7 +402,13 @@ public class JDBCConnection {
     	pStatement.setString(8, booking.get(ContentDescriptor.Booking.Cols.FNAME));
     	pStatement.setString(9, booking.get(ContentDescriptor.Booking.Cols.SNAME));
     	pStatement.setInt(10, Integer.parseInt(booking.get(ContentDescriptor.Booking.Cols.RESULT)));
-    	pStatement.setInt(11, Integer.parseInt(booking.get(ContentDescriptor.Booking.Cols.MSID)));
+    	if (booking.get(ContentDescriptor.Booking.Cols.MSID) == null || booking.get(ContentDescriptor.Booking.Cols.MSID).compareTo("null")
+    			== 0) {
+    		//no membershipID
+    		pStatement.setNull(11, java.sql.Types.INTEGER);
+    	} else {
+    		pStatement.setInt(11, Integer.parseInt(booking.get(ContentDescriptor.Booking.Cols.MSID)));
+    	}
     	pStatement.setString(12, booking.get(ContentDescriptor.Booking.Cols.NOTES));
     	
     	pStatement.setString(13, booking.get(ContentDescriptor.Booking.Cols.ETIME));

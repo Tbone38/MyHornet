@@ -20,7 +20,7 @@
 	 	    android:background="@color/gym"
 	 	    android:textSize="18sp"
 	 	    android:padding="5dp"
-	 	    android:layout_margin="7dp" /> 
+	 	    android:layout_margin="3dp" /> 
 	 	    
 	 	<TextView 
 	 	    android:id="@+id/membershipname"
@@ -30,7 +30,7 @@
 	 	    android:gravity="center"
 	 	    android:textSize="16sp"
 	 	    android:padding="5dp"
-	 	    android:layout_margin="7dp"/>
+	 	    android:layout_margin="3dp"/>
 	 	
 	 	<LinearLayout 
 	 	    android:id="@+id/gifttimerow"
@@ -39,8 +39,10 @@
 	 	    android:layout_below="@id/membershipname"
 	 	    android:gravity="center"
 	 	    android:orientation="horizontal"
-	 	    android:padding="5dp"
-	 	    android:layout_margin="7dp" >
+	 	    android:paddingLeft="5dp"
+	 	    android:paddingRight="5dp"
+	 	    android:paddingTop="5dp"
+	 	    android:layout_margin="3dp" >
 	 	    
 		 	<TextView
 		 	    android:id="@+id/gifttimeL"
@@ -54,20 +56,32 @@
 		 	    android:id="@+id/gifttime"
 		 	    android:layout_width="0dp"
 		 	    android:layout_height="wrap_content"
-		 	    android:layout_weight=".2" />
+		 	    android:layout_weight=".2"
+		 	    android:textOn="@string/membership_gifttime_yes"
+		 	    android:textOff="@string/membership_gifttime_no" />
 		 	
 	 	</LinearLayout>
-	 	
+	 	<TextView
+	 	    android:id="@+id/gifttime_description"
+	 	    android:layout_width="wrap_content"
+	 	    android:layout_height="wrap_content"
+	 	    android:layout_below="@id/gifttimerow"
+	 	    android:textSize="13sp"
+	 	    android:text="@string/membership_gifttime_description"
+	 	    android:paddingLeft="5dp"
+	 	    android:paddingRight="5dp"
+	 	    android:paddingBottom="5dp"
+	 	    android:layout_margin="3dp" />
 	 	<TextView 
 	 	    android:id="@+id/startdateL"
 	 	    android:layout_width="wrap_content"
 	 	    android:layout_height="wrap_content"
-	 	    android:layout_below="@id/gifttimerow"
+	 	    android:layout_below="@id/gifttime_description"
 	 	    android:gravity="center"
 	 	    android:textSize="16sp"
 	 	    android:text="@string/membership_startdate"
 	 	    android:padding="5dp"
-	 	    android:layout_margin="7dp"/>
+	 	    android:layout_margin="3dp"/>
 	 	
 	 	<TextView 
 	 	    android:id="@+id/startdate"
@@ -78,7 +92,7 @@
 	 	    android:textSize="18sp"
 	 	    android:text="@string/membership_default_startdate"
 	 	    android:padding="5dp"
-	 	    android:layout_margin="7dp" />
+	 	    android:layout_margin="3dp" />
 	 	
 	 	<TextView
 	 	    android:id="@+id/hold_durationL"
@@ -89,7 +103,7 @@
 	 	    android:textSize="16sp"
 	 	    android:text="@string/membership_length"
 	 	    android:padding="5dp" 
-	 	    android:layout_margin="7dp"/>
+	 	    android:layout_margin="3dp"/>
 	 	
 	 	<Spinner 
 	 	    android:id="@+id/hold_duration"
@@ -97,7 +111,7 @@
 	 	    android:layout_height="wrap_content"
 	 	    android:layout_below="@id/hold_durationL"
 	 	    android:padding="5dp" 
-	 	    android:layout_margin="7dp"
+	 	    android:layout_margin="3dp"
 	 	    android:entries="@array/membership_length_titles" />
 	 	
 	 	<TextView 
@@ -109,7 +123,7 @@
 	 	    android:textSize="16sp"
 	 	    android:text="@string/membership_reason"
 	 	    android:padding="5dp" 
-	 	    android:layout_margin="7dp"/>
+	 	    android:layout_margin="3dp"/>
 	 	
 	 	<EditText
 	 	    android:id="@+id/hold_reason"
@@ -119,7 +133,7 @@
 	 	    android:gravity="center"
 	 	    android:inputType="text"
 	 	    android:padding="5dp"
-	 	    android:layout_margin="7dp" />
+	 	    android:layout_margin="3dp" />
 	 	
 	 	<LinearLayout
 	 	    android:id="@+id/buttonrow"
@@ -135,7 +149,9 @@
 	 	        android:layout_weight=".45"
 	 	        android:gravity="center"
 	 	        android:textSize="20sp"
-	 	        android:text="@string/buttonAccept" />
+	 	        android:text="@string/buttonAccept"
+	 	        android:padding="5dp"
+	 	    	android:layout_margin="3dp" />
 	 	    
 	 	    <TextView
 	 	        android:id="@+id/buttoncancel"
@@ -144,7 +160,9 @@
 	 	        android:layout_weight=".45"
 	 	        android:gravity="center"
 	 	        android:textSize="20sp"
-	 	        android:text="@string/buttonCancel" />
+	 	        android:text="@string/buttonCancel"
+	 	        android:padding="5dp"
+	 	    	android:layout_margin="3dp" />
 	 	    
 	 	</LinearLayout>    
 	</RelativeLayout>

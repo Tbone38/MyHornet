@@ -16,7 +16,7 @@ SELECT
         WHEN member.id IS NOT NULL THEN
             member.firstname
         ELSE 'card#'|| entryexit.cardno::text
-    END AS fmname, --TODO: fix this, as seperate firstname and surname
+    END AS fmname, 
     CASE
     	WHEN membership.cardno != entryexit.cardno THEN
 		member.surname

@@ -1,5 +1,7 @@
 package com.treshna.hornet;
 
+import com.treshna.hornet.R.color;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -15,6 +17,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -33,11 +36,13 @@ public class MemberFindFragment extends ListFragment implements LoaderManager.Lo
 	private String input;
 	private boolean is_booking;
 	private OnMemberSelectListener mCallback;
+	private static final String TAG = "MemberFindFragment";
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		// Show the Up button in the action bar.
+		Log.v(TAG, "Creating MemberFindFragment");
 	 	is_booking = false;
 	 	Bundle b = null;
 	 	try {
@@ -48,7 +53,6 @@ public class MemberFindFragment extends ListFragment implements LoaderManager.Lo
 	 	} catch (Exception e) {
 	 		is_booking = false;
 	 	}
-		
 		loadermanager = getLoaderManager();
 		contentResolver = getActivity().getContentResolver();
 		parent = getActivity();
@@ -69,6 +73,7 @@ public class MemberFindFragment extends ListFragment implements LoaderManager.Lo
 	 @Override
 	 public void onResume(){
 		 super.onResume();
+		 Log.v(TAG, "Resuming MemberFindFragment");
 		 setupView();
 	 }
 	 
@@ -166,7 +171,7 @@ public class MemberFindFragment extends ListFragment implements LoaderManager.Lo
 	public void onClick(View v) {
 		switch (v.getId()){
 			case (R.id.add):{
-			Intent i = new Intent(parent, AddMember.class);
+			Intent i = new Intent(parent, MemberAdd.class);
 			startActivity(i);
 			}
 		}

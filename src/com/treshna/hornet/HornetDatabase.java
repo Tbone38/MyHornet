@@ -30,7 +30,7 @@ import com.treshna.hornet.ContentDescriptor.Visitor;
 public class HornetDatabase extends SQLiteOpenHelper {
 	
 	 public static final String DATABASE_NAME="hornet.db";
-	 private static final int DATABASE_VERSION = 81;
+	 private static final int DATABASE_VERSION = 82;
 	 
 	 public HornetDatabase (Context context) {
 		 super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -159,7 +159,8 @@ public class HornetDatabase extends SQLiteOpenHelper {
 				+ContentDescriptor.Class.Cols.SDATE+" INTEGER, "+ContentDescriptor.Class.Cols.FREQ+" TEXT, "
 				+ContentDescriptor.Class.Cols.STIME+" TEXT, "+ContentDescriptor.Class.Cols.ETIME+" TEXT, "
 				+ContentDescriptor.Class.Cols.MAX_ST+" INTEGER, "+ContentDescriptor.Class.Cols.RID+" INTEGER, "
-				+ContentDescriptor.Class.Cols.LASTUPDATED+" NUMERIC "
+				+ContentDescriptor.Class.Cols.LASTUPDATED+" NUMERIC, "+ContentDescriptor.Class.Cols.ONLINE+" INTEGER DEFAULT 1,"
+				+ContentDescriptor.Class.Cols.DESC+" TEXT "
 				+");");
 		
 		/* TODO:

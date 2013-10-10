@@ -16,12 +16,14 @@ import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,7 +33,7 @@ import android.widget.ArrayAdapter;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 
-public class BookingsSlidePager extends FragmentActivity  implements BookingsListFragment.OnCalChangeListener {
+public class BookingsSlidePager extends ActionBarActivity  implements BookingsListFragment.OnCalChangeListener {
 	private static int NUM_PAGES = 7; //?
 	
 	private Map<Integer, BookingsListFragment> fragmentlist = new HashMap<Integer, BookingsListFragment>();
@@ -41,6 +43,7 @@ public class BookingsSlidePager extends FragmentActivity  implements BookingsLis
     
     private Cursor cur;
     private ContentResolver contentResolver;
+    private static final String TAG = "BookingsSlidePager";
     
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override //when the server sync finishes, it sends out a broadcast.
@@ -58,6 +61,9 @@ public class BookingsSlidePager extends FragmentActivity  implements BookingsLis
         Services.setContext(this);
               
         setContentView(R.layout.swipe_layout);
+        ActionBar actionBar = getSupportActionBar();
+	    actionBar.setDisplayHomeAsUpEnabled(true);
+        
         // Instantiate a ViewPager and a PagerAdapter.
         mPager = (ViewPager) findViewById(R.id.pager);
         mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
@@ -116,16 +122,16 @@ public class BookingsSlidePager extends FragmentActivity  implements BookingsLis
     private void updateSelection(int value){
     	if (value > 0 && value != Integer.valueOf(Services.getAppSettings(this, "resourcelist"))) {
 	    	Services.setPreference(this, "resourcelist", String.valueOf(value));
-	    	
+	    	Log.v(TAG, "Selection Updated");
 	    	Intent updateInt = new Intent(this, HornetDBService.class);
 			updateInt.putExtra(Services.Statics.KEY, Services.Statics.RESOURCESELECTED);
 			updateInt.putExtra("newtime", String.valueOf(value));
 		 	this.startService(updateInt);
-		 	
+		 	Log.v(TAG, "Started ResourceSelected Update Intent");
 		 	Intent bookings = new Intent(this, HornetDBService.class);
 			bookings.putExtra(Services.Statics.KEY, Services.Statics.BOOKING);
 		 	this.startService(bookings);
-		 	
+		 	Log.v(TAG, "Started Booking Update Intent");
 		 	//just change the cursor.
 		 	BookingsListFragment page = fragmentlist.get(mPager.getCurrentItem());
 		 	if (page != null) {
@@ -195,70 +201,65 @@ public class BookingsSlidePager extends FragmentActivity  implements BookingsLis
 		super.onPause();
 	}
 	 
-	@Override
+    @Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.main, menu);
+		getMenuInflater().inflate(R.menu.not_main, menu);
 		return true;
 	}
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		    // Handle item selection
-		    switch (item.getItemId()) {
-		    case android.R.id.home:
-				NavUtils.navigateUpFromSameTask(this);
-				return true;
-		    case (R.id.action_settings):
-		    	Intent settingsIntent = new Intent(this, SettingsActivity.class);
-		    	startActivity(settingsIntent);
-		    	return true;
-		    case (R.id.action_scan):
-		    	Intent scanIntent = new Intent(this, HornetRFIDReader.class);
-		    	startActivity(scanIntent);
-		    	return true;
-		    case (R.id.action_update): { //this updates last visitors.
-		    	SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-			 	if (Integer.parseInt(preferences.getString("sync_frequency", "-1")) == -1) {
-			 		Services.setPreference(this, "sync_frequency", "5");
-			 	}
-			 	PollingHandler polling = Services.getPollingHandler();
-		    	polling.startService();
-		    	return true;
-		    }
-		    case (R.id.action_halt): {
-		    	PollingHandler polling = Services.getPollingHandler();
-		    	polling.stopPolling(false);
-		    	Services.setPreference(this, "sync_frequency", "-1");
-		    	return true;
-		    }
-		    case (R.id.action_bookings):{
-		    	Intent bookings = new Intent(this, HornetDBService.class);
-				bookings.putExtra(Services.Statics.KEY, Services.Statics.BOOKING);
-			 	this.startService(bookings);
-		    	
-			 	Intent intent = new Intent(this, BookingsSlidePager.class);
-		       	startActivity(intent);
-		       	return true;
-		    }
-		    case (R.id.action_addMember):{
-		    	Intent intent = new Intent(this, AddMember.class);
-		    	startActivity(intent);
-		    	return true;
-		    }
-		    case (R.id.action_findMember):{
-		    	Intent i = new Intent(this, MemberFind.class);
-		    	startActivity(i);
-		    	return true;
-		    }
-		    case (R.id.action_visitors):{
-		    	Intent intent = new Intent(this, DisplayResultsActivity.class);
-				intent.putExtra(Services.Statics.KEY,DisplayResultsActivity.LASTVISITORS); 
-				startActivity(intent);
-		    	return true;
-		    }
-		    default:
-		    	return super.onOptionsItemSelected(item);
-		}       
-	 }
+	    // Handle item selection
+	    switch (item.getItemId()) {
+	    case android.R.id.home:
+			NavUtils.navigateUpFromSameTask(this);
+			return true;
+	    case (R.id.action_home):{
+	    	Intent i = new Intent (this, MainActivity.class);
+	    	startActivity(i);
+	    	return true;
+	    }
+	    case (R.id.action_createclass):{
+	    	Intent i = new Intent(this, ClassCreate.class);
+	    	startActivity(i);
+	    	return true;
+	    }
+	    case (R.id.action_settings):
+	    	Intent settingsIntent = new Intent(this, SettingsActivity.class);
+	    	startActivity(settingsIntent);
+	    	return true;
+	    case (R.id.action_update): {
+	    	SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+		 	if (Integer.parseInt(preferences.getString("sync_frequency", "-1")) == -1) {
+		 		Services.setPreference(this, "sync_frequency", "5");
+		 	}
+		 	PollingHandler polling = Services.getPollingHandler();
+	    	polling.startService();
+	    	return true;
+	    }
+	    case (R.id.action_halt): {
+	    	PollingHandler polling = Services.getPollingHandler();
+	    	polling.stopPolling(false);
+	    	Services.setPreference(this, "sync_frequency", "-1");
+	    	return true;
+	    }
+	    case (R.id.action_bookings):{
+	    	Intent bookings = new Intent(this, HornetDBService.class);
+			bookings.putExtra(Services.Statics.KEY, Services.Statics.BOOKING);
+		 	this.startService(bookings);
+	    	
+		 	Intent intent = new Intent(this, BookingsSlidePager.class);
+	       	startActivity(intent);
+	       	return true;
+	    }
+	    case (R.id.action_addMember):{
+	    	Intent intent = new Intent(this, MemberAdd.class);
+	    	startActivity(intent);
+	    	return true;
+	    }	    
+	    default:
+	    	return super.onOptionsItemSelected(item);
+	    }
+	}
 
     class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter{
     	

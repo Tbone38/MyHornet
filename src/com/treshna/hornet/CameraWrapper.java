@@ -13,10 +13,12 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.app.NavUtils;
 import android.view.Menu;
@@ -140,26 +142,62 @@ public class CameraWrapper extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
+		getMenuInflater().inflate(R.menu.not_main, menu);
 		return true;
 	}
-
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			// This ID represents the Home or Up button. In the case of this
-			// activity, the Up button is shown. Use NavUtils to allow users
-			// to navigate up one level in the application structure. For
-			// more details, see the Navigation pattern on Android Design:
-			//
-			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
-			//
+	    // Handle item selection
+	    switch (item.getItemId()) {
+	    case android.R.id.home:
 			NavUtils.navigateUpFromSameTask(this);
 			return true;
-		}
-		return super.onOptionsItemSelected(item);
+	    case (R.id.action_home):{
+	    	Intent i = new Intent (this, MainActivity.class);
+	    	startActivity(i);
+	    	return true;
+	    }
+	    case (R.id.action_createclass):{
+	    	Intent i = new Intent(this, ClassCreate.class);
+	    	startActivity(i);
+	    	return true;
+	    }
+	    case (R.id.action_settings):
+	    	Intent settingsIntent = new Intent(this, SettingsActivity.class);
+	    	startActivity(settingsIntent);
+	    	return true;
+	    case (R.id.action_update): {
+	    	SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+		 	if (Integer.parseInt(preferences.getString("sync_frequency", "-1")) == -1) {
+		 		Services.setPreference(this, "sync_frequency", "5");
+		 	}
+		 	PollingHandler polling = Services.getPollingHandler();
+	    	polling.startService();
+	    	return true;
+	    }
+	    case (R.id.action_halt): {
+	    	PollingHandler polling = Services.getPollingHandler();
+	    	polling.stopPolling(false);
+	    	Services.setPreference(this, "sync_frequency", "-1");
+	    	return true;
+	    }
+	    case (R.id.action_bookings):{
+	    	Intent bookings = new Intent(this, HornetDBService.class);
+			bookings.putExtra(Services.Statics.KEY, Services.Statics.BOOKING);
+		 	this.startService(bookings);
+	    	
+		 	Intent intent = new Intent(this, BookingsSlidePager.class);
+	       	startActivity(intent);
+	       	return true;
+	    }
+	    case (R.id.action_addMember):{
+	    	Intent intent = new Intent(this, MemberAdd.class);
+	    	startActivity(intent);
+	    	return true;
+	    }	    
+	    default:
+	    	return super.onOptionsItemSelected(item);
+	    }
 	}
 
 }

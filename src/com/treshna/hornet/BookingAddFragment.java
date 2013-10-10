@@ -371,7 +371,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 			Bundle b = new Bundle(1);
 			b.putBoolean(Services.Statics.IS_BOOKING, true);
 			f.setArguments(b);
-			ft.replace(R.id.bookingframe, f);
+			ft.replace(R.id.booking_frame, f);
 			//ft.addToBackStack(null);
 			ft.commit();
 			//this.

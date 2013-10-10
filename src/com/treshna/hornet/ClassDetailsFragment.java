@@ -43,6 +43,7 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 	private Cursor cur;
 	private ContentResolver contentResolver;
 	private String bookingID;
+	private String classId;
 	private Context ctx;
 	ClassMemberListAdapter mAdapter;
 	LoaderManager mLoaderManager;
@@ -124,6 +125,7 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 		date = cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.ARRIVAL));
 		stime = cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.STIME));
 		etime = cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.ETIME));
+		classId = cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.CLASSID));
 		
 		cur.close();
 		getActivity().setTitle(classname);
@@ -169,15 +171,36 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 		 * and then either: Add said member to the list
 		 * 				or Check the box for the member if they're already in the list.
 		 */
-		Log.v(TAG, "TAG DISCOVERY, SERIAL: "+serial);
+		int maxStudents = 0, curStudents, online = 0;
 		ContentResolver contentResolver;
+		contentResolver = getActivity().getContentResolver();
+		Cursor cur = contentResolver.query(ContentDescriptor.Class.CONTENT_URI, null, ContentDescriptor.Class.Cols.CID+" = ?",
+				new String[] {classId}, null);
+		if (cur.moveToFirst()) {
+			maxStudents = cur.getInt(cur.getColumnIndex(ContentDescriptor.Class.Cols.MAX_ST));
+			online = cur.getInt(cur.getColumnIndex(ContentDescriptor.Class.Cols.ONLINE));
+		}
+		cur.close();
+		//how many students are currently signed up?
+		cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.PARENTID+" = ?",
+				new String[] {bookingID}, null);
+		curStudents = cur.getCount();
+		
+		if (curStudents >= maxStudents || online == 0) {
+			//can't add members, we're already full (or online booking's are set to false for this class).
+			Toast.makeText(getActivity(), "The class has already reached it's student limit!", Toast.LENGTH_LONG).show();
+			return;
+		}
+		
+		Log.v(TAG, "TAG DISCOVERY, SERIAL: "+serial);
+		
 		ContentValues values;
 		String door;
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS", Locale.US);
 
 		door = "-"+bookingID;
 		
-		contentResolver = getActivity().getContentResolver();
+		
 		values = new ContentValues();
 		values.put(ContentDescriptor.Swipe.Cols.ID, serial);
 		values.put(ContentDescriptor.Swipe.Cols.DOOR, door);
@@ -231,6 +254,28 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 		case (R.id.classAddMemberB):{
 			// get the name from the edit-text, look up member,
 			// add member(ship?) to the list.
+			int maxStudents = 0, curStudents, online = 0;
+			ContentResolver contentResolver;
+			contentResolver = getActivity().getContentResolver();
+			Cursor cur = contentResolver.query(ContentDescriptor.Class.CONTENT_URI, null, ContentDescriptor.Class.Cols.CID+" = ?",
+					new String[] {classId}, null);
+			if (cur.moveToFirst()) {
+				maxStudents = cur.getInt(cur.getColumnIndex(ContentDescriptor.Class.Cols.MAX_ST));
+				online = cur.getInt(cur.getColumnIndex(ContentDescriptor.Class.Cols.ONLINE));
+			}
+			cur.close();
+			//how many students are currently signed up?
+			cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.PARENTID+" = ?",
+					new String[] {bookingID}, null);
+			curStudents = cur.getCount();
+			
+			if (curStudents >= maxStudents || online == 0) {
+				//can't add members, we're already full (or online booking's are set to false for this class).
+				Toast.makeText(getActivity(), "The class has already reached it's student limit!", Toast.LENGTH_LONG).show();
+				return;
+			}
+			
+			
 			AutoCompleteTextView findmember;
 			findmember = (AutoCompleteTextView) ((View) view.getParent()).findViewById(R.id.classAddMember);
 			
@@ -238,9 +283,6 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 			membername = findmember.getEditableText().toString();
 			
 			Log.v(TAG, "Got member with name: "+membername);
-			
-			ContentResolver contentResolver;
-			Cursor cur;
 			
 			contentResolver = getActivity().getContentResolver();
 			

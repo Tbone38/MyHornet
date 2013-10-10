@@ -196,7 +196,7 @@ public class VisitorsViewAdapter extends SimpleCursorAdapter implements OnClickL
 		LayoutInflater inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			
-			View rowView = inflater.inflate(R.layout.visitor_list, parent, false);
+			View rowView = inflater.inflate(R.layout.visitor_row, parent, false);
 			
 				/***Last Visitors***/
 				//buildLVLayout(rowView);

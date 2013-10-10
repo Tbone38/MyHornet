@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,7 +25,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class AddMember extends NFCActivity implements OnClickListener{
+public class MemberAdd extends NFCActivity implements OnClickListener{
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
 	@Override
@@ -32,12 +33,15 @@ public class AddMember extends NFCActivity implements OnClickListener{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_add_member);
 		Services.setContext(this);
+		ActionBar actionBar = getSupportActionBar();
+	    actionBar.setDisplayHomeAsUpEnabled(true);
+		
 		/*
 		 * This is the private-hidden setting used for determining if the last
 		 * insert was a member or a prospect.
 		 */
-		SharedPreferences preferences = this.getSharedPreferences(MainActivity.PREF_NAME, MODE_PRIVATE);
-		int id = preferences.getInt(MainActivity.PREF_KEY, -1);
+		SharedPreferences preferences = this.getSharedPreferences(Services.Statics.PREF_NAME, MODE_PRIVATE);
+		int id = preferences.getInt(Services.Statics.PREF_KEY, -1);
 		if (id != -1){
 			RadioButton radio = (RadioButton) this.findViewById(id);
 			radio.setChecked(true);
@@ -76,11 +80,9 @@ public class AddMember extends NFCActivity implements OnClickListener{
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
+		getMenuInflater().inflate(R.menu.not_main, menu);
 		return true;
 	}
-		
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    // Handle item selection
@@ -88,13 +90,19 @@ public class AddMember extends NFCActivity implements OnClickListener{
 	    case android.R.id.home:
 			NavUtils.navigateUpFromSameTask(this);
 			return true;
+	    case (R.id.action_home):{
+	    	Intent i = new Intent (this, MainActivity.class);
+	    	startActivity(i);
+	    	return true;
+	    }
+	    case (R.id.action_createclass):{
+	    	Intent i = new Intent(this, ClassCreate.class);
+	    	startActivity(i);
+	    	return true;
+	    }
 	    case (R.id.action_settings):
 	    	Intent settingsIntent = new Intent(this, SettingsActivity.class);
 	    	startActivity(settingsIntent);
-	    	return true;
-	    case (R.id.action_scan):
-	    	Intent scanIntent = new Intent(this, HornetRFIDReader.class);
-	    	startActivity(scanIntent);
 	    	return true;
 	    case (R.id.action_update): {
 	    	SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -111,12 +119,6 @@ public class AddMember extends NFCActivity implements OnClickListener{
 	    	Services.setPreference(this, "sync_frequency", "-1");
 	    	return true;
 	    }
-	    case (R.id.action_visitors):{
-	    	Intent intent = new Intent(this, DisplayResultsActivity.class);
-			intent.putExtra(Services.Statics.KEY,DisplayResultsActivity.LASTVISITORS); 
-			startActivity(intent);
-	    	return true;
-	    }
 	    case (R.id.action_bookings):{
 	    	Intent bookings = new Intent(this, HornetDBService.class);
 			bookings.putExtra(Services.Statics.KEY, Services.Statics.BOOKING);
@@ -127,15 +129,10 @@ public class AddMember extends NFCActivity implements OnClickListener{
 	       	return true;
 	    }
 	    case (R.id.action_addMember):{
-	    	Intent intent = new Intent(this, AddMember.class);
+	    	Intent intent = new Intent(this, MemberAdd.class);
 	    	startActivity(intent);
 	    	return true;
-	    }
-	    case (R.id.action_findMember):{
-	    	Intent i = new Intent(this, MemberFind.class);
-	    	startActivity(i);
-	    	return true;
-	    }
+	    }	    
 	    default:
 	    	return super.onOptionsItemSelected(item);
 	    }
@@ -301,10 +298,10 @@ public class AddMember extends NFCActivity implements OnClickListener{
 			emptyFields.add("memberSignupType");
 			emptyFields.add(String.valueOf(R.id.labelSignupType));
 		} else {
-			SharedPreferences memberAdd = this.getSharedPreferences(MainActivity.PREF_NAME, MODE_PRIVATE);
+			SharedPreferences memberAdd = this.getSharedPreferences(Services.Statics.PREF_NAME, MODE_PRIVATE);
 			SharedPreferences.Editor editor = memberAdd.edit();
-			if (member.isChecked()) editor.putInt(MainActivity.PREF_KEY, R.id.radioMember);
-			else if (prospect.isChecked()) editor.putInt(MainActivity.PREF_KEY, R.id.radioProspect);
+			if (member.isChecked()) editor.putInt(Services.Statics.PREF_KEY, R.id.radioMember);
+			else if (prospect.isChecked()) editor.putInt(Services.Statics.PREF_KEY, R.id.radioProspect);
 			editor.commit();
 		}
 		// rest of the fields optional?

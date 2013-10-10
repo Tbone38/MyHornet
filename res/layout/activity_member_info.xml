@@ -106,18 +106,39 @@
         android:textIsSelectable="false"
         android:layout_below="@id/memberDetails"
     />
-	 <LinearLayout android:id="@+id/memberinfo"
+	<LinearLayout android:id="@+id/memberinfo"
     	android:layout_width="match_parent"
     	android:layout_height="wrap_content"
     	android:layout_below="@id/memberinfoH"
     	android:orientation="vertical"
     	tools:context=".MemberDetails">
 	</LinearLayout>
-   
+	
+	<LinearLayout
+	    android:id="@+id/membernotes"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@id/memberinfo"
+	    android:orientation="vertical" >
+	    
+	    <TextView
+    	android:id="@+id/membernotesH"
+        android:padding="3dp"
+    	android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:background="@color/gym"
+        android:text="@string/heading_member_notes"
+        android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+        android:textIsSelectable="false" />
+	    
+	</LinearLayout>
+	 
     <LinearLayout android:id="@+id/membercontact"
     	android:layout_width="match_parent"
     	android:layout_height="wrap_content"
-    	android:layout_below="@id/memberinfo"
+    	android:layout_below="@id/membernotes"
     	android:orientation="vertical"
     	tools:context=".MemberDetails">
 		

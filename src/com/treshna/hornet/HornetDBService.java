@@ -76,17 +76,14 @@ public class HornetDBService extends Service {
 	   }
 	   thread.addNetwork(currentCall, resourceid, this);
 	   if (!thread.isAlive() && thread.getState() == Thread.State.NEW) {
-		   //System.out.print("\n\n**STARTING THREAD**\n\n");
 		   Log.v(TAG, "STARTING THREAD");
 		   thread.start();
 	   } else if (thread.getState() == Thread.State.TERMINATED || !thread.isAlive()) {
-		   //System.out.print("\n\n**RESTARTING THREAD**\n\n");
 		   Log.v(TAG, "RESTARTING THREAD");
 		   thread = new NetworkThread();
 		   thread.addNetwork(currentCall, resourceid, this);
 		   thread.start();
 	   } else {
-		  // System.out.print("\n\nTHREAD STATE:"+thread.getState());
 		   Log.v(TAG, "Thread State:"+thread.getState());
 	   }
 	   
@@ -183,34 +180,38 @@ public class HornetDBService extends Service {
  	   case (Services.Statics.BOOKING):{ //this should be rolled into last-visitors, if rid not set, then skip.
  		   statusMessage = null;
  		   thread.is_networking = true;
- 		   int uploadcount, result;
+ 		   int uploadcount, bookingcount, classcount;
  		 
- 		   /**
- 		    * if the bookingTime table hasn't been built then:
- 		    * no bookings are going to show in the list.
- 		    * this usually means the resource hasn't been selected/setup.
- 		    * 
- 		    * What should I do about it?
- 		    */
- 		  
+ 		  //check resource state.
+ 		  long last_sync = Long.parseLong(Services.getAppSettings(ctx, "b_lastsync"));
+ 		  int sresource = Integer.parseInt(Services.getAppSettings(ctx, "resourcelist"));
+ 		  if (last_sync <=10 && sresource < 0) {
+ 			  cur = contentResolver.query(ContentDescriptor.Resource.CONTENT_URI, null, null, null, null);
+ 			  if (cur.getCount() > 0) {
+ 				  Services.setPreference(ctx, "resourcelist", "1");
+ 			  }
+ 			  cur.close();
+ 		  }
  		   
 		   Services.showProgress(Services.getContext(), "Syncing Bookings From Server", handler, currentCall);
 		   //upload bookings, then update bookings, then get bookings.
 		   uploadcount = uploadBookings();
 		   updateBookings(); //this should be in last visitors as well
-		   result = getBookings();
+		   bookingcount = getBookings();
 		   bookingImages();
+		   
+		   classcount = getClasses();
 		   
 		   thread.is_networking = false;
 		  
-		   if (result >= 0) {
-			   statusMessage = "Retrieved "+result+" Bookings\n Uploaded "+uploadcount+" Bookings";
+		   if (bookingcount >= 0) {
+			   statusMessage = "Retrieved "+bookingcount+" Bookings\n Uploaded "+uploadcount+" Bookings";
 		   }
 		   Services.stopProgress(handler, currentCall);
 		   Services.showToast(getApplicationContext(), statusMessage, handler);
 		  
 		   Intent bcIntent = new Intent();
-		   if (result >= 0) {
+		   if (bookingcount >= 0) {
 			   bcIntent.putExtra(Services.Statics.IS_SUCCESSFUL, true);
 		   } else {
 			   bcIntent.putExtra(Services.Statics.IS_SUCCESSFUL, false);
@@ -1263,7 +1264,7 @@ public class HornetDBService extends Service {
     
     private int getBookings(){
     	ResultSet rs;
-    	int result, lastrid, resourceid;
+    	int result, lastrid, theResource;
     	Calendar cal;
     	java.sql.Date yesterday, tomorrow;
     	long this_sync, last_sync;
@@ -1279,23 +1280,40 @@ public class HornetDBService extends Service {
     	
     	this_sync = new Date().getTime();
     	last_sync = Long.parseLong(Services.getAppSettings(ctx, "b_lastsync"));
-    	lastrid = Integer.decode(Services.getAppSettings(ctx, "last_rid"));
-    	
-    	resourceid = Integer.decode(Services.getAppSettings(this, "resourcelist"));
-    	if (lastrid != resourceid) {
-    		last_sync = 3;
+    	String rid = Services.getAppSettings(ctx, "last_rid");
+    	if (rid == null || rid.compareTo("null") == 0) {
+    		lastrid = -1;
+    	} else {
+    		lastrid = Integer.decode(rid);
     	}
-    	if (resourceid < 0 ) {
+    	
+    	
+    	theResource = Integer.decode(Services.getAppSettings(this, "resourcelist"));
+    	if (lastrid != theResource) {
+    		last_sync = 0;
+    	}
+    	if (theResource < 0 ) {
     		statusMessage = "please set resource in the application settings";
     		return -1;
     	}
+    	cur = contentResolver.query(ContentDescriptor.BookingTime.CONTENT_URI, null, null, null, null);
+    	if (cur.getCount() <= 0) {
+    		Log.e(TAG, "**No Rows returned by BookingTime");
+    		resourceid = String.valueOf(theResource);
+	   	  	Log.v(TAG, "Selected Resource:"+resourceid);
+	   	  	//rebuild times, then update the reference in date.
+	   	  	setTime(); 
+	   	  	setDate();
+	   	  	updateOpenHours();
+    	}
+    	
     	try {
     		connection.openConnection();
     		/*System.out.print("\nYesterday:"+yesterday.toLocaleString());
     		System.out.print("\nTomorrow:"+tomorrow.toLocaleString());*/
     		//System.out.print("\nResourceID:"+resourceid);
     		//System.out.print("\n\nLast Sync:"+last_sync);
-    		rs = connection.getBookings(yesterday, tomorrow, resourceid, last_sync);
+    		rs = connection.getBookings(yesterday, tomorrow, theResource, last_sync);
     	} catch (SQLException e) {
     		e.printStackTrace();
     		statusMessage = e.getLocalizedMessage();
@@ -2024,12 +2042,64 @@ public class HornetDBService extends Service {
     	
     	return result;
     }
-    /**TODO
+    /**
+     * after getting bookings, we need to get classes.
+     * when swiping in tags for classes, we need to check that
+     * the class member limit has not been reached.
+     * @return
+     */
+    
     private int getClasses() {
     	int result = 0;
     	
+    	try {
+    		connection.openConnection();
+    	} catch (SQLException e) {
+    		statusMessage = e.getLocalizedMessage();
+    		return -1;
+    	} catch (ClassNotFoundException e) {
+    		//installation issue, Postgresql JDBC driver not found.
+    		throw new RuntimeException(e);
+    	}
+    	ResultSet rs = null;
+    	try {
+    		rs = connection.getClasses();
+    		//do handling here.
+    		while (rs.next()){
+    			ContentValues values = new ContentValues();
+    			values.put(ContentDescriptor.Class.Cols.CID, rs.getString("id"));
+    			values.put(ContentDescriptor.Class.Cols.NAME, rs.getString("name"));
+    			values.put(ContentDescriptor.Class.Cols.DESC, rs.getString("description"));
+    			values.put(ContentDescriptor.Class.Cols.MAX_ST, rs.getString("max_students"));
+    			if (rs.getString("onlinebook").compareTo("t") ==0) {
+    				values.put(ContentDescriptor.Class.Cols.ONLINE, 1);
+    			} else {
+    				values.put(ContentDescriptor.Class.Cols.ONLINE, 0);
+    			}
+    			
+    			cur = contentResolver.query(ContentDescriptor.Class.CONTENT_URI, null, ContentDescriptor.Class.Cols.CID+" = ?",
+    					new String[] {rs.getString("id")}, null);
+    			if (cur.getCount() > 0) {
+    				//update!
+    				contentResolver.update(ContentDescriptor.Class.CONTENT_URI, values, ContentDescriptor.Class.Cols.CID+" = ?", 
+    						new String[] {rs.getString("id")});
+    			} else {
+    				//insert!
+    				contentResolver.insert(ContentDescriptor.Class.CONTENT_URI, values);
+    			}
+    			cur.close();
+    			result +=1;
+    		}
+    		rs.close();
+    	} catch (SQLException e) {
+    		statusMessage = e.getLocalizedMessage();
+    		return -2;
+    	}
+    	connection.closePreparedStatement();
+    	connection.closeConnection();
+    	
     	return result;
-    }*/
+    }
     
     /** we need to look up the serial in the database,
 	 * find the member associated with it (if there is one),

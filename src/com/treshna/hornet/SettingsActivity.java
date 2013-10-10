@@ -127,7 +127,8 @@ public class SettingsActivity extends PreferenceActivity {
 	@Override
 	protected void onResume(){
 		super.onResume();
-		if (Services.getProgress() != null && Services.getProgress().isShowing()) {
+		Services.setContext(this);
+		if (Services.getProgress() != null) {
     		Services.getProgress().show();
 		}
 		IntentFilter iff = new IntentFilter();
@@ -152,8 +153,8 @@ public class SettingsActivity extends PreferenceActivity {
 		clearData.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-            	clearData();            	
-            		Intent i = getPackageManager().getLaunchIntentForPackage( DisplayResultsActivity.getContext().getPackageName() );
+            	clearData();             	
+            		Intent i = getPackageManager().getLaunchIntentForPackage( getApplicationContext().getPackageName() );
                 	i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 	startActivity(i);	
             	return true;
@@ -282,13 +283,13 @@ public class SettingsActivity extends PreferenceActivity {
 	}
 	
 	private static void clearData(){
-		Editor editor = PreferenceManager.getDefaultSharedPreferences(DisplayResultsActivity.getContext()).edit();
+		Editor editor = PreferenceManager.getDefaultSharedPreferences(MainActivity.getContext()).edit();
 		editor.clear();
 		editor.commit();
 		//does this break things?
-		ContentResolver contentResolver =  DisplayResultsActivity.getContext().getContentResolver();
+		ContentResolver contentResolver =  MainActivity.getContext().getContentResolver();
 		contentResolver.delete(ContentDescriptor.DROPTABLE_URI, null, null);
-		Toast.makeText(DisplayResultsActivity.getContext(), "Data Cleared, restarting Application.", Toast.LENGTH_LONG).show();
+		Toast.makeText(MainActivity.getContext(), "Data Cleared, restarting Application.", Toast.LENGTH_LONG).show();
 		//return result;
 	}
 	
