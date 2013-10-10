@@ -54,7 +54,7 @@ public class MemberDetails extends NFCActivity implements OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Services.setContext(this);
-		setContentView(R.layout.activity_member_info);
+		setContentView(R.layout.member_details);
 		ActionBar actionBar = getSupportActionBar();
 	    actionBar.setDisplayHomeAsUpEnabled(true);
 		Intent intent = getIntent();

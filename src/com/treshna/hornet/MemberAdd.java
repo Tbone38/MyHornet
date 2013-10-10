@@ -31,7 +31,7 @@ public class MemberAdd extends NFCActivity implements OnClickListener{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_add_member);
+		setContentView(R.layout.member_add);
 		Services.setContext(this);
 		ActionBar actionBar = getSupportActionBar();
 	    actionBar.setDisplayHomeAsUpEnabled(true);
