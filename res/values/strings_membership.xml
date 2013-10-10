@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="membership_gifttime">Gift Time</string>
+  <string name="membership_gifttime_yes">Yes</string>
+  <string name="membership_gifttime_no">No</string>
+  <string name="membership_gifttime_description">Can the member use the gym through the period?</string>
+  <string name="membership_startdate">Start Date</string>
+  <string name="membership_length">Duration</string>
+  <string name="membership_reason">Reason For Hold</string>
+  <string name="membership_default_startdate">Select Start Date</string>
+  <string name="action_halt_membership">Membership Hold</string>
+  <string-array name="membership_length_titles">
+      <item>1 week</item>
+      <item>2 weeks</item>
+      <item>1 month</item>
+      <item>2 months</item>
+      <item>3 months</item>
+      <item>6 months</item>
+  </string-array>
+  
+</resources>

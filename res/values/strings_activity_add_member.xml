@@ -1,0 +1,29 @@
+<resources>
+	<string name="labelFirstName">Enter Your Given Name</string>
+	<string name="labelSurnameName">Enter Your Surname Name</string>
+	<string name="labelEmail">Email Address:</string>
+	<string name="labelHomePhone">Home Phone:</string>
+	<string name="labelCellPhone">Cell Phone:</string>
+	<string name="labelStreet">Street Address:</string>
+	<string name="labelSuburb">Suburb:</string>
+	<string name="hintSuburb">Optional Suburb</string>
+	<string name="labelCity">City:</string>
+	<string name="hintCity">The Town/City you live in</string>
+	<string name="labelPostalCode">Postal Code:</string>
+	<string name="labelNotes">Notes:</string>
+	<string name="labelMedical">Medical Conditions:</string>
+	<string name="hintMedical">known Medical Conditions (leave blank if none)</string>
+	<string name="labelGender">Gender:</string>
+	<string name="radioMale">Male</string>
+	<string name="radioFemale">Female</string>
+	<string name="labelDoB">Date of Birth:</string>
+	<string name="hintDoB">dd/mm/yyyy</string>
+	<string name="labelSignupType">Sign-up Type:</string>
+	<string name="radioMember">Member</string>
+	<string name="radioProspect">Prospect</string>
+	<string name="labelMemberNo">Member Number:</string>
+	<string name="errorMemberNo">No MemberID\'s are available.</string>
+	<string name="buttonAccept">Accept</string>
+	<string name="buttonCancel">Cancel</string>
+	<string name="buttonClear">Clear</string>
+</resources>
