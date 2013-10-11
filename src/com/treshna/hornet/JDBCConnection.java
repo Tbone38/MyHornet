@@ -502,6 +502,33 @@ public class JDBCConnection {
     }
     
     
+    public int uploadSuspend(String sid, String mid, String msid, String startdate, String duration, 
+    		String reason, String freeze) throws SQLException {
+    	
+    	pStatement = con.prepareStatement("INSERT INTO membership_suspend (id, startdate, howlong, reason, "
+    			+ "memberid, freeze_fees) VALUES (?, ?::DATE, ?::INTERVAL, ?, ?, ?);");
+    	pStatement.setInt(1, Integer.decode(sid));
+    	pStatement.setString(2, Services.dateFormat(startdate, "yyyyMMdd", "yyyy-MM-dd"));
+    	pStatement.setString(3, duration);
+    	pStatement.setString(4, reason);
+    	pStatement.setInt(5, Integer.decode(mid));
+    	if (Integer.decode(freeze) == 1) {
+    		pStatement.setBoolean(6, true);
+    	} else {
+    		pStatement.setBoolean(6, false);
+    	}
+    	
+    	pStatement.executeUpdate();
+    	this.closePreparedStatement();
+    	
+    	pStatement = con.prepareStatement("UPDATE membership SET suspendid = ? WHERE id = ? ;");
+    	pStatement.setInt(1, Integer.decode(sid));
+    	pStatement.setInt(2, Integer.decode(msid));
+    	
+    	return pStatement.executeUpdate();
+    }
+    
+    
     public ResultSet startStatementQuery(String query) throws SQLException {
     	ResultSet rs = null;
 	    	statement = con.createStatement();
@@ -515,7 +542,7 @@ public class JDBCConnection {
     	if (statement != null) {
 	    	try {
 	    		statement.close();
-	    	} catch(Exception e) {
+	    	} catch(SQLException e) {
 	    		//e.printStackTrace();
 	    	} finally {
 	    		statement = null;
@@ -529,7 +556,7 @@ public class JDBCConnection {
     	if (pStatement != null) {
 	    	try{
 	    		pStatement.close();
-	    	}catch(Exception e){
+	    	}catch(SQLException e){
 	    		//e.printStackTrace();
 	    	} finally {
 	    		pStatement = null;

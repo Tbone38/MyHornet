@@ -16,6 +16,7 @@ import com.treshna.hornet.ContentDescriptor.Date;
 import com.treshna.hornet.ContentDescriptor.Image;
 import com.treshna.hornet.ContentDescriptor.Member;
 import com.treshna.hornet.ContentDescriptor.Membership;
+import com.treshna.hornet.ContentDescriptor.MembershipSuspend;
 import com.treshna.hornet.ContentDescriptor.OpenTime;
 import com.treshna.hornet.ContentDescriptor.Pending;
 import com.treshna.hornet.ContentDescriptor.PendingUploads;
@@ -30,7 +31,7 @@ import com.treshna.hornet.ContentDescriptor.Visitor;
 public class HornetDatabase extends SQLiteOpenHelper {
 	
 	 public static final String DATABASE_NAME="hornet.db";
-	 private static final int DATABASE_VERSION = 82;
+	 private static final int DATABASE_VERSION = 83;
 	 
 	 public HornetDatabase (Context context) {
 		 super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -162,18 +163,8 @@ public class HornetDatabase extends SQLiteOpenHelper {
 				+ContentDescriptor.Class.Cols.LASTUPDATED+" NUMERIC, "+ContentDescriptor.Class.Cols.ONLINE+" INTEGER DEFAULT 1,"
 				+ContentDescriptor.Class.Cols.DESC+" TEXT "
 				+");");
-		
-		/* TODO:
-		 * 	Consider adding a pending-uploads table that takes:
-		 * 		- an id (representing the table the pending upload is in),
-		 * 		- a row id (for the row in the table)
-		 * 		- a timestamp (?)
-		 * 
-		 * something like 	tableid 1 = booking (upload booking)
-		 * 					tableid 2 = class
-		 * 					tableid 3 = swipe
-		 * 					tableid 4 = member
-		 * 					tableid 5 = image
+		/*
+		 * used for referencing other tables in the database.
 		 */
 		db.execSQL("CREATE TABLE "+ContentDescriptor.TableIndex.NAME+" ("+ContentDescriptor.TableIndex.Cols._ID+" INTEGER PRIMARY KEY, "
 				+ContentDescriptor.TableIndex.Cols.NAME+" TEXT "
@@ -182,6 +173,13 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		db.execSQL("CREATE TABLE "+PendingUploads.NAME+" ("+PendingUploads.Cols._ID+" INTEGER PRIMARY KEY, "
 				+PendingUploads.Cols.TABLEID+" INTEGER, "+PendingUploads.Cols.ROWID+" INTEGER, "
 				+"FOREIGN KEY ("+PendingUploads.Cols.TABLEID+") REFERENCES "+TableIndex.NAME+" ("+TableIndex.Cols._ID+") "
+				+");");
+		
+		db.execSQL("CREATE TABLE "+MembershipSuspend.NAME+" ("+MembershipSuspend.Cols._ID+" INTEGER PRIMARY KEY, "
+				+MembershipSuspend.Cols.SID+" INTEGER, "+MembershipSuspend.Cols.MID+" INTEGER DEFAULT 0, "
+				+MembershipSuspend.Cols.STARTDATE+" INTEGER, "+MembershipSuspend.Cols.REASON+" TEXT, "
+				+MembershipSuspend.Cols.LENGTH+" INTEGER, " //# of days ?
+				+MembershipSuspend.Cols.FREEZE+" INTEGER, "+MembershipSuspend.Cols.MSID+" INTEGER "
 				+");");
 		
 		repopulateTable(db);
@@ -232,6 +230,7 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS "+Class.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+TableIndex.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+PendingUploads.NAME);
+		db.execSQL("DROP TABLE IF EXISTS "+MembershipSuspend.NAME);
 	}
 	
 	private void repopulateTable(SQLiteDatabase db) {

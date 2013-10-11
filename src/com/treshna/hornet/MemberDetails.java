@@ -298,7 +298,7 @@ public class MemberDetails extends NFCActivity implements OnClickListener {
 			}
 			
 			//add hold/edit membership button here.
-			/*if (null_count < 8  && member.get(0) != null && member.get(0).compareTo("null") != 0) {
+			if (null_count < 8  && member.get(0) != null && member.get(0).compareTo("null") != 0) {
 				Log.v(TAG, "creating HOLD Button.");
 				TextView hold = new TextView(this);
 				hold.setId(55008);
@@ -320,7 +320,7 @@ public class MemberDetails extends NFCActivity implements OnClickListener {
 				hold.setOnClickListener(this);
 				
 				msWindow.addView(hold);
-			}*/
+			}
 			
 			
 			memberInfo.addView(msWindow);

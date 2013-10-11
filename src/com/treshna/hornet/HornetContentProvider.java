@@ -143,6 +143,11 @@ public class HornetContentProvider extends ContentProvider {
         	getContext().getContentResolver().notifyChange(uri, null);
         	return rows;
         }
+        case ContentDescriptor.MembershipSuspend.PATH_TOKEN:{
+        	int rows = db.delete(ContentDescriptor.MembershipSuspend.NAME, selection, selectionArgs);
+        	getContext().getContentResolver().notifyChange(uri, null);
+        	return rows;
+        }
         
         case ContentDescriptor.TOKEN_DROPTABLE:{ //special case, drops tables/deletes database.
         	FileHandler fh = new FileHandler(ctx);
@@ -259,6 +264,11 @@ public class HornetContentProvider extends ContentProvider {
             	long id = db.insert(ContentDescriptor.PendingUploads.NAME, null, values);
             	getContext().getContentResolver().notifyChange(uri, null);
             	return ContentDescriptor.PendingUploads.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
+            }
+            case ContentDescriptor.MembershipSuspend.PATH_TOKEN:{
+            	long id = db.insert(ContentDescriptor.MembershipSuspend.NAME, null, values);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return ContentDescriptor.MembershipSuspend.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
             }
             
             default: {
@@ -502,6 +512,11 @@ public class HornetContentProvider extends ContentProvider {
             	builder.setTables(ContentDescriptor.PendingUploads.NAME);
             	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
             }
+            case ContentDescriptor.MembershipSuspend.PATH_TOKEN:{
+            	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+            	builder.setTables(ContentDescriptor.MembershipSuspend.NAME);
+            	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+            }
             
             default: throw new UnsupportedOperationException("URI: " + uri + " not supported.");
         }
@@ -604,6 +619,11 @@ public class HornetContentProvider extends ContentProvider {
             }
             case ContentDescriptor.PendingUploads.PATH_TOKEN:{
             	int result = db.update(ContentDescriptor.PendingUploads.NAME, values, selection, selectionArgs);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return result;
+            }
+            case ContentDescriptor.MembershipSuspend.PATH_TOKEN:{
+            	int result = db.update(ContentDescriptor.MembershipSuspend.NAME, values, selection, selectionArgs);
             	getContext().getContentResolver().notifyChange(uri, null);
             	return result;
             }

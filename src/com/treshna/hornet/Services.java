@@ -39,6 +39,7 @@ public class Services {
 		try {
 			date = input.parse(dateString);
 		} catch (ParseException e) {
+			Log.e(TAG, "Error Parsing Date:", e);
 			return ""; //or null?
 		}
 		SimpleDateFormat output = new SimpleDateFormat(outputLayout);

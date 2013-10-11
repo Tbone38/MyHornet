@@ -2,16 +2,16 @@ package com.treshna.hornet;
 
 import java.util.Date;
 
-import com.treshna.hornet.R.color;
-
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
@@ -20,6 +20,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.treshna.hornet.R.color;
 
 
 public class MainActivity extends NFCActivity implements BookingsListFragment.OnCalChangeListener{
@@ -66,8 +68,36 @@ public class MainActivity extends NFCActivity implements BookingsListFragment.On
 						this, "bookings", BookingsSlideFragment.class));
 		ab.addTab(bookingtab);*/
 		
+		
+		/**the below code needs to run on app start.
+         */
+        Intent updateInt = new Intent(this, HornetDBService.class);
+                updateInt.putExtra(Services.Statics.KEY, Services.Statics.LASTVISITORS);
+                PendingIntent pintent = PendingIntent.getService(this, 0, updateInt, PendingIntent.FLAG_UPDATE_CURRENT);
+                //polling = new PollingHandler(this, pintent);
+                Services.setPollingHandler(this, pintent);
+                startReciever();
+                /************************************/
 		Log.v("MainActivity", "Finished onCreate");
 	}
+	
+	public void startReciever(){
+		IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION);
+        registerReceiver(Services.getPollingHandler(), intentFilter);
+	}
+	
+	public void onStop() {
+		super.onStop();
+        
+        try {
+        	unregisterReceiver(Services.getPollingHandler()); //?
+        } catch (Exception e) {
+        	//doesn't matter.
+        }
+	}
+
+
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

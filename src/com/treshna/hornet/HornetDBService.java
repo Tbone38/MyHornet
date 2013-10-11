@@ -118,6 +118,10 @@ public class HornetDBService extends Service {
 		 
 		   	if (currenttime > (polling_start+threehours)) {
 		   		//polling has been running for over three hours, turn it off.
+		   		//I should probably let myself know that the Polling has been turned off.
+		   		Log.w(TAG, "Polling has been going for 3 hours, turning it off.");
+		   		Services.getPollingHandler().stopPolling(false);
+		   		Services.setPreference(ctx, "sync_frequency", "-1");
 		   		return;
 		   	}
 		   	boolean result = getLastVisitors();
@@ -129,6 +133,14 @@ public class HornetDBService extends Service {
 			uploadMember();
 			getMemberID();
 			getBookingID();
+			int sid_count = getSuspendID();
+			if (sid_count < 0) {
+				Services.showToast(getApplicationContext(), statusMessage, handler);
+			}
+			int upload_sid_count = uploadSuspends();
+			if (upload_sid_count < 0) {
+				Services.showToast(getApplicationContext(), statusMessage, handler);
+			}
 			Services.setPreference(ctx, "lastsync", String.valueOf(new Date().getTime()));
 			Services.showToast(getApplicationContext(), statusMessage, handler);
 			/*Broadcast an intent to let the app know that the sync has finished
@@ -171,6 +183,7 @@ public class HornetDBService extends Service {
 			Services.showToast(getApplicationContext(), statusMessage, handler);
 			//upload member
 			uploadMember();
+			
 			
 			thread.is_networking = false;
  			//}}).start();
@@ -333,16 +346,9 @@ public class HornetDBService extends Service {
 	public boolean getLastVisitors(){
     	    	
     	long this_sync = new Date().getTime();
-		try {
-			connection.openConnection();
-		} catch (SQLException e) {
-			statusMessage = e.getLocalizedMessage();
-			return false;
-		} catch (ClassNotFoundException e){
-			// postgres JDBC class not found, something went 
-			// wrong with the setup/installation.
-			throw new RuntimeException(e);
-		}
+    	if (!openConnection()) {
+    		return false; //connection failed;
+    	}
 	
         	/*
         	 * The Below information handles queries. 
@@ -522,8 +528,8 @@ public class HornetDBService extends Service {
 	    		e.printStackTrace();	
 	    	}
     	}
-        Services.setPreference(ctx, "lastsync", String.valueOf(this_sync));//String.valueOf(System.currentTimeMillis())
-    	//moved connection.close switch-case;   	
+        closeConnection();
+        Services.setPreference(ctx, "lastsync", String.valueOf(this_sync));//String.valueOf(System.currentTimeMillis())   	
 		return true;
     }
     
@@ -573,15 +579,9 @@ public class HornetDBService extends Service {
 		Log.v(TAG, "Querying Server for images");
 		//System.out.print("\n\n"+imageWhereQuery);
 		Log.v(TAG, imageWhereQuery);
-		try {
-			connection.openConnection();
-		} catch (SQLException e) {
-			statusMessage = e.getLocalizedMessage();
-			return;
-		} catch (ClassNotFoundException e) {
-			//JDBC postgres class not found.
-			throw new RuntimeException();
-		}
+		if (!openConnection()) {
+    		return ; //connection failed;
+    	}
 			/*
 			 * Hard-coded file size is a pain in the ass, look into fixing this.
 			 * If the filesize isn't exact, the query will fail (doesn't like having empty data in 
@@ -721,10 +721,9 @@ public class HornetDBService extends Service {
 			e.printStackTrace();
 			throw new RuntimeException(e);
 		} finally {
-			connection.closeStatementQuery();
-			cur.close();
+			closeConnection();
 		}
-		connection.closeConnection();
+		
 	}
     
 	public boolean uploadImage(int id, int mid, String cDate, String description, int isProfile) {
@@ -739,14 +738,8 @@ public class HornetDBService extends Service {
     	idExists = 0;
     	dateList = new ArrayList<String>();
     	dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
-    	try {
-    		connection.openConnection();
-    	} catch (SQLException e) {
-    		statusMessage = e.getLocalizedMessage();
-    		return false;
-    	} catch (ClassNotFoundException e) {
-    		//JDBC postgresql class not found. means an error during installation/compiling 
-    		throw new RuntimeException(e);
+    	if (!openConnection()) {
+    		return false; //connection failed;
     	}
   
     	try {	
@@ -761,9 +754,6 @@ public class HornetDBService extends Service {
     			//from imageCount(), getString(1)  = lastUpdated, 2 = created
     			idExists = rs.getRow();
     			dateList.add(rs.getString("created")); //does this want to be lastupdated? 
-    			/*System.out.println(idExists);
-    			serverImageDate = dateFormat.parse(rs.getString(1));
-    			System.out.println(serverImageDate);*/
     		}
     		rs.close();
     		connection.closePreparedStatement();	
@@ -832,8 +822,7 @@ public class HornetDBService extends Service {
     			e.printStackTrace();
     		}
     	}
-    	connection.closePreparedStatement();
-    	connection.closeConnection();
+    	closeConnection();
 	    return (updateCount != 0);	
     }
     
@@ -846,20 +835,12 @@ public class HornetDBService extends Service {
     	cur = contentResolver.query(ContentDescriptor.Pending.CONTENT_URI, null, ContentDescriptor.Pending.Cols.ISUSED+" = 1", null, null);
     	if (cur.getColumnCount() <= 0) {
     		cur.close();
-    		//System.out.print("\n\n NO pending members");
     		Log.v(TAG, "No Pending members");
     		return 0;
     	}
     	cur.moveToFirst();
-    	try {
-    		connection.openConnection();
-    	} catch (SQLException e) {
-    		statusMessage = e.getLocalizedMessage();
-    		return 0;
-    	}
-    	catch (ClassNotFoundException e) {
-    		//no postgresql jdbc class. 
-    		throw new RuntimeException(e);
+    	if (!openConnection()) {
+    		return -1; //connection failed;
     	}
     	try {
 	    	while (cur.getPosition() < cur.getCount()) { //TODO: ensure this matches the addMember required fields (2013-09-27)
@@ -926,8 +907,7 @@ public class HornetDBService extends Service {
 	    	statusMessage = e.getLocalizedMessage();
 	    	e.printStackTrace();
 	    }
-    	cur.close();
-    	connection.closeConnection();
+    	closeConnection();
     	return result;
     }
     /* Retrieves and stores free memberID's from the database,
@@ -937,16 +917,9 @@ public class HornetDBService extends Service {
     	//when pending.rowCount < 10, get memberID until rowCount = 200
     	//always do upload first.
     	int count;
-    	try {
-			connection.openConnection();
-		} catch (SQLException e) {
-			// Connection failed to open
-			statusMessage = e.getLocalizedMessage();
-			return 0;
-		} catch (ClassNotFoundException e) {
-			//postgresql JDBC class not found.
-			throw new RuntimeException(e);
-		}
+    	if (!openConnection()) {
+    		return -1; //connection failed; see statusMessage for why
+    	}
     	
     	cur = contentResolver.query(ContentDescriptor.Pending.CONTENT_URI, null, ContentDescriptor.Pending.Cols.ISUSED+" = 0", null, null);
     	count = cur.getCount();
@@ -999,7 +972,7 @@ public class HornetDBService extends Service {
     		}
     		
     	}
-    	connection.closeConnection();
+    	closeConnection();
     	return count;
     }
     
@@ -1007,16 +980,8 @@ public class HornetDBService extends Service {
     	int result = 0, count;
     	ResultSet rs;
     	
-    	try {
-			connection.openConnection();
-		} catch (SQLException e) {
-			// Connection failed to open
-			statusMessage = e.getLocalizedMessage();
-			return 0;
-		}
-    	catch (ClassNotFoundException e) {
-    		//Postgresql JDBC class not found.
-    		throw new RuntimeException(e);
+    	if (!openConnection()) {
+    		return -1; //connection failed;
     	}
     	cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.LASTUPDATED+" = 0", null, null);
     	count = cur.getCount();
@@ -1078,24 +1043,18 @@ public class HornetDBService extends Service {
     			//doesn't matter, we're only closing the statement anyway.
     		}
     	}
-    	connection.closeConnection();
+    	closeConnection();
     	return result;
     }
     
     private int getResource(){
     	ResultSet rs = null;
     	int result = 0;
-    	try {
-			connection.openConnection();
-    		rs = connection.getResource();
-    	} catch (SQLException e) {
-    		statusMessage = e.getLocalizedMessage();
-    		return 0;
-    	} catch (ClassNotFoundException e) {
-    		//postgresql JDBC class missing.
-    		throw new RuntimeException(e);
+    	if (!openConnection()) {
+    		return -1; //connection failed;
     	}
     	try {
+    		rs = connection.getResource();
     		while (rs.next()) {
     			cur = contentResolver.query(ContentDescriptor.Resource.CONTENT_URI, null, ContentDescriptor.Resource.Cols.ID +" = "+rs.getString(1),
 	    				null, null);
@@ -1115,8 +1074,7 @@ public class HornetDBService extends Service {
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
     	}
-    	connection.closePreparedStatement();
-    	connection.closeConnection();
+    	closeConnection();
     	
     	return result;
     }
@@ -1140,13 +1098,8 @@ public class HornetDBService extends Service {
     			"AND "+ContentDescriptor.Booking.Cols.IS_UPLOADED+" = 0",
     			new String[] {b_lastsync}, null);
     	
-    	try {
-    		connection.openConnection();
-    	} catch (SQLException e){
-    		statusMessage = e.getLocalizedMessage();
-    	} catch (ClassNotFoundException e) {
-    		//Postgresql JDBC class missing.
-    		throw new RuntimeException(e);
+    	if (!openConnection()) {
+    		return -1; //connection failed;
     	}
     	while (cur.moveToNext()) { //why isn't this using ContentValues() ?
 			Map<String, String> values = new HashMap<String, String>();
@@ -1197,8 +1150,7 @@ public class HornetDBService extends Service {
     	}
     	//System.out.print("\n\nUploaded "+result+" Bookings \n\n");
     	Log.v(TAG, "Uploaded "+result+" Bookings");
-    	cur.close();
-    	connection.closeConnection();
+    	closeConnection();
     	
     	ContentValues values = new ContentValues();
 		values.put(ContentDescriptor.Booking.Cols.IS_UPLOADED, 1);
@@ -1226,14 +1178,8 @@ public class HornetDBService extends Service {
     		cur.close();
     		return 0;
     	}
-    	try {
-    		connection.openConnection();
-    	} catch (SQLException e) {
-    		statusMessage = e.getLocalizedMessage();
-    		e.printStackTrace();
-    	} catch (ClassNotFoundException e) {
-    		//Postgresql JDBC class not found.
-    		throw new RuntimeException(e);
+    	if (!openConnection()) {
+    		return -1; //connection failed;
     	}
     	
     	while (cur.moveToNext()) {
@@ -1257,8 +1203,8 @@ public class HornetDBService extends Service {
     			e.printStackTrace();
     		}
     	}
-    	System.out.print("\n\nUpdated "+result+" Bookings!\n\n");
-    	connection.closeConnection();
+    	Log.v(TAG, "Updated "+result+" Booking!");
+    	closeConnection();
     	return result;
     }
     
@@ -1306,25 +1252,13 @@ public class HornetDBService extends Service {
 	   	  	setDate();
 	   	  	updateOpenHours();
     	}
-    	
-    	try {
-    		connection.openConnection();
-    		/*System.out.print("\nYesterday:"+yesterday.toLocaleString());
-    		System.out.print("\nTomorrow:"+tomorrow.toLocaleString());*/
-    		//System.out.print("\nResourceID:"+resourceid);
-    		//System.out.print("\n\nLast Sync:"+last_sync);
-    		rs = connection.getBookings(yesterday, tomorrow, theResource, last_sync);
-    	} catch (SQLException e) {
-    		e.printStackTrace();
-    		statusMessage = e.getLocalizedMessage();
-    		return -1;
-    	} catch (ClassNotFoundException e) {
-    		//Postgresql JDBC class missing.
-    		throw new RuntimeException(e);
+    	if (!openConnection()) {
+    		return -1; //connection failed;
     	}
     	
+    	
     	try {
-    		//System.out.print("\n\nCount:"+rs.getFetchSize());
+    		rs = connection.getBookings(yesterday, tomorrow, theResource, last_sync);
     		Log.v(TAG, "getBookings() Row Count"+rs.getFetchSize()); 
 	    	while (rs.next()) {
 	    		ContentValues val;
@@ -1356,7 +1290,6 @@ public class HornetDBService extends Service {
 	    				checkin = 0;
 	    			}
 	    		}
-	    		
 	    		
 	    		date = Services.dateFormat(rs.getString("arrival"), "yyyy-MM-dd", "yyyyMMdd");
 	    		starttime = getTime(rs.getString("startid"), contentResolver );
@@ -1399,7 +1332,6 @@ public class HornetDBService extends Service {
 	    				new String[] {rs.getString("resourceid")}, null);
 	    		if (cur.getCount() > 0) {
 	    			cur.moveToFirst();
-	    			//System.out.print("\n\nOFFSET:"+cur.getString(cur.getColumnIndex(ContentDescriptor.Resource.Cols.PERIOD)));
 	    			val.put(ContentDescriptor.Booking.Cols.OFFSET, cur.getString(cur.getColumnIndex(ContentDescriptor.Resource.Cols.PERIOD)));
 	    		}
 	    		cur.close();
@@ -1408,13 +1340,11 @@ public class HornetDBService extends Service {
 	    		cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.BID +" = "+rs.getString("bookingid"),
 	    				null, null);
 	    		if (cur.getCount() == 0) { //insert
-	    			//System.out.print("\n\nINSERTING BOOKING\n\n");
 	    			cur.close();
 	    			contentResolver.insert(ContentDescriptor.Booking.CONTENT_URI, val);
 //	    			timeid+=1;
 		    		result +=1;
 	    		} else { //update
-	    			//System.out.print("\n\nUPDATING BOOKING\n\n");
 	    			cur.close();
 	    			int status = 0;
 	    		
@@ -1423,7 +1353,6 @@ public class HornetDBService extends Service {
 	    					new String[] {rs.getString("bookingid")});
 	    			if (status == 0) {
 	    				//update failed
-	    				//System.out.print("\n\nUPDATE FAILED\n\n");
 	    				Log.e(TAG, "Booking Update Failed for id:"+rs.getString("bookingid"));
 	    			}
 	    			result +=status;
@@ -1467,10 +1396,8 @@ public class HornetDBService extends Service {
     		e.printStackTrace();
     		statusMessage = e.getLocalizedMessage();
     	}
-    	connection.closePreparedStatement();
-    	connection.closeConnection();
-    	//System.out.print("\n\nBookingCount:"+result);
-    	//System.out.print("\n\nBookings sync'd at:"+this_sync+"\n\n");
+    	closeConnection();
+
     	Log.v(TAG, "BookingCount:"+result);
     	Log.v(TAG,"Bookings Sync'd at:"+this_sync);
     	Services.setPreference(ctx, "last_rid", String.valueOf(resourceid));
@@ -1485,22 +1412,14 @@ public class HornetDBService extends Service {
     	ResultSet rs = null;
     	
     	result = contentResolver.delete(ContentDescriptor.Bookingtype.CONTENT_URI,null, null);
-    	//System.out.print("\n\nDeleted "+result+" from bookingtype");
+
     	final int CACI = 0; //TODO: fix this
-    	try {
-    		connection.openConnection();
-    		//if caci ? bookingtypeValids
-    		// else bookingtype
-    		rs = (CACI != 0)?connection.getBookingTypesValid() : connection.getBookingTypes();
-    	} catch (SQLException e){
-    		statusMessage = e.getLocalizedMessage();
-    		e.printStackTrace();
-    		return -1;
-    	} catch (ClassNotFoundException e) {
-    		//Postgresql JDBC class not found.
-    		throw new RuntimeException(e);
+    	if (!openConnection()) {
+    		return -1; //connection failed;
     	}
+    	
     	try {
+    		rs = (CACI != 0)?connection.getBookingTypesValid() : connection.getBookingTypes();
     		while (rs.next()) {
     			
     				ContentValues values = new ContentValues();
@@ -1520,9 +1439,7 @@ public class HornetDBService extends Service {
     		statusMessage = e.getLocalizedMessage();
     		e.printStackTrace();
     	}
-    	//System.out.print("\n\nGot"+result+" bookingtypes from server");
-    	connection.closePreparedStatement();
-    	connection.closeConnection();
+    	closeConnection();
     	
     	return result;
     }
@@ -1551,20 +1468,13 @@ public class HornetDBService extends Service {
     private int getResultStatus(){
     	int result = 0;
     	ResultSet rs = null;
-    	try {
-    		connection.openConnection();
-    		rs = connection.getResultStatus();
-    	} catch (SQLException e) {
-    		statusMessage = e.getLocalizedMessage();
-    		e.printStackTrace();
-    		return -1;
-    	} catch (ClassNotFoundException e) {
-    		//Postgresql JDBC class missing.
-    		throw new RuntimeException(e);
+    	if (!openConnection()) {
+    		return -1; //connection failed;
     	}
     	
     	contentResolver.delete(ContentDescriptor.ResultStatus.CONTENT_URI, null, null);
     	try {
+    		rs = connection.getResultStatus();
 	    	while (rs.next()) {
 	    		ContentValues values = new ContentValues();
 	    		values.put(ContentDescriptor.ResultStatus.Cols.ID, rs.getString("id"));
@@ -1579,8 +1489,7 @@ public class HornetDBService extends Service {
     		statusMessage = e.getLocalizedMessage();
     		e.printStackTrace();
     	}
-    	connection.closePreparedStatement();
-    	connection.closeConnection();
+    	closeConnection();
     	return result;
     }
     
@@ -1688,18 +1597,11 @@ public class HornetDBService extends Service {
     	result = 0;
     	rs = null;
     	contentResolver.delete(ContentDescriptor.Member.CONTENT_URI, null, null);
-    	try {
-    		connection.openConnection();
-    		rs = connection.getMembers();
-    	} catch (SQLException e) {
-    		statusMessage = e.getLocalizedMessage();
-    		e.printStackTrace();
-    		return -1;
-    	} catch (ClassNotFoundException e) {
-    		//Postgresql JDBC class missing.
-    		throw new RuntimeException(e);
+    	if (!openConnection()) {
+    		return -1; //connection failed;
     	}
     	try {
+    		rs = connection.getMembers();
     		while (rs.next()) {
     			ContentValues values = new ContentValues();
     			values.put(ContentDescriptor.Member.Cols.MID, rs.getString("id"));
@@ -1719,8 +1621,7 @@ public class HornetDBService extends Service {
     		statusMessage = e.getLocalizedMessage();
     		e.printStackTrace();
     	}
-    	connection.closePreparedStatement();
-    	connection.closeConnection();
+    	closeConnection();
     	
     	return result;
     }
@@ -1730,18 +1631,12 @@ public class HornetDBService extends Service {
     	ResultSet rs = null;
     	
     	contentResolver.delete(ContentDescriptor.Membership.CONTENT_URI, null, null);
-    	try {
-    		connection.openConnection();
-    		rs = connection.getMembership();
-    	} catch (SQLException e) {
-    		statusMessage = e.getLocalizedMessage();
-    		e.printStackTrace();
-    	} catch (ClassNotFoundException e) {
-    		//postgresql JDBC class missing.
-    		throw new RuntimeException(e);
+    	if (!openConnection()) {
+    		return -1; //connection failed;
     	}
     	
     	try {
+    		rs = connection.getMembership();
     		while (rs.next()){
     			ContentValues values = new ContentValues();
     			
@@ -1764,7 +1659,7 @@ public class HornetDBService extends Service {
     		statusMessage = e.getLocalizedMessage();
     		e.printStackTrace();
     	}
-    	connection.closeConnection();
+    	closeConnection();
     	return result;
     }
     
@@ -1799,12 +1694,13 @@ public class HornetDBService extends Service {
     		//System.out.print("\n\ndoor:"+door);
     		Log.v(TAG, "id:"+id);
     		Log.v(TAG, "door:"+door);
-
+    		if (!openConnection()) {
+        		return -1; //connection failed;
+        	}
     		try {
     			ResultSet rs;
     			String tempmess;
     			
-    			connection.openConnection();
 	    		rs = connection.tagInsert(door, id);
 	    		rs.close();
 	    		connection.closePreparedStatement();
@@ -1824,11 +1720,8 @@ public class HornetDBService extends Service {
 	    	} catch (SQLException e) {
 	    		statusMessage = e.getLocalizedMessage();
 	    		e.printStackTrace();
-	    	} catch (ClassNotFoundException e) {
-	    		//Postgresql JDBC class missing.
-	    		throw new RuntimeException(e);
 	    	}
-    		connection.closeConnection();
+    		closeConnection();
     	}
     	cur.close();
     	contentResolver.delete(ContentDescriptor.Swipe.CONTENT_URI, null, null);
@@ -1841,18 +1734,11 @@ public class HornetDBService extends Service {
     	ResultSet rs = null;
     	
     	contentResolver.delete(ContentDescriptor.OpenTime.CONTENT_URI, null, null);
-    	try {
-    		connection.openConnection();
-    		rs = connection.getOpenHours();
-    	} catch (SQLException e){
-    		statusMessage = e.getLocalizedMessage();
-    		e.printStackTrace();
-    		return -1;
-    	} catch (ClassNotFoundException e) {
-    		//Postgresql JDBC class missing.
-    		throw new RuntimeException(e);
+    	if (!openConnection()) {
+    		return -1; //connection failed;
     	}
     	try {
+    		rs = connection.getOpenHours();
     		while (rs.next()) {
     			ContentValues values = new ContentValues();
     			values.put(ContentDescriptor.OpenTime.Cols.DAYOFWEEK, (rs.getInt("dayofweek")+1));
@@ -1867,7 +1753,7 @@ public class HornetDBService extends Service {
     		statusMessage = e.getLocalizedMessage();
     		e.printStackTrace();
     	}
-    	connection.closeConnection();
+    	closeConnection();
     	return result;
     }
     
@@ -1967,15 +1853,8 @@ public class HornetDBService extends Service {
     	}
     	cur.close();
     	
-    	try {
-    		connection.openConnection();
-    	} catch (SQLException e) {
-    		//could not open connection.
-    		statusMessage = e.getLocalizedMessage();
-    		return -1;
-    	} catch (ClassNotFoundException e) {
-    		//Postgresql JDBC class missing.
-    		throw new RuntimeException(e);
+    	if (!openConnection()) {
+    		return -1; //connection failed;
     	}
     	
     	for (int i = 0; i < idlist.size(); i +=1) {
@@ -2029,7 +1908,6 @@ public class HornetDBService extends Service {
     			statusMessage = e.getLocalizedMessage();
     			return -3;
     		}
-    		connection.closePreparedStatement();
     		
     		//if we got here the inserts must've been successful. so remove the pending upload.
     		contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, ContentDescriptor.PendingUploads.Cols.TABLEID+" = ? AND "
@@ -2038,7 +1916,7 @@ public class HornetDBService extends Service {
     		
     		result += 1;
     	}
-    	connection.closeConnection();
+    	closeConnection();
     	
     	return result;
     }
@@ -2052,14 +1930,8 @@ public class HornetDBService extends Service {
     private int getClasses() {
     	int result = 0;
     	
-    	try {
-    		connection.openConnection();
-    	} catch (SQLException e) {
-    		statusMessage = e.getLocalizedMessage();
-    		return -1;
-    	} catch (ClassNotFoundException e) {
-    		//installation issue, Postgresql JDBC driver not found.
-    		throw new RuntimeException(e);
+    	if (!openConnection()) {
+    		return -1; //connection failed;
     	}
     	ResultSet rs = null;
     	try {
@@ -2095,8 +1967,7 @@ public class HornetDBService extends Service {
     		statusMessage = e.getLocalizedMessage();
     		return -2;
     	}
-    	connection.closePreparedStatement();
-    	connection.closeConnection();
+    	closeConnection();
     	
     	return result;
     }
@@ -2113,14 +1984,8 @@ public class HornetDBService extends Service {
     	cur = contentResolver.query(ContentDescriptor.Swipe.CONTENT_URI, null, ContentDescriptor.Swipe.Cols.DOOR+" < 0",
     			null, null);
     	bookingswipecount = cur.getCount();
-    	try {
-    		connection.openConnection();
-    	} catch (SQLException e) {
-    		statusMessage = e.getLocalizedMessage();
-    		return -1;
-    	} catch (ClassNotFoundException e) {
-    		//Postgresql JDBC class missing.
-    		throw new RuntimeException(e);
+    	if (!openConnection()) {
+    		return -1; //connection failed;
     	}
     	while (bookingswipecount > 0) {
     		
@@ -2349,8 +2214,155 @@ public class HornetDBService extends Service {
     	if (cur != null && !cur.isClosed()) {
     		cur.close();
     	}
-    	connection.closeConnection();
+    	closeConnection();
     	
+    	return result;
+    }
+    
+    private boolean openConnection(){
+    	try {
+    		connection.openConnection();
+    	} catch (SQLException e) {
+    		statusMessage = e.getLocalizedMessage();
+    		return false;
+    	} catch (ClassNotFoundException e) {
+    		//Postgresql JDBC driver missing!!
+    		throw new RuntimeException(e);
+    	}
+    	return true;
+    }
+    
+    private void closeConnection() {
+    	if (cur != null && !cur.isClosed()) {
+    		cur.close();
+    		cur = null;
+    	}
+    	connection.closeStatementQuery();
+    	connection.closePreparedStatement();
+    	connection.closeConnection();
+    }
+    
+    private int getSuspendID(){
+    	int result = 0; 
+    	String query = "select nextval('membership_suspend_id_seq');";
+    	if (!openConnection()) {
+    		return -1; //connection failed;
+    	}
+    	
+    	cur = contentResolver.query(ContentDescriptor.MembershipSuspend.CONTENT_URI, null, 
+    			ContentDescriptor.MembershipSuspend.Cols.MID+" = 0", null, null);
+    	int free_count = cur.getCount(); // = cur.count() where mid = 0;;
+    	cur.close();
+    	
+    	cur = contentResolver.query(ContentDescriptor.MembershipSuspend.CONTENT_URI, null,
+    			ContentDescriptor.MembershipSuspend.Cols.SID+" < 0", null, null);
+    	int need_count = cur.getCount();
+    	cur.close();
+    	
+    	ResultSet rs;
+    	
+    	for (int i = ((20+need_count)-free_count); i > 0; i -=1) {   	
+	    	try {
+	    		rs = connection.startStatementQuery(query);
+	    		rs.next();
+	    		//Handle the insertion.
+	    		ContentValues values = new ContentValues();
+	    		
+	    		values.put(ContentDescriptor.MembershipSuspend.Cols.SID, rs.getString("nextval"));
+	    		if (need_count > 0) {
+	    			cur = contentResolver.query(ContentDescriptor.MembershipSuspend.CONTENT_URI, null,
+	    	    			ContentDescriptor.MembershipSuspend.Cols.SID+" < 0", null, null);
+	    			cur.moveToFirst();
+	    			int memberid = cur.getInt(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.MID));
+	    			cur.close();
+	    			
+	    			contentResolver.update(ContentDescriptor.MembershipSuspend.CONTENT_URI, values,
+	    					ContentDescriptor.MembershipSuspend.Cols.MID+" = ?", new String[] {String.valueOf(memberid)});
+	    			
+	    			//should probably update the pending uploads table too?
+	    			cur = contentResolver.query(ContentDescriptor.MembershipSuspend.CONTENT_URI, new String[] 
+	    					{ContentDescriptor.MembershipSuspend.Cols._ID}, ContentDescriptor.MembershipSuspend.Cols.MID+" = ?",
+	    					new String[] {String.valueOf(memberid)}, null);
+	    			
+	    			if (cur.moveToFirst()) {
+	    				int rowid = cur.getInt(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols._ID));
+	    				
+	    				values = new ContentValues();
+	    				values.put(ContentDescriptor.PendingUploads.Cols.TABLEID,
+	    						ContentDescriptor.TableIndex.Values.MembershipSuspend.getKey());
+	    				values.put(ContentDescriptor.PendingUploads.Cols.ROWID, rowid);
+	    				
+	    				contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, values);
+	    			}
+	    			cur.close();
+	    			
+	    			need_count -=1;
+	    		} else {
+	    			contentResolver.insert(ContentDescriptor.MembershipSuspend.CONTENT_URI, values);
+	    		}
+	    	} catch (SQLException e) {
+	    		statusMessage = e.getLocalizedMessage();
+	    		e.printStackTrace();
+	    		return -2;
+	    	}
+	    	result +=1;
+	    	connection.closeStatementQuery();
+    	}
+    	
+    	closeConnection();
+    	return result;
+    }
+    
+    private int uploadSuspends(){
+    	int result = 0;
+    	
+    	if (!openConnection()) {
+    		return -1; //connection failed;
+    	}
+    	ArrayList<Integer> rows = new ArrayList<Integer>();
+    	cur = contentResolver.query(ContentDescriptor.PendingUploads.CONTENT_URI, null, ContentDescriptor.PendingUploads.Cols.TABLEID+" = ?",
+    			new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.MembershipSuspend.getKey())}, null);
+    	while (cur.moveToNext()) {
+    		rows.add(cur.getInt(cur.getColumnIndex(ContentDescriptor.PendingUploads.Cols.ROWID)));
+    	}
+    	cur.close();
+    	
+    	for (int i = 0; i < rows.size(); i +=1) {
+    		cur = contentResolver.query(ContentDescriptor.MembershipSuspend.CONTENT_URI, null, 
+    				ContentDescriptor.MembershipSuspend.Cols._ID+" = ?", new String[] {String.valueOf(rows.get(i))}, null);
+    		if (!cur.moveToFirst()) {
+    			//an error occured, the cursor was empty?
+    			statusMessage = "an Error Occured: MembershipSuspend could not find row";
+    			//rather than returning we should delete the issue, and then continue.
+    			//TODO:
+    			return -2;
+    		}
+    		String mid, msid, sid, reason, start, duration, freeze;
+  
+    		mid = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.MID));
+    		msid = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.MSID));
+    		sid = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.SID));
+    		reason = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.REASON));
+    		start = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.STARTDATE));
+    		duration = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.LENGTH));
+    		freeze = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.FREEZE));
+    		
+    		try {
+    			connection.uploadSuspend(sid, mid, msid, start, duration, reason, freeze);
+    		} catch (SQLException e) {
+    			statusMessage = e.getLocalizedMessage();
+    			e.printStackTrace();
+    			return -3;
+    		}
+    		//remove it from the pendingUploads table.
+    		contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, 
+    				ContentDescriptor.PendingUploads.Cols.TABLEID+" = ? AND "
+    				+ContentDescriptor.PendingUploads.Cols.ROWID+" = ?", 
+    				new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.MembershipSuspend.getKey()),
+    				String.valueOf(rows.get(i))});
+    	}
+    	
+    	closeConnection();
     	return result;
     }
 }

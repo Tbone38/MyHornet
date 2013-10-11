@@ -3,19 +3,52 @@ package com.treshna.hornet;
 import android.content.UriMatcher;
 import android.net.Uri;
 import android.provider.BaseColumns;
-/*
- * This class provides/stores the information required
- * by the application to interface with the content provider
- * for the class.
- */
 
 /*	ID RANGES
  *  0   > < 100 = company/database settings etc.
  *  100 > < 200 = Member/membership/images etc
  *  200 > < 300 = Pending member uploads & swipes.
  *  300 > < 400 = Bookings related tables.
+ *  
+ *  In use ID's:
+ *    1 = drop table					126:
+ *   10:								127 = MembershipSuspend
+ *   11 = TableIndex					130:
+ *   12:								135:
+ *   13 = PendingUploads				140 = Visitor
+ *   50:								150:
+ *   55 = Company (unused)				155:
+ *   80:								160:
+ *   90 = ResultStatus					165 = Images
+ *   91:								200:
+ *   92 = OpenTime						210 = Pending
+ *   93:								220:
+ *   94 = Date							230 = Swipe
+ *  100:								300:
+ *  110 = Member						305:
+ *  120:								310 = Booking
+ *  125 = Membership
+ *  
+ *  311:
+ *  312:
+ *  313 = BookingTime
+ *  315:
+ *  324:
+ *  325 = Time
+ *  321:
+ *  322 = Class
+ *  320:
+ *  330 = Bookingtype 
+ *  340:
+ *  350 = Resource
+ *  360:
+ *  370 = Programme
  */
-
+/**
+ * This class provides/stores the information required
+ * by the application to interface with the content provider
+ * for the class.
+ */
 public class ContentDescriptor {
 	 public static final String AUTHORITY = "com.treshna.hornet";
 	 private static final Uri BASE_URI = Uri.parse("content://" + AUTHORITY);
@@ -77,6 +110,8 @@ public class ContentDescriptor {
 	     matcher.addURI(authority, TableIndex.PATH_FOR_ID, TableIndex.PATH_FOR_ID_TOKEN);
 	     matcher.addURI(authority, PendingUploads.PATH, PendingUploads.PATH_TOKEN);
 	     matcher.addURI(authority, PendingUploads.PATH_FOR_ID, PendingUploads.PATH_FOR_ID_TOKEN);
+	     
+	     matcher.addURI(authority, MembershipSuspend.PATH, MembershipSuspend.PATH_TOKEN);
 	     
 	     matcher.addURI(authority, DROPTABLE, TOKEN_DROPTABLE);
 	     
@@ -564,7 +599,8 @@ public class ContentDescriptor {
 	 		 */
 	 		public static enum Values {
 	 			Booking(1), Class(2), Swipe(3),Membership(4) /*when adding memberships*/,
-	 					Pending(5) /*when adding members/prospects*/,Image(6);
+	 					Pending(5) /*when adding members/prospects*/,Image(6),
+	 					MembershipSuspend(7);
 	 			
 	 			private final int key;
 	 			
@@ -617,4 +653,27 @@ public class ContentDescriptor {
 	 			//timestamp, probably not neccissary.
 	 		}
 	 	}
+	 	
+	 	public static class MembershipSuspend {
+	 		public static final String NAME = "MembershipSuspend";
+	 		public static final String PATH = "MembershipSuspend";
+	 		public static final int PATH_TOKEN = 126;
+	 		public static final String PATH_FOR_ID = "MembershipSuspend/*";
+	 		public static final int PATH_FOR_ID_TOKEN = 127;
+	 		
+	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
+	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.membershipsuspend";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.membershipsuspend";
+	 		
+	 		public static class Cols implements BaseColumns {
+	 			public static final String SID = "suspendid";
+	 			public static final String STARTDATE = "start";
+	 			public static final String LENGTH = "length";
+	 			public static final String REASON = "reason";
+	 			public static final String MID = "memberid";
+	 			public static final String MSID = "membershipid"; //insert the suspendid into membership row ?
+	 			public static final String FREEZE = "freeze_fees";
+	 		}
+	 	}
+
 }
