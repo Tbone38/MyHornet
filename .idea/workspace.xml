@@ -12,12 +12,38 @@
       </filter>
     </filters>
   </component>
-  <component name="AndroidLogFilters">
-    <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Hornet" />
-  </component>
   <component name="ChangeListManager">
     <list default="true" id="9bde22c4-8469-4d1d-86ed-841808d73963" name="Default" comment="">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/AndroidManifest.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/Hornet.apk" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/R.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/classes.dex" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/classes/.gitignore" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/dexedLibs/android-support-v4-21f90db72bfeabc460bb2c20153c506e.jar" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/dexedLibs/android-support-v4-a958159f6b42fe9b08852a1b9a9746a6.jar" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/dexedLibs/gcm-ae8893645d7361fb079e8d5142a4301a.jar" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/dexedLibs/postgresql-9.2-1002.jdbc4-20bfd61057a22ab08680d17c9a020b47.jar" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/jarlist.cache" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/res/drawable-hdpi/ic_launcher.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/res/drawable-mdpi/ic_launcher.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/res/drawable-xhdpi/ic_launcher.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/res/drawable-xxhdpi/ic_launcher.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/resources.ap_" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/dexedLibs/android-support-v4-632e2b2659aeba71dd90d38d7033eb05.jar" afterPath="$PROJECT_DIR$/bin/dexedLibs/android-support-v4-632e2b2659aeba71dd90d38d7033eb05.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/dexedLibs/android-support-v7-appcompat-14e5d86bf638fd7b522daaf45816fbfc.jar" afterPath="$PROJECT_DIR$/bin/dexedLibs/android-support-v7-appcompat-14e5d86bf638fd7b522daaf45816fbfc.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/dexedLibs/android-support-v7-appcompat-4f3e929089d505d1625ce464c93236c4.jar" afterPath="$PROJECT_DIR$/bin/dexedLibs/android-support-v7-appcompat-4f3e929089d505d1625ce464c93236c4.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/dexedLibs/postgresql-9.2-1002.jdbc4-208151ae28a101385eb28fe293190f48.jar" afterPath="$PROJECT_DIR$/bin/dexedLibs/postgresql-9.2-1002.jdbc4-208151ae28a101385eb28fe293190f48.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/.gitignore" afterPath="$PROJECT_DIR$/gen/.gitignore" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/AndroidManifest.xml" afterPath="$PROJECT_DIR$/AndroidManifest.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/treshna/hornet/BookingsSlideFragment.java" afterPath="$PROJECT_DIR$/src/com/treshna/hornet/BookingsSlideFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/treshna/hornet/ClassDetailsFragment.java" afterPath="$PROJECT_DIR$/src/com/treshna/hornet/ClassDetailsFragment.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Hornet.iml" afterPath="$PROJECT_DIR$/Hornet.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/treshna/hornet/HornetDatabase.java" afterPath="$PROJECT_DIR$/src/com/treshna/hornet/HornetDatabase.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/treshna/hornet/MemberDetails.java" afterPath="$PROJECT_DIR$/src/com/treshna/hornet/MemberDetails.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/treshna/hornet/MemberFindFragment.java" afterPath="$PROJECT_DIR$/src/com/treshna/hornet/MemberFindFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/treshna/hornet/MembershipHold.java" afterPath="$PROJECT_DIR$/src/com/treshna/hornet/MembershipHold.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/menu/main.xml" afterPath="$PROJECT_DIR$/res/menu/main.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/menu/not_main.xml" afterPath="$PROJECT_DIR$/res/menu/not_main.xml" />
     </list>
     <ignored path="Hornet.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -35,7 +61,6 @@
     <disable_hints />
   </component>
   <component name="DebuggerManager">
-    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <breakpoint_any default_suspend_policy="SuspendAll" default_condition_enabled="true">
       <breakpoint>
         <option name="NOTIFY_CAUGHT" value="true" />
@@ -72,6 +97,7 @@
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
     </breakpoint_any>
+    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <breakpoint_rules />
     <ui_properties />
   </component>
@@ -84,7 +110,7 @@
       <file leaf-file-name="BookingDetailsFragment.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/treshna/hornet/BookingDetailsFragment.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="232" column="12" selection-start="9875" selection-end="9875" vertical-scroll-proportion="3.2517483" vertical-offset="1140" max-vertical-offset="6180">
+            <state line="235" column="12" selection-start="9941" selection-end="9941" vertical-scroll-proportion="-0.83916086" vertical-offset="3525" max-vertical-offset="6615">
               <folding />
             </state>
           </provider>
@@ -452,8 +478,8 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/com/treshna/hornet/BookingDetailsFragment.java" />
         <option value="$PROJECT_DIR$/src/com/treshna/hornet/SettingsActivity.java" />
+        <option value="$PROJECT_DIR$/src/com/treshna/hornet/BookingDetailsFragment.java" />
       </list>
     </option>
   </component>
@@ -489,7 +515,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
@@ -561,6 +586,7 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -610,19 +636,6 @@
       <option name="PORT" value="5005" />
       <method />
     </configuration>
-    <configuration default="true" type="Applet" factoryName="Applet">
-      <module name="" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="HTML_FILE_NAME" />
-      <option name="HTML_USED" value="false" />
-      <option name="WIDTH" value="400" />
-      <option name="HEIGHT" value="300" />
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
-      <option name="VM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <method />
-    </configuration>
     <configuration default="true" type="TestNG" factoryName="TestNG">
       <module name="" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -648,6 +661,19 @@
       <envs />
       <properties />
       <listeners />
+      <method />
+    </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
       <method />
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
@@ -906,7 +932,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/treshna/hornet/BookingDetailsFragment.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="232" column="12" selection-start="9875" selection-end="9875" vertical-scroll-proportion="3.2517483" vertical-offset="1140" max-vertical-offset="6180">
+        <state line="235" column="12" selection-start="9941" selection-end="9941" vertical-scroll-proportion="-0.83916086" vertical-offset="3525" max-vertical-offset="6615">
           <folding />
         </state>
       </provider>

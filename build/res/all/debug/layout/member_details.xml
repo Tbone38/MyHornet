@@ -1,0 +1,161 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" 
+    android:layout_width="fill_parent" 
+    android:layout_height="fill_parent">
+<RelativeLayout
+    android:id="@+id/pageLayout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".MemberDetails" >  
+    <android.support.v4.view.ViewPager
+    	android:id="@+id/gallery"
+    	android:layout_width="match_parent"
+    	android:layout_height="180dp"
+    	android:layout_gravity="center"
+    	android:background="@color/gym"/>  
+    	
+    <View
+        android:id="@+id/overlayleft"
+        android:layout_width="50dp"
+        android:layout_height="180dp"
+        android:layout_alignLeft="@id/gallery"
+        android:layout_alignTop="@id/gallery"
+        android:background="@color/overlay" />
+    <TextView 
+        android:id="@+id/moveimageLeft"
+        android:layout_width="50dp"
+        android:layout_height="180dp"
+        android:layout_alignLeft="@id/gallery"
+        android:layout_alignTop="@id/gallery"
+        android:gravity="center"
+        android:textSize="22sp"
+        android:text="@string/leftarrow"/>
+    
+    <View
+        android:id="@+id/overlayright"
+        android:layout_width="50dp"
+        android:layout_height="180dp"
+        android:layout_alignRight="@id/gallery"
+        android:layout_alignTop="@id/gallery"
+        android:background="@color/overlay" />
+    
+    <TextView
+        android:id="@+id/moveimageRight"
+        android:layout_width="50dp"
+        android:layout_height="180dp"
+        android:layout_alignRight="@id/gallery"
+        android:layout_alignTop="@id/gallery"
+        android:gravity="center"
+        android:textSize="22sp" 
+        android:text="@string/rightarrow"/>
+    
+    <TextView
+    	android:id="@+id/memberDetailsH"
+        android:padding="3dp"
+    	android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:background="@color/gym"
+        android:text="@string/heading_member_info"
+        android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+        android:textIsSelectable="false"
+        android:layout_below="@id/gallery"        
+    />
+     
+    <TextView android:id="@+id/memberName"
+        android:padding="3dp"
+    	android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+        android:textIsSelectable="true"
+        android:layout_below="@id/memberDetailsH"/>
+    
+    <ImageView
+        android:id="@+id/smiley"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignBottom="@id/memberName"
+        android:layout_alignTop="@id/memberName"
+       	android:layout_below="@id/memberDetailsH"
+        android:contentDescription="@string/smiley_description"/>
+	 
+	 <LinearLayout android:id="@+id/memberDetails"
+    	android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:layout_below="@id/memberName"
+    	android:orientation="vertical"
+    	tools:context=".MemberDetails">
+	</LinearLayout>
+	 <TextView
+    	android:id="@+id/memberinfoH"
+        android:padding="3dp"
+    	android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:background="@color/gym"
+        android:text="@string/heading_member_details"
+        android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+        android:textIsSelectable="false"
+        android:layout_below="@id/memberDetails"
+    />
+	<LinearLayout android:id="@+id/memberinfo"
+    	android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:layout_below="@id/memberinfoH"
+    	android:orientation="vertical"
+    	tools:context=".MemberDetails">
+	</LinearLayout>
+	
+	<LinearLayout
+	    android:id="@+id/membernotes"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@id/memberinfo"
+	    android:orientation="vertical" >
+	    
+	    <TextView
+    	android:id="@+id/membernotesH"
+        android:padding="3dp"
+    	android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:background="@color/gym"
+        android:text="@string/heading_member_notes"
+        android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+        android:textIsSelectable="false" />
+	    
+	</LinearLayout>
+	 
+    <LinearLayout android:id="@+id/membercontact"
+    	android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:layout_below="@id/membernotes"
+    	android:orientation="vertical"
+    	tools:context=".MemberDetails">
+		
+		<TextView
+    		android:id="@+id/memberContactH"
+        	android:padding="3dp"
+    		android:textSize="20sp"
+        	android:textStyle="bold"
+        	android:textColor="@color/white"
+        	android:background="@color/gym"
+        	android:text="@string/heading_member_contact"
+        	android:layout_width="match_parent"
+    		android:layout_height="wrap_content"
+        	android:textIsSelectable="false"
+    	/>
+       
+    
+    </LinearLayout>
+</RelativeLayout>
+</ScrollView><!-- From: file:/home/callum/work/workspace/Hornet/res/layout/member_details.xml -->

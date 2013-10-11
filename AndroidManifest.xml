@@ -44,7 +44,6 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <!--  -->
             <meta-data
                 android:name="android.nfc.action.TECH_DISCOVERED"
                 android:resource="@xml/nfc_tech_filter" />
@@ -109,12 +108,20 @@
         <activity
             android:name="com.treshna.hornet.ClassCreate"
             android:label="@string/title_activity_class_create"
+           	android:parentActivityName="com.treshna.hornet.MainActivity"
             android:theme="@style/Theme.AppCompat.Light" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.treshna.hornet.MainActivity" />
         </activity>
         <activity
             android:name="com.treshna.hornet.MembershipHold"
             android:label="@string/title_activity_membership_hold"
+            android:parentActivityName="com.treshna.hornet.MemberDetails"
             android:theme="@style/Theme.AppCompat.Light" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.treshna.hornet.MemberDetails" />
         </activity>
     </application>
 

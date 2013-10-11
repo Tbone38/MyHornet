@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- From: file:/home/callum/work/workspace/Hornet/res/values/strings_membership.xml -->
+    <string-array name="membership_length_titles">
+        <item>1 week</item>
+        <item>2 weeks</item>
+        <item>1 month</item>
+        <item>2 months</item>
+        <item>3 months</item>
+        <item>6 months</item>
+    </string-array>
     <!-- From: file:/home/callum/work/workspace/Hornet/res/values/strings_activity_settings.xml -->
     <string-array name="pref_resource_entries"></string-array>
     <string-array name="pref_resource_values"></string-array>
@@ -36,6 +45,7 @@
     <color name="lightgrey">#FFD3D3D3</color>
     <color name="navy">#FF000080</color>
     <color name="orangered">#FFFF4500</color>
+    <color name="overlay">#A0FFFFFF</color>
     <color name="palegreen">#FF7CFC00</color>
     <color name="red">#ffff0000</color>
     <color name="silver">#FFC0C0C0</color>
@@ -48,8 +58,15 @@
     <!-- From: file:/home/callum/work/workspace/Hornet/res/values/strings.xml -->
     <string name="action_add">Add Member</string>
     <string name="action_bookings">Bookings</string>
+    <!-- From: file:/home/callum/work/workspace/Hornet/res/values/strings_class.xml -->
+    <string name="action_classCreate">Create Class</string>
+    <!-- From: file:/home/callum/work/workspace/Hornet/res/values/strings.xml -->
     <string name="action_findMember">Find Member</string>
     <string name="action_halt">Halt auto-Sync</string>
+    <!-- From: file:/home/callum/work/workspace/Hornet/res/values/strings_membership.xml -->
+    <string name="action_halt_membership">Membership Hold</string>
+    <!-- From: file:/home/callum/work/workspace/Hornet/res/values/strings.xml -->
+    <string name="action_home">Home</string>
     <string name="action_scan">Scan Tag</string>
     <string name="action_settings">Settings</string>
     <string name="action_sync">Start Sync</string>
@@ -94,7 +111,9 @@
     <string name="button_content_query">Show Last Access</string>
     <string name="button_scan_tag">Scan Tag</string>
     <!-- From: file:/home/callum/work/workspace/Hornet/res/values/strings_class.xml -->
+    <string name="classaddmember">Add Member to Class</string>
     <string name="classdatedefault">Select Date</string>
+    <string name="classdescription">Present tag to check in/add member to class</string>
     <string name="classendtimedefault">Select End Time</string>
     <string name="classmidtime"> - </string>
     <string name="classresourcedefault">Select Resource</string>
@@ -112,7 +131,7 @@
     <string name="heading_member_contact">Contact Details</string>
     <string name="heading_member_details">Membership Information</string>
     <string name="heading_member_info">Member</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="heading_member_notes">Notes</string>
     <!-- From: file:/home/callum/work/workspace/Hornet/res/values/strings_activity_add_member.xml -->
     <string name="hintCity">The Town/City you live in</string>
     <string name="hintDoB">dd/mm/yyyy</string>
@@ -136,6 +155,17 @@
     <string name="labelStreet">Street Address:</string>
     <string name="labelSuburb">Suburb:</string>
     <string name="labelSurnameName">Enter Your Surname Name</string>
+    <!-- From: file:/home/callum/work/workspace/Hornet/res/values/strings.xml -->
+    <string name="leftarrow">&lt;</string>
+    <!-- From: file:/home/callum/work/workspace/Hornet/res/values/strings_membership.xml -->
+    <string name="membership_default_startdate">Select Start Date</string>
+    <string name="membership_gifttime">Gift Time</string>
+    <string name="membership_gifttime_description">Can the member use the gym through the period?</string>
+    <string name="membership_gifttime_no">No</string>
+    <string name="membership_gifttime_yes">Yes</string>
+    <string name="membership_length">Duration</string>
+    <string name="membership_reason">Reason For Hold</string>
+    <string name="membership_startdate">Start Date</string>
     <!-- From: file:/home/callum/work/workspace/Hornet/res/values/strings.xml -->
     <string name="plusmember">+</string>
     <!-- From: file:/home/callum/work/workspace/Hornet/res/values/strings_activity_settings.xml -->
@@ -169,15 +199,17 @@
     <string name="radioProspect">Prospect</string>
     <!-- From: file:/home/callum/work/workspace/Hornet/res/values/strings.xml -->
     <string name="rfidwelcome">Waiting for a Tag.</string>
+    <string name="rightarrow">></string>
     <string name="smiley_description">smiley representing the Members happiness</string>
     <string name="task_description">indicates if the member has a task or booking</string>
-    <string name="title_activity_add_booking">AddBooking</string>
+    <string name="title_activity_add_booking">Add Booking</string>
     <string name="title_activity_add_member">Sign Up</string>
     <string name="title_activity_camera_wrapper">Camera Wrapper</string>
     <string name="title_activity_class_create">Create Class</string>
     <string name="title_activity_display_results">Displaying Results</string>
     <string name="title_activity_member_find">Find Member</string>
     <string name="title_activity_member_info">Member Information</string>
+    <string name="title_activity_membership_hold">Hold Membership</string>
     <string name="title_activity_rfid_reader">Tag Reader</string>
     <!-- From: file:/home/callum/work/workspace/Hornet/res/values/strings_activity_settings.xml -->
     <string name="title_activity_settings">Settings</string>

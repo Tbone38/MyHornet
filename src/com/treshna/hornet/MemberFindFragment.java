@@ -1,7 +1,5 @@
 package com.treshna.hornet;
 
-import com.treshna.hornet.R.color;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentResolver;

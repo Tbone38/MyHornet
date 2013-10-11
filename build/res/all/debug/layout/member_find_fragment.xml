@@ -25,7 +25,8 @@
 	        android:gravity="center"
 	        android:text="@string/plusmember"
 	        android:textSize="22sp"
-	        android:padding="3dp" />
+	        android:padding="3dp"
+	        android:background="@drawable/border"/>
     </LinearLayout>
     <ListView 
         android:id="@android:id/list"

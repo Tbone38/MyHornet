@@ -250,7 +250,7 @@ int drawable border 0x7f020057
 int drawable button 0x7f020058
 int drawable ic_launcher 0x7f020059
 int drawable imageborder 0x7f02005a
-int id action_addMember 0x7f0600e5
+int id action_addMember 0x7f0600e4
 int id action_bar 0x7f06001a
 int id action_bar_activity_content 0x7f060015
 int id action_bar_container 0x7f060019
@@ -258,9 +258,9 @@ int id action_bar_overlay_layout 0x7f06001d
 int id action_bar_root 0x7f060018
 int id action_bar_subtitle 0x7f060021
 int id action_bar_title 0x7f060020
-int id action_bookings 0x7f0600e4
+int id action_bookings 0x7f0600e3
 int id action_context_bar 0x7f06001b
-int id action_createclass 0x7f0600e3
+int id action_createclass 0x7f0600e5
 int id action_halt 0x7f0600e7
 int id action_home 0x7f0600e9
 int id action_menu_divider 0x7f060016

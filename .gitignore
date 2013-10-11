@@ -2,7 +2,7 @@
 ./gen
 ./.gitignore
 ./gradle
-./.grade
+./.gradle
 ./gradlew
 ./gradlew.bat
 ./.swp

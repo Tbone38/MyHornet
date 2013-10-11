@@ -245,7 +245,10 @@ public class MemberDetails extends NFCActivity implements OnClickListener {
 				//memberInfo.addView(memberEH);
 				msWindow.addView(memberEH);
 				
-				String date = Services.dateFormat(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.EXPIRERY)), "yyyy-MM-dd", "dd MMM yy");
+				String date = Services.dateFormat(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.EXPIRERY)), "yyyy-MMM-dd", "dd MMM yy");
+				if (date.compareTo("") ==0) {
+					date = cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.EXPIRERY));
+				}
 				TextView memberET = new TextView(this);
 				memberET.setPadding(Services.convertdpToPxl(this, 45), 0, 0, 0);
 				memberET.setText(date);
@@ -429,7 +432,7 @@ public class MemberDetails extends NFCActivity implements OnClickListener {
 		
 		if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.LASTVISIT)) 
 				&& cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.LASTVISIT)).compareTo("") != 0) {
-			String lastVisit = Services.dateFormat(cur.getString(19), "yyyy-MM-dd HH:mm", "dd MMM yy 'at' HH:mm aa");
+			String lastVisit = Services.dateFormat(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.LASTVISIT)), "yyyy-MM-dd HH:mm", "dd MMM yy 'at' HH:mm aa");
 			
 			TextView lastVH = new TextView(this);
 			lastVH.setPadding(Services.convertdpToPxl(this, 35), 0, 0, 0);

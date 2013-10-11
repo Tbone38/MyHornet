@@ -5,25 +5,26 @@
          android:orderInCategory="100"
          android:title="@string/action_home"
          hornet:showAsAction="ifRoom" />
-	 <item 
-	     android:id="@+id/action_createclass"
-	     android:orderInCategory="200"
-	     android:title="@string/action_classCreate"/>
+	
 	 <item
         android:id="@+id/action_bookings"
-        android:orderInCategory="300"
+        android:orderInCategory="200"
         android:title="@string/action_bookings"
         hornet:showAsAction="ifRoom"/>
 	  <item
         android:id="@+id/action_addMember"
-        android:orderInCategory="400"
+        android:orderInCategory="300"
         android:title="@string/action_add"
         hornet:showAsAction="ifRoom"/>
+	   <item 
+	     android:id="@+id/action_createclass"
+	     android:orderInCategory="400"
+	     android:title="@string/action_classCreate"
+	     hornet:showAsAction="ifRoom"/>
 	 <item
         android:id="@+id/action_update"
         android:orderInCategory="500"
-        android:title="@string/action_sync"
-        hornet:showAsAction="ifRoom"/>
+        android:title="@string/action_sync"/>
      <item
         android:id="@+id/action_halt"
         android:orderInCategory="600"

@@ -91,11 +91,6 @@ center
             <file
                 path="/home/callum/work/workspace/Hornet/res/values/strings_activity_settings.xml"
                 qualifiers="" >
-                <string name="pref_title_server_database" >Server Database Name
-                </string>
-                <string name="title_activity_settings" >Settings
-                </string>
-
                 <string-array name="pref_sync_frequency_values" >
                     <item>
 3
@@ -126,15 +121,19 @@ center
                     </item>
                 </string-array>
 
+                <string name="title_activity_settings" >Settings
+                </string>
+                <string name="pref_title_server_database" >Server Database Name
+                </string>
                 <string name="pref_header_booking" >Bookings
                 </string>
                 <string name="pref_title_show_membership" >Show Membership details in List
                 </string>
-                <string name="pref_default_server_port" >5432
+                <string name="pref_title_server_address" >Server Address
                 </string>
                 <string name="pref_default_server_address" >192.168.2.2
                 </string>
-                <string name="pref_title_server_address" >Server Address
+                <string name="pref_default_server_port" >5432
                 </string>
                 <string name="pref_title_door" >Door ID
                 </string>
@@ -205,9 +204,9 @@ Never
 
                 <string name="pref_title_system_sync_settings" >System sync settings
                 </string>
-                <string name="pref_get_resource" >Get Resource List
-                </string>
                 <string name="pref_header_data_sync" >Data &amp; sync
+                </string>
+                <string name="pref_get_resource" >Get Resource List
                 </string>
             </file>
             <file
@@ -217,31 +216,33 @@ Never
                 </string>
                 <string name="button_scan_tag" >Scan Tag
                 </string>
-                <string name="action_halt" >Halt auto-Sync
-                </string>
                 <string name="task_description" >indicates if the member has a task or booking
                 </string>
-                <string name="title_activity_add_booking" >AddBooking
+                <string name="action_halt" >Halt auto-Sync
+                </string>
+                <string name="title_activity_add_booking" >Add Booking
                 </string>
                 <string name="title_activity_member_info" >Member Information
                 </string>
                 <string name="plusmember" >+
                 </string>
-                <string name="filler_text" >filler Text, Filler Text!
+                <string name="title_activity_membership_hold" >Hold Membership
                 </string>
-                <string name="title_activity_class_create" >Create Class
+                <string name="filler_text" >filler Text, Filler Text!
                 </string>
                 <string name="welcome" >Welcome, Please Select the feature you would like to use:
                 </string>
-                <string name="title_activity_add_member" >Sign Up
+                <string name="title_activity_class_create" >Create Class
                 </string>
                 <string name="title_activity_camera_wrapper" >Camera Wrapper
                 </string>
-                <string name="hello_world" >Hello world!
+                <string name="title_activity_add_member" >Sign Up
                 </string>
                 <string name="image_description" >Image of the Member
                 </string>
                 <string name="button_add_picture" >Add Photo
+                </string>
+                <string name="leftarrow" >&lt;
                 </string>
                 <string name="action_bookings" >Bookings
                 </string>
@@ -250,6 +251,8 @@ Never
                 <string name="title_activity_rfid_reader" >Tag Reader
                 </string>
                 <string name="action_sync" >Start Sync
+                </string>
+                <string name="rightarrow" >>
                 </string>
                 <string name="button_content_query" >Show Last Access
                 </string>
@@ -263,6 +266,8 @@ Never
                 </string>
                 <string name="action_scan" >Scan Tag
                 </string>
+                <string name="action_home" >Home
+                </string>
                 <string name="heading_member_info" >Member
                 </string>
                 <string name="heading_member_details" >Membership Information
@@ -275,13 +280,15 @@ Never
                 </string>
                 <string name="title_activity_member_find" >Find Member
                 </string>
+                <string name="heading_member_notes" >Notes
+                </string>
             </file>
             <file
                 path="/home/callum/work/workspace/Hornet/res/values/strings_activity_add_booking.xml"
                 qualifiers="" >
-                <string name="bookingfor" >Booking\'s For: 
-                </string>
                 <string name="bookingMembership" >No Member Selected
+                </string>
+                <string name="bookingfor" >Booking\'s For: 
                 </string>
                 <string name="bookingnoshow" >No Show
                 </string>
@@ -299,9 +306,9 @@ Never
                 </string>
                 <string name="addbookingDate" >Set Date
                 </string>
-                <string name="bookingselect" >>
-                </string>
                 <string name="bookingStartTimeH" >Start Time
+                </string>
+                <string name="bookingselect" >>
                 </string>
                 <string name="bookingNameH" >Name
                 </string>
@@ -343,19 +350,25 @@ Never
                 </string>
                 <string name="classmidtime" > - 
                 </string>
-                <string name="createclassdate" >Class Date
+                <string name="classdescription" >Present tag to check in/add member to class
                 </string>
                 <string name="createclassname" >Class Name
                 </string>
                 <string name="classdatedefault" >Select Date
                 </string>
-                <string name="classendtimedefault" >Select End Time
-                </string>
                 <string name="createclassrepeating" >Repeat Weekly
                 </string>
                 <string name="classstarttimedefault" >Select Start Time
                 </string>
+                <string name="action_classCreate" >Create Class
+                </string>
                 <string name="createclasstime" >Class Time
+                </string>
+                <string name="createclassdate" >Class Date
+                </string>
+                <string name="classendtimedefault" >Select End Time
+                </string>
+                <string name="classaddmember" >Add Member to Class
                 </string>
                 <string name="classresourcedefault" >Select Resource
                 </string>
@@ -377,6 +390,8 @@ Never
                 </color>
                 <color name="grey" >#FF808080
                 </color>
+                <color name="overlay" >#A0FFFFFF
+                </color>
                 <color name="bookingname" >#F0C4C4C4
                 </color>
                 <color name="white" >#FFFFFFFF
@@ -387,9 +402,9 @@ Never
                 </color>
                 <color name="gym" >#FF5FBDBC
                 </color>
-                <color name="lightgrey" >#FFD3D3D3
-                </color>
                 <color name="orangered" >#FFFF4500
+                </color>
+                <color name="lightgrey" >#FFD3D3D3
                 </color>
                 <color name="palegreen" >#FF7CFC00
                 </color>
@@ -397,13 +412,13 @@ Never
             <file
                 path="/home/callum/work/workspace/Hornet/res/values/strings_activity_add_member.xml"
                 qualifiers="" >
-                <string name="buttonClear" >Clear
-                </string>
                 <string name="labelEmail" >Email Address:
                 </string>
-                <string name="labelGender" >Gender:
+                <string name="buttonClear" >Clear
                 </string>
                 <string name="buttonAccept" >Accept
+                </string>
+                <string name="labelGender" >Gender:
                 </string>
                 <string name="labelCellPhone" >Cell Phone:
                 </string>
@@ -417,9 +432,9 @@ Never
                 </string>
                 <string name="labelCity" >City:
                 </string>
-                <string name="radioMale" >Male
-                </string>
                 <string name="radioMember" >Member
+                </string>
+                <string name="radioMale" >Male
                 </string>
                 <string name="hintDoB" >dd/mm/yyyy
                 </string>
@@ -453,43 +468,8 @@ Never
                 </string>
             </file>
             <file
-                name="add_booking"
-                path="/home/callum/work/workspace/Hornet/res/menu/add_booking.xml"
-                qualifiers=""
-                type="menu" />
-            <file
-                name="add_member"
-                path="/home/callum/work/workspace/Hornet/res/menu/add_member.xml"
-                qualifiers=""
-                type="menu" />
-            <file
                 name="main"
                 path="/home/callum/work/workspace/Hornet/res/menu/main.xml"
-                qualifiers=""
-                type="menu" />
-            <file
-                name="display_results_activity"
-                path="/home/callum/work/workspace/Hornet/res/menu/display_results_activity.xml"
-                qualifiers=""
-                type="menu" />
-            <file
-                name="class_create"
-                path="/home/callum/work/workspace/Hornet/res/menu/class_create.xml"
-                qualifiers=""
-                type="menu" />
-            <file
-                name="member_find"
-                path="/home/callum/work/workspace/Hornet/res/menu/member_find.xml"
-                qualifiers=""
-                type="menu" />
-            <file
-                name="hornet_rfid_reader"
-                path="/home/callum/work/workspace/Hornet/res/menu/hornet_rfid_reader.xml"
-                qualifiers=""
-                type="menu" />
-            <file
-                name="camera_wrapper"
-                path="/home/callum/work/workspace/Hornet/res/menu/camera_wrapper.xml"
                 qualifiers=""
                 type="menu" />
             <file
@@ -533,21 +513,6 @@ Never
                 qualifiers=""
                 type="layout" />
             <file
-                name="activity_main"
-                path="/home/callum/work/workspace/Hornet/res/layout/activity_main.xml"
-                qualifiers=""
-                type="layout" />
-            <file
-                name="activity_add_member"
-                path="/home/callum/work/workspace/Hornet/res/layout/activity_add_member.xml"
-                qualifiers=""
-                type="layout" />
-            <file
-                name="activity_rfid_reader"
-                path="/home/callum/work/workspace/Hornet/res/layout/activity_rfid_reader.xml"
-                qualifiers=""
-                type="layout" />
-            <file
                 name="booking_add"
                 path="/home/callum/work/workspace/Hornet/res/layout/booking_add.xml"
                 qualifiers=""
@@ -578,11 +543,6 @@ Never
                 qualifiers=""
                 type="layout" />
             <file
-                name="display_results_activity"
-                path="/home/callum/work/workspace/Hornet/res/layout/display_results_activity.xml"
-                qualifiers=""
-                type="layout" />
-            <file
                 name="booking_fragment_layout"
                 path="/home/callum/work/workspace/Hornet/res/layout/booking_fragment_layout.xml"
                 qualifiers=""
@@ -600,11 +560,6 @@ Never
             <file
                 name="booking_page"
                 path="/home/callum/work/workspace/Hornet/res/layout/booking_page.xml"
-                qualifiers=""
-                type="layout" />
-            <file
-                name="activity_member_info"
-                path="/home/callum/work/workspace/Hornet/res/layout/activity_member_info.xml"
                 qualifiers=""
                 type="layout" />
             <file
@@ -654,6 +609,95 @@ Never
                     <!-- API 14 theme customizations can go here. -->
                 </style>
             </file>
+            <file
+                name="not_main"
+                path="/home/callum/work/workspace/Hornet/res/menu/not_main.xml"
+                qualifiers=""
+                type="menu" />
+            <file
+                name="class_details_row"
+                path="/home/callum/work/workspace/Hornet/res/layout/class_details_row.xml"
+                qualifiers=""
+                type="layout" />
+            <file
+                name="main_activity"
+                path="/home/callum/work/workspace/Hornet/res/layout/main_activity.xml"
+                qualifiers=""
+                type="layout" />
+            <file
+                path="/home/callum/work/workspace/Hornet/res/values/strings_membership.xml"
+                qualifiers="" >
+                <string name="membership_default_startdate" >Select Start Date
+                </string>
+                <string name="membership_reason" >Reason For Hold
+                </string>
+                <string name="membership_gifttime_no" >No
+                </string>
+                <string name="membership_gifttime_yes" >Yes
+                </string>
+                <string name="membership_startdate" >Start Date
+                </string>
+                <string name="membership_gifttime" >Gift Time
+                </string>
+                <string name="action_halt_membership" >Membership Hold
+                </string>
+                <string name="membership_gifttime_description" >Can the member use the gym through the period?
+                </string>
+
+                <string-array name="membership_length_titles" >
+                    <item>
+1 week
+                    </item>
+                    <item>
+2 weeks
+                    </item>
+                    <item>
+1 month
+                    </item>
+                    <item>
+2 months
+                    </item>
+                    <item>
+3 months
+                    </item>
+                    <item>
+6 months
+                    </item>
+                </string-array>
+
+                <string name="membership_length" >Duration
+                </string>
+            </file>
+            <file
+                name="border"
+                path="/home/callum/work/workspace/Hornet/res/drawable/border.xml"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="member_details"
+                path="/home/callum/work/workspace/Hornet/res/layout/member_details.xml"
+                qualifiers=""
+                type="layout" />
+            <file
+                name="class_details"
+                path="/home/callum/work/workspace/Hornet/res/layout/class_details.xml"
+                qualifiers=""
+                type="layout" />
+            <file
+                name="member_add"
+                path="/home/callum/work/workspace/Hornet/res/layout/member_add.xml"
+                qualifiers=""
+                type="layout" />
+            <file
+                name="membership_hold"
+                path="/home/callum/work/workspace/Hornet/res/layout/membership_hold.xml"
+                qualifiers=""
+                type="layout" />
+            <file
+                name="visitor_row"
+                path="/home/callum/work/workspace/Hornet/res/layout/visitor_row.xml"
+                qualifiers=""
+                type="layout" />
         </source>
         <source path="/home/callum/work/workspace/Hornet/build/res/rs/debug" />
     </dataSet>

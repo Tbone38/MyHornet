@@ -146,7 +146,8 @@ public class HornetDatabase extends SQLiteOpenHelper {
 				+Programme.Cols.GNAME+" TEXT, "+Programme.Cols.MLENGTH+" TEXT, "
 				+Programme.Cols.SDATE+" TEXT, "+Programme.Cols.EDATE+" TEXT, "
 				+Programme.Cols.PRICE+" TEXT, "+Programme.Cols.SIGNUP+" TEXT, "
-				+Programme.Cols.ONLINE+" TEXT"+Programme.Cols.NOTE+" TEXT );"); //add memberships, lookup priority
+				+Programme.Cols.ONLINE+" TEXT"+Programme.Cols.NOTE+" TEXT "
+				+");"); //add memberships, lookup priority
 		
 		db.execSQL("CREATE TABLE "+ContentDescriptor.Swipe.NAME+" ("+ContentDescriptor.Swipe.Cols.ID+" TEXT, "
 				+ContentDescriptor.Swipe.Cols.DOOR+" INTEGER, "+ContentDescriptor.Swipe.Cols.DATETIME+" DATETIME, "
