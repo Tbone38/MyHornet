@@ -2269,7 +2269,7 @@ public class HornetDBService extends Service {
 	    		ContentValues values = new ContentValues();
 	    		
 	    		values.put(ContentDescriptor.MembershipSuspend.Cols.SID, rs.getString("nextval"));
-	    		if (need_count > 0) {
+	    		if (need_count > 0) { //we've got pending suspends that need an id before upload.
 	    			cur = contentResolver.query(ContentDescriptor.MembershipSuspend.CONTENT_URI, null,
 	    	    			ContentDescriptor.MembershipSuspend.Cols.SID+" < 0", null, null);
 	    			cur.moveToFirst();

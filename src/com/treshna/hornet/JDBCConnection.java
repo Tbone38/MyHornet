@@ -385,6 +385,7 @@ public class JDBCConnection {
      * @return insert count
      * @throws SQLException
      */
+	//TODO: does this need parentid added?
     public int uploadBookings(Map<String, String> booking) throws SQLException {
     	//ResultSet rs = null;
     	pStatement = con.prepareStatement("INSERT INTO booking (id, memberid, resourceid, arrival, startid, starttime, "
