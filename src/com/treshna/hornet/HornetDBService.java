@@ -107,40 +107,52 @@ public class HornetDBService extends Service {
      */
     public void startNetworking(int currentcall, String theResource){
     	switch (currentCall){
- 	   case (Services.Statics.LASTVISITORS): { //this should be run frequently
- 		  /* new Thread(new Runnable() { //threading because Android blocks networking on main thread.
- 			   public void run() {*/
-		   	//Never show progress bar for last-visitors.
-		   	thread.is_networking = true;
-		   	long polling_start = PreferenceManager.getDefaultSharedPreferences(ctx).getLong(PollingHandler.POLLING_START, -1);
-		   	long threehours = (180 * 60 * 1000);
-		   	long currenttime = new Date().getTime();
-		 
-		   	if (currenttime > (polling_start+threehours)) {
-		   		//polling has been running for over three hours, turn it off.
-		   		//I should probably let myself know that the Polling has been turned off.
-		   		Log.w(TAG, "Polling has been going for 3 hours, turning it off.");
-		   		Services.getPollingHandler().stopPolling(false);
-		   		Services.setPreference(ctx, "sync_frequency", "-1");
-		   		return;
-		   	}
-		   	boolean result = getLastVisitors();
+ 	   	case (Services.Statics.LASTVISITORS): { //this should be run frequently
+ 	   		
+ 	   		thread.is_networking = true;
+ 	   		long polling_start = PreferenceManager.getDefaultSharedPreferences(ctx).getLong(PollingHandler.POLLING_START, -1);
+ 	   		long threehours = (180 * 60 * 1000);
+ 	   		long currenttime = new Date().getTime();
+ 	   		
+ 	   		if (currenttime > (polling_start+threehours)) {
+ 	   			//polling has been running for over three hours, turn it off.
+ 	   			//I should probably let myself know that the Polling has been turned off.
+ 	   			Log.w(TAG, "Polling has been going for 3 hours, turning it off.");
+ 	   			Services.getPollingHandler().stopPolling(false);
+ 	   			Services.setPreference(ctx, "sync_frequency", "-1");
+ 	   			return;
+ 	   		}
+ 	   		
+ 	   		//get Visitors
+ 	   		boolean result = getLastVisitors();
 			if (result == true) { //If database query was successful, then look for images; else show toast.
 				visitorImages();
 			}
-			uploadClass();
-			uploadBookings();
-			uploadMember();
+			
+			//get ID's
 			getMemberID();
 			getBookingID();
 			int sid_count = getSuspendID();
 			if (sid_count < 0) {
 				Services.showToast(getApplicationContext(), statusMessage, handler);
 			}
+			
+			//do uploads
+			uploadAllImages();
+			uploadClass();
+			uploadBookings();
+			uploadMember();
 			int upload_sid_count = uploadSuspends();
 			if (upload_sid_count < 0) {
 				Services.showToast(getApplicationContext(), statusMessage, handler);
 			}
+			
+			//do bookings!
+			updateBookings(); //this should be in last visitors as well
+			getBookings();
+			bookingImages();
+			getClasses();
+			   
 			Services.setPreference(ctx, "lastsync", String.valueOf(new Date().getTime()));
 			Services.showToast(getApplicationContext(), statusMessage, handler);
 			/*Broadcast an intent to let the app know that the sync has finished
@@ -151,9 +163,8 @@ public class HornetDBService extends Service {
 			Intent bcIntent = new Intent();
 			bcIntent.setAction("com.treshna.hornet.serviceBroadcast");
 			sendBroadcast(bcIntent);
-			//System.out.println("*Sending Intent, Stoping Service*");
 			Log.v(TAG, "Sending Intent, Stopping Service");
- 			 //  }}).start();
+
  		   	break;
  	   } 
  	   case (Services.Statics.UPLOAD):{
@@ -165,20 +176,7 @@ public class HornetDBService extends Service {
 			int count = 0;
 			uploadClass();
 			uploadBookings();
-			cur = contentResolver.query(ContentDescriptor.Image.CONTENT_URI, null, null, null, null);
-			cur.moveToFirst();
-			int i = 0;
-			while (i < cur.getCount()){
-				cur.moveToPosition(i);
-				boolean result = uploadImage(cur.getInt(cur.getColumnIndex(ContentDescriptor.Image.Cols.ID)),
-						cur.getInt(cur.getColumnIndex(ContentDescriptor.Image.Cols.MID)),
-						cur.getString(cur.getColumnIndex(ContentDescriptor.Image.Cols.DATE)), 
-						cur.getString(cur.getColumnIndex(ContentDescriptor.Image.Cols.DESCRIPTION)),
-						cur.getInt(cur.getColumnIndex(ContentDescriptor.Image.Cols.IS_PROFILE)));
-				count = (result == true) ? count +1 : count + 0;
-				i +=1;
-			}
-			cur.close();
+			count = uploadAllImages();
 			if (count != 0) statusMessage = "Uploaded "+count+" Images";
 			Services.showToast(getApplicationContext(), statusMessage, handler);
 			//upload member
@@ -877,6 +875,26 @@ public class HornetDBService extends Service {
 		}
 		
 	}
+    
+    public int uploadAllImages(){
+    	cur = contentResolver.query(ContentDescriptor.Image.CONTENT_URI, null, null, null, null);
+		cur.moveToFirst();
+		int i = 0, count = 0;
+		Log.e(TAG, cur.toString());
+		Log.e(TAG, String.valueOf(i));
+		while (i < cur.getCount()){
+			cur.moveToPosition(i);
+			boolean result = uploadImage(cur.getInt(cur.getColumnIndex(ContentDescriptor.Image.Cols.ID)),
+					cur.getInt(cur.getColumnIndex(ContentDescriptor.Image.Cols.MID)),
+					cur.getString(cur.getColumnIndex(ContentDescriptor.Image.Cols.DATE)), 
+					cur.getString(cur.getColumnIndex(ContentDescriptor.Image.Cols.DESCRIPTION)),
+					cur.getInt(cur.getColumnIndex(ContentDescriptor.Image.Cols.IS_PROFILE)));
+			count = (result == true) ? count +1 : count + 0;
+			i +=1;
+		}
+		cur.close();
+		return count;
+    }
     
 	public boolean uploadImage(int id, int mid, String cDate, String description, int isProfile) {
     	int idExists, imageSize, updateCount;
