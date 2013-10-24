@@ -265,7 +265,7 @@ public class SettingsActivity extends PreferenceActivity {
 		progress.setKey("progress");
 		progress.setTitle("Progress Box Visible");
 		progress.setSummary("Checking this ensures sync progress is displayed on screen");
-		progress.setChecked(true);
+		progress.setChecked(false);
 		debug.addPreference(progress);
 		// debug toasts on
 		CheckBoxPreference toast = new CheckBoxPreference(this);

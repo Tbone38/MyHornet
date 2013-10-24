@@ -156,7 +156,8 @@ public class MemberAdd extends NFCActivity implements OnClickListener{
 					memberid = input.get(13);
 				}
 				Intent intent = new Intent(this, HornetDBService.class);
-				intent.putExtra(Services.Statics.KEY,Services.Statics.UPLOAD); 
+				//intent.putExtra(Services.Statics.KEY,Services.Statics.UPLOAD);
+				intent.putExtra(Services.Statics.KEY, Services.Statics.LASTVISITORS);
 				new InsertMember(this, intent, input.get(0), input.get(1), input.get(2), input.get(3), input.get(4),
 						input.get(5), input.get(6), input.get(7), input.get(8), input.get(9), input.get(10), input.get(11), input.get(12), memberid);
 				//InsertMember member = above line

@@ -255,11 +255,15 @@ public class BookingPage extends ActionBarActivity implements OnMemberSelectList
             		selectedMSID = null;
             	} else if (rg.getChildCount() > 0) {
 	            	
-	            	int cid = rg.getCheckedRadioButtonId();     	
-	            	RadioButton rb = (RadioButton) rg.findViewById(cid);
-	            	selectedMS = (String) rb.getText();
-	            	selectedMSID = (String) rb.getTag();
-	            	System.out.print("\n\nSelected Membership:"+selectedMS+" with ID:"+selectedMSID);
+	            	int cid = rg.getCheckedRadioButtonId();  
+	            	if (cid == -1) {
+	            		selectedMSID = null;
+	            	} else {
+		            	RadioButton rb = (RadioButton) rg.findViewById(cid);
+		            	selectedMS = (String) rb.getText();
+		            	selectedMSID = (String) rb.getTag();
+		            	System.out.print("\n\nSelected Membership:"+selectedMS+" with ID:"+selectedMSID);
+	            	}
             	}
 	            /** Rabbit Hole: fix this by changing the member name handling as well.
 	             * 

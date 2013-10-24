@@ -155,9 +155,12 @@ public class Services {
 		}
 	}
 	
-	public static void showProgress(final Context ctx, final String message, Handler handler, int call) {
+	public static void showProgress(final Context ctx, final String message, Handler handler, int call, boolean force) {
 		
 		DEBUG = PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean("progress", false);
+		if (force) {
+			DEBUG = true;
+		}
 		if (progress != null) {
 			//Services.stopProgress(handler, call);
 			Services.getProgress().dismiss();
@@ -198,7 +201,7 @@ public class Services {
 	
 	public static class Statics {
 		public static final int LASTVISITORS = 1;
-		public static final int UPLOAD = 2;
+		//public static final int UPLOAD = 2;
 		public static final int SWIPE = 3;
 		public static final int BOOKING = 4;		
 		public static final int FIRSTRUN = 10;

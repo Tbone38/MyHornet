@@ -57,20 +57,13 @@ public class BookingsSlideFragment extends Fragment  implements BookingsListFrag
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Services.setContext(getActivity());
-            
-        //getActivity().setContentView(R.layout.swipe_layout);
-        
-        
-        
     }
     
     @Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 		  super.onCreateView(inflater, container, savedInstanceState);
-		  //System.out.print("\n\nCreating View\n");
 		  Log.i(TAG, "Creating View");
-		  //return super.onCreateView(inflater, container, savedInstanceState);
-		 
+	
 		  view = inflater.inflate(R.layout.swipe_layout, container, false);
 		// Instantiate a ViewPager and a PagerAdapter.
 	        mPager = (ViewPager) view.findViewById(R.id.pager);

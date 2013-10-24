@@ -87,6 +87,7 @@ public class MainActivity extends NFCActivity implements BookingsListFragment.On
         registerReceiver(Services.getPollingHandler(), intentFilter);
 	}
 	
+	@Override
 	public void onStop() {
 		super.onStop();
         
@@ -198,14 +199,12 @@ public class MainActivity extends NFCActivity implements BookingsListFragment.On
 	    	 mFragment = mActivity.getSupportFragmentManager().findFragmentByTag(mTag);
 	         if (mFragment == null) {
 	            // If not, instantiate and add it to the activity
-	        	//mActivity.getSupportFragmentManager().executePendingTransactions();
 	            mFragment = Fragment.instantiate(mActivity, mClass.getName());
 	            Log.i("TabListener", "Adding Fragment:"+mTag);
 	          
 	            ft.replace(getContentViewCompat(), mFragment, mTag);
 	        } else {
 	            // If it exists, simply attach it in order to show it
-	        	//mActivity.getSupportFragmentManager().executePendingTransactions();
 	        	Log.i("TabListener", "Attaching Fragment:"+mTag);
 	        	ft.replace(getContentViewCompat(), mFragment, mTag);
 	        }
@@ -215,7 +214,6 @@ public class MainActivity extends NFCActivity implements BookingsListFragment.On
 	    	mFragment = mActivity.getSupportFragmentManager().findFragmentByTag(mTag);
 	    	if (mFragment != null) {
 	            // Detach the fragment, because another one is being attached
-	    		//mActivity.getSupportFragmentManager().executePendingTransactions();
 	    		Log.i("TabListener", "Detaching Fragment:"+mTag);
 	    		ft.detach(mFragment);
 	        } else {

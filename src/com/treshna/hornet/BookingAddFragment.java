@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -24,6 +25,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,6 +53,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 	private String curdate;
 	private Context ctx;
 	private View screen;
+	private static final String TAG = "BookingAddFragment";
 	
 	String statusMessage;
 	
@@ -352,6 +355,20 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 						updateView(error);
 						break;
 					}
+					case (-6):{ //the booking duration is set incorrectly
+						ArrayList<String> error = new ArrayList<String>();
+						error.add(null); //filler, where the boolean value was
+						error.add(String.valueOf(R.id.bookingEndTimeH));
+						updateView(error);
+						break;
+					}
+					case (-7):{
+						ArrayList<String> error = new ArrayList<String>();
+						error.add(null); //filler, where the boolean value was
+						error.add(String.valueOf(R.id.bookingStartTimeH));
+						updateView(error);
+						break;
+					}
 					}
 					
 				} else {
@@ -399,6 +416,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		ContentValues values = new ContentValues();
 		values.put(ContentDescriptor.Booking.Cols.STIME, input.get(2));
 		values.put(ContentDescriptor.Booking.Cols.ETIME, input.get(3));
+		
 		int etimeid = getTime(input.get(3), contentResolver);
 		if (etimeid == -1) {
 			statusMessage = "incorrect time selected, try 30 minute increments";
@@ -424,7 +442,17 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		values.put(ContentDescriptor.Booking.Cols.OFFSET, offset);
 		values.put(ContentDescriptor.Booking.Cols.IS_UPLOADED, 0);
 		cur.close();
-		
+		int correctspace = get_mod(input.get(3), input.get(2),offset);
+		if (correctspace != 0) {
+			if (correctspace == -3) {
+				statusMessage = "Cannot Create booking at that start time.";
+				Log.e(TAG, "Creating booking at this time will only show on phone.");
+				return -7;
+			}
+			statusMessage = "Booking duration does not match Resource's booking peroids.";
+			Log.e(TAG, "Incorrect time amount selected");
+			return -6;
+		}
 		arrival = Services.dateFormat(input.get(1), "yyyy MM dd", "yyyyMMdd");
 		
 		//Check if the timeslots are available before attempting to insert bookings.
@@ -496,7 +524,6 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 			return 0;
 		}
 		
-		//TODO: the below code needs the loop around it fixed. consider do-while;
 		int curtimeid = stimeid;
 		
 		while (curtimeid < etimeid) {
@@ -692,9 +719,6 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 	    	if (cur != null){
 	    		cur.close();
 	    	}
-	    	/*if (contentResolver == null){
-	    		contentResolver = getContentResolver();
-	    	}*/
 	    	cur = contentResolver.query(ContentDescriptor.Time.CONTENT_URI, null, ContentDescriptor.Time.Cols.TIME
 					+" = '"+time+"' ", null, null);
 			if (cur.getCount() == 0) {
@@ -702,12 +726,46 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 				return -1;
 			}
 			cur.moveToFirst();
-			/*for (int i=0;i<cur.getCount();i+=1){
-				//System.out.print("\n\ni:"+cur.getString(i));
-			}*/
+			
 			result = cur.getInt(cur.getColumnIndex(ContentDescriptor.Time.Cols.ID));
 			cur.close();
 			return result;
-			//return cur.getInt(0);
 	    }
+	 
+	 /* get hours and minutes as separate values, check that the minutes match
+	  * convert hours into minutes. add the hours to the minutes
+	  * subtract start from end, then modular against the minutes period.
+	  */
+	 private int get_mod(String etime, String stime, String period) {
+		 int result = -1;
+		 int iehour, iemin, ishour, ismin;
+		 int iperiod, ietime, istime;
+
+		 etime = etime.replace(":", "");
+		 stime = stime.replace(":", "");
+		 period = period.replace(":", "");
+	
+		 iehour = Integer.parseInt(etime.substring(0, 2));
+		 iehour = (iehour * 60);
+		 iemin = Integer.parseInt(etime.substring(2, 4));
+		 ietime = (iehour + iemin);
+		 ishour = Integer.parseInt(stime.substring(0, 2));
+		 ishour = (ishour *60);
+		 ismin = Integer.parseInt(stime.substring(2, 4));
+		 istime = (ishour + ismin);
+		 
+		 iperiod = Integer.parseInt(period.substring(2, 4));
+		 result = (ietime-istime)%iperiod;
+		 
+		 if ((ismin == 15 || ismin == 45) && (iperiod == 30 || iperiod == 60)) {
+			 return -3;
+		 }		 
+
+		 //Log.v(TAG, "etime:"+etime+" , stime:"+stime+" , Period:"+period); 
+		 //Log.v(TAG, "** MOD RESULT:"+String.valueOf(result));
+		 //Log.v(TAG, "iehour:"+iehour+" iemin:"+iemin+" ishour:"+ishour+" ismin:"+ismin);
+		 //Log.v(TAG, "ietime:"+ietime+" istime:"+istime+" iperiod:"+iperiod);
+		
+		 return result;
+	 }
 }

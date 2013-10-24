@@ -125,7 +125,8 @@ public class CameraWrapper extends Activity {
          System.out.println("Updating Image Table");
   
          Intent intent = new Intent(this, HornetDBService.class);
-         intent.putExtra(Services.Statics.KEY,Services.Statics.UPLOAD); 
+         //intent.putExtra(Services.Statics.KEY,Services.Statics.UPLOAD);
+         intent.putExtra(Services.Statics.KEY, Services.Statics.LASTVISITORS);
          startService(intent);
          finish();
 	}

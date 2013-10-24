@@ -238,7 +238,7 @@ public class JDBCConnection {
     	pStatement = con.prepareStatement("select resource.id as resourceid, resource.name as resourcename, "
     			+ "resource.companyid as resourcecompanyid, resourcetype.name as resourcetypename, "
     			+ "resourcetype.period as resourcetypeperiod FROM resource LEFT JOIN resourcetype"
-    			+" ON (resource.resourcetypeid = resourcetype.id);");
+    			+" ON (resource.resourcetypeid = resourcetype.id) WHERE resource.history = 'f';");
     	rs = pStatement.executeQuery();
     	return rs;
     }
@@ -391,7 +391,7 @@ public class JDBCConnection {
     	pStatement = con.prepareStatement("INSERT INTO booking (id, memberid, resourceid, arrival, startid, starttime, "
     			+"bookingtypeid, firstname, surname, result, membershipid, notes, endtime, endid, lastupdate) " +
     			"VALUES (?,?,?,?::DATE,?::TIME WITHOUT TIME ZONE,?::TIME WITHOUT TIME ZONE,?,?,?,?, ?, ?, " +
-    			"(?::TIME WITHOUT TIME ZONE - ?::TIME WITHOUT TIME ZONE), (?::TIME WITHOUT TIME ZONE - ?::TIME WITHOUT TIME ZONE), ?);");    	
+    			"(?::TIME WITHOUT TIME ZONE), (?::TIME WITHOUT TIME ZONE - ?::TIME WITHOUT TIME ZONE), ?);");    	
     	
     	pStatement.setInt(1, Integer.parseInt(booking.get(ContentDescriptor.Booking.Cols.BID)));
     	pStatement.setInt(2, Integer.parseInt(booking.get(ContentDescriptor.Booking.Cols.MID)));
@@ -413,11 +413,11 @@ public class JDBCConnection {
     	pStatement.setString(12, booking.get(ContentDescriptor.Booking.Cols.NOTES));
     	
     	pStatement.setString(13, booking.get(ContentDescriptor.Booking.Cols.ETIME));
-    	pStatement.setString(14, booking.get(ContentDescriptor.Booking.Cols.OFFSET));
-    	pStatement.setString(15, booking.get(ContentDescriptor.Booking.Cols.ETIME));
-    	pStatement.setString(16, booking.get(ContentDescriptor.Booking.Cols.OFFSET));
+    	//pStatement.setString(14, booking.get(ContentDescriptor.Booking.Cols.OFFSET)); if uncommenting: +1 the below numbers 
+       	pStatement.setString(14, booking.get(ContentDescriptor.Booking.Cols.ETIME));
+    	pStatement.setString(15, booking.get(ContentDescriptor.Booking.Cols.OFFSET));
     	//todo last-updated
-    	pStatement.setDate(17, new java.sql.Date(Long.valueOf(booking.get(ContentDescriptor.Booking.Cols.LASTUPDATED))));
+    	pStatement.setDate(16, new java.sql.Date(Long.valueOf(booking.get(ContentDescriptor.Booking.Cols.LASTUPDATED))));
     	
     	Log.v(TAG, "Upload Bookings Query:"+pStatement.toString());
     	return pStatement.executeUpdate();
