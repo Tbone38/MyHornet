@@ -255,6 +255,7 @@ public class SettingsActivity extends PreferenceActivity {
 		/*******End Bookings settings*******/
 	}
 	
+	@SuppressWarnings("deprecation")
 	private void createDebugOpt(){
 		PreferenceCategory debug = new PreferenceCategory(this);
 		debug.setTitle("Debug Options");
@@ -264,7 +265,7 @@ public class SettingsActivity extends PreferenceActivity {
 		progress.setKey("progress");
 		progress.setTitle("Progress Box Visible");
 		progress.setSummary("Checking this ensures sync progress is displayed on screen");
-		progress.setChecked(false);
+		progress.setChecked(true);
 		debug.addPreference(progress);
 		// debug toasts on
 		CheckBoxPreference toast = new CheckBoxPreference(this);

@@ -6,11 +6,6 @@
          android:title="@string/action_home"
          hornet:showAsAction="ifRoom" />
 	
-	 <item
-        android:id="@+id/action_bookings"
-        android:orderInCategory="200"
-        android:title="@string/action_bookings"
-        hornet:showAsAction="ifRoom"/>
 	  <item
         android:id="@+id/action_addMember"
         android:orderInCategory="300"

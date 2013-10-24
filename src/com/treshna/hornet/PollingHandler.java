@@ -68,7 +68,7 @@ public class PollingHandler extends BroadcastReceiver {
 				this.conStatus = false;
 			}
 		}
-		if (this.serverExists == true && conStatus == true) {
+		if ( conStatus == true) {
 			setPolling();
 		} else {
 			makeToast();
@@ -81,7 +81,7 @@ public class PollingHandler extends BroadcastReceiver {
 	public boolean startService() {
 		conStatus = isConnected();
 		serverExists = serverExists();
-		if (conStatus == true && serverExists == true) {
+		if (conStatus == true) {
 			this.isPolling = true;
 			setPolling();
 			return true;
@@ -148,11 +148,14 @@ public class PollingHandler extends BroadcastReceiver {
 	private void makeToast() {
 		if (conStatus == false) message = "no wifi connection found.";
 		else if (serverExists == false) message = "server not found on wifi, please check server ip settings.";
-		handler.post(new Runnable() {  
-				@Override  
-				public void run() {  
-					Toast.makeText(context.getApplicationContext(), message, Toast.LENGTH_LONG).show();
-				}});
+		if (message != null) {
+			handler.post(new Runnable() {  
+					@Override  
+					public void run() {  
+						Toast.makeText(context.getApplicationContext(), message, Toast.LENGTH_LONG).show();
+						message = null;
+					}});
+		}
 	}
 	
 	/*************************************/

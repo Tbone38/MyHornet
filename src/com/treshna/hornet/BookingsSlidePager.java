@@ -104,9 +104,12 @@ public class BookingsSlidePager extends ActionBarActivity  implements BookingsLi
 					if (cur != null){
 						cur.close();
 					}
-					cur = contentResolver.query(ContentDescriptor.Resource.CONTENT_URI, null, ContentDescriptor.Resource.Cols.NAME+" = ?", 
+					/*cur = contentResolver.query(ContentDescriptor.Resource.CONTENT_URI, null, ContentDescriptor.Resource.Cols.NAME+" = ?", 
 							new String[] {resourcename}, null);
-					cur.moveToFirst();
+					cur.moveToFirst();*/ 
+					//TODO: check this aligns properly (starts and ends)
+					cur = contentResolver.query(ContentDescriptor.Resource.CONTENT_URI, null, null, null, null);
+					cur.moveToPosition(pos);
 					resourceid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Resource.Cols.ID));
 					
 					updateSelection(resourceid);
@@ -242,7 +245,7 @@ public class BookingsSlidePager extends ActionBarActivity  implements BookingsLi
 	    	Services.setPreference(this, "sync_frequency", "-1");
 	    	return true;
 	    }
-	    case (R.id.action_bookings):{
+	    /*case (R.id.action_bookings):{
 	    	Intent bookings = new Intent(this, HornetDBService.class);
 			bookings.putExtra(Services.Statics.KEY, Services.Statics.BOOKING);
 		 	this.startService(bookings);
@@ -250,7 +253,7 @@ public class BookingsSlidePager extends ActionBarActivity  implements BookingsLi
 		 	Intent intent = new Intent(this, BookingsSlidePager.class);
 	       	startActivity(intent);
 	       	return true;
-	    }
+	    }*/
 	    case (R.id.action_addMember):{
 	    	Intent intent = new Intent(this, MemberAdd.class);
 	    	startActivity(intent);

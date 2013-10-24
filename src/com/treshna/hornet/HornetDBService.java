@@ -550,11 +550,163 @@ public class HornetDBService extends Service {
     	queryServerForImage(cur, 0);
     }
     
+    public void queryServerForImage(Cursor cursor, int index) {
+    	boolean oldQuery;
+    	ResultSet rs;
+    	FileHandler fileHandler;
+    	String query;
+    	ContentValues val;
+    	byte[] is;
+    	SimpleDateFormat dateFormat;
+    	
+    	oldQuery = PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean("image", false);
+    	ArrayList<String> imagelist = new ArrayList<String>();
+    	while (cursor.moveToNext()){
+    		imageWhereQuery = imageWhereQuery + " "+ cursor.getString(index) + ",";
+    		imagelist.add(cursor.getString(index));
+    	}
+    	cursor.close();
+		//System.out.println("\nQuerying server for image");
+		Log.v(TAG, "Querying Server for images");
+		query ="";
+    	if (oldQuery != true){ 
+        	query = "SELECT decode(substring(imagedata from 3),'base64'), memberid, lastupdated, description, is_profile, "
+					+"created FROM IMAGE where substring(imagedata,1,2) = '1|' and length(imagedata)>200"
+					+" AND memberid = '";
+        
+		} else if (oldQuery == true) { //the table doesn't have description or is_profile
+			query = "SELECT decode(substring(imagedata from 3),'base64'), memberid, lastupdated, "
+					+"created FROM IMAGE where substring(imagedata,1,2) = '1|' and length(imagedata)>200"
+					+" AND memberid = '";
+		}
+    	
+    	if (!openConnection()) {
+    		return ; //connection failed;
+    	}
+    	fileHandler = new FileHandler(this);
+    	for (int i=0; i< imagelist.size(); i+=1) {
+    		val = new ContentValues();
+        	dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        	String theQuery;
+        	theQuery = query+imagelist.get(i)+"';";
+        	
+    		rs = null;
+        	try {
+        		rs = connection.startStatementQuery(theQuery);
+        	} catch (SQLException e) {
+        		statusMessage = e.getLocalizedMessage();
+        		e.printStackTrace();
+        		return;
+        	}
+        	try {
+	        	while (rs.next()) {
+	        		List<String> dates;
+	        		Date cacheDate, sDate;
+	        		boolean imgExists;
+	        		
+	        		
+	        		cur = contentResolver.query(ContentDescriptor.Image.CONTENT_URI, null, ContentDescriptor.Image.Cols.MID
+	                		+" = "+rs.getString("memberid"), null, null); //imagelist.get(i)
+	            	cur.moveToFirst();
+	            	
+	            	//do some date checking. rather than rewriting images every time.
+	            	dates = new ArrayList<String>();
+	            	cacheDate = null;
+	        		while(!cur.isAfterLast()){
+	        			if ( cur.getCount() > 0 && cur.isNull(cur.getColumnIndex(ContentDescriptor.Image.Cols.DATE)) == false) {
+	        				String cDate = Services.dateFormat(cur.getString(cur.getColumnIndex(ContentDescriptor.Image.Cols.DATE)),
+	        						"dd MMM yy hh:mm:ss aa", "yyyy-MM-dd");
+	            			dates.add(cDate);
+	            		}
+	        			cur.moveToNext();
+	            	}
+	            	imgExists = false;
+	            	sDate = dateFormat.parse(rs.getString("lastupdated"));
+	            	for (String date : dates){
+	            		cacheDate = dateFormat.parse(date);
+	            		if (cacheDate.compareTo(sDate) == 0) imgExists = true;
+	            	}
+	            	//if the image isn't found: add it!
+	            	if (imgExists == false){
+	            		int imgCount = 0, isProfile;
+		            	imgCount = cur.getCount();
+		            	String ssDate, description;
+		            	
+		            	if (oldQuery != true) {
+			            	if (rs.getBoolean("is_profile") == true) { //isProfile
+			            		imgCount = 0;
+			            		
+			            		if (cur.getCount() > 0) {
+			            			val = new ContentValues();
+			            			val.put(ContentDescriptor.Image.Cols.ID, cur.getCount());
+			            			contentResolver.update(ContentDescriptor.Image.CONTENT_URI, val, ContentDescriptor.Image.Cols.ID +" = "+imgCount
+			            					+" AND "+ContentDescriptor.Image.Cols.MID+" = "+rs.getString("memberid"), null);
+			            			fileHandler.renameFile("0_"+rs.getString("memberid"), cur.getCount()+"_"+rs.getString("memberid"));
+			            		}
+			            	}
+		            	}
+		            	else {
+		            		imgCount = 0;
+		            		if (cur.getCount() > 0) {
+		            			val = new ContentValues();
+		            			val.put(ContentDescriptor.Image.Cols.ID, cur.getCount());
+		            			contentResolver.update(ContentDescriptor.Image.CONTENT_URI, val, ContentDescriptor.Image.Cols.ID +" = "+imgCount
+		            					+" AND "+ContentDescriptor.Image.Cols.MID+" = "+rs.getString("memberid"), null);
+		            			fileHandler.renameFile("0_"+rs.getString("memberid"), cur.getCount()+"_"+rs.getString("memberid"));
+		            		}
+		            	}
+		            	//cur.close();     		
+			            	//Add some null handling as well.
+		            	is = rs.getBytes(1); //imagedata
+		            	
+		        		fileHandler.writeFile(is, imgCount+"_"+rs.getString("memberid"));
+		        		is = null;
+		        		val.put(ContentDescriptor.Image.Cols.ID, imgCount);
+		        		val.put(ContentDescriptor.Image.Cols.MID, rs.getString("memberid"));
+		        		ssDate = Services.dateFormat(rs.getString("lastupdated"), "yyyy-MM-dd", "dd MMM yy hh:mm:ss aa");
+		        		val.put(ContentDescriptor.Image.Cols.DATE, ssDate);
+		        		description = null;
+		        		if (oldQuery != true) {
+		        			description = rs.getString("description");
+		        		}
+		        		if (description == null || description.length() < 2 || description.compareTo(" ") == 0) {
+		        			description = "no description";
+		        		}
+		        		val.put(ContentDescriptor.Image.Cols.DESCRIPTION, description);
+		        		isProfile = 0;
+		        		if (oldQuery != true){
+		        			isProfile = Services.booltoInt(rs.getBoolean("is_profile"));
+		        		} else {
+		        			isProfile = Services.booltoInt(rs.getBoolean(1)); //TODO: pretty sure this is broken, remove the rs.getBoolean
+		        		}
+		        		val.put(ContentDescriptor.Image.Cols.IS_PROFILE, isProfile);
+		        		contentResolver.insert(ContentDescriptor.Image.CONTENT_URI, val);
+	            	}
+	            	cur.close();
+	        	}
+	        	rs.close();
+        	} catch (SQLException e) {
+        		statusMessage = e.getLocalizedMessage();
+        		e.printStackTrace();
+        		closeConnection();
+        		return;
+        	} catch (ParseException e) {
+        		//date formatted incorrectly.
+        		statusMessage = e.getLocalizedMessage();
+        		e.printStackTrace();
+        		closeConnection();
+        		return;
+        	}
+    	}
+    	
+    	closeConnection();
+    }
+    
     /*
      * Image ID's are set such that id 0 for membership is always the profile picture.
      * this means that getting the profile picture from the sdcard should be 0_<memberid>.jpg
      */
-    private void queryServerForImage(Cursor cursor, int index){
+    private void oldqueryServerForImage(Cursor cursor, int index){
     	// Fix this
     	boolean oldQuery;
     	ResultSet rs;
@@ -566,6 +718,7 @@ public class HornetDBService extends Service {
     	SimpleDateFormat dateFormat;
     	
     	oldQuery = PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean("image", false);
+    	
     	
     	imageWhereQuery = " AND memberid IN (";
     	imageWhereQuery += (cursor.getCount() == 0)? "-1 " : " ";
@@ -594,7 +747,7 @@ public class HornetDBService extends Service {
         	// file size, gets passed into byte, this number need only be an int though.
         	query = fileHandler.readFile(fileSize, "multiImageQuery.sql");
         	query = query + imageWhereQuery;
-        
+			
         	try {
         		rs = connection.startStatementQuery(query);
         	} catch (SQLException e) {
@@ -605,7 +758,6 @@ public class HornetDBService extends Service {
 		} else if (oldQuery == true) { //the table doesn't have description or is_profile
 			fileSize = 162; 
         	// file size, gets passed into byte, this number need only be an int though.
-        	
         	query = fileHandler.readFile(fileSize, "noDescImageQuery.sql");
         	query = query + imageWhereQuery;
         	
@@ -1549,7 +1701,7 @@ public class HornetDBService extends Service {
 				//System.out.print("\n\nPeriod:"+cur.getString(0));
 				Log.v(TAG, "Period:"+cur.getString(0));
 				intv = cur.getString(0).replaceAll(":", "");
-				intvl = (Integer.parseInt(intv)/100);
+				intvl = (Integer.parseInt(intv)/100); //div by 100 to get integer representing minutes
 				Services.setPreference(ctx, "timeslot", String.valueOf(intvl));
 				cur.close();
 			}
@@ -1558,7 +1710,10 @@ public class HornetDBService extends Service {
 		interval = Integer.decode(Services.getAppSettings(this, "timeslot"));
 		//System.out.print("\n\nInterval:"+interval);
 		Log.v(TAG, "Interval:"+interval);
+		/*
 		if (interval != 15 && interval != 30 && interval != 60) interval = 15; //default every 15 minutes.
+		*/
+		interval = 15; //try defaulting to 15 minutes, see if that fixes or creates issues
 		day = Calendar.getInstance();
 		day.add(Calendar.DATE, -1);
 		

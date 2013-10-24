@@ -61,12 +61,12 @@ public class MainActivity extends NFCActivity implements BookingsListFragment.On
 		ab.addTab(visitortab);
 		/**
 		 * TODO: refactor bookings so that they work from a tab.
-		 *  (too hard basket atm).
+		 *  (too hard basket atm).*/
 		bookingtab = ab.newTab()
 				.setText("Bookings")
 				.setTabListener(new TabListener<BookingsSlideFragment>(
 						this, "bookings", BookingsSlideFragment.class));
-		ab.addTab(bookingtab);*/
+		ab.addTab(bookingtab);
 		
 		
 		/**the below code needs to run on app start.
@@ -136,7 +136,7 @@ public class MainActivity extends NFCActivity implements BookingsListFragment.On
 	    	Services.setPreference(this, "sync_frequency", "-1");
 	    	return true;
 	    }
-	    case (R.id.action_bookings):{
+	    /*case (R.id.action_bookings):{
 	    	Intent bookings = new Intent(this, HornetDBService.class);
 			bookings.putExtra(Services.Statics.KEY, Services.Statics.BOOKING);
 		 	this.startService(bookings);
@@ -144,7 +144,7 @@ public class MainActivity extends NFCActivity implements BookingsListFragment.On
 		 	Intent intent = new Intent(this, BookingsSlidePager.class);
 	       	startActivity(intent);
 	       	return true;
-	    }
+	    }*/
 	    case (R.id.action_addMember):{
 	    	Intent intent = new Intent(this, MemberAdd.class);
 	    	startActivity(intent);

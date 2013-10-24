@@ -57,7 +57,7 @@ public class BookingsSlideFragment extends Fragment  implements BookingsListFrag
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Services.setContext(getActivity());
-              
+            
         //getActivity().setContentView(R.layout.swipe_layout);
         
         
@@ -74,7 +74,7 @@ public class BookingsSlideFragment extends Fragment  implements BookingsListFrag
 		  view = inflater.inflate(R.layout.swipe_layout, container, false);
 		// Instantiate a ViewPager and a PagerAdapter.
 	        mPager = (ViewPager) view.findViewById(R.id.pager);
-	        mPagerAdapter = new ScreenSlidePagerAdapter(getActivity().getSupportFragmentManager());
+	        mPagerAdapter = new ScreenSlidePagerAdapter(getChildFragmentManager());
 	        mPager.setAdapter(mPagerAdapter);
 	        date = new Date();
 	        mPager.setCurrentItem(2);
@@ -112,9 +112,12 @@ public class BookingsSlideFragment extends Fragment  implements BookingsListFrag
 						if (cur != null){
 							cur.close();
 						}
-						cur = contentResolver.query(ContentDescriptor.Resource.CONTENT_URI, null, ContentDescriptor.Resource.Cols.NAME+" = ?", 
+						/*cur = contentResolver.query(ContentDescriptor.Resource.CONTENT_URI, null, ContentDescriptor.Resource.Cols.NAME+" = ?", 
 								new String[] {resourcename}, null);
-						cur.moveToFirst();
+						cur.moveToFirst();*/ 
+						//TODO: check this aligns properly (starts and ends)
+						cur = contentResolver.query(ContentDescriptor.Resource.CONTENT_URI, null, null, null, null);
+						cur.moveToPosition(pos);
 						resourceid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Resource.Cols.ID));
 						
 						updateSelection(resourceid);
@@ -236,7 +239,7 @@ public class BookingsSlideFragment extends Fragment  implements BookingsListFrag
 	public void onDateChange(Date newdate) {
 		//the widget has selected a new date, rebuild the fragments using that date.
 		date = newdate;
-		mPagerAdapter = new ScreenSlidePagerAdapter(getActivity().getSupportFragmentManager());
+		mPagerAdapter = new ScreenSlidePagerAdapter(getChildFragmentManager());
 		//get bookings for this date ?
 	    mPager.setAdapter(mPagerAdapter);
 		mPager.setCurrentItem(1);

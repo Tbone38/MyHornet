@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
@@ -25,6 +26,7 @@ public class MemberFindAdapter extends SimpleCursorAdapter implements OnClickLis
 	String[] FROM;
 	private boolean IS_BOOKING; //0 = find member, 1 = select member for booking
 	private OnMemberSelectListener mCallback;
+	private static final String TAG = "MemberFindAdapter";
 	
 	@SuppressWarnings("deprecation")
 	public MemberFindAdapter(Context context, int layout, Cursor c,
@@ -45,9 +47,8 @@ public class MemberFindAdapter extends SimpleCursorAdapter implements OnClickLis
 		/*for (int i=0; i<cursor.getColumnCount(); i++){
 			System.out.print("\n\nColumn:"+i+" Name:"+cursor.getColumnName(i)+"  Value:"+cursor.getString(i));
 		}*/
-		if (cursor.getInt(cursor.getColumnIndex(ContentDescriptor.Member.Cols.STATUS)) == 1 ||
-				cursor.getInt(cursor.getColumnIndex(ContentDescriptor.Member.Cols.STATUS)) == 2) {
-			//rowLayout.setBackgroundColor(color.greyout);
+		if (cursor.getInt(cursor.getColumnIndex(ContentDescriptor.Member.Cols.STATUS)) == 2) {
+			//expired!
 			rowLayout.setClickable(false);
 			
 			
@@ -60,9 +61,25 @@ public class MemberFindAdapter extends SimpleCursorAdapter implements OnClickLis
 			} else {
 				details.setVisibility(View.INVISIBLE);
 			}
+		} else if (cursor.getInt(cursor.getColumnIndex(ContentDescriptor.Member.Cols.STATUS)) == 1) {
+			//suspended!
+			ArrayList<String> tagInfo = new ArrayList<String>();
 			
+			rowLayout.setBackgroundColor(Color.WHITE);
+			tagInfo.add(cursor.getString(0)); //cursor.getColumnIndex(ContentDescriptor.Member.Cols.MID)
+			tagInfo.add(null);
+			rowLayout.setTag(tagInfo);
+			rowLayout.setClickable(true);
+			rowLayout.setOnClickListener(this);
+			TextView details = (TextView) rowLayout.findViewById(R.id.details);
+			if (!cursor.isNull(cursor.getColumnIndex(ContentDescriptor.Membership.Cols.PNAME)) &&
+					cursor.getString(cursor.getColumnIndex(ContentDescriptor.Membership.Cols.PNAME)).compareTo("") != 0) {
+				details.setText(cursor.getString(cursor.getColumnIndex(ContentDescriptor.Membership.Cols.PNAME))+"\n\nOn Suspension");
+				details.setVisibility(View.VISIBLE);
+			} else {
+				details.setVisibility(View.INVISIBLE);
+			}
 		} else {
-			//name.setTextColor(color.black);
 			ArrayList<String> tagInfo = new ArrayList<String>();
 			
 			rowLayout.setBackgroundColor(Color.WHITE);
@@ -130,7 +147,8 @@ public class MemberFindAdapter extends SimpleCursorAdapter implements OnClickLis
 		switch(v.getId()){
 		case(R.id.listRow):{
 			if (!IS_BOOKING) {
-				System.out.println("**Row Selected, Displaying More Info:");
+				//System.out.println("**Row Selected, Displaying More Info:");
+				Log.v(TAG, "Row Selected, Displaying More Info:");
 				ArrayList<String> tagInfo;
 				if (v.getTag() instanceof ArrayList<?>){
 					tagInfo = (ArrayList<String>) v.getTag();

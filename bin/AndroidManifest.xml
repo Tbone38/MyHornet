@@ -102,7 +102,7 @@
             android:theme="@style/Theme.AppCompat.Light" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.treshna.hornet.BookingsSlidePager" />
+                android:value="com.treshna.hornet.MainActivity" />
         </activity>
        
         <activity
