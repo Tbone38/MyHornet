@@ -771,7 +771,7 @@ public class HornetDBService extends Service {
     			catch (ParseException e){/* non-proper date format given*/ }
     			//System.out.print("\n * Cache: "+cacheImageDate);
     			//System.out.print("\n * Server: "+sDate);
-				if ((cacheImageDate.compareTo(sDate)) == 0) {
+				if ((cacheImageDate.compareTo(sDate)) == 0) { //TODO: make this more efficient
 					//image with exact same date already exists.
 					Log.v(TAG, "SKIPPING IMAGE, \nServer copy is same as local");
 					doesExist = true;
