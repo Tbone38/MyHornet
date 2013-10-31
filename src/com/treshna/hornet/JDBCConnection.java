@@ -479,8 +479,13 @@ public class JDBCConnection {
     	
     	return pStatement.executeUpdate();
     }
-    
-    public ResultSet findCardBySerial(String serial) throws SQLException {
+    /**
+     * DEPRECATED! use the internal idcard table instead.
+     * @param serial
+     * @return
+     * @throws SQLException
+     */
+    /*public ResultSet findCardBySerial(String serial) throws SQLException {
     	ResultSet rs;
     	
     	pStatement = con.prepareStatement("SELECT id FROM idcard WHERE serial = ?;");
@@ -489,7 +494,7 @@ public class JDBCConnection {
     	rs = pStatement.executeQuery();
     	
     	return rs;
-    }
+    }*/
     
     public ResultSet findMemberByCard(int cardno) throws SQLException {
     	ResultSet rs;
@@ -529,6 +534,35 @@ public class JDBCConnection {
     	return pStatement.executeUpdate();
     }
     
+    public ResultSet getIdCards() throws SQLException {
+    	ResultSet rs;
+    	
+    	pStatement = con.prepareStatement("SELECT id, serial FROM idcard;");
+    	rs = pStatement.executeQuery();
+    	
+    	return rs;
+    }
+    
+    public ResultSet getPaymentMethods() throws SQLException {
+    	ResultSet rs;
+    	
+    	pStatement = con.prepareStatement("SELECT id, name FROM paymentmethod;");
+    	rs = pStatement.executeQuery();
+    	
+    	return rs;
+    }
+    
+    public ResultSet getProgrammes() throws SQLException {
+    	ResultSet rs;
+    	
+    	pStatement = con.prepareStatement("SELECT p.id AS pid, programmegroupid, p.name, pg.name AS groupname, startdate, enddate, "
+    			+ "amount, mlength, signupfee, notes, lastupdate, price_desc(NULL, p.id) AS price_desc FROM programme p LEFT JOIN programmegroup pg ON "
+    			+ "(p.programmegroupid = pg.id)"
+    			+ "WHERE history = 'f';");
+    	rs = pStatement.executeQuery();
+    	
+    	return rs;
+    }
     
     public ResultSet startStatementQuery(String query) throws SQLException {
     	ResultSet rs = null;

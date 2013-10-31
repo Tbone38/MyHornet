@@ -113,12 +113,18 @@
     	android:orientation="vertical"
     	tools:context=".MemberDetails">
 	</LinearLayout>
-	
+	<TextView 
+	    android:id="@+id/addMembership"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@id/memberinfo"
+	    android:textSize="18sp"
+	    android:text="@string/add_membership" />
 	<LinearLayout
 	    android:id="@+id/membernotes"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    android:layout_below="@id/memberinfo"
+	    android:layout_below="@id/addMembership"
 	    android:orientation="vertical" >
 	    
 	    <TextView

@@ -16,4 +16,6 @@
     <color name="greyout">#FFC4C4C4</color>
     <color name="bookingname">#F0C4C4C4</color>
     <color name="overlay">#A0FFFFFF</color>
+    
+    <color name="android_blue">#FF33B5E5</color>
 </resources>

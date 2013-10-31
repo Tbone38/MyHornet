@@ -13,11 +13,13 @@ import com.treshna.hornet.ContentDescriptor.Bookingtype;
 import com.treshna.hornet.ContentDescriptor.Class;
 import com.treshna.hornet.ContentDescriptor.Company;
 import com.treshna.hornet.ContentDescriptor.Date;
+import com.treshna.hornet.ContentDescriptor.IdCard;
 import com.treshna.hornet.ContentDescriptor.Image;
 import com.treshna.hornet.ContentDescriptor.Member;
 import com.treshna.hornet.ContentDescriptor.Membership;
 import com.treshna.hornet.ContentDescriptor.MembershipSuspend;
 import com.treshna.hornet.ContentDescriptor.OpenTime;
+import com.treshna.hornet.ContentDescriptor.PaymentMethod;
 import com.treshna.hornet.ContentDescriptor.Pending;
 import com.treshna.hornet.ContentDescriptor.PendingUploads;
 import com.treshna.hornet.ContentDescriptor.Programme;
@@ -31,7 +33,7 @@ import com.treshna.hornet.ContentDescriptor.Visitor;
 public class HornetDatabase extends SQLiteOpenHelper {
 	
 	 public static final String DATABASE_NAME="hornet.db";
-	 private static final int DATABASE_VERSION = 83;
+	 private static final int DATABASE_VERSION = 85;
 	 
 	 public HornetDatabase (Context context) {
 		 super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -140,14 +142,15 @@ public class HornetDatabase extends SQLiteOpenHelper {
 				+ContentDescriptor.Resource.Cols.CID+" TEXT, "+ContentDescriptor.Resource.Cols.NAME+" TEXT, "
 				+ContentDescriptor.Resource.Cols.RTNAME+" TEXT, "+Resource.Cols.PERIOD+" TEXT );");
 		
-		//classes?
-		db.execSQL("CREATE TABLE "+Programme.NAME+" ("+Programme.Cols.ID+" INTEGER PRIMARY KEY, "
+		//Memberships
+		db.execSQL("CREATE TABLE "+Programme.NAME+" ("+Programme.Cols._ID+" INTEGER PRIMARY KEY, "
 				+Programme.Cols.GID+" INTEGER, "+Programme.Cols.NAME+" TEXT, "
 				+Programme.Cols.GNAME+" TEXT, "+Programme.Cols.MLENGTH+" TEXT, "
 				+Programme.Cols.SDATE+" TEXT, "+Programme.Cols.EDATE+" TEXT, "
 				+Programme.Cols.PRICE+" TEXT, "+Programme.Cols.SIGNUP+" TEXT, "
-				+Programme.Cols.ONLINE+" TEXT"+Programme.Cols.NOTE+" TEXT "
-				+");"); //add memberships, lookup priority
+				+Programme.Cols.NOTE+" TEXT, "+Programme.Cols.PID+" INTEGER, "
+				+Programme.Cols.LASTUPDATED+" TEXT, "+Programme.Cols.PRICE_DESC+" TEXT "
+				+");");
 		
 		db.execSQL("CREATE TABLE "+ContentDescriptor.Swipe.NAME+" ("+ContentDescriptor.Swipe.Cols.ID+" TEXT, "
 				+ContentDescriptor.Swipe.Cols.DOOR+" INTEGER, "+ContentDescriptor.Swipe.Cols.DATETIME+" DATETIME, "
@@ -181,6 +184,14 @@ public class HornetDatabase extends SQLiteOpenHelper {
 				+MembershipSuspend.Cols.STARTDATE+" INTEGER, "+MembershipSuspend.Cols.REASON+" TEXT, "
 				+MembershipSuspend.Cols.LENGTH+" INTEGER, " //# of days ?
 				+MembershipSuspend.Cols.FREEZE+" INTEGER, "+MembershipSuspend.Cols.MSID+" INTEGER "
+				+");");
+		
+		db.execSQL("CREATE TABLE "+IdCard.NAME+" ("+IdCard.Cols._ID+" INTEGER PRIMARY KEY, "
+				+IdCard.Cols.CARDID+" INTEGER, "+IdCard.Cols.SERIAL+" TEXT "
+				+");");
+		
+		db.execSQL("CREATE TABLE "+PaymentMethod.NAME+" ("+PaymentMethod.Cols._ID+" INTEGER PRIMARY KEY, "
+				+PaymentMethod.Cols.PAYMENTID+" INTEGER, "+PaymentMethod.Cols.NAME+" TEXT "
 				+");");
 		
 		repopulateTable(db);
@@ -228,10 +239,12 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS "+ResultStatus.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+OpenTime.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+Date.NAME);
-		db.execSQL("DROP TABLE IF EXISTS "+Class.NAME);
+		db.execSQL("DROP TABLE IF EXISTS "+Class.NAME); //and some of this
 		db.execSQL("DROP TABLE IF EXISTS "+TableIndex.NAME);
-		db.execSQL("DROP TABLE IF EXISTS "+PendingUploads.NAME);
-		db.execSQL("DROP TABLE IF EXISTS "+MembershipSuspend.NAME);
+		db.execSQL("DROP TABLE IF EXISTS "+PendingUploads.NAME); //TODO: save this
+		db.execSQL("DROP TABLE IF EXISTS "+MembershipSuspend.NAME); //and this
+		db.execSQL("DROP TABLE IF EXISTS "+IdCard.NAME);
+		db.execSQL("DROP TABLE IF EXISTS "+PaymentMethod.NAME);
 	}
 	
 	private void repopulateTable(SQLiteDatabase db) {

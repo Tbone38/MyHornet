@@ -329,6 +329,11 @@ public class MemberDetails extends NFCActivity implements OnClickListener {
 			memberInfo.addView(msWindow);
 		}
 		
+		TextView addMembership = (TextView) this.findViewById(R.id.addMembership);
+		addMembership.setTag(memberID);
+		addMembership.setClickable(true);
+		addMembership.setOnClickListener(this);
+		
 		LinearLayout notesGroup = (LinearLayout) this.findViewById(R.id.membernotes);
 		if (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.NOTES)) != null) {
 			if (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.NOTES)).compareTo("null") != 0) {
@@ -687,6 +692,16 @@ public class MemberDetails extends NFCActivity implements OnClickListener {
 			i.putExtra(Services.Statics.MSID, membershipid);
 			startActivity(i);
 			break;
+		}
+		case (R.id.addMembership):{
+			String memberid = null;
+			if (v.getTag() instanceof String) {
+				memberid = (String) v.getTag();
+			}
+			Intent i = new Intent(this, EmptyActivity.class);
+			i.putExtra(Services.Statics.KEY, Services.Statics.FragmentType.MembershipAdd.getKey());
+			i.putExtra(Services.Statics.MID, memberid);
+			startActivity(i);
 		}
 		}
 	}

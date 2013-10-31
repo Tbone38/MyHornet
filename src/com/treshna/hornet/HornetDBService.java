@@ -128,7 +128,7 @@ public class HornetDBService extends Service {
 			if (result == true) { //If database query was successful, then look for images; else show toast.
 				visitorImages();
 			}
-			
+			//TODO: check for error messages when running these commands.
 			//get ID's
 			getMemberID();
 			getBookingID();
@@ -152,6 +152,8 @@ public class HornetDBService extends Service {
 			getBookings();
 			bookingImages();
 			getClasses();
+			
+
 			   
 			Services.setPreference(ctx, "lastsync", String.valueOf(new Date().getTime()));
 			Services.showToast(getApplicationContext(), statusMessage, handler);
@@ -255,7 +257,7 @@ public class HornetDBService extends Service {
  	   
  	   case (Services.Statics.FIRSTRUN):{ //this should be run nightly/weekly
  		   thread.is_networking = true;
- 		 	
+ 		 	//it needs more update handling.
 		   Services.showProgress(Services.getContext(), "Syncing Local Database setting from Server", handler, currentCall, true);
 		   //the above box should probably always show.
 		   
@@ -275,6 +277,11 @@ public class HornetDBService extends Service {
 		   
 		   getBookingID();
 		  
+		   //do Memberships!
+		   getIdCards();
+		   getPaymentMethods();
+		   getProgrammes();
+		   
 		   thread.is_networking = false;
 		   Services.stopProgress(handler, currentCall);
 		   if (statusMessage != null) {
@@ -282,7 +289,6 @@ public class HornetDBService extends Service {
 		   }
 		   statusMessage = "Recieved "+mcount+" Members, "+mscount+" memberships, and "+rcount+" Resources";
 		   Services.showToast(getApplicationContext(), statusMessage, handler);
-		   //System.out.print("\n\nrcount:"+rcount+"  btcount:"+btcount+" rscount:"+rscount+"  mcount:"+mcount+" days:"+days);
 		   Log.v(TAG, "rcount:"+rcount+"  btcount:"+btcount+"  rscount:"+rscount+"  mcount:"+mcount
 				   +"  days:"+days);
 		   
@@ -301,7 +307,7 @@ public class HornetDBService extends Service {
  	    */
  	   case (Services.Statics.RESOURCESELECTED):{
  		   Log.v(TAG, "STARTING RESOURCE SETUP");
- 		   	thread.is_networking = true;
+ 		   	thread.is_networking = true; //set because we're rebuilding tables, don't try referencing them while we do!
  		   	Services.showProgress(Services.getContext(), "Setting up resource", handler, currentCall, false);
 	   	  	resourceid = theResource;
 	   	  	Log.v(TAG, "Selected Resource:"+resourceid);
@@ -1968,32 +1974,28 @@ public class HornetDBService extends Service {
     		if (cur.getCount() <= 0) return 0;
     		
     		serial = cur.getString(cur.getColumnIndex(ContentDescriptor.Swipe.Cols.ID)); 
-    		
+    		cur.close();
     		//rs = connection.findMemberBySerial(serial);
     		//select id FROM idcard where serial = 'Mx1bc34e';
     		//select memberid from membership where cardno = 168;
     		try {
-    			rs = connection.findCardBySerial(serial);
-    			Log.v(TAG, "findCard By Serial Size:"+rs.getFetchSize());
-    			if (!rs.next()) {
+    			cur = contentResolver.query(ContentDescriptor.IdCard.CONTENT_URI, null, ContentDescriptor.IdCard.Cols.SERIAL+" = ?",
+    					new String[] {serial}, null);
+    			Log.v(TAG, "FindCard By Serial Size:"+cur.getCount());
+    			
+    			if (!cur.moveToFirst()) {
     				//something went wrong, (sometimes the serial is just an int?)
     				//I should probably delete the serial from the swipe table.
+    				statusMessage = "tag not found in local database, try long syncing to fix.";
     				cur.close();
     				contentResolver.delete(ContentDescriptor.Swipe.CONTENT_URI, ContentDescriptor.Swipe.Cols.ID+" = ? ",
     						new String[] {serial});
-    				return -4; //only 1 row.
-    			}
-    		
-    			cardno = rs.getInt("id");
-    			if (rs.wasNull()) {
-    				//tag not found
-    				statusMessage = "tag not found in database";
-    				contentResolver.delete(ContentDescriptor.Swipe.CONTENT_URI, ContentDescriptor.Swipe.Cols.ID+" = ?",
-    						new String[] {serial});
+    				//return -4; //only 1 row. ??
     				continue;
     			}
-    			rs.close();
-    			connection.closePreparedStatement();
+    		
+    			//cardno = rs.getInt("id");
+    			cardno = cur.getInt(cur.getColumnIndex(ContentDescriptor.IdCard.Cols.CARDID));
     			
     			rs = connection.findMemberByCard(cardno);
     			rs.next();
@@ -2331,5 +2333,116 @@ public class HornetDBService extends Service {
     	
     	closeConnection();
     	return result;
+    }
+    
+    private int getIdCards() {
+    	int result = 0;
+    	ResultSet rs;
+    	
+    	if (!openConnection()) {
+    		return -1; //connection failed;
+    	}
+    	
+    	try {
+    		rs = connection.getIdCards();
+    	} catch (SQLException e) {
+    		statusMessage = e.getLocalizedMessage();
+    		e.printStackTrace();
+    		return -2;
+    	}
+    	try {
+    		while (rs.next()) {
+    			ContentValues values = new ContentValues();
+    			
+    			values.put(ContentDescriptor.IdCard.Cols.CARDID, rs.getString("id"));
+    			values.put(ContentDescriptor.IdCard.Cols.SERIAL, rs.getString("serial"));
+    			
+    			contentResolver.insert(ContentDescriptor.IdCard.CONTENT_URI, values);
+    			result +=1;
+    		}
+    	} catch (SQLException e) {
+    		statusMessage = e.getLocalizedMessage();
+    		e.printStackTrace();
+    		return -3;
+    	}
+    	connection.closeConnection();
+    	
+    	return result;
+    }
+    
+    private int getPaymentMethods() {
+    	int result = 0;
+    	ResultSet rs;
+    	
+    	if (!openConnection()) {
+    		return -1;
+    	}
+    	try {
+    		rs = connection.getPaymentMethods();
+    	} catch (SQLException e) {
+    		statusMessage = e.getLocalizedMessage();
+    		e.printStackTrace();
+    		return -2;
+    	}
+    	try {
+    		while (rs.next()) {
+    			ContentValues values = new ContentValues();
+    			
+    			values.put(ContentDescriptor.PaymentMethod.Cols.PAYMENTID, rs.getString("id"));
+    			values.put(ContentDescriptor.PaymentMethod.Cols.NAME, rs.getString("name"));
+    			
+    			contentResolver.insert(ContentDescriptor.PaymentMethod.CONTENT_URI, values);
+    		}
+    	} catch (SQLException e) {
+    		statusMessage = e.getLocalizedMessage();
+    		e.printStackTrace();
+    		return -3;
+    	}
+    	
+    	closeConnection();
+    	return result;
+    }
+    
+    private int getProgrammes() {
+    	int result = 0;
+    	ResultSet rs;
+    	
+    	if (!openConnection()) {
+    		return -1; //check statusMessage for reason
+    	}
+    	try {
+    		rs = connection.getProgrammes();
+    	} catch (SQLException e) {
+    		statusMessage = e.getLocalizedMessage();
+    		e.printStackTrace();
+    		return -2;
+    	}
+    	try {
+    		while (rs.next()) {
+    			ContentValues values = new ContentValues();
+    			
+    			values.put(ContentDescriptor.Programme.Cols.PID, rs.getString("pid"));
+    			values.put(ContentDescriptor.Programme.Cols.NAME, rs.getString("name"));
+    			values.put(ContentDescriptor.Programme.Cols.GID, rs.getString("programmegroupid"));
+    			values.put(ContentDescriptor.Programme.Cols.GNAME, rs.getString("groupname"));
+    			values.put(ContentDescriptor.Programme.Cols.SDATE, rs.getString("startdate"));
+    			values.put(ContentDescriptor.Programme.Cols.EDATE, rs.getString("enddate"));
+    			values.put(ContentDescriptor.Programme.Cols.PRICE, rs.getString("amount"));
+    			values.put(ContentDescriptor.Programme.Cols.MLENGTH, rs.getString("mlength"));
+    			values.put(ContentDescriptor.Programme.Cols.SIGNUP, rs.getString("signupfee"));
+    			values.put(ContentDescriptor.Programme.Cols.NOTE, rs.getString("notes"));
+    			values.put(ContentDescriptor.Programme.Cols.LASTUPDATED, rs.getString("lastupdate"));
+    			values.put(ContentDescriptor.Programme.Cols.PRICE_DESC, rs.getString("price_desc"));
+    			
+    			contentResolver.insert(ContentDescriptor.Programme.CONTENT_URI, values);
+    		}
+    	} catch (SQLException e ) {
+    		statusMessage = e.getLocalizedMessage();
+    		e.printStackTrace();
+    		return -3;
+    	}
+    	closeConnection();
+    	return result;
+    	
     }
 }

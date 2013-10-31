@@ -17,7 +17,9 @@ import android.provider.BaseColumns;
  *   12:								135:
  *   13 = PendingUploads				140 = Visitor
  *   50:								150:
- *   55 = Company (unused)				155:
+ *   55 = Company (unused)
+ *   60:
+ *   61 = Payment Method				155:
  *   80:								160:
  *   90 = ResultStatus					165 = Images
  *   91:								200:
@@ -29,8 +31,8 @@ import android.provider.BaseColumns;
  *  120:								310 = Booking
  *  125 = Membership
  *  
- *  311:
- *  312:
+ *  311:								400:
+ *  312:								401 = idcard
  *  313 = BookingTime
  *  315:
  *  324:
@@ -112,6 +114,9 @@ public class ContentDescriptor {
 	     matcher.addURI(authority, PendingUploads.PATH_FOR_ID, PendingUploads.PATH_FOR_ID_TOKEN);
 	     
 	     matcher.addURI(authority, MembershipSuspend.PATH, MembershipSuspend.PATH_TOKEN);
+	     matcher.addURI(authority, IdCard.PATH, IdCard.PATH_TOKEN);
+	     matcher.addURI(authority, PaymentMethod.PATH, PaymentMethod.PATH_TOKEN);
+	     matcher.addURI(authority, Programme.PATH, Programme.PATH_TOKEN);
 	     
 	     matcher.addURI(authority, DROPTABLE, TOKEN_DROPTABLE);
 	     
@@ -433,8 +438,8 @@ public class ContentDescriptor {
 	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.programme";
 	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.programme";
 	 		
-	 		public static class Cols {
-	 			public static final String ID = BaseColumns._ID;
+	 		public static class Cols implements BaseColumns{
+	 			public static final String PID = "programmeid";
 	 			public static final String GID = "groupid";
 	 			public static final String NAME = "name";
 	 			public static final String GNAME = "groupname";
@@ -443,9 +448,9 @@ public class ContentDescriptor {
 	 			public static final String PRICE = "price";
 	 			public static final String MLENGTH = "mlength";
 	 			public static final String SIGNUP = "signupfee";
-	 			public static final String ONLINE = "online";
 	 			public static final String NOTE = "pricenotes";
 	 			public static final String LASTUPDATED = "lastupdated";
+	 			public static final String PRICE_DESC ="price_desc";
 	 		}
 	 	}
 	 	//for storing actual memberships ?
@@ -469,7 +474,7 @@ public class ContentDescriptor {
 	       	 	public static final String VISITS="msvisits"; //concession
 	 			//if membership table is used for checking cards then: see pi cache;
 	 			public static final String CARDNO = "cardno";
-	 			public static final String DENY = "deny"; //0 = allow, 1 = deny ? where do I get this?
+	 			public static final String DENY = "deny"; //MOVE THIS TO A SEPERATE TABLE
 	 			public static final String LASTUPDATED = "lastupdated";
 	 		}
 	 	}
@@ -579,6 +584,85 @@ public class ContentDescriptor {
 	 		}
 	 	}
 	 	
+	 	//TODO: move more uploads here:
+	 	//		-Member
+	 	//		-Image
+	 	//		-Swipe
+	 	//		-Booking
+	 	public static class PendingUploads {
+	 		public static final String NAME = "PendingUploads";
+	 		public static final String PATH = "PendingUploads";
+	 		public static final int PATH_TOKEN = 12;
+	 		public static final String PATH_FOR_ID = "PendingUploads/*";
+	 		public static final int PATH_FOR_ID_TOKEN = 13;
+	 		
+	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
+	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.pendinguploads";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.pendinguploads";
+	 		
+	 		public static class Cols implements BaseColumns {
+	 			public static final String ROWID = "rowid";
+	 			public static final String TABLEID = "tableid";
+	 			//timestamp, probably not neccissary.
+	 		}
+	 	}
+	 	
+	 	public static class MembershipSuspend {
+	 		public static final String NAME = "MembershipSuspend";
+	 		public static final String PATH = "MembershipSuspend";
+	 		public static final int PATH_TOKEN = 126;
+	 		public static final String PATH_FOR_ID = "MembershipSuspend/*";
+	 		public static final int PATH_FOR_ID_TOKEN = 127;
+	 		
+	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
+	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.membershipsuspend";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.membershipsuspend";
+	 		
+	 		public static class Cols implements BaseColumns {
+	 			public static final String SID = "suspendid";
+	 			public static final String STARTDATE = "start";
+	 			public static final String LENGTH = "length";
+	 			public static final String REASON = "reason";
+	 			public static final String MID = "memberid";
+	 			public static final String MSID = "membershipid"; //insert the suspendid into membership row ?
+	 			public static final String FREEZE = "freeze_fees";
+	 		}
+	 	}
+	 	
+	 	public static class IdCard {
+	 		public static final String NAME = "idcard";
+	 		public static final String PATH = "idcard";
+	 		public static final int PATH_TOKEN = 400;
+	 		public static final String PATH_FOR_ID = "idcard/*";
+	 		public static final int PATH_FOR_ID_TOKEN = 401;
+	 		
+	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
+	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.idcard";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.idcard";
+	 		
+	 		public static class Cols implements BaseColumns {
+	 			public static final String CARDID = "cardid";
+	 			public static final String SERIAL = "serial";
+	 		}
+	 	}
+	 	
+	 	public static class PaymentMethod {
+	 		public static final String NAME = "paymentmethod";
+	 		public static final String PATH = "paymentmethod";
+	 		public static final int PATH_TOKEN = 60;
+	 		public static final String PATH_FOR_ID = "paymentmethod/*";
+	 		public static final int PATH_FOR_ID_TOKEN = 61;
+	 		
+	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
+	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.paymentmethod";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.paymentmethod";
+	 		
+	 		public static class Cols implements BaseColumns {
+	 			public static final String PAYMENTID = "paymentid";
+	 			public static final String NAME = "paymentname";
+	 		}
+	 	}
+	 	
 	 	public static class TableIndex {
 	 		public static final String NAME = "TableIndex";
 	 		public static final String PATH = "TableIndex";
@@ -628,51 +712,6 @@ public class ContentDescriptor {
 	 			public int getKey() {
 	 				return this.key;
 	 			}
-	 		}
-	 	}
-	 	
-	 	//TODO: move more uploads here:
-	 	//		-Member
-	 	//		-Image
-	 	//		-Swipe
-	 	//		-Booking
-	 	public static class PendingUploads {
-	 		public static final String NAME = "PendingUploads";
-	 		public static final String PATH = "PendingUploads";
-	 		public static final int PATH_TOKEN = 12;
-	 		public static final String PATH_FOR_ID = "PendingUploads/*";
-	 		public static final int PATH_FOR_ID_TOKEN = 13;
-	 		
-	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
-	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.pendinguploads";
-	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.pendinguploads";
-	 		
-	 		public static class Cols implements BaseColumns {
-	 			public static final String ROWID = "rowid";
-	 			public static final String TABLEID = "tableid";
-	 			//timestamp, probably not neccissary.
-	 		}
-	 	}
-	 	
-	 	public static class MembershipSuspend {
-	 		public static final String NAME = "MembershipSuspend";
-	 		public static final String PATH = "MembershipSuspend";
-	 		public static final int PATH_TOKEN = 126;
-	 		public static final String PATH_FOR_ID = "MembershipSuspend/*";
-	 		public static final int PATH_FOR_ID_TOKEN = 127;
-	 		
-	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
-	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.membershipsuspend";
-	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.membershipsuspend";
-	 		
-	 		public static class Cols implements BaseColumns {
-	 			public static final String SID = "suspendid";
-	 			public static final String STARTDATE = "start";
-	 			public static final String LENGTH = "length";
-	 			public static final String REASON = "reason";
-	 			public static final String MID = "memberid";
-	 			public static final String MSID = "membershipid"; //insert the suspendid into membership row ?
-	 			public static final String FREEZE = "freeze_fees";
 	 		}
 	 	}
 

@@ -31,10 +31,10 @@ public class Services {
 	 *  This function changes the format of a dateString. It requires the dateString, 
 	 *  the Layout of the string (e.g "yyyy-MM-dd"), and the requested output layout. 
 	 */
-	@SuppressLint("SimpleDateFormat")
+
 	public static String dateFormat(String dateString, String inputLayout, String outputLayout){
 		if (dateString == null || inputLayout == null || outputLayout == null ) return null;
-		SimpleDateFormat input = new SimpleDateFormat(inputLayout);
+		SimpleDateFormat input = new SimpleDateFormat(inputLayout, Locale.US);
 		Date date = null;
 		try {
 			date = input.parse(dateString);
@@ -42,7 +42,7 @@ public class Services {
 			Log.e(TAG, "Error Parsing Date:", e);
 			return ""; //or null?
 		}
-		SimpleDateFormat output = new SimpleDateFormat(outputLayout);
+		SimpleDateFormat output = new SimpleDateFormat(outputLayout, Locale.US);
 		String dateText = output.format(date);
 		
 		return dateText;
@@ -214,11 +214,27 @@ public class Services {
 		public static final String IS_BOOKING_F = "firstname";
 		public static final String IS_BOOKING_S = "surname";
 		public static final String MSID = "membershipid";
+		public static final String MID = "memberid";
 		public static String PREF_NAME = "addMember";
 		public static String PREF_KEY = "memberType";
 		
 		public static final String IS_SUCCESSFUL = "com.treshna.hornet.is_successful";
 		public static final String IS_RESTART = "com.treshna.hornet.is_restart";
 		public static final String IS_CLASSSWIPE = "com.treshna.hornet.class_swipe";
+		
+		public static enum FragmentType {
+			MembershipAdd(1);
+			
+			private final int key;
+			
+			FragmentType(int thekey) {
+				this.key = thekey;
+			}
+			
+			public int getKey() {
+ 				return this.key;
+ 			}
+			
+		}
 	}
 }

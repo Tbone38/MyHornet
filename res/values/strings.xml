@@ -26,7 +26,7 @@
     <string name="filler_text">filler Text, Filler Text!</string>
     <string name="heading_member_info">Member</string>
     <string name="heading_member_details">Membership Information</string>
-     <string name="heading_member_notes">Notes</string>
+    <string name="heading_member_notes">Notes</string>
     <string name="heading_member_contact">Contact Details</string>
     <string name="title_activity_add_member">Sign Up</string>
     <string name="title_activity_add_booking">Add Booking</string>
@@ -36,5 +36,8 @@
     <string name="leftarrow">&#60;</string>
     <string name="rightarrow">&#62;</string>
     <string name="title_activity_membership_hold">Hold Membership</string>
+    <string name="title_activity_membership_add">Add Membership</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="cancel">Cancel</string>
 
 </resources>
