@@ -20,6 +20,7 @@
   
   <!-- 				ADD MEMBERSHIP 				-->
   	<string name="add_membership">Add Membership</string>
+  	<string name="add_membership_group_type">Membership Group Type</string>
   	<string name="add_membership_type">Membership Type</string>
 	<string name="add_membership_to">to</string>
 	<string name="add_membership_startdate">Start Date</string>
@@ -31,5 +32,5 @@
 	<string name="add_membership_actions">Actions</string>
 	<string name="add_membership_add_tag">Add Tag</string>
 	<string name="add_membership_add_photo">Add Photo</string>
-	<string name="add_membership_complete">Complete &amp; Save</string>
+	<string name="add_membership_complete">Save &amp; Continue</string>
 </resources>

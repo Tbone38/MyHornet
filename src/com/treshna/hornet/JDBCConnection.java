@@ -254,7 +254,7 @@ public class JDBCConnection {
     	ResultSet rs = null;
     	if (last_sync > 0) {
     		//System.out.print("\n\nGetting Bookings with update After "+new java.sql.Date(last_sync));
-    		Log.v(TAG, "Getting Bookings with update Afrer "+new java.sql.Timestamp(last_sync));
+    		Log.v(TAG, "Getting Bookings with update After "+new java.sql.Timestamp(last_sync));
 	    	pStatement = con.prepareStatement("SELECT resourceid, booking.firstname, booking.surname, "
 	    			+"CASE WHEN bookingtype.externalname IS NOT NULL THEN bookingtype.externalname ELSE bookingtype.name END AS bookingname, "
 	    			+"booking.startid, booking.endid, booking.arrival, booking.id AS bookingid, bookingtype.id AS bookingtypeid, booking.endtime, booking.notes, booking.result, "
@@ -335,14 +335,23 @@ public class JDBCConnection {
     }
     
     //being used for bookings, TODO: last-visitors as well; ?
-    public ResultSet getMembers() throws SQLException {
+    public ResultSet getMembers(String lastupdate) throws SQLException {
     	ResultSet rs = null;
-    	pStatement = con.prepareStatement("SELECT id, member.firstname, member.surname, " //get_name
+    	String query = "SELECT id, member.firstname, member.surname, " //get_name
     			+"CASE WHEN member.happiness = 1 THEN ':)' WHEN member.happiness = 0 THEN ':|'"
     			+" WHEN member.happiness <= -1 THEN ':(' WHEN member.happiness = 2 THEN '||' ELSE '' END AS happiness, "
     			+"member.phonehome AS mphhome, member.phonework AS mphwork, member.phonecell AS mphcell, "
     			+"member.email AS memail, member.notes AS mnotes, member.status FROM member"
-    			+" WHERE status != 3;");
+    			+" WHERE status != 3";
+    	if (lastupdate != null) {
+    		query = query + " AND lastupdate > ?::TIMESTAMP WITHOUT TIME ZONE";
+    	}
+    	pStatement = con.prepareStatement(query);
+    	
+    	if (lastupdate != null) {
+    		pStatement.setString(1, Services.dateFormat(new Date(Long.parseLong(lastupdate)).toString(),
+    				"EEE MMM dd HH:mm:ss zzz yyyy", "dd-MM-yyyy HH:mm:ss"));
+    	}
     	
     	rs = pStatement.executeQuery();
     	return rs;
@@ -369,12 +378,22 @@ public class JDBCConnection {
     	return rs;
     }
     
-    public ResultSet getMembership() throws SQLException {
+    public ResultSet getMembership(String lastsync) throws SQLException {
     	ResultSet rs = null;
-    	pStatement = con.prepareStatement("SELECT membership.id, memberid, membership.startdate, membership.enddate, cardno, membership.notes, " +
+    	String query ="SELECT membership.id, memberid, membership.startdate, membership.enddate, cardno, membership.notes, " +
     			"primarymembership, membership.lastupdate, " +
     			" membership.concession, programme.name FROM membership LEFT JOIN programme ON (membership.programmeid = programme.id)" +
-    			" WHERE membership.enddate >= now()::date ;");
+    			" WHERE membership.enddate >= now()::date ";
+    	if (lastsync != null) {
+    		query = query + "AND lastupdate > ?::TIMESTAMP WITHOUT TIME ZONE ;";
+    	}
+  
+    	pStatement = con.prepareStatement(query);
+    	if (lastsync != null) {
+    		pStatement.setString(1, Services.dateFormat(new Date(Long.parseLong(lastsync)).toString(),
+    				"EEE MMM dd HH:mm:ss zzz yyyy", "dd-MM-yyyy HH:mm:ss"));
+    	}
+    	
     	rs = pStatement.executeQuery();
     	return rs;
     }
@@ -552,17 +571,25 @@ public class JDBCConnection {
     	return rs;
     }
     
-    public ResultSet getProgrammes() throws SQLException {
+    public ResultSet getProgrammes(String lastupdate) throws SQLException {
     	ResultSet rs;
-    	
-    	pStatement = con.prepareStatement("SELECT p.id AS pid, programmegroupid, p.name, pg.name AS groupname, startdate, enddate, "
+    	String query = "SELECT p.id AS pid, programmegroupid, p.name, pg.name AS groupname, startdate, enddate, "
     			+ "amount, mlength, signupfee, notes, lastupdate, price_desc(NULL, p.id) AS price_desc FROM programme p LEFT JOIN programmegroup pg ON "
     			+ "(p.programmegroupid = pg.id)"
-    			+ "WHERE history = 'f';");
+    			+ "WHERE history = 'f' ";
+    	if (lastupdate != null) {
+    		query = query + "AND lastupdate >?::TIMESTAMP WITHOUT TIME ZONE";
+    	}
+    	pStatement = con.prepareStatement(query);
+    	if (lastupdate != null) {
+    		pStatement.setString(1, Services.dateFormat(new Date(Long.parseLong(lastupdate)).toString(), 
+    				"EEE MMM dd HH:mm:ss zzz yyyy", "dd-MM-yyyy HH:mm:ss"));
+    	}
     	rs = pStatement.executeQuery();
     	
     	return rs;
     }
+    
     
     public ResultSet startStatementQuery(String query) throws SQLException {
     	ResultSet rs = null;

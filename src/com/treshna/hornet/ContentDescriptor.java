@@ -117,6 +117,7 @@ public class ContentDescriptor {
 	     matcher.addURI(authority, IdCard.PATH, IdCard.PATH_TOKEN);
 	     matcher.addURI(authority, PaymentMethod.PATH, PaymentMethod.PATH_TOKEN);
 	     matcher.addURI(authority, Programme.PATH, Programme.PATH_TOKEN);
+	     matcher.addURI(authority, Programme.PATH_FOR_GROUP, Programme.PATH_FOR_GROUP_TOKEN);
 	     
 	     matcher.addURI(authority, DROPTABLE, TOKEN_DROPTABLE);
 	     
@@ -433,7 +434,10 @@ public class ContentDescriptor {
 	 		public static final int PATH_TOKEN = 360;
 	 		public static final String PATH_FOR_ID = "Programme/*";
 	 		public static final int PATH_FOR_ID_TOKEN = 370;
+	 		public static final String PATH_FOR_GROUP = "ProgrammeGroup";
+	 		public static final int PATH_FOR_GROUP_TOKEN = 361;
 	 		
+	 		public static final Uri GROUP_URI = BASE_URI.buildUpon().appendPath(PATH_FOR_GROUP).build();
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
 	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.programme";
 	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.programme";
@@ -453,6 +457,25 @@ public class ContentDescriptor {
 	 			public static final String PRICE_DESC ="price_desc";
 	 		}
 	 	}
+	 	
+	 	//is this redundant?
+	 	public static class ProgrammeGroup {
+	 		public static final String NAME = "ProgrammeGroup";
+	 		public static final String PATH = "ProgrammeGroup";
+	 		public static final int PATH_TOKEN = 361;
+	 		public static final String PATH_FOR_ID = "ProgrammeGroup/*";
+	 		public static final int PATH_FOR_ID_TOKEN = 371;
+	 		
+	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
+	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.programmegroup";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.programmegroup";
+	 		
+	 		public static class Cols implements BaseColumns {
+	 			public static final String PGID = "programmegroupid";
+	 			public static final String PGNAME = "programmegroupname";
+	 		}
+	 	}
+	 	
 	 	//for storing actual memberships ?
 	 	public static class Membership {
 	 		public static final String NAME = "Membership";
@@ -476,6 +499,11 @@ public class ContentDescriptor {
 	 			public static final String CARDNO = "cardno";
 	 			public static final String DENY = "deny"; //MOVE THIS TO A SEPERATE TABLE
 	 			public static final String LASTUPDATED = "lastupdated";
+	 			public static final String PRIMARYMS = "primarymembership";
+	 			public static final String PID = "programmeid";
+	 			public static final String PGID ="programmegroupid";
+	 			public static final String PAYMENT = "paymentdue";
+	 			public static final String SIGNUP = "signupfee";
 	 		}
 	 	}
 	 	
@@ -604,6 +632,23 @@ public class ContentDescriptor {
 	 			public static final String ROWID = "rowid";
 	 			public static final String TABLEID = "tableid";
 	 			//timestamp, probably not neccissary.
+	 		}
+	 	}
+	 	
+	 	public static class PendingDownloads {
+	 		public static final String NAME = "PendingDownloads";
+	 		public static final String PATH = "PendingDownloads";
+	 		public static final int PATH_TOKEN = 14;
+	 		public static final String PATH_FOR_ID = "PendingDownloads/*";
+	 		public static final int PATH_FOR_ID_TOKEN = 15;
+	 		
+	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
+	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.pendingdownloads";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.pendingdownloads";
+	 		
+	 		public static class Cols implements BaseColumns {
+	 			public static final String ROWID = "rowid";
+	 			public static final String TABLEID = "tableid";
 	 		}
 	 	}
 	 	

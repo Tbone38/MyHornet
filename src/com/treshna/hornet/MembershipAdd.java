@@ -6,11 +6,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
-import com.treshna.hornet.BookingPage.TagFoundListener;
+
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -21,6 +22,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -33,6 +35,8 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.treshna.hornet.BookingPage.TagFoundListener;
 
 public class MembershipAdd extends Fragment implements OnClickListener, TagFoundListener {
 	private static final String TAG ="MembershipAdd";
@@ -54,6 +58,7 @@ public class MembershipAdd extends Fragment implements OnClickListener, TagFound
 	private String memberid;
 	private String cardid = null;
 	private AlertDialog alertDialog = null;
+	private int groupid;
 	
 	private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override //when the data-picker finishes, sends out a broadcast.
@@ -160,7 +165,7 @@ public class MembershipAdd extends Fragment implements OnClickListener, TagFound
 		});
 		
 		
-		Spinner membershiptype = (Spinner) page.findViewById(R.id.membershiptype);
+		/*Spinner membershiptype = (Spinner) page.findViewById(R.id.membershiptype);
 		cur = contentResolver.query(ContentDescriptor.Programme.CONTENT_URI, null, null, null, null);
 		ArrayList<String> membershiptypes = new ArrayList<String>();
 		while (cur.moveToNext()) {
@@ -192,8 +197,75 @@ public class MembershipAdd extends Fragment implements OnClickListener, TagFound
 			@Override
 			public void onNothingSelected(AdapterView<?> arg0) {
 			}
+		});*/
+
+		
+		Spinner membershipgroup = (Spinner) page.findViewById(R.id.membershipgrouptype);
+		cur = contentResolver.query(ContentDescriptor.Programme.GROUP_URI, null, null, null, null);
+		ArrayList<String> membershipgroups = new ArrayList<String>();
+		while (cur.moveToNext()) {
+			membershipgroups.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Programme.Cols.GNAME)));
+		}
+		cur.close();
+		
+		ArrayAdapter<String> groupAdapter = new ArrayAdapter<String>(ctx,
+				android.R.layout.simple_spinner_item, membershipgroups);
+		groupAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		membershipgroup.setAdapter(groupAdapter);
+		membershipgroup.setOnItemSelectedListener(new OnItemSelectedListener(){
+
+			@Override
+			public void onItemSelected(AdapterView<?> parentView, View selectedView,
+					int position, long id) {
+				cur = contentResolver.query(ContentDescriptor.Programme.GROUP_URI, null, null, null, null);
+				if (!cur.moveToPosition(position)) {
+					//error!
+				}
+				groupid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Programme.Cols.GID));
+
+				Spinner membershiptype = (Spinner) page.findViewById(R.id.membershiptype);
+				cur = contentResolver.query(ContentDescriptor.Programme.CONTENT_URI, null, ContentDescriptor.Programme.Cols.GID+" = ?",
+						new String[] {String.valueOf(groupid)}, null);
+				ArrayList<String> membershiptypes = new ArrayList<String>();
+				while (cur.moveToNext()) {
+					membershiptypes.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Programme.Cols.NAME)));
+				}
+				cur.close();
+				
+				ArrayAdapter<String> typeAdapter = new ArrayAdapter<String>(ctx,
+						android.R.layout.simple_spinner_item, membershiptypes);
+				typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+				
+				membershiptype.setAdapter(typeAdapter);
+				membershiptype.setOnItemSelectedListener(new OnItemSelectedListener() {
+					@Override
+					public void onItemSelected(AdapterView<?> parentView, View selectedView,
+							int position, long id) {
+						cur = contentResolver.query(ContentDescriptor.Programme.CONTENT_URI, null, ContentDescriptor.Programme.Cols.GID+" = ?",
+								new String[] {String.valueOf(groupid)}, null);
+						
+						if (!cur.moveToPosition(position)){
+							//we failed for some reason, what should I do?
+						}
+						mPrice.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Programme.Cols.PRICE)));
+						mSignup.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Programme.Cols.SIGNUP)));
+						
+						 TextView payment_desc = (TextView) page.findViewById(R.id.membershippaymentdesc);
+						 payment_desc.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Programme.Cols.PRICE_DESC)));
+					}
+
+					@Override
+					public void onNothingSelected(AdapterView<?> arg0) {
+					}
+				});
+
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {}
 		});
 		
+				
 		
 		TextView startdate = (TextView) page.findViewById(R.id.membershipsdate);
 		startdate.setTag(Services.dateFormat(new Date().toString(),
@@ -234,6 +306,12 @@ public class MembershipAdd extends Fragment implements OnClickListener, TagFound
 		
 		LinearLayout addtag = (LinearLayout) page.findViewById(R.id.membershipaddtag_row);
 		addtag.setOnClickListener(this);
+		
+		LinearLayout accept = (LinearLayout) page.findViewById(R.id.acceptbutton);
+		accept.setOnClickListener(this);
+		
+		LinearLayout cancel = (LinearLayout) page.findViewById(R.id.cancelbutton);
+		cancel.setOnClickListener(this);
 		
 		return page;
 	}
@@ -315,7 +393,7 @@ public class MembershipAdd extends Fragment implements OnClickListener, TagFound
 		}
 		case (R.id.acceptbutton):{
 			ArrayList<String> emptyviews = validate();
-			boolean is_valid = Boolean.parseBoolean(emptyviews.get(1));
+			boolean is_valid = Boolean.parseBoolean(emptyviews.get(0));
 			if (!is_valid) {
 				updateView(emptyviews);
 			} else {
@@ -323,6 +401,10 @@ public class MembershipAdd extends Fragment implements OnClickListener, TagFound
 				//insert results
 				//continue to next page
 			}
+			break;
+		}
+		case (R.id.cancelbutton):{
+			getActivity().finish();
 			break;
 		}
 		case (R.id.membershipaddphoto_row): {
@@ -364,28 +446,34 @@ public class MembershipAdd extends Fragment implements OnClickListener, TagFound
 		boolean is_valid = true;
 		
 		TextView startdate = (TextView) page.findViewById(R.id.membershipsdate);
-		if (startdate.toString().compareTo(this.getString(R.string.add_membership_startdate)) ==0) {
+		if (startdate.getText().toString().compareTo(this.getString(R.string.add_membership_startdate)) ==0) {
 			//not changed!
 			is_valid = false;
 			emptyviews.add(String.valueOf(R.id.membershipsdate));
+		} else {
+			startdate.setTextColor(Color.BLACK);
 		}
 		
 		TextView enddate = (TextView) page.findViewById(R.id.membershipedate);
-		if (enddate.toString().compareTo(this.getString(R.string.add_membership_enddate))==0) {
+		if (enddate.getText().toString().compareTo(this.getString(R.string.add_membership_enddate))==0) {
 			is_valid = false;
 			emptyviews.add(String.valueOf(R.id.membershipedate));
-		} else if (startdate.toString().compareTo(this.getString(R.string.add_membership_startdate)) !=0) {
+		} else if (startdate.getText().toString().compareTo(this.getString(R.string.add_membership_startdate)) !=0) {
 			//compare the dates;
 			SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy", Locale.US);
 			Date sdate = null, edate = null;
 			try {
-				sdate = format.parse(startdate.toString());
-				edate = format.parse(startdate.toString());
+				sdate = format.parse(startdate.getText().toString());
+				edate = format.parse(enddate.getText().toString());
 				if (sdate.getTime()>= edate.getTime()) {
 					is_valid = false;
 					emptyviews.add(String.valueOf(R.id.membershipedate));
 					emptyviews.add(String.valueOf(R.id.membershipsdate));
+				} else {
+					startdate.setTextColor(Color.BLACK);
+					enddate.setTextColor(Color.BLACK);
 				}
+				
 			} catch (ParseException e) {
 				is_valid = false;
 				emptyviews.add(String.valueOf(R.id.membershipedate));
@@ -394,10 +482,21 @@ public class MembershipAdd extends Fragment implements OnClickListener, TagFound
 		}
 		
 		TextView paymentdate = (TextView) page.findViewById(R.id.membershippaymentdate);
-		if (paymentdate.toString().compareTo(this.getString(R.string.add_membership_paymentdate)) == 0) {
+		Log.v(TAG, paymentdate.getText().toString());
+		Log.v(TAG, this.getString(R.string.add_membership_paymentdate));
+		if (paymentdate.getText().toString().compareTo(this.getString(R.string.add_membership_paymentdate)) == 0) {
 			is_valid = false;
 			emptyviews.add(String.valueOf(R.id.membershippaymentdate));
-		} // do all the crazy gymmaster payment checking here.
+		 // do all the crazy gymmaster payment checking here.
+		} 
+		/*
+		 *First payment date after start date" CHECK (firstpayment >= startdate)
+    	 *First payment date is too early" CHECK (firstpayment > '1990-01-01'::date)
+    	 *First payment is too far in the future" CHECK (firstpayment < (startdate + '4 mons'::interval) OR startdate < now()) 
+		 */
+		else {
+			paymentdate.setTextColor(Color.BLACK);
+		}
 		
 		
 		emptyviews.add(0, String.valueOf(is_valid));
@@ -406,7 +505,7 @@ public class MembershipAdd extends Fragment implements OnClickListener, TagFound
 	
 	private ArrayList<String> getInput(){
 		ArrayList<String> input = new ArrayList<String>();
-		
+	
 		
 		return input;
 	}
@@ -430,27 +529,29 @@ public class MembershipAdd extends Fragment implements OnClickListener, TagFound
 			//the phone.
 			//TODO:
 			message = "Tag not found in db, please swipe tag at reception, then re-sync device";
-			return;
-		}
-		cardid = cur.getString(cur.getColumnIndex(ContentDescriptor.IdCard.Cols.CARDID));
-		cur.close();
-		
-		cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols.CARDNO+" = ?",
-				new String[] {cardid}, null);
-		if (cur.getCount() > 0) {
-			//id is in use, what should I do?
-			message = "Tag already in use";
-			cardid = null;
-			return;
+			Log.v(TAG, message);
 		} else {
-			message = "Assigning card No. "+cardid+" to member.";
-			if (alertDialog != null){
-				alertDialog.dismiss();
-				alertDialog = null;
+			cardid = cur.getString(cur.getColumnIndex(ContentDescriptor.IdCard.Cols.CARDID));
+			cur.close();
+			
+			cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols.CARDNO+" = ?",
+					new String[] {cardid}, null);
+			if (cur.getCount() > 0) {
+				//id is in use, what should I do?
+				message = "Tag already in use";
+				Log.v(TAG, message);
+				cardid = null;
+			} else {
+				message = "Assigning card No. "+cardid+" to member.";
+				Log.v(TAG, message);
+				if (alertDialog != null){
+					alertDialog.dismiss();
+					alertDialog = null;
+				}
 			}
 		}
+		cur.close();
 		//TOAST!
-		
 		Toast.makeText(ctx, message, Toast.LENGTH_LONG).show();
 	}
 }

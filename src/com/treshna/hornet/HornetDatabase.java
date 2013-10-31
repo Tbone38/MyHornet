@@ -21,6 +21,7 @@ import com.treshna.hornet.ContentDescriptor.MembershipSuspend;
 import com.treshna.hornet.ContentDescriptor.OpenTime;
 import com.treshna.hornet.ContentDescriptor.PaymentMethod;
 import com.treshna.hornet.ContentDescriptor.Pending;
+import com.treshna.hornet.ContentDescriptor.PendingDownloads;
 import com.treshna.hornet.ContentDescriptor.PendingUploads;
 import com.treshna.hornet.ContentDescriptor.Programme;
 import com.treshna.hornet.ContentDescriptor.Resource;
@@ -65,11 +66,15 @@ public class HornetDatabase extends SQLiteOpenHelper {
 				+");");
 		
 		db.execSQL("CREATE TABLE "+Membership.NAME+" ("+Membership.Cols._ID+" INTEGER PRIMARY KEY, "
-				+Membership.Cols.MID+" INTEGER, "+Membership.Cols.MSID+" INTEGER, "
+				+Membership.Cols.MID+" INTEGER NOT NULL, "+Membership.Cols.MSID+" INTEGER, "
 				+Membership.Cols.CARDNO+" TEXT, "+Membership.Cols.DENY+" INTEGER, "
 				+Membership.Cols.PNAME+" TEXT, "+Membership.Cols.MSSTART+" TEXT, "
 				+Membership.Cols.EXPIRERY+" TEXT, "+Membership.Cols.VISITS+" TEXT, "
-				+Membership.Cols.LASTUPDATED+" TIMESTAMP NOT NULL DEFAULT current_timstamp );"); //ms since epoch;
+				+Membership.Cols.LASTUPDATED+" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, "
+				+Membership.Cols.PRIMARYMS+" INTEGER, "+Membership.Cols.PID+" INTEGER, "
+				+Membership.Cols.PGID+" INTEGER, "+Membership.Cols.PAYMENT+" TEXT, "
+				+Membership.Cols.SIGNUP+" TEXT "
+				+");"); //?
 		
 		//for quick look up of Images:, Uses composite PK
 		db.execSQL("CREATE TABLE "+ContentDescriptor.Image.NAME+" ("+ContentDescriptor.Image.Cols.ID+" INTEGER, "
@@ -177,6 +182,10 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		db.execSQL("CREATE TABLE "+PendingUploads.NAME+" ("+PendingUploads.Cols._ID+" INTEGER PRIMARY KEY, "
 				+PendingUploads.Cols.TABLEID+" INTEGER, "+PendingUploads.Cols.ROWID+" INTEGER, "
 				+"FOREIGN KEY ("+PendingUploads.Cols.TABLEID+") REFERENCES "+TableIndex.NAME+" ("+TableIndex.Cols._ID+") "
+				+");");
+		//add a table that forces a row to redownload all it's data?
+		db.execSQL("CREATE TABLE "+PendingDownloads.NAME+" ("+PendingUploads.Cols._ID+" INTEGER PRIMARY KEY, "
+				+PendingDownloads.Cols.TABLEID+" INTEGER, "+PendingDownloads.Cols.ROWID+" INTEGER "
 				+");");
 		
 		db.execSQL("CREATE TABLE "+MembershipSuspend.NAME+" ("+MembershipSuspend.Cols._ID+" INTEGER PRIMARY KEY, "

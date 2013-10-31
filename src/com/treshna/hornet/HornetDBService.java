@@ -123,6 +123,9 @@ public class HornetDBService extends Service {
  	   			return;
  	   		}
  	   		
+ 	   		long this_sync = new Date().getTime();
+ 	   		String last_sync = Services.getAppSettings(ctx, "lastsync"); //use this for checking lastupdate
+ 	   		
  	   		//get Visitors
  	   		boolean result = getLastVisitors();
 			if (result == true) { //If database query was successful, then look for images; else show toast.
@@ -155,7 +158,7 @@ public class HornetDBService extends Service {
 			
 
 			   
-			Services.setPreference(ctx, "lastsync", String.valueOf(new Date().getTime()));
+			Services.setPreference(ctx, "lastsync", String.valueOf(this_sync));
 			Services.showToast(getApplicationContext(), statusMessage, handler);
 			/*Broadcast an intent to let the app know that the sync has finished
 			 * communicating with the server/updating the cache.
@@ -1584,7 +1587,7 @@ public class HornetDBService extends Service {
     		return -1; //connection failed;
     	}
     	try {
-    		rs = connection.getMembers();
+    		rs = connection.getMembers(null);
     		while (rs.next()) {
     			ContentValues values = new ContentValues();
     			values.put(ContentDescriptor.Member.Cols.MID, rs.getString("id"));
@@ -1597,7 +1600,16 @@ public class HornetDBService extends Service {
     			values.put(ContentDescriptor.Member.Cols.EMAIL, rs.getString("memail"));
     			values.put(ContentDescriptor.Member.Cols.NOTES, rs.getString("mnotes"));
     			values.put(ContentDescriptor.Member.Cols.STATUS, rs.getString("status"));
-    			contentResolver.insert(ContentDescriptor.Member.CONTENT_URI, values);
+    			
+    			cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, ContentDescriptor.Member.Cols.MID+" = ?",
+    					new String[] {rs.getString("id")}, null);
+    			if (cur.getCount() > 0) {
+    				contentResolver.update(ContentDescriptor.Member.CONTENT_URI, values, ContentDescriptor.Member.Cols.MID+" = ?",
+    						new String[] {rs.getString("id")});
+    			} else {
+    				contentResolver.insert(ContentDescriptor.Member.CONTENT_URI, values);
+    			}
+    			cur.close();
     			result +=1;
     		}
     	} catch (SQLException e){
@@ -1619,7 +1631,7 @@ public class HornetDBService extends Service {
     	}
     	
     	try {
-    		rs = connection.getMembership();
+    		rs = connection.getMembership(null);
     		while (rs.next()){
     			ContentValues values = new ContentValues();
     			
@@ -1632,7 +1644,15 @@ public class HornetDBService extends Service {
     			values.put(ContentDescriptor.Membership.Cols.VISITS, rs.getString("concession"));
     			values.put(ContentDescriptor.Membership.Cols.LASTUPDATED, rs.getString("lastupdate"));
     			
-    			contentResolver.insert(ContentDescriptor.Membership.CONTENT_URI, values);
+    			cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols.MSID+" = ?",
+    					new String[] {rs.getString("id")},null);
+    			if (cur.getCount()> 0) { //update
+    				contentResolver.update(ContentDescriptor.Membership.CONTENT_URI, values, ContentDescriptor.Membership.Cols.MSID+" = ?",
+    						new String[] {rs.getString("id")});
+    			} else { //insert
+    				contentResolver.insert(ContentDescriptor.Membership.CONTENT_URI, values);
+    			}
+    			cur.close();
     			result +=1;
     		}
     	} catch (SQLException e) {
@@ -2411,7 +2431,7 @@ public class HornetDBService extends Service {
     		return -1; //check statusMessage for reason
     	}
     	try {
-    		rs = connection.getProgrammes();
+    		rs = connection.getProgrammes(null);
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
     		e.printStackTrace();
@@ -2434,7 +2454,15 @@ public class HornetDBService extends Service {
     			values.put(ContentDescriptor.Programme.Cols.LASTUPDATED, rs.getString("lastupdate"));
     			values.put(ContentDescriptor.Programme.Cols.PRICE_DESC, rs.getString("price_desc"));
     			
-    			contentResolver.insert(ContentDescriptor.Programme.CONTENT_URI, values);
+    			cur = contentResolver.query(ContentDescriptor.Programme.CONTENT_URI, null, ContentDescriptor.Programme.Cols.PID+" = ?",
+    					new String[] {rs.getString("pid")}, null);
+    			if (cur.getCount() > 0) {
+    				contentResolver.update(ContentDescriptor.Programme.CONTENT_URI, values, 
+    						ContentDescriptor.Programme.Cols.PID+" = ?", new String[] {rs.getString("pid")});
+    			} else {
+    				contentResolver.insert(ContentDescriptor.Programme.CONTENT_URI, values);
+    			}
+    			cur.close();
     		}
     	} catch (SQLException e ) {
     		statusMessage = e.getLocalizedMessage();
@@ -2442,7 +2470,46 @@ public class HornetDBService extends Service {
     		return -3;
     	}
     	closeConnection();
-    	return result;
-    	
+    	return result;	
     }
+    
+    private int getMembershipID(){
+    	int result = 0;
+    	String query = "select nextval('membership_id_seq');";
+    	
+    	if (!openConnection()) {
+    		return -1; //see statusMessage for error;
+    	}
+    	cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols.MID+" = 0",
+    			null, null);
+    	int free_count = cur.getCount();
+    	cur.close();
+    	
+    	if (free_count >= 15) {
+    		//we have 15 already,
+    		return 0;
+    	}
+    	ResultSet rs;
+    	for (int i = (20-free_count); i < 0; i--) {
+    		try {
+    			rs = connection.startStatementQuery(query);
+    			rs.next();
+    			
+    			ContentValues values = new ContentValues();
+    			values.put(ContentDescriptor.Membership.Cols.MSID, rs.getString("nextval"));
+    			values.put(ContentDescriptor.Member.Cols.MID, 0);
+    			
+    			contentResolver.insert(ContentDescriptor.Membership.CONTENT_URI, values);
+    			result +=1;
+    			
+    		} catch (SQLException e){
+    			statusMessage = e.getLocalizedMessage();
+    			e.printStackTrace();
+    			return -2;
+    		}
+    	}
+    	closeConnection();
+    	return result;
+    }
+    
 }
