@@ -119,7 +119,7 @@
 	    android:layout_height="wrap_content"
 	    android:layout_below="@id/memberinfo"
 	    android:textSize="18sp"
-	    android:text="@string/add_membership" />
+	    android:text="@string/membership_add" />
 	<LinearLayout
 	    android:id="@+id/membernotes"
 	    android:layout_width="match_parent"

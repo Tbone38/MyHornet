@@ -1,0 +1,166 @@
+<ScrollView 
+	xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".MembershipAdd">
+	<RelativeLayout 
+		android:id="@+id/membershipadd"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content" >
+	    
+	    <TextView
+	        android:id="@+id/membership_programme_name_L"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="13sp"
+	        android:text="@string/membership_complete_pname" />
+	    <EditText
+	        android:id="@+id/membership_programme_name"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@id/membership_programme_name_L"
+	        android:textSize="18sp"
+	        android:enabled="false" />
+	    
+	    <TextView 
+	        android:id="@+id/membership_tag_L"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@id/membership_programme_name"
+	        android:textSize="13sp"
+	        android:text="@string/membership_complete_tag"/>
+	    <EditText
+	        android:id="@+id/membership_tag"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@id/membership_tag_L"
+	        android:textSize="18sp"
+	        android:enabled="false" />
+	    
+	    <TextView
+	        android:id="@+id/membership_start_end_L"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@id/membership_tag"
+	        android:textSize="13sp"
+	        android:text="@string/membership_complete_start_end" />
+	    <EditText 
+	        android:id="@+id/membership_start_end"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@id/membership_start_end_L"
+	        android:textSize="18sp"
+	        android:enabled="false"/>
+	    
+	    <TextView
+	        android:id="@+id/membership_first_payment_L"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@id/membership_start_end"
+	        android:textSize="13sp"
+	        android:text="@string/membership_complete_first_payment" />
+	    <EditText
+	        android:id="@+id/membership_first_payment"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@id/membership_first_payment_L"
+	        android:textSize="18sp"
+	        android:enabled="false" />
+	    
+	    <TextView
+	        android:id="@+id/membership_signup_fee_L"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@id/membership_first_payment"
+	        android:textSize="13sp"
+	        android:text="@string/membership_complete_signup_fee" />
+	    <EditText 
+	        android:id="@+id/membership_signup_fee"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@id/membership_signup_fee_L"
+	        android:textSize="18sp"
+	        android:enabled="false"/>
+	    
+	    <TextView
+	        android:id="@+id/membership_amount_outstanding_L"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@id/membership_signup_fee"
+	        android:textSize="13sp"
+	        android:text="@string/membership_amount_outstanding" />
+	    <EditText
+	        android:id="@+id/membership_amount_outstanding"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@id/membership_amount_outstanding_L"
+	        android:textSize="18sp"
+	        android:enabled="false" />
+	    
+	    <TextView
+	        android:id="@+id/button_set_tag"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@id/membership_amount_outstanding"
+	        android:textSize="18sp"
+	        android:text="@string/membership_add_tag"
+	        android:background="@drawable/button" />
+	    	   
+		<LinearLayout
+		    android:id="@+id/buttonrow"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_below="@id/button_set_tag"
+		    android:orientation="horizontal"
+		    android:baselineAligned="false">
+			<LinearLayout 
+			    android:id="@+id/button_accept"
+			    android:layout_width="0dp"
+			    android:layout_height="wrap_content"
+			    android:layout_weight=".5"
+			    android:orientation="horizontal"
+			    android:background="@drawable/button"
+			    android:clickable="true">
+			    <ImageView 
+			        android:id="@+id/acceptbuttontick"
+			        android:layout_width="35dp"
+			        android:layout_height="35dp"
+			        android:background="@drawable/ic_action_accept"/>
+			    <TextView
+			        android:id="@+id/accept"
+			        android:layout_width="wrap_content"
+			        android:layout_height="match_parent"
+			        android:gravity="center"
+			        android:textSize="18sp"
+			        android:text="@string/membership_add_complete" />
+			</LinearLayout>
+			<LinearLayout
+			    android:id="@+id/button_cancel"
+			    android:layout_width="0dp"
+			    android:layout_height="wrap_content"
+			    android:layout_weight=".4"
+			    android:orientation="horizontal"
+			    android:background="@drawable/button"
+			    android:clickable="true">
+			    
+			    <ImageView
+			        android:id="@+id/cancelbuttoncross"
+			        android:layout_width="35dp"
+			        android:layout_height="35dp"
+			        android:background="@drawable/ic_action_cancel" />
+			    <TextView
+			        android:id="@+id/cancel"
+			        android:layout_width="wrap_content"
+			        android:layout_height="match_parent"
+			        android:gravity="center"
+			        android:textSize="18sp"
+			        android:text="@string/cancel" />
+			</LinearLayout>
+		</LinearLayout>		
+	</RelativeLayout>
+</ScrollView>

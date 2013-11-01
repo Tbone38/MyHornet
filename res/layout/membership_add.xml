@@ -18,7 +18,7 @@
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:textSize="13sp"
-	        android:text="@string/add_membership_group_type"
+	        android:text="@string/membership_add_group_type"
 	        android:layout_margin="3dp"
 	        android:padding="5dp" />
 	    <Spinner
@@ -35,7 +35,7 @@
 		    android:layout_height="wrap_content"
 		    android:layout_below="@id/membershipgrouptype"
 		    android:textSize="13sp"
-		  	android:text="@string/add_membership_type"
+		  	android:text="@string/membership_add_type"
 		  	android:layout_margin="3dp"
 		  	android:padding="5dp" />
 		<Spinner
@@ -52,7 +52,7 @@
 		    android:layout_height="wrap_content"
 		    android:layout_below="@+id/membershiptype"
 		    android:textSize="18sp"
-		    android:text="@string/add_membership_startdate"
+		    
 		    android:layout_margin="3dp"
 		  	android:padding="5dp" />
 		<TextView
@@ -62,7 +62,7 @@
 		    android:layout_below="@id/membershiptype"
 		    android:layout_toRightOf="@+id/membershipsdate"
 		    android:textSize="18sp"
-		    android:text="@string/add_membership_to"
+		    android:text="@string/membership_add_to"
 		    android:layout_margin="3dp"
 		  	android:padding="5dp" />
 		<TextView
@@ -72,7 +72,7 @@
 		    android:layout_below="@id/membershiptype"
 		    android:layout_toRightOf="@+id/membershipdateto"
 		    android:textSize="18sp"
-		    android:text="@string/add_membership_enddate"
+		    
 		    android:layout_margin="3dp"
 		  	android:padding="5dp" />
 		
@@ -82,7 +82,7 @@
 		    android:layout_height="wrap_content"
 		    android:layout_below="@+id/membershipsdate"
 		    android:textSize="20sp"
-		    android:text="@string/add_membership_price"
+		    android:text="@string/membership_add_price"
 		    android:layout_margin="3dp"
 		  	android:padding="5dp"
 		  	android:background="@color/gym"
@@ -125,7 +125,7 @@
 	    	android:layout_height="wrap_content"
 	    	android:layout_below="@id/paymentrow"
 	    	android:textSize="20sp"
-	    	android:text="@string/add_membership_payment_date"
+	    	android:text="@string/membership_add_payment_date"
 	    	android:layout_margin="3dp"
 		  	android:padding="5dp"
 		  	android:background="@color/gym"
@@ -136,7 +136,7 @@
 		    android:layout_height="wrap_content"
 		    android:layout_below="@id/membershippaymentdateH"
 		    android:textSize="18sp"
-		    android:text="@string/add_membership_paymentdate"
+		    android:text="@string/membership_add_paymentdate"
 		    android:layout_margin="3dp"
 		  	android:padding="5dp"/>
 		
@@ -146,7 +146,7 @@
 		    android:layout_height="wrap_content"
 		    android:layout_below="@id/membershippaymentdate"
 		    android:textSize="20sp"
-		    android:text="@string/add_membership_signup_fee"
+		    android:text="@string/membership_add_signup_fee"
 		    android:layout_margin="3dp"
 		  	android:padding="5dp"
 		  	android:background="@color/gym"
@@ -167,7 +167,7 @@
 		    android:layout_height="wrap_content"
 		    android:layout_below="@id/membershipsignupfee"
 		    android:textSize="20sp"
-		    android:text="@string/add_membership_actions"
+		    android:text="@string/membership_add_actions"
 		    android:textColor="@color/white"
 		    android:background="@color/gym"
 		    android:layout_margin="3dp"
@@ -191,7 +191,7 @@
 		        android:layout_height="match_parent"
 		        android:gravity="center"
 		        android:textSize="18sp"
-		        android:text="@string/add_membership_add_tag" />
+		        android:text="@string/membership_add_tag" />
 		</LinearLayout>
 		<LinearLayout
 		    android:id="@+id/membershipaddphoto_row"
@@ -212,7 +212,7 @@
 		        android:layout_height="match_parent"
 		        android:gravity="center"
 		        android:textSize="18sp"
-		        android:text="@string/add_membership_add_photo" />
+		        android:text="@string/membership_add_photo" />
 		    
 		</LinearLayout>
 		<LinearLayout
@@ -241,7 +241,7 @@
 			        android:layout_height="match_parent"
 			        android:gravity="center"
 			        android:textSize="18sp"
-			        android:text="@string/add_membership_complete" />
+			        android:text="@string/membership_add_complete" />
 			</LinearLayout>
 			<LinearLayout
 			    android:id="@+id/cancelbutton"

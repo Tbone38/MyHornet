@@ -254,6 +254,7 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS "+MembershipSuspend.NAME); //and this
 		db.execSQL("DROP TABLE IF EXISTS "+IdCard.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+PaymentMethod.NAME);
+		db.execSQL("DROP TABLE IF EXISTS "+PendingDownloads.NAME);
 	}
 	
 	private void repopulateTable(SQLiteDatabase db) {

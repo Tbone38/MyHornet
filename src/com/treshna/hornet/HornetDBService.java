@@ -123,7 +123,7 @@ public class HornetDBService extends Service {
  	   			return;
  	   		}
  	   		
- 	   		long this_sync = new Date().getTime();
+ 	   		long this_sync = System.currentTimeMillis();
  	   		String last_sync = Services.getAppSettings(ctx, "lastsync"); //use this for checking lastupdate
  	   		
  	   		//get Visitors
@@ -135,6 +135,7 @@ public class HornetDBService extends Service {
 			//get ID's
 			getMemberID();
 			getBookingID();
+			getMembershipID();
 			int sid_count = getSuspendID();
 			if (sid_count < 0) {
 				Services.showToast(getApplicationContext(), statusMessage, handler);
@@ -150,14 +151,18 @@ public class HornetDBService extends Service {
 				Services.showToast(getApplicationContext(), statusMessage, handler);
 			}
 			
+			//downloads!
+			getMember(last_sync);
+			getProgrammes(last_sync);
+			getMembership(last_sync);
+			
 			//do bookings!
 			updateBookings(); 
 			getBookings();
 			bookingImages();
-			getClasses();
+			getClasses(last_sync);
 			
 
-			   
 			Services.setPreference(ctx, "lastsync", String.valueOf(this_sync));
 			Services.showToast(getApplicationContext(), statusMessage, handler);
 			/*Broadcast an intent to let the app know that the sync has finished
@@ -172,21 +177,6 @@ public class HornetDBService extends Service {
 
  		   	break;
  	   } 
- 	   /*case (Services.Statics.UPLOAD):{
- 		  statusMessage = "";
- 		  thread.is_networking = true;
- 		  int count = 0;
- 		  uploadClass();
- 		  uploadBookings();
- 		  count = uploadAllImages();
- 		  if (count != 0) statusMessage = "Uploaded "+count+" Images";
- 		  Services.showToast(getApplicationContext(), statusMessage, handler);
- 		  //upload member
- 		  uploadMember();
-			
- 		  thread.is_networking = false;
- 		  break;
- 	   }*/
  	   /****/
  	   case (Services.Statics.BOOKING):{ //this should be rolled into last-visitors, if rid not set, then skip.
  		   statusMessage = null;
@@ -211,7 +201,7 @@ public class HornetDBService extends Service {
 		   bookingcount = getBookings();
 		   bookingImages();
 		   
-		   classcount = getClasses();
+		   classcount = getClasses(null);
 		   
 		   thread.is_networking = false;
 		  
@@ -236,8 +226,6 @@ public class HornetDBService extends Service {
  	   
  	   case (Services.Statics.SWIPE):{
  		   statusMessage = null;
- 		   /*new Thread(new Runnable() {
- 			public void run() {*/
  		   thread.is_networking = true;
 			  
 		   int result;
@@ -266,7 +254,7 @@ public class HornetDBService extends Service {
 		   
 		   int rcount = getResource();
 		   int days = getOpenHours();
-		   int mscount = getMembership();
+		   
 		   int midcount = getMemberID();
 		   if (midcount != 0) statusMessage = midcount+" Sign-up's available";
 		   if (statusMessage != null && statusMessage.length() >3 ) {
@@ -275,7 +263,8 @@ public class HornetDBService extends Service {
 		   //statusMessage = null;
 		   int rscount = getResultStatus();
 		   int btcount = getBookingType();
-		   int mcount = getMember();
+		   int mcount = getMember(null);
+		   int mscount = getMembership(null);
 		   memberImages();
 		   
 		   getBookingID();
@@ -283,7 +272,7 @@ public class HornetDBService extends Service {
 		   //do Memberships!
 		   getIdCards();
 		   getPaymentMethods();
-		   getProgrammes();
+		   getProgrammes(null);
 		   
 		   thread.is_networking = false;
 		   Services.stopProgress(handler, currentCall);
@@ -1575,19 +1564,23 @@ public class HornetDBService extends Service {
 			}
     }
     
-    private int getMember(){
+    private int getMember(String last_sync){
     	Log.v(TAG, "Getting MemberID's");
     	int result;
     	ResultSet rs;
     	
     	result = 0;
     	rs = null;
-    	contentResolver.delete(ContentDescriptor.Member.CONTENT_URI, null, null);
+    	//contentResolver.delete(ContentDescriptor.Member.CONTENT_URI, null, null);
     	if (!openConnection()) {
     		return -1; //connection failed;
     	}
     	try {
-    		rs = connection.getMembers(null);
+    		if (last_sync == null) {
+    			rs = connection.getMembers(null);
+    		} else {
+    			rs = connection.getMembers(last_sync);
+    		}
     		while (rs.next()) {
     			ContentValues values = new ContentValues();
     			values.put(ContentDescriptor.Member.Cols.MID, rs.getString("id"));
@@ -1601,7 +1594,7 @@ public class HornetDBService extends Service {
     			values.put(ContentDescriptor.Member.Cols.NOTES, rs.getString("mnotes"));
     			values.put(ContentDescriptor.Member.Cols.STATUS, rs.getString("status"));
     			
-    			cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, ContentDescriptor.Member.Cols.MID+" = ?",
+    			cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, "m."+ContentDescriptor.Member.Cols.MID+" = ?",
     					new String[] {rs.getString("id")}, null);
     			if (cur.getCount() > 0) {
     				contentResolver.update(ContentDescriptor.Member.CONTENT_URI, values, ContentDescriptor.Member.Cols.MID+" = ?",
@@ -1621,17 +1614,16 @@ public class HornetDBService extends Service {
     	return result;
     }
     
-    private int getMembership() { //why would this fail?
+    private int getMembership(String last_sync) { //why would this fail?
     	int result = 0;
     	ResultSet rs = null;
     	
-    	contentResolver.delete(ContentDescriptor.Membership.CONTENT_URI, null, null);
     	if (!openConnection()) {
     		return -1; //connection failed;
     	}
     	
     	try {
-    		rs = connection.getMembership(null);
+    		rs = connection.getMembership(last_sync);
     		while (rs.next()){
     			ContentValues values = new ContentValues();
     			
@@ -1919,7 +1911,7 @@ public class HornetDBService extends Service {
      * @return
      */
     
-    private int getClasses() {
+    private int getClasses(String last_sync) {
     	int result = 0;
     	
     	if (!openConnection()) {
@@ -1927,7 +1919,7 @@ public class HornetDBService extends Service {
     	}
     	ResultSet rs = null;
     	try {
-    		rs = connection.getClasses();
+    		rs = connection.getClasses(last_sync);
     		//do handling here.
     		while (rs.next()){
     			ContentValues values = new ContentValues();
@@ -2016,8 +2008,16 @@ public class HornetDBService extends Service {
     		
     			//cardno = rs.getInt("id");
     			cardno = cur.getInt(cur.getColumnIndex(ContentDescriptor.IdCard.Cols.CARDID));
+    			cur.close();
     			
     			rs = connection.findMemberByCard(cardno);
+    			if (rs.getFetchSize() <= 0) {
+    				
+    				contentResolver.delete(ContentDescriptor.Swipe.CONTENT_URI, ContentDescriptor.Swipe.Cols.ID+" = ? ",
+    						new String[] {serial});
+    				//return -4; //only 1 row. ??
+    				continue;
+    			}
     			rs.next();
     			
     			memberid = rs.getString("memberid");
@@ -2423,7 +2423,7 @@ public class HornetDBService extends Service {
     	return result;
     }
     
-    private int getProgrammes() {
+    private int getProgrammes(String last_sync) {
     	int result = 0;
     	ResultSet rs;
     	
@@ -2431,7 +2431,7 @@ public class HornetDBService extends Service {
     		return -1; //check statusMessage for reason
     	}
     	try {
-    		rs = connection.getProgrammes(null);
+    		rs = connection.getProgrammes(last_sync);
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
     		e.printStackTrace();
@@ -2489,6 +2489,7 @@ public class HornetDBService extends Service {
     		//we have 15 already,
     		return 0;
     	}
+    	//TODO: what if theirs memberships which require an id? 
     	ResultSet rs;
     	for (int i = (20-free_count); i < 0; i--) {
     		try {

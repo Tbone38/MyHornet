@@ -171,9 +171,10 @@ public class SettingsActivity extends PreferenceActivity {
 			public boolean onPreferenceClick(Preference preference) {
 				SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ctx);
 				Editor e = preferences.edit();
-				e.putString("b_lastsync", String.valueOf(3));
+				e.putString("b_lastsync", String.valueOf(3)); //3 ms after epoch.
+				e.putString("lastsync", String.valueOf(3)); //3 ms after epoch.
 				e.commit();
-				
+				//this should make the app redownload all data.
 				return true;
 			}
 		});

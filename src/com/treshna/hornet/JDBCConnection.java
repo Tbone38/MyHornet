@@ -364,14 +364,25 @@ public class JDBCConnection {
     	return rs;
     }
     
-    public ResultSet getClasses() throws SQLException {
+    public ResultSet getClasses(String lastsync) throws SQLException {
     	ResultSet rs = null;
-    	pStatement = con.prepareStatement("SELECT id, name, max_students,  description, price, onlinebook FROM class;");
+    	String query = "SELECT id, name, max_students,  description, price, onlinebook FROM class ";
+    	
+    	if (lastsync != null) {
+    		query = query+" WHERE lastupdate > ?::TIMESTAMP WITHOUT TIME ZONE";
+    	}
+    	
+    	pStatement = con.prepareStatement(query);
+    	if (lastsync != null) {
+    		pStatement.setString(1, Services.dateFormat(new Date(Long.valueOf(lastsync)).toString(),
+    				"EEE MMM dd HH:mm:ss zzz yyyy", "dd-MM-yyyy HH:mm:ss"));
+    	}
+    	
     	rs = pStatement.executeQuery();
     	return rs;
     }
     
-    public ResultSet getTimeInterval() throws SQLException {
+    public ResultSet getTimeInterval() throws SQLException { //shouldn't this have a where-clause?
     	ResultSet rs = null;
     	pStatement = con.prepareStatement("SELECT period FROM resourcetype;");
     	rs = pStatement.executeQuery();
@@ -383,9 +394,9 @@ public class JDBCConnection {
     	String query ="SELECT membership.id, memberid, membership.startdate, membership.enddate, cardno, membership.notes, " +
     			"primarymembership, membership.lastupdate, " +
     			" membership.concession, programme.name FROM membership LEFT JOIN programme ON (membership.programmeid = programme.id)" +
-    			" WHERE membership.enddate >= now()::date ";
+    			" WHERE membership.history = 'f' ";
     	if (lastsync != null) {
-    		query = query + "AND lastupdate > ?::TIMESTAMP WITHOUT TIME ZONE ;";
+    		query = query + "AND membership.lastupdate > ?::TIMESTAMP WITHOUT TIME ZONE ;";
     	}
   
     	pStatement = con.prepareStatement(query);
@@ -570,11 +581,13 @@ public class JDBCConnection {
     	
     	return rs;
     }
-    
+    /**
+     * grabs the mlength as seconds, add them to the chosen start date.
+     */
     public ResultSet getProgrammes(String lastupdate) throws SQLException {
     	ResultSet rs;
     	String query = "SELECT p.id AS pid, programmegroupid, p.name, pg.name AS groupname, startdate, enddate, "
-    			+ "amount, mlength, signupfee, notes, lastupdate, price_desc(NULL, p.id) AS price_desc FROM programme p LEFT JOIN programmegroup pg ON "
+    			+ "amount, date_part('epoch', mlength::interval) as mlength, signupfee, notes, lastupdate, price_desc(NULL, p.id) AS price_desc FROM programme p LEFT JOIN programmegroup pg ON "
     			+ "(p.programmegroupid = pg.id)"
     			+ "WHERE history = 'f' ";
     	if (lastupdate != null) {

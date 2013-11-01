@@ -19,18 +19,26 @@
   </string-array>
   
   <!-- 				ADD MEMBERSHIP 				-->
-  	<string name="add_membership">Add Membership</string>
-  	<string name="add_membership_group_type">Membership Group Type</string>
-  	<string name="add_membership_type">Membership Type</string>
-	<string name="add_membership_to">to</string>
-	<string name="add_membership_startdate">Start Date</string>
-	<string name="add_membership_enddate">End Date</string>
-	<string name="add_membership_paymentdate">Payment Date</string>
-	<string name="add_membership_price">Price</string>
-	<string name="add_membership_payment_date">First Payment Date</string>
-	<string name="add_membership_signup_fee">Signup Fee</string>
-	<string name="add_membership_actions">Actions</string>
-	<string name="add_membership_add_tag">Add Tag</string>
-	<string name="add_membership_add_photo">Add Photo</string>
-	<string name="add_membership_complete">Save &amp; Continue</string>
+  	<string name="membership_add">Add Membership</string>
+  	<string name="membership_add_group_type">Membership Group Type</string>
+  	<string name="membership_add_type">Membership Type</string>
+	<string name="membership_add_to">to</string>
+	<string name="membership_add_startdate">Start Date</string>
+	<string name="membership_add_enddate">End Date</string>
+	<string name="membership_add_paymentdate">Payment Date</string>
+	<string name="membership_add_price">Price</string>
+	<string name="membership_add_payment_date">First Payment Date</string>
+	<string name="membership_add_signup_fee">Signup Fee</string>
+	<string name="membership_add_actions">Actions</string>
+	<string name="membership_add_tag">Add Tag</string>
+	<string name="membership_add_photo">Add Photo</string>
+	<string name="membership_add_complete">Save &amp; Continue</string>
+	
+	<string name="membership_complete_pname">Programme Name</string>
+	<string name="membership_complete_tag">Card Number</string>
+	<string name="membership_complete_start_end">Start &amp; End Dates</string>
+	<string name="membership_complete_first_payment">First Payment Date</string>
+	<string name="membership_complete_signup_fee">Signup Fee</string>
+	<string name="membership_amount_outstanding">Amount Outstanding</string>
+	
 </resources>

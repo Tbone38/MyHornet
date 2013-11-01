@@ -10,7 +10,7 @@
 	    android:id="@+id/action_createclass"
 	    android:orderInCategory="300"
 	    android:title="@string/action_classCreate"
-	    hornet:showAsAction="ifRoom"/>
+	    />
 	 <item
         android:id="@+id/action_update"
         android:orderInCategory="400"

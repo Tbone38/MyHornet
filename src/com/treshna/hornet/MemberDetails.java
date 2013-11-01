@@ -230,7 +230,7 @@ public class MemberDetails extends NFCActivity implements OnClickListener {
 				null_count += 2;
 			}
 			
-			if (member.get(4) != null && member.get(4).compareTo("null") != 0) {
+			if (member.get(4) != null && member.get(4).compareTo("null") != 0 && member.get(4).compareTo("") != 0) {
 				
 				TextView memberEH = new TextView(this);
 				memberEH.setPadding(Services.convertdpToPxl(this, 35), 0, 0, 0);
@@ -245,8 +245,10 @@ public class MemberDetails extends NFCActivity implements OnClickListener {
 				//memberInfo.addView(memberEH);
 				msWindow.addView(memberEH);
 				
-				String date = Services.dateFormat(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.EXPIRERY)), "yyyy-MMM-dd", "dd MMM yy");
-				if (date.compareTo("") ==0) {
+				String date = Services.dateFormat(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.EXPIRERY)), "yyyy-MM-dd", "dd MMM yy");
+				if (date == null) {
+					/*date = Services.dateFormat(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.EXPIRERY)),
+							"", "");*/
 					date = cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.EXPIRERY));
 				}
 				TextView memberET = new TextView(this);
