@@ -45,7 +45,7 @@ public class VisitorsViewAdapter extends SimpleCursorAdapter implements OnClickL
 	    showMembership = preferences.getBoolean("show_membership", false);
 	}
 	
-	
+	//This will need changed.
 	/*
 	 * LastVisitors Layout
 	 */
