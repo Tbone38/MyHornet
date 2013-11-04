@@ -603,6 +603,51 @@ public class JDBCConnection {
     	return rs;
     }
     
+    /**
+     * This functions needs to upload memberships, and add a $0.00 payment for the
+     * membership on the same day as the membership was created. 
+     * @return
+     * @throws SQLException
+     */
+    public int uploadMembership(int memberId, int membershipId, int programmeId, int programmeGroupId, 
+    		String startDate, String endDate, int cardNo, String signupFee, String price) throws SQLException {
+    	
+    	pStatement = con.prepareStatement("INSERT INTO membership (id, programmeid, programmegroupid, memberid, startdate, "
+    			+ "enddate, cardno, notes, signupfee, paymentdue) VALUES (?, ?, ?, ?, ?::date, ?::date, ?, 'Membership Added Via Android',"
+    			+ " ?::money, ?::money);");
+    	pStatement.setInt(1, membershipId);
+    	pStatement.setInt(2, programmeId);
+    	pStatement.setInt(3, programmeGroupId);
+    	pStatement.setInt(4, memberId);
+    	pStatement.setString(5, startDate);
+    	if (endDate != null) {
+    		pStatement.setString(6, endDate);
+    	} else {
+    		pStatement.setNull(6, java.sql.Types.DATE);
+    	}
+    	pStatement.setInt(7, cardNo);
+    	pStatement.setString(8, signupFee);
+    	pStatement.setString(9, price);
+    	
+    	
+    	pStatement.executeUpdate();
+    	this.closePreparedStatement();
+    	
+    	
+    	pStatement = con.prepareStatement("INSERT INTO payment (paymentmethodid, memberid, membershipid, amount, "
+    			+ "note, finished) VALUES (11, ?, ?, '0.00'::money, 'Membership Added via Android', 't');");
+    	pStatement.setInt(1, memberId);
+    	pStatement.setInt(2, membershipId);
+    	
+    	pStatement.executeUpdate();
+    	this.closePreparedStatement();
+    	
+    	pStatement = con.prepareStatement("UPDATE membership SET (completed) = ('t') WHERE id = ?");
+    	pStatement.setInt(1, membershipId);
+    	
+    	return pStatement.executeUpdate();
+    }
+    
     
     public ResultSet startStatementQuery(String query) throws SQLException {
     	ResultSet rs = null;

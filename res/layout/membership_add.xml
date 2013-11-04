@@ -102,14 +102,7 @@
 			    android:layout_margin="3dp"
 			  	android:padding="5dp"
 			  	android:inputType="numberDecimal" />
-			<!-- Change this spinner to text box. programme.price_desc -->
-			<!-- <Spinner 
-			    android:id="@+id/membershippaymenttype"
-			    android:layout_width="0dp"
-			    android:layout_height="wrap_content"
-			    android:layout_weight=".5"
-			    android:layout_margin="3dp"
-			  	android:padding="5dp"/> -->
+			
 			  	<TextView
 			  	    android:id="@+id/membershippaymentdesc"
 			  	    android:layout_width="0dp"
@@ -119,7 +112,7 @@
 			  	    android:layout_margin="3dp"
 			  	    android:padding="5dp" />
 		</LinearLayout>
-		<TextView 
+		<!-- <TextView 
 	    	android:id="@+id/membershippaymentdateH"
 	    	android:layout_width="match_parent"
 	    	android:layout_height="wrap_content"
@@ -138,13 +131,13 @@
 		    android:textSize="18sp"
 		    android:text="@string/membership_add_paymentdate"
 		    android:layout_margin="3dp"
-		  	android:padding="5dp"/>
+		  	android:padding="5dp"/> -->
 		
 		<TextView
 		    android:id="@+id/membershipsignupfeeH"
 		    android:layout_width="match_parent"
 		    android:layout_height="wrap_content"
-		    android:layout_below="@id/membershippaymentdate"
+		    android:layout_below="@id/paymentrow"
 		    android:textSize="20sp"
 		    android:text="@string/membership_add_signup_fee"
 		    android:layout_margin="3dp"
@@ -161,65 +154,12 @@
 		  	android:padding="5dp"
 		  	android:inputType="numberDecimal" />
 		
-		<TextView
-		    android:id="@+id/membershipactionH"
-		    android:layout_width="match_parent"
-		    android:layout_height="wrap_content"
-		    android:layout_below="@id/membershipsignupfee"
-		    android:textSize="20sp"
-		    android:text="@string/membership_add_actions"
-		    android:textColor="@color/white"
-		    android:background="@color/gym"
-		    android:layout_margin="3dp"
-		    android:padding="5dp" />
-		<LinearLayout
-		    android:id="@+id/membershipaddtag_row"
-		    android:layout_width="match_parent"
-		    android:layout_height="wrap_content"
-		    android:layout_below="@id/membershipactionH"
-		    android:orientation="horizontal"
-		    android:background="@drawable/button"
-		    android:clickable="true">
-		    <ImageView 
-		        android:id="@+id/membershiptag_ic"
-		        android:layout_width="35dp"
-		        android:layout_height="35dp"
-		        android:background="@drawable/ic_action_labels"/>
-		    <TextView
-		        android:id="@+id/membershipaddtag"
-		        android:layout_width="wrap_content"
-		        android:layout_height="match_parent"
-		        android:gravity="center"
-		        android:textSize="18sp"
-		        android:text="@string/membership_add_tag" />
-		</LinearLayout>
-		<LinearLayout
-		    android:id="@+id/membershipaddphoto_row"
-		    android:layout_width="match_parent"
-		    android:layout_height="wrap_content"
-		    android:layout_below="@id/membershipaddtag_row"
-		    android:orientation="horizontal"
-		    android:background="@drawable/button"
-		    android:clickable="true">
-		    <ImageView
-		        android:id="@+id/membershipphoto_ic"
-		        android:layout_width="35dp"
-		        android:layout_height="35dp"
-		        android:background="@drawable/ic_action_camera" />
-		    <TextView
-		        android:id="@+id/membershipaddphoto"
-		        android:layout_width="wrap_content"
-		        android:layout_height="match_parent"
-		        android:gravity="center"
-		        android:textSize="18sp"
-		        android:text="@string/membership_add_photo" />
-		    
-		</LinearLayout>
+		
 		<LinearLayout
 		    android:id="@+id/buttonrow"
 		    android:layout_width="match_parent"
 		    android:layout_height="wrap_content"
-		    android:layout_below="@id/membershipaddphoto_row"
+		    android:layout_below="@id/membershipsignupfee"
 		    android:orientation="horizontal"
 		    android:baselineAligned="false">
 			<LinearLayout 

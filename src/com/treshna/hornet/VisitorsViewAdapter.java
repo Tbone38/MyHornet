@@ -64,12 +64,7 @@ public class VisitorsViewAdapter extends SimpleCursorAdapter implements OnClickL
         {
             cursor.moveToFirst();
         }
-		/*//TESTING CODE
-		int j;
-		for (j=0;j<cursor.getColumnCount();j+=1) {
-			System.out.print("\n\n ****COLUMN("+j+"): "+cursor.getColumnName(j));
-			System.out.print("\n\n ***VALUE: "+cursor.getString(j));
-		}*/
+		
 		
 		ArrayList<String> tagInfo = new ArrayList<String>();
 		tagInfo.add(cursor.getString(cursor.getColumnIndex(ContentDescriptor.Visitor.Cols.MID))); 
@@ -196,7 +191,7 @@ public class VisitorsViewAdapter extends SimpleCursorAdapter implements OnClickL
 		LayoutInflater inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			
-			View rowView = inflater.inflate(R.layout.visitor_row, parent, false);
+			View rowView = inflater.inflate(R.layout.new_visitor_row, parent, false);
 			
 				/***Last Visitors***/
 				//buildLVLayout(rowView);

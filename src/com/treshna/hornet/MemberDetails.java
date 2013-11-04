@@ -202,7 +202,9 @@ public class MemberDetails extends NFCActivity implements OnClickListener {
 			
 			if ( member.get(3) != null && member.get(3).compareTo("null") != 0) {
 				String date = Services.dateFormat(member.get(3), "yyyy-MM-dd", "dd MMM yy");
-				
+				if (date == null) {
+					date = member.get(3);
+				}
 				TextView memberSH = new TextView(this);
 				memberSH.setPadding(Services.convertdpToPxl(this, 35), 0, 0, 0);
 				memberSH.setText("Membership Started");

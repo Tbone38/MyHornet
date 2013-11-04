@@ -223,7 +223,7 @@ public class Services {
 		public static final String IS_CLASSSWIPE = "com.treshna.hornet.class_swipe";
 		
 		public static enum FragmentType {
-			MembershipAdd(1);
+			MembershipAdd(1), MembershipComplete(2);
 			
 			private final int key;
 			

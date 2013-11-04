@@ -45,6 +45,7 @@ import android.provider.BaseColumns;
  *  350 = Resource
  *  360:
  *  370 = Programme
+ *  371 = ProgrammeGroup (sorted from programme)
  */
 /**
  * This class provides/stores the information required
@@ -435,7 +436,7 @@ public class ContentDescriptor {
 	 		public static final String PATH_FOR_ID = "Programme/*";
 	 		public static final int PATH_FOR_ID_TOKEN = 370;
 	 		public static final String PATH_FOR_GROUP = "ProgrammeGroup";
-	 		public static final int PATH_FOR_GROUP_TOKEN = 361;
+	 		public static final int PATH_FOR_GROUP_TOKEN = 371;
 	 		
 	 		public static final Uri GROUP_URI = BASE_URI.buildUpon().appendPath(PATH_FOR_GROUP).build();
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
@@ -455,24 +456,6 @@ public class ContentDescriptor {
 	 			public static final String NOTE = "pricenotes";
 	 			public static final String LASTUPDATED = "lastupdated";
 	 			public static final String PRICE_DESC ="price_desc";
-	 		}
-	 	}
-	 	
-	 	//is this redundant?
-	 	public static class ProgrammeGroup {
-	 		public static final String NAME = "ProgrammeGroup";
-	 		public static final String PATH = "ProgrammeGroup";
-	 		public static final int PATH_TOKEN = 361;
-	 		public static final String PATH_FOR_ID = "ProgrammeGroup/*";
-	 		public static final int PATH_FOR_ID_TOKEN = 371;
-	 		
-	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
-	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.programmegroup";
-	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.programmegroup";
-	 		
-	 		public static class Cols implements BaseColumns {
-	 			public static final String PGID = "programmegroupid";
-	 			public static final String PGNAME = "programmegroupname";
 	 		}
 	 	}
 	 	
@@ -502,8 +485,9 @@ public class ContentDescriptor {
 	 			public static final String PRIMARYMS = "primarymembership";
 	 			public static final String PID = "programmeid";
 	 			public static final String PGID ="programmegroupid";
-	 			public static final String PAYMENT = "paymentdue";
+	 			public static final String PRICE = "price";
 	 			public static final String SIGNUP = "signupfee";
+	 			public static final String CREATION = "creationdate";
 	 		}
 	 	}
 	 	

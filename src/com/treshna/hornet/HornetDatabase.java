@@ -72,8 +72,8 @@ public class HornetDatabase extends SQLiteOpenHelper {
 				+Membership.Cols.EXPIRERY+" TEXT, "+Membership.Cols.VISITS+" TEXT, "
 				+Membership.Cols.LASTUPDATED+" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, "
 				+Membership.Cols.PRIMARYMS+" INTEGER, "+Membership.Cols.PID+" INTEGER, "
-				+Membership.Cols.PGID+" INTEGER, "+Membership.Cols.PAYMENT+" TEXT, "
-				+Membership.Cols.SIGNUP+" TEXT "
+				+Membership.Cols.PGID+" INTEGER, "+Membership.Cols.PRICE+" TEXT, "
+				+Membership.Cols.SIGNUP+" TEXT, "+Membership.Cols.CREATION+" TEXT"
 				+");"); //?
 		
 		//for quick look up of Images:, Uses composite PK
@@ -183,7 +183,11 @@ public class HornetDatabase extends SQLiteOpenHelper {
 				+PendingUploads.Cols.TABLEID+" INTEGER, "+PendingUploads.Cols.ROWID+" INTEGER, "
 				+"FOREIGN KEY ("+PendingUploads.Cols.TABLEID+") REFERENCES "+TableIndex.NAME+" ("+TableIndex.Cols._ID+") "
 				+");");
+		
 		//add a table that forces a row to redownload all it's data?
+		//it will use the Postgresql ID's in the rowid column (MemberID, membershipID, etc), 
+		//not the local id's.
+		// (over-write all previous data for row).
 		db.execSQL("CREATE TABLE "+PendingDownloads.NAME+" ("+PendingUploads.Cols._ID+" INTEGER PRIMARY KEY, "
 				+PendingDownloads.Cols.TABLEID+" INTEGER, "+PendingDownloads.Cols.ROWID+" INTEGER "
 				+");");
@@ -220,7 +224,7 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS "+Member.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+Image.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+Visitor.NAME);
-		db.execSQL("DROP TABLE IF EXISTS "+Membership.NAME);
+		db.execSQL("DROP TABLE IF EXISTS "+Membership.NAME); //save this
 		
 		db.execSQL("ALTER TABLE "+Pending.NAME+" RENAME TO old_"+Pending.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+BookingTime.NAME);

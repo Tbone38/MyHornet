@@ -17,6 +17,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -34,11 +35,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.treshna.hornet.BookingPage.TagFoundListener;
-
-public class MembershipAdd extends Fragment implements OnClickListener, TagFoundListener {
+public class MembershipAdd extends Fragment implements OnClickListener {
 	private static final String TAG ="MembershipAdd";
 	Context ctx;
 	ContentResolver contentResolver;
@@ -233,7 +231,7 @@ public class MembershipAdd extends Fragment implements OnClickListener, TagFound
 								 "dd MMM yyyy"));
 						 
 						 TextView enddate = (TextView) page.findViewById(R.id.membershipedate);
-						 Log.w(TAG, "Length IS:"+mLength);
+						 //Log.w(TAG, "Length IS:"+mLength);
 						 if ( mLength > 0) {
 							 enddate.setText(Services.dateFormat(end.toString(), "EEE MMM dd HH:mm:ss zzz yyyy",
 									 "dd MMM yyyy"));
@@ -279,7 +277,7 @@ public class MembershipAdd extends Fragment implements OnClickListener, TagFound
 			enddate.setBackgroundDrawable(getResources().getDrawable(R.drawable.button));
 		}
 		
-		TextView paymentdate = (TextView) page.findViewById(R.id.membershippaymentdate);
+		/*TextView paymentdate = (TextView) page.findViewById(R.id.membershippaymentdate);
 		paymentdate.setTag(Services.dateFormat(new Date().toString(), 
 				"EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd"));
 		paymentdate.setClickable(true);
@@ -288,14 +286,8 @@ public class MembershipAdd extends Fragment implements OnClickListener, TagFound
 			paymentdate.setBackground(getResources().getDrawable(R.drawable.button));
 		} else {
 			paymentdate.setBackgroundDrawable(getResources().getDrawable(R.drawable.button));
-		}
+		}*/
 		
-		//actions
-		LinearLayout addphoto = (LinearLayout) page.findViewById(R.id.membershipaddphoto_row);
-		addphoto.setOnClickListener(this);
-		
-		LinearLayout addtag = (LinearLayout) page.findViewById(R.id.membershipaddtag_row);
-		addtag.setOnClickListener(this);
 		
 		LinearLayout accept = (LinearLayout) page.findViewById(R.id.acceptbutton);
 		accept.setOnClickListener(this);
@@ -315,10 +307,10 @@ public class MembershipAdd extends Fragment implements OnClickListener, TagFound
 			TextView enddate = (TextView) page.findViewById(R.id.membershipedate);
 			enddate.setText(edate);
 		}
-		if (pdate != null) {
+		/*if (pdate != null) {
 			TextView paymentdate = (TextView) page.findViewById(R.id.membershippaymentdate);
 			paymentdate.setText(pdate);
-		}
+		}*/
 	}
 	
 	private void receivedBroadcast(Intent i) {
@@ -372,7 +364,7 @@ public class MembershipAdd extends Fragment implements OnClickListener, TagFound
 		    eDatePicker.show(this.getChildFragmentManager(), "datePicker");
 		    break;
 		}
-		case (R.id.membershippaymentdate):{
+		/*case (R.id.membershippaymentdate):{
 			Bundle bdl;
 			bdl = new Bundle(1);
 			bdl.putString(Services.Statics.KEY, (String) v.getTag());
@@ -380,7 +372,7 @@ public class MembershipAdd extends Fragment implements OnClickListener, TagFound
 			pDatePicker.setArguments(bdl);
 		    pDatePicker.show(this.getChildFragmentManager(), "datePicker");
 		    break;
-		}
+		}*/
 		case (R.id.acceptbutton):{
 			ArrayList<String> emptyviews = validate();
 			boolean is_valid = Boolean.parseBoolean(emptyviews.get(0));
@@ -389,8 +381,13 @@ public class MembershipAdd extends Fragment implements OnClickListener, TagFound
 			} else {
 				ArrayList<String> results = getInput();
 				//insert results
-				insertMembership(results);
+				int row = insertMembership(results);
 				//continue to next page
+				
+				Bundle bdl = new Bundle(1);
+				bdl.putInt(Services.Statics.KEY, row);
+				EmptyActivity parent = (EmptyActivity) getActivity();
+				parent.setFragment(Services.Statics.FragmentType.MembershipComplete.getKey(), bdl);
 			}
 			break;
 		}
@@ -398,31 +395,9 @@ public class MembershipAdd extends Fragment implements OnClickListener, TagFound
 			getActivity().finish();
 			break;
 		}
-		case (R.id.membershipaddphoto_row): {
-			Intent camera = new Intent(ctx, CameraWrapper.class);
-			camera.putExtra(VisitorsViewAdapter.EXTRA_ID,memberid);
-			ctx.startActivity(camera);
-			break;
-		}
-		case (R.id.membershipaddtag_row):{
-			//show alert box, indicating to swipe:
-			//handle swipe event on this fragment differently.
-			swipeBox();
-			break;
-		}
 		}
 		
-	}
-	
-	private void swipeBox(){
-		AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
-		
-		builder.setTitle("Swipe Tag")
-		.setMessage("Please Swipe a tag against the device");
-		alertDialog = builder.create();
-		alertDialog.show();
-	}
-	
+	}	
 	
 	private void updateView(ArrayList<String> emptyFields) {
 		for(int i=1; i<emptyFields.size(); i+=1){
@@ -471,22 +446,17 @@ public class MembershipAdd extends Fragment implements OnClickListener, TagFound
 			}
 		}
 		
-		TextView paymentdate = (TextView) page.findViewById(R.id.membershippaymentdate);
+		/*TextView paymentdate = (TextView) page.findViewById(R.id.membershippaymentdate);
 		Log.v(TAG, paymentdate.getText().toString());
 		Log.v(TAG, this.getString(R.string.membership_add_paymentdate));
 		if (paymentdate.getText().toString().compareTo(this.getString(R.string.membership_add_paymentdate)) == 0) {
 			is_valid = false;
 			emptyviews.add(String.valueOf(R.id.membershippaymentdate));
 		 // do all the crazy gymmaster payment checking here.
-		} 
-		/*
-		 *First payment date after start date" CHECK (firstpayment >= startdate)
-    	 *First payment date is too early" CHECK (firstpayment > '1990-01-01'::date)
-    	 *First payment is too far in the future" CHECK (firstpayment < (startdate + '4 mons'::interval) OR startdate < now()) 
-		 */
+		}
 		else {
 			paymentdate.setTextColor(Color.BLACK);
-		}
+		}*/
 		
 		
 		emptyviews.add(0, String.valueOf(is_valid));
@@ -525,67 +495,80 @@ public class MembershipAdd extends Fragment implements OnClickListener, TagFound
 		EditText price = (EditText) page.findViewById(R.id.membershipprice);
 		input.add(5, price.getText().toString());
 		
-		TextView paymentdate = (TextView) page.findViewById(R.id.membershippaymentdate);
-		input.add(6, paymentdate.getText().toString());
+		/*TextView paymentdate = (TextView) page.findViewById(R.id.membershippaymentdate);
+		input.add(6, paymentdate.getText().toString());*/
+		input.add(6, null);
 		
 		EditText signupfee = (EditText) page.findViewById(R.id.membershipsignupfee);
 		input.add(7, signupfee.getText().toString());
 		
-		if (cardid == null) {
-			input.add(8, null);
-		} else if (cardid != null) {
-			input.add(8, cardid);
+		
+		cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, new String[] {ContentDescriptor.Membership.Cols.CARDNO},
+				ContentDescriptor.Membership.Cols.MID+" = ? AND "+ContentDescriptor.Membership.Cols.CARDNO+" IS NOT NULL",
+				new String[] {memberid}, null);
+		if (cur.moveToFirst()) {
+			input.add(8, cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.CARDNO)));
+		} else {
+			input.add(8, null); //cardid
 		}
 		
 		return input;
 	}
 
-	private void insertMembership(ArrayList<String> input) {
-		//!!!TODO!!!
+	private int insertMembership(ArrayList<String> input) {
+		ContentValues values = new ContentValues();
 		
-	}
-
-	
-	/** look up the serial in the idcard table,
-	 * check that the cardno is not in use by anyone else.
-	 * assign the cardno to the membership.
-	 */
-	@Override
-	public void onNewTag(String serial) {
-		ContentResolver contentResolver = getActivity().getContentResolver();
-		Cursor cur;
-		String message;
-		
-		cur = contentResolver.query(ContentDescriptor.IdCard.CONTENT_URI, null, ContentDescriptor.IdCard.Cols.SERIAL+" = ?",
-				new String[] {serial}, null);
-		if (!cur.moveToFirst()) {
-			//tag not found in db. Tell them to swipe card at reception, then re-sync
-			//the phone.
-			//TODO:
-			message = "Tag not found in db, please swipe tag at reception, then re-sync device";
-			Log.v(TAG, message);
-		} else {
-			cardid = cur.getString(cur.getColumnIndex(ContentDescriptor.IdCard.Cols.CARDID));
-			cur.close();
-			
-			cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols.CARDNO+" = ?",
-					new String[] {cardid}, null);
-			if (cur.getCount() > 0) {
-				//id is in use, what should I do?
-				message = "Tag already in use";
-				Log.v(TAG, message);
-				cardid = null;
-			} else {
-				message = "Assigning card No. "+cardid+" to member.";
-				Log.v(TAG, message);
-				if (alertDialog != null){
-					alertDialog.dismiss();
-					alertDialog = null;
-				}
-			}
+		values.put(ContentDescriptor.Membership.Cols.MID, input.get(0));
+		values.put(ContentDescriptor.Membership.Cols.PGID, input.get(1));
+		values.put(ContentDescriptor.Membership.Cols.PID, input.get(2));
+		values.put(ContentDescriptor.Membership.Cols.MSSTART, input.get(3));
+		if (input.get(4) != null) {
+			values.put(ContentDescriptor.Membership.Cols.EXPIRERY, input.get(4));
+		}
+		values.put(ContentDescriptor.Membership.Cols.PRICE, input.get(5));
+		//payment-date?
+		values.put(ContentDescriptor.Membership.Cols.SIGNUP, input.get(7));
+		if (input.get(8) != null) {
+			values.put(ContentDescriptor.Membership.Cols.CARDNO, input.get(8));
+		}
+		values.put(ContentDescriptor.Membership.Cols.CREATION, Services.dateFormat(new Date().toString(),
+				"EEE MMM dd HH:mm:ss zzz yyyy", "dd MMM yyyy HH:mm:ss"));
+		cur = contentResolver.query(ContentDescriptor.Programme.CONTENT_URI, null, ContentDescriptor.Programme.Cols.PID+" = ?",
+				new String[] {input.get(2)}, null);
+		if (cur.moveToFirst()) {
+			values.put(ContentDescriptor.Membership.Cols.PNAME, 
+					cur.getString(cur.getColumnIndex(ContentDescriptor.Programme.Cols.NAME)));
 		}
 		cur.close();
-		//TOAST!
-		Toast.makeText(ctx, message, Toast.LENGTH_LONG).show();
+		
+		int msid;
+		String rowid = "-1";
+		cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols.MID+" = 0",
+				null, null);
+		if (!cur.moveToFirst()) {
+			msid = -1;
+		} else {
+			msid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MSID));
+			rowid = cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols._ID));
+		}
+		cur.close();
+		
+		if (msid > 0) {
+			contentResolver.update(ContentDescriptor.Membership.CONTENT_URI, values, ContentDescriptor.Membership.Cols.MSID+" = ?",
+					new String[] {String.valueOf(msid)});
+			
+			values = new ContentValues();
+			values.put(ContentDescriptor.PendingUploads.Cols.TABLEID, ContentDescriptor.TableIndex.Values.Membership.getKey());
+			values.put(ContentDescriptor.PendingUploads.Cols.ROWID, rowid);
+			contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, values);
+		} else {
+			values.put(ContentDescriptor.Membership.Cols.MSID, msid);
+			Uri row =contentResolver.insert(ContentDescriptor.Membership.CONTENT_URI, values);
+			rowid = row.getLastPathSegment();
+		}
+		Log.v(TAG, "insert rowid: "+rowid);
+		
+		return Integer.parseInt(rowid);
 	}
+
 }

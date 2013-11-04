@@ -69,7 +69,7 @@ public class LastVisitorsFragment extends ListFragment {
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {	
 		super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.visitor_list, container, false);
+        View view = inflater.inflate(R.layout.new_visitor_list, container, false);
         return view;
     }
 	
@@ -133,7 +133,7 @@ public class LastVisitorsFragment extends ListFragment {
        	 cur = contentResolver.query(ContentDescriptor.Visitor.VISITOR_JOIN_MEMBER_URI, null, null, null, ContentDescriptor.Visitor.Cols.DATETIME+" DESC limit 100");
 		 String[] from = {};
 		 int[] to = {};
-		 mAdapter = new VisitorsViewAdapter(getActivity(), R.layout.visitor_row, cur, from, to);
+		 mAdapter = new VisitorsViewAdapter(getActivity(), R.layout.new_visitor_row, cur, from, to);
 		 setListAdapter(mAdapter);
 		 ListView listView = getListView();
 		 listView.setTextFilterEnabled(true);

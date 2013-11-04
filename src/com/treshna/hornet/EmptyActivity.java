@@ -43,15 +43,30 @@ public class EmptyActivity extends NFCActivity{
 		Intent intent = getIntent();
 		view = intent.getIntExtra(Services.Statics.KEY, -1);
 		
-		FragmentTransaction ft = frm.beginTransaction();
+		Bundle bdl = null;
 		if (view == Services.Statics.FragmentType.MembershipAdd.getKey()) {
 			String memberid = intent.getStringExtra(Services.Statics.MID);
-			Bundle bdl = new Bundle(1);
+			bdl = new Bundle(1);
 			bdl.putString(Services.Statics.MID, memberid);
-			
+		}
+		
+		setFragment(view, bdl);
+	}
+	
+	public void setFragment(int theView, Bundle bdl) {
+		this.view = theView;
+		
+		tagFoundListener = null;
+		FragmentTransaction ft = frm.beginTransaction();
+		if (view == Services.Statics.FragmentType.MembershipAdd.getKey()) {
 			Fragment f = new MembershipAdd();
-			tagFoundListener = (TagFoundListener) f;
 			f.setArguments(bdl);
+			ft.replace(R.id.empty_layout, f);
+			
+		} else if (view == Services.Statics.FragmentType.MembershipComplete.getKey()) {
+			Fragment f = new MembershipComplete();
+			f.setArguments(bdl);
+			tagFoundListener = (TagFoundListener) f;
 			ft.replace(R.id.empty_layout, f);
 			if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1){
 				
@@ -61,16 +76,16 @@ public class EmptyActivity extends NFCActivity{
 			    try {
 			        tag.addDataType("*/*");
 			    } catch (MalformedMimeTypeException e) {
-			        //throw new RuntimeException("fail", e);
 			    	//ignore, it's probably not critical.
 			    }
 			    intentFiltersArray = new IntentFilter[] {tag};
 			}
-			
+
 		} else { //default!
 
 		}
 		ft.commit();
+		
 	}
 	
 	public void setTitle(String title) {
@@ -83,10 +98,14 @@ public class EmptyActivity extends NFCActivity{
 		Tag card;
 		
 		card = i.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-		id = getID(card);
+		id = this.getID(card);
 		
 		Log.v(TAG, "\n\n\ncard.serial:"+id);
-		tagFoundListener.onNewTag(id);
+		if (tagFoundListener != null) {
+			tagFoundListener.onNewTag(id);
+		} else {
+			super.onNewIntent(i);
+		}
 	}
 	
 	@Override
@@ -103,7 +122,7 @@ public class EmptyActivity extends NFCActivity{
 	@Override
 	public void onResume(){
 		super.onResume();
-		if (view == Services.Statics.FragmentType.MembershipAdd.getKey()) {
+		if (view == Services.Statics.FragmentType.MembershipComplete.getKey()) {
 			if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(this.getIntent().getAction())){
 				this.onNewIntent(this.getIntent());
 			}

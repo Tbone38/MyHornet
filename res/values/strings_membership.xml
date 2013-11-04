@@ -38,7 +38,10 @@
 	<string name="membership_complete_tag">Card Number</string>
 	<string name="membership_complete_start_end">Start &amp; End Dates</string>
 	<string name="membership_complete_first_payment">First Payment Date</string>
+	<string name="membership_complete_price">Programme Price</string>
 	<string name="membership_complete_signup_fee">Signup Fee</string>
 	<string name="membership_amount_outstanding">Amount Outstanding</string>
+	<string name="membership_complete">Complete</string>
+	<string name="membership_complete_desc">Please Confirm the below Details are correct:</string>
 	
 </resources>

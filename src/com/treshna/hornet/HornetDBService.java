@@ -146,6 +146,7 @@ public class HornetDBService extends Service {
 			uploadClass();
 			uploadBookings();
 			uploadMember();
+			uploadMembership();
 			int upload_sid_count = uploadSuspends();
 			if (upload_sid_count < 0) {
 				Services.showToast(getApplicationContext(), statusMessage, handler);
@@ -2485,24 +2486,49 @@ public class HornetDBService extends Service {
     	int free_count = cur.getCount();
     	cur.close();
     	
-    	if (free_count >= 15) {
+    	cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols.MSID+" < 0",
+    			null, null);
+    	int need_count = cur.getCount();
+    	cur.close();
+    	
+    	
+    	if (free_count >= 15 && need_count == 0) {
     		//we have 15 already,
     		return 0;
     	}
-    	//TODO: what if theirs memberships which require an id? 
+ 
     	ResultSet rs;
-    	for (int i = (20-free_count); i < 0; i--) {
+    	for (int i = ((20+need_count)-free_count); i > 0; i-=1) {
     		try {
     			rs = connection.startStatementQuery(query);
     			rs.next();
     			
     			ContentValues values = new ContentValues();
     			values.put(ContentDescriptor.Membership.Cols.MSID, rs.getString("nextval"));
-    			values.put(ContentDescriptor.Member.Cols.MID, 0);
     			
-    			contentResolver.insert(ContentDescriptor.Membership.CONTENT_URI, values);
+    			if (need_count > 0) {
+    				cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null,
+    						ContentDescriptor.Membership.Cols.MSID+" < 0", null, null);
+    				cur.moveToFirst();
+    				int rowid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Membership.Cols._ID));
+    				cur.close();
+    				
+    				contentResolver.update(ContentDescriptor.Membership.CONTENT_URI, values, ContentDescriptor.Membership.Cols._ID+" = ?",
+    						new String[] {String.valueOf(rowid)});
+    				
+    				values = new ContentValues();
+    				values.put(ContentDescriptor.PendingUploads.Cols.TABLEID,
+    						ContentDescriptor.TableIndex.Values.Membership.getKey());
+    				values.put(ContentDescriptor.PendingUploads.Cols.ROWID, rowid);
+    				contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, values);
+    				
+    				need_count -= 1;
+    			} else {
+	    			values.put(ContentDescriptor.Membership.Cols.MID, 0);
+	    			contentResolver.insert(ContentDescriptor.Membership.CONTENT_URI, values);
+    			}
+    			
     			result +=1;
-    			
     		} catch (SQLException e){
     			statusMessage = e.getLocalizedMessage();
     			e.printStackTrace();
@@ -2510,6 +2536,62 @@ public class HornetDBService extends Service {
     		}
     	}
     	closeConnection();
+    	return result;
+    }
+    
+    private int uploadMembership(){
+    	int result = 0;
+    	ArrayList<Integer> pendingRows = new ArrayList<Integer>();
+    	if (!openConnection()) {
+    		return -1;
+    	}
+    	
+    	cur = contentResolver.query(ContentDescriptor.PendingUploads.CONTENT_URI, null, 
+    			ContentDescriptor.PendingUploads.Cols.TABLEID+" = ?",
+    			new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Membership.getKey())}, 
+    			null);
+    	while (cur.moveToNext()) {
+    		pendingRows.add(cur.getInt(cur.getColumnIndex(ContentDescriptor.PendingUploads.Cols.ROWID)));
+    	}
+    	cur.close();
+    	
+    	for (int i=0; i <pendingRows.size(); i +=1) {
+    		cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols._ID+" = ?",
+    				new String[] {String.valueOf(pendingRows.get(i))}, null);
+    		
+    		if (!cur.moveToFirst()) {
+    			//can't find the pending row!
+    			contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, ContentDescriptor.PendingUploads.Cols.TABLEID
+    					+"= ? AND "+ContentDescriptor.PendingUploads.Cols.ROWID+" = ?", 
+    					new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Membership.getKey()),
+    					String.valueOf(pendingRows.get(i))});
+    		}
+    		try {
+    			//will this be OK with nulls?
+	    		result = result + connection.uploadMembership(cur.getInt(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MID)),
+	    				cur.getInt(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MSID)),
+	    				cur.getInt(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PID)),
+	    				cur.getInt(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PGID)),
+	    				cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MSSTART)),
+	    				cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.EXPIRERY)),
+	    				cur.getInt(cur.getColumnIndex(ContentDescriptor.Membership.Cols.CARDNO)),
+	    				cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.SIGNUP)),
+	    				cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PRICE)));
+    		} catch (SQLException e) {
+    			statusMessage = e.getLocalizedMessage();
+    			e.printStackTrace();
+    			return -2;
+    		}
+    		cur.close();
+    		
+    		contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, ContentDescriptor.PendingUploads.Cols.TABLEID
+					+"= ? AND "+ContentDescriptor.PendingUploads.Cols.ROWID+" = ?", 
+					new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Membership.getKey()),
+					String.valueOf(pendingRows.get(i))});
+    	}
+    	
+    	closeConnection();
+    	
     	return result;
     }
     

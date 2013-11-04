@@ -12,11 +12,18 @@
 		android:id="@+id/membershipadd"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content" >
-	    
+	    <TextView
+	        android:id="@+id/membership_complete_desc"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="16sp"
+	        android:text="@string/membership_complete_desc" />
+	        
 	    <TextView
 	        android:id="@+id/membership_programme_name_L"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
+	        android:layout_below="@id/membership_complete_desc"
 	        android:textSize="13sp"
 	        android:text="@string/membership_complete_pname" />
 	    <EditText
@@ -58,17 +65,17 @@
 	        android:enabled="false"/>
 	    
 	    <TextView
-	        android:id="@+id/membership_first_payment_L"
+	        android:id="@+id/membership_price_L"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_below="@id/membership_start_end"
 	        android:textSize="13sp"
-	        android:text="@string/membership_complete_first_payment" />
+	        android:text="@string/membership_complete_price" />
 	    <EditText
-	        android:id="@+id/membership_first_payment"
+	        android:id="@+id/membership_price"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:layout_below="@id/membership_first_payment_L"
+	        android:layout_below="@id/membership_price_L"
 	        android:textSize="18sp"
 	        android:enabled="false" />
 	    
@@ -76,7 +83,7 @@
 	        android:id="@+id/membership_signup_fee_L"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:layout_below="@id/membership_first_payment"
+	        android:layout_below="@id/membership_price"
 	        android:textSize="13sp"
 	        android:text="@string/membership_complete_signup_fee" />
 	    <EditText 
@@ -87,58 +94,95 @@
 	        android:textSize="18sp"
 	        android:enabled="false"/>
 	    
+	   
 	    <TextView
-	        android:id="@+id/membership_amount_outstanding_L"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_below="@id/membership_signup_fee"
-	        android:textSize="13sp"
-	        android:text="@string/membership_amount_outstanding" />
-	    <EditText
-	        android:id="@+id/membership_amount_outstanding"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_below="@id/membership_amount_outstanding_L"
-	        android:textSize="18sp"
-	        android:enabled="false" />
-	    
-	    <TextView
-	        android:id="@+id/button_set_tag"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_below="@id/membership_amount_outstanding"
-	        android:textSize="18sp"
-	        android:text="@string/membership_add_tag"
-	        android:background="@drawable/button" />
+		    android:id="@+id/membershipactionH"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_below="@id/membership_signup_fee"
+		    android:textSize="20sp"
+		    android:text="@string/membership_add_actions"
+		    android:textColor="@color/white"
+		    android:background="@color/gym"
+		    android:layout_margin="3dp"
+		    android:padding="5dp" />
+		<LinearLayout
+		    android:id="@+id/button_addtag_row"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_below="@id/membershipactionH"
+		    android:orientation="horizontal"
+		    android:background="@drawable/button"
+		    android:clickable="true">
+		    <ImageView 
+		        android:id="@+id/membershiptag_ic"
+		        android:layout_width="35dp"
+		        android:layout_height="35dp"
+		        android:background="@drawable/ic_action_labels"/>
+		    <TextView
+		        android:id="@+id/membershipaddtag"
+		        android:layout_width="wrap_content"
+		        android:layout_height="match_parent"
+		        android:gravity="center"
+		        android:textSize="18sp"
+		        android:text="@string/membership_add_tag" />
+		</LinearLayout>
+		<LinearLayout
+		    android:id="@+id/button_addphoto_row"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_below="@id/button_addtag_row"
+		    android:orientation="horizontal"
+		    android:background="@drawable/button"
+		    android:clickable="true">
+		    <ImageView
+		        android:id="@+id/membershipphoto_ic"
+		        android:layout_width="35dp"
+		        android:layout_height="35dp"
+		        android:background="@drawable/ic_action_camera" />
+		    <TextView
+		        android:id="@+id/membershipaddphoto"
+		        android:layout_width="wrap_content"
+		        android:layout_height="match_parent"
+		        android:gravity="center"
+		        android:textSize="18sp"
+		        android:text="@string/membership_add_photo" />
+		    
+		</LinearLayout>
 	    	   
 		<LinearLayout
 		    android:id="@+id/buttonrow"
 		    android:layout_width="match_parent"
 		    android:layout_height="wrap_content"
-		    android:layout_below="@id/button_set_tag"
+		    android:layout_below="@id/button_addphoto_row"
 		    android:orientation="horizontal"
 		    android:baselineAligned="false">
-			<LinearLayout 
+
+			<LinearLayout
 			    android:id="@+id/button_accept"
 			    android:layout_width="0dp"
 			    android:layout_height="wrap_content"
 			    android:layout_weight=".5"
-			    android:orientation="horizontal"
 			    android:background="@drawable/button"
-			    android:clickable="true">
-			    <ImageView 
+			    android:clickable="true"
+			    android:orientation="horizontal" >
+
+			    <ImageView
 			        android:id="@+id/acceptbuttontick"
 			        android:layout_width="35dp"
 			        android:layout_height="35dp"
-			        android:background="@drawable/ic_action_accept"/>
+			        android:background="@drawable/ic_action_accept" />
+
 			    <TextView
 			        android:id="@+id/accept"
 			        android:layout_width="wrap_content"
-			        android:layout_height="match_parent"
+			        android:layout_height="wrap_content"
+			        android:layout_margin="5dp"
 			        android:gravity="center"
-			        android:textSize="18sp"
-			        android:text="@string/membership_add_complete" />
+			        android:text="@string/membership_complete"
+			        android:textSize="18sp" />
 			</LinearLayout>
+
 			<LinearLayout
 			    android:id="@+id/button_cancel"
 			    android:layout_width="0dp"
