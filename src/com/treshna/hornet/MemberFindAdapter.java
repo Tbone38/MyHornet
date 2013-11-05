@@ -147,7 +147,6 @@ public class MemberFindAdapter extends SimpleCursorAdapter implements OnClickLis
 		switch(v.getId()){
 		case(R.id.listRow):{
 			if (!IS_BOOKING) {
-				//System.out.println("**Row Selected, Displaying More Info:");
 				Log.v(TAG, "Row Selected, Displaying More Info:");
 				ArrayList<String> tagInfo;
 				if (v.getTag() instanceof ArrayList<?>){
@@ -155,20 +154,15 @@ public class MemberFindAdapter extends SimpleCursorAdapter implements OnClickLis
 				} else {
 					break;
 				}
-				//String id = v.getTag().toString();
-				Intent intent = new Intent(context, MemberDetails.class);
-				intent.putStringArrayListExtra(EXTRA_ID, tagInfo);
-				//intent.putExtra(EXTRA_ID,id);
-				context.startActivity(intent);
+				
+				mCallback.onMemberSelect(tagInfo.get(0));
+				
 			} else if (IS_BOOKING) {
 				if (mCallback != null) {
 					ArrayList<String> tagInfo = (ArrayList<String>) v.getTag();
 					mCallback.onMemberSelect(tagInfo.get(0));
 					//remove this from stack;
 				}
-				//mCallback = (OnMemberSelectListener) 
-				//get the id, pass the details back to the previous page (bookings details).
-				// use a listener? set it in the bundle?
 			}
 			break; }
 		}

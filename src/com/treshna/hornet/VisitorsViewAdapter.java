@@ -32,32 +32,33 @@ public class VisitorsViewAdapter extends SimpleCursorAdapter implements OnClickL
 	private static int REQ_HEIGHT = 100;
 	private boolean showDoorname = false;
 	private boolean showMembership = false;
+	private OnClickListener theClicker;
 	
 	@SuppressWarnings("deprecation")
 	public VisitorsViewAdapter(Context context, int layout, Cursor c,
-			String[] from, int[] to) {
+			String[] from, int[] to, OnClickListener clicker) {
 		super(context, layout, c, from, to);
 		this.context = context;
 		this.FROM = from;
 		this.cursor = c;
+		this.theClicker = clicker;
+		
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 	    showDoorname = preferences.getBoolean("show_doorname", false);
 	    showMembership = preferences.getBoolean("show_membership", false);
 	}
 	
-	//This will need changed.
-	/*
-	 * LastVisitors Layout
-	 */
 	private View displayLVLayout(View rowView, int position){
 		
-		TextView imageText = (TextView) rowView.findViewById(R.id.imageText);
+		//TextView imageText = (TextView) rowView.findViewById(R.id.imageText);
 		TextView nameView = (TextView) rowView.findViewById(R.id.name);	
 		TextView timeView = (TextView) rowView.findViewById(R.id.time);
 		TextView denyView = (TextView) rowView.findViewById(R.id.deny);
 		ImageView imageView = (ImageView) rowView.findViewById(R.id.image);
 		ImageView smileView = (ImageView) rowView.findViewById(R.id.smiley);
 		ImageView taskView = (ImageView) rowView.findViewById(R.id.task);
+		View colorBlock = (View) rowView.findViewById(R.id.visitor_colour_block);
+		colorBlock.setBackgroundColor(context.getResources().getColor(R.color.visitors_green));
 		cursor.moveToPosition(position);
 
 		if(cursor.isBeforeFirst())
@@ -68,15 +69,19 @@ public class VisitorsViewAdapter extends SimpleCursorAdapter implements OnClickL
 		
 		ArrayList<String> tagInfo = new ArrayList<String>();
 		tagInfo.add(cursor.getString(cursor.getColumnIndex(ContentDescriptor.Visitor.Cols.MID))); 
-		tagInfo.add(cursor.getString(cursor.getColumnIndex(ContentDescriptor.Visitor.Cols.DATETIME)));;
+		tagInfo.add(cursor.getString(cursor.getColumnIndex(ContentDescriptor.Visitor.Cols.DATETIME)));
 		rowView.setTag(tagInfo);
 		rowView.setClickable(true);
-		rowView.setOnClickListener(this);
+		if (theClicker != null) {
+			rowView.setOnClickListener(theClicker);
+		} else {
+			rowView.setOnClickListener(this);
+		}
 		if (cursor.isNull(cursor.getColumnIndex(ContentDescriptor.Member.Cols.MID))) {
 			rowView.setClickable(false);
 			nameView.setTextColor(Color.parseColor("#C4C4C4"));
 			timeView.setTextColor(Color.parseColor("#C4C4C4"));
-			imageText.setTextColor(Color.parseColor("#C4C4C4"));
+			//imageText.setTextColor(Color.parseColor("#C4C4C4"));
 		} else {
 			try {
 				nameView.setTextColor(Color.parseColor(cursor.getString(cursor.getColumnIndex(ContentDescriptor.Member.Cols.COLOUR))));
@@ -124,14 +129,14 @@ public class VisitorsViewAdapter extends SimpleCursorAdapter implements OnClickL
 		
 		if (imgFile.exists() == true){
 			imageView.bringToFront();
-			imageText.setVisibility(View.GONE);
+			//imageText.setVisibility(View.GONE);
 		} else if ((imgFile.exists() == false) && (cursor.getInt(cursor.getColumnIndex(ContentDescriptor.Visitor.Cols.MID)) > 0)){
-			imageText.bringToFront();
+			//imageText.bringToFront();
 			imageView.setClickable(true);
 			imageView.setTag(cursor.getString(cursor.getColumnIndex(ContentDescriptor.Visitor.Cols.MID)));
 			imageView.setOnClickListener(this);
 		} else {
-			imageText.bringToFront();
+			//imageText.bringToFront();
 			imageView.setClickable(false);
 		}
 		if (imgFile.exists() == true) {
@@ -163,12 +168,14 @@ public class VisitorsViewAdapter extends SimpleCursorAdapter implements OnClickL
 			} else {
 			   	denyText += "Denied: "+cursor.getString(cursor.getColumnIndex(ContentDescriptor.Visitor.Cols.DENY))
 			   			+" at "+cursor.getString(cursor.getColumnIndex(ContentDescriptor.Visitor.Cols.DOORNAME));
+			   	colorBlock.setBackgroundColor(context.getResources().getColor(R.color.visitors_red));
 			}
 		} else {
 			if (cursor.getString(cursor.getColumnIndex(ContentDescriptor.Visitor.Cols.DENY)).compareTo("Granted") == 0){
 				denyText +="Access Granted";
 			} else {
 				denyText +="Denied: "+cursor.getString(cursor.getColumnIndex(ContentDescriptor.Visitor.Cols.DENY));
+				colorBlock.setBackgroundColor(context.getResources().getColor(R.color.visitors_red));
 		}	}
 		timeView.setText(displayText);
 		denyView.setText(denyText);
@@ -206,7 +213,6 @@ public class VisitorsViewAdapter extends SimpleCursorAdapter implements OnClickL
 	 * @see android.view.View.OnClickListener#onClick(android.view.View)
 	 * Handles Photos
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public void onClick(View v) {
 		//do Photo taking stuff here.
@@ -218,22 +224,7 @@ public class VisitorsViewAdapter extends SimpleCursorAdapter implements OnClickL
 	        camera.putExtra(EXTRA_ID,id);
 	        context.startActivity(camera);
 	        break;} 
-		case(R.id.listRow):{
-			System.out.println("**Row Selected, Displaying More Info:");
-			ArrayList<String> tagInfo = null;
-			if (v.getTag() instanceof ArrayList<?>) {
-				tagInfo = (ArrayList<String>) v.getTag();
-			} else {
-				break;
-			}
-			//String id = v.getTag().toString();
-			Intent intent = new Intent(context, MemberDetails.class);
-			intent.putStringArrayListExtra(EXTRA_ID, tagInfo);
-			//intent.putExtra(EXTRA_ID,id);
-			context.startActivity(intent);
-			break; }
 		}
-		
     }
 	
 }

@@ -6,54 +6,62 @@
     android:id="@+id/pageLayout"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    android:padding="7dp"
     tools:context=".MemberDetails" >  
+    
+    <TextView android:id="@+id/memberName"
+        android:padding="3dp"
+    	android:textSize="26sp"
+        android:textStyle="bold"
+        android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:gravity="center"
+        android:textIsSelectable="true"/>
+    
     <android.support.v4.view.ViewPager
     	android:id="@+id/gallery"
     	android:layout_width="match_parent"
-    	android:layout_height="180dp"
+    	android:layout_height="240dp"
+    	android:layout_below="@id/memberName"
     	android:layout_gravity="center"
-    	android:background="@color/gym"/>  
+    	/>  
     	
-    <View
+    <RelativeLayout
         android:id="@+id/overlayleft"
         android:layout_width="50dp"
-        android:layout_height="180dp"
+        android:layout_height="240dp"
         android:layout_alignLeft="@id/gallery"
         android:layout_alignTop="@id/gallery"
-        android:background="@color/overlay" />
-    <TextView 
-        android:id="@+id/moveimageLeft"
-        android:layout_width="50dp"
-        android:layout_height="180dp"
-        android:layout_alignLeft="@id/gallery"
-        android:layout_alignTop="@id/gallery"
+        android:background="@color/overlay"
         android:gravity="center"
-        android:textSize="22sp"
-        android:text="@string/leftarrow"/>
+        android:layout_below="@id/memberName" >
+	    <ImageView 
+	        android:id="@+id/moveimageLeft"
+	        android:layout_width="50dp"
+	        android:layout_height="90dp"
+	        android:gravity="center"
+	        android:background="@drawable/ic_action_previous_item"/>
+	</RelativeLayout>
     
-    <View
+    <RelativeLayout
         android:id="@+id/overlayright"
         android:layout_width="50dp"
-        android:layout_height="180dp"
+        android:layout_height="240dp"
         android:layout_alignRight="@id/gallery"
         android:layout_alignTop="@id/gallery"
-        android:background="@color/overlay" />
-    
-    <TextView
-        android:id="@+id/moveimageRight"
-        android:layout_width="50dp"
-        android:layout_height="180dp"
-        android:layout_alignRight="@id/gallery"
-        android:layout_alignTop="@id/gallery"
+        android:background="@color/overlay"
         android:gravity="center"
-        android:textSize="22sp" 
-        android:text="@string/rightarrow"/>
+        android:layout_below="@id/memberName" >
     
-    <TextView
+	    <ImageView
+	        android:id="@+id/moveimageRight"
+	        android:layout_width="50dp"
+	        android:layout_height="90dp"
+	        android:gravity="center"
+	        android:background="@drawable/ic_action_next_item"/>
+	</RelativeLayout>
+    
+    <!-- <TextView
     	android:id="@+id/memberDetailsH"
         android:padding="3dp"
     	android:textSize="20sp"
@@ -65,18 +73,11 @@
     	android:layout_height="wrap_content"
         android:textIsSelectable="false"
         android:layout_below="@id/gallery"        
-    />
+    /> -->
      
-    <TextView android:id="@+id/memberName"
-        android:padding="3dp"
-    	android:textSize="20sp"
-        android:textStyle="bold"
-        android:layout_width="wrap_content"
-    	android:layout_height="wrap_content"
-        android:textIsSelectable="true"
-        android:layout_below="@id/memberDetailsH"/>
     
-    <ImageView
+    
+    <!-- <ImageView
         android:id="@+id/smiley"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -84,12 +85,12 @@
         android:layout_alignBottom="@id/memberName"
         android:layout_alignTop="@id/memberName"
        	android:layout_below="@id/memberDetailsH"
-        android:contentDescription="@string/smiley_description"/>
+        android:contentDescription="@string/smiley_description"/> -->
 	 
 	 <LinearLayout android:id="@+id/memberDetails"
     	android:layout_width="match_parent"
     	android:layout_height="wrap_content"
-    	android:layout_below="@id/memberName"
+    	android:layout_below="@id/gallery"
     	android:orientation="vertical"
     	tools:context=".MemberDetails">
 	</LinearLayout>
@@ -163,5 +164,17 @@
        
     
     </LinearLayout>
+    <TextView
+        android:id="@+id/memberActionsH"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/membercontact"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:background="@color/gym"
+        android:text="Actions"
+        android:padding="3dp" />
+    
 </RelativeLayout>
 </ScrollView>

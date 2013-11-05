@@ -215,6 +215,7 @@ public class Services {
 		public static final String IS_BOOKING_S = "surname";
 		public static final String MSID = "membershipid";
 		public static final String MID = "memberid";
+		public static final String VISIT = "visitdate";
 		public static String PREF_NAME = "addMember";
 		public static String PREF_KEY = "memberType";
 		
@@ -223,7 +224,7 @@ public class Services {
 		public static final String IS_CLASSSWIPE = "com.treshna.hornet.class_swipe";
 		
 		public static enum FragmentType {
-			MembershipAdd(1), MembershipComplete(2);
+			MembershipAdd(1), MembershipComplete(2), MemberDetails(3);
 			
 			private final int key;
 			

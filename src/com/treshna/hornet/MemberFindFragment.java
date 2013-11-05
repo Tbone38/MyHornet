@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class MemberFindFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor>, OnClickListener {
@@ -75,7 +76,7 @@ public class MemberFindFragment extends ListFragment implements LoaderManager.Lo
 		 setupView();
 	 }
 	 
-	@SuppressWarnings("deprecation")
+
 	@SuppressLint("NewApi")
 	private void setupView(){
 		
@@ -101,12 +102,12 @@ public class MemberFindFragment extends ListFragment implements LoaderManager.Lo
 			}
 		});
 		
-		TextView addMember = (TextView) view.findViewById(R.id.add);
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+		ImageView addMember = (ImageView) view.findViewById(R.id.add);
+		/*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
 			addMember.setBackground(getResources().getDrawable(R.drawable.button));
 		} else {
 			addMember.setBackgroundDrawable(getResources().getDrawable(R.drawable.button));
-		}
+		}*/
 		getActivity().getWindow().getDecorView().setBackgroundColor(Color.WHITE);
 		addMember.setClickable(true);
 		addMember.setOnClickListener(this);
@@ -117,7 +118,7 @@ public class MemberFindFragment extends ListFragment implements LoaderManager.Lo
 		if (is_booking) {
 			mAdapter = new MemberFindAdapter(parent,R.layout.member_find_row, null, from, to, true, mCallback);
 		} else {
-			mAdapter = new MemberFindAdapter(parent,R.layout.member_find_row, null, from, to, false, null);
+			mAdapter = new MemberFindAdapter(parent,R.layout.member_find_row, null, from, to, false, mCallback);
 		}
 		setListAdapter(mAdapter);
 		System.out.print("\n\nADAPTER SET: ");
@@ -191,5 +192,9 @@ public class MemberFindFragment extends ListFragment implements LoaderManager.Lo
 	            //mCallback not set
 	        }
 	    }
+	 
+	 public void setMemberSelectListener(OnMemberSelectListener theListener) {
+		 this.mCallback = theListener;
+	 }
 	
 }

@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/dual_panel_frame"
+    android:id="@+id/panel_frame"
+    android:tag="dual_panel"
     android:orientation="horizontal"
     android:baselineAligned="false"
     tools:context=".MainActivity" >

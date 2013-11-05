@@ -8,25 +8,47 @@
 	    android:id="@+id/findRow"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    android:orientation="horizontal" >
+	    android:orientation="horizontal"
+	    android:paddingLeft="2dp" >
+	    <View 
+	        android:id="@+id/member_find_color_block"
+	        android:layout_width="20dp"
+	        android:layout_height="match_parent"
+	        android:background="@color/member_blue"
+	        android:paddingTop="3dp"
+	        android:paddingBottom="3dp"
+	        android:paddingRight="3dp"
+	        android:paddingLeft="5dp"
+	        android:layout_margin="1dp" />
+	    <TextView
+	        android:id="@+id/member_find_name"
+	        android:layout_width="80dp"
+	        android:layout_height="match_parent"
+	        android:background="@color/member_grey"
+	        android:textSize="15sp"
+	        android:text="Name"
+	        android:padding="3dp"
+	        android:layout_margin="1dp" />
+	        
+	    
 	    <EditText
 	        android:id="@+id/find"
 	        android:layout_width="0dp"
 	        android:layout_height="wrap_content"
-	        android:layout_weight=".8"
+	        android:layout_weight=".4"
 	        android:inputType="text" 
 	        android:padding="3dp"/>
 	    
-	    <TextView
+	    <ImageView
 	        android:id="@+id/add"
 	        android:layout_width="0dp"
-	        android:layout_height="wrap_content"
-	        android:layout_weight=".15"
-	        android:gravity="center"
+	        android:layout_height="35dp"
+	        android:layout_weight=".1"
+	       	android:scaleType="centerInside"
 	        android:text="@string/plusmember"
 	        android:textSize="22sp"
 	        android:padding="3dp"
-	        android:background="@drawable/border"/>
+	        android:background="@drawable/ic_action_new"/>
     </LinearLayout>
     <ListView 
         android:id="@android:id/list"

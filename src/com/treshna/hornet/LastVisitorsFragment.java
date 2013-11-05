@@ -1,5 +1,7 @@
 package com.treshna.hornet;
 
+import java.util.ArrayList;
+
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -13,14 +15,16 @@ import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 /*
  * 
  */
-public class LastVisitorsFragment extends ListFragment {
+public class LastVisitorsFragment extends ListFragment implements OnClickListener{
 	private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override //when the server sync finishes, it sends out a broadcast.
         public void onReceive(Context context, Intent intent) {
@@ -70,6 +74,8 @@ public class LastVisitorsFragment extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {	
 		super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.new_visitor_list, container, false);
+		//View view = inflater.inflate(R.layout.new_visitor_frame, container, false);
+		
         return view;
     }
 	
@@ -133,7 +139,7 @@ public class LastVisitorsFragment extends ListFragment {
        	 cur = contentResolver.query(ContentDescriptor.Visitor.VISITOR_JOIN_MEMBER_URI, null, null, null, ContentDescriptor.Visitor.Cols.DATETIME+" DESC limit 100");
 		 String[] from = {};
 		 int[] to = {};
-		 mAdapter = new VisitorsViewAdapter(getActivity(), R.layout.new_visitor_row, cur, from, to);
+		 mAdapter = new VisitorsViewAdapter(getActivity(), R.layout.new_visitor_row, cur, from, to, this);
 		 setListAdapter(mAdapter);
 		 ListView listView = getListView();
 		 listView.setTextFilterEnabled(true);
@@ -152,6 +158,35 @@ public class LastVisitorsFragment extends ListFragment {
 		IntentFilter intentFilter = new IntentFilter();
 		intentFilter.addAction(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION);
 		getActivity().registerReceiver(Services.getPollingHandler(), intentFilter);
+	}
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()){
+		case(R.id.listRow):{
+			//System.out.println("**Row Selected, Displaying More Info:");
+			ArrayList<String> tagInfo = null;
+			if (v.getTag() instanceof ArrayList<?>) {
+				tagInfo = (ArrayList<String>) v.getTag();
+			} else {
+				break;
+			}
+			LinearLayout theView = (LinearLayout) this.getParentFragment().getView().findViewById(R.id.panel_frame);
+			Log.d(TAG, "The Tag IS:"+theView.getTag());
+			if (theView.getTag().toString().compareTo("single_panel") == 0) {
+				//Single Panel
+				Intent intent = new Intent(getActivity(), EmptyActivity.class);
+				intent.putExtra(Services.Statics.KEY, Services.Statics.FragmentType.MemberDetails.getKey());
+				intent.putStringArrayListExtra(VisitorsViewAdapter.EXTRA_ID, tagInfo);
+				getActivity().startActivity(intent);
+			} else {
+				//Dual Panel
+				((ViewGroup)getView().getParent()).getId();
+				LastVisitorsSuperFragment fr = (LastVisitorsSuperFragment) this.getParentFragment();
+				fr.setMemberDisplay(tagInfo);
+			}
+		}
+		}
 	}    
 }
 

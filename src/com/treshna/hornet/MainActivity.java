@@ -50,18 +50,15 @@ public class MainActivity extends NFCActivity implements BookingsListFragment.On
 		
 		membertab = ab.newTab()
                 .setText("Find Member")
-                .setTabListener(new TabListener<MemberFindFragment>(
-                        this, "findmember", MemberFindFragment.class));
+                .setTabListener(new TabListener<MemberFindSuperFragment>(
+                        this, "findmember", MemberFindSuperFragment.class));
 		ab.addTab(membertab);
 		
 		visitortab = ab.newTab()
 				.setText("Last Visitors")
-				.setTabListener(new TabListener<LastVisitorsFragment>(
-						this, "lastvisitors", LastVisitorsFragment.class));
+				.setTabListener(new TabListener<LastVisitorsSuperFragment>(
+						this, "lastvisitors", LastVisitorsSuperFragment.class));
 		ab.addTab(visitortab);
-		/**
-		 * TODO: refactor bookings so that they work from a tab.
-		 *  (too hard basket atm).*/
 		bookingtab = ab.newTab()
 				.setText("Bookings")
 				.setTabListener(new TabListener<BookingsSlideFragment>(
@@ -137,15 +134,6 @@ public class MainActivity extends NFCActivity implements BookingsListFragment.On
 	    	Services.setPreference(this, "sync_frequency", "-1");
 	    	return true;
 	    }
-	    /*case (R.id.action_bookings):{
-	    	Intent bookings = new Intent(this, HornetDBService.class);
-			bookings.putExtra(Services.Statics.KEY, Services.Statics.BOOKING);
-		 	this.startService(bookings);
-	    	
-		 	Intent intent = new Intent(this, BookingsSlidePager.class);
-	       	startActivity(intent);
-	       	return true;
-	    }*/
 	    case (R.id.action_addMember):{
 	    	Intent intent = new Intent(this, MemberAdd.class);
 	    	startActivity(intent);
@@ -185,7 +173,8 @@ public class MainActivity extends NFCActivity implements BookingsListFragment.On
             if (mFragment != null && !mFragment.isDetached()) {
             	Log.d("TabListener", "Fragment already existsed and was visible.");
                 FragmentTransaction ft = mActivity.getSupportFragmentManager().beginTransaction();
-                ft.remove(mFragment);
+                //ft.remove(mFragment);
+                ft.detach(mFragment);
                 ft.commit();
                 mFragment = null;
             }
@@ -206,7 +195,8 @@ public class MainActivity extends NFCActivity implements BookingsListFragment.On
 	        } else {
 	            // If it exists, simply attach it in order to show it
 	        	Log.i("TabListener", "Attaching Fragment:"+mTag);
-	        	ft.replace(getContentViewCompat(), mFragment, mTag);
+	        	//ft.replace(getContentViewCompat(), mFragment, mTag);
+	        	ft.attach(mFragment);
 	        }
 	    }
 

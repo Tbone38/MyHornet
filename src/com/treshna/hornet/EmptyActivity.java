@@ -1,6 +1,9 @@
 package com.treshna.hornet;
 
+import java.util.ArrayList;
+
 import com.treshna.hornet.BookingPage.TagFoundListener;
+
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -48,6 +51,13 @@ public class EmptyActivity extends NFCActivity{
 			String memberid = intent.getStringExtra(Services.Statics.MID);
 			bdl = new Bundle(1);
 			bdl.putString(Services.Statics.MID, memberid);
+
+		} else if (view == Services.Statics.FragmentType.MemberDetails.getKey()) {
+			ArrayList<String> tag = intent.getStringArrayListExtra(VisitorsViewAdapter.EXTRA_ID);
+			
+			bdl = new Bundle(2);
+			bdl.putString(Services.Statics.MID, tag.get(0));
+		    bdl.putString(Services.Statics.KEY, tag.get(1));
 		}
 		
 		setFragment(view, bdl);
@@ -80,8 +90,14 @@ public class EmptyActivity extends NFCActivity{
 			    }
 			    intentFiltersArray = new IntentFilter[] {tag};
 			}
-
-		} else { //default!
+		
+		} else if (view == Services.Statics.FragmentType.MemberDetails.getKey()) {
+			Fragment f = new MemberDetailsFragment();
+			f.setArguments(bdl);
+			ft.replace(R.id.empty_layout, f);
+		}
+		
+		else { //default!
 
 		}
 		ft.commit();

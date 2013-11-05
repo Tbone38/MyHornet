@@ -18,4 +18,8 @@
     <color name="overlay">#A0FFFFFF</color>
     
     <color name="android_blue">#FF33B5E5</color>
+    <color name="visitors_green">#FF8EAD00</color>
+    <color name="visitors_red">#FFB74C4C</color>
+    <color name="member_grey">#FFECECEC</color>
+    <color name="member_blue">#FF00AEF0</color>
 </resources>
