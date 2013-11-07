@@ -44,7 +44,7 @@ public class MembershipHold extends ActionBarActivity implements OnClickListener
 	private String datevalue;
 	DatePickerFragment datePicker;
 	private String mMemberId;
-	private String mMembershipId;
+	private String mMembershipId = null;
 	private static final String TAG = "MembershipHold";
 
 	private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {

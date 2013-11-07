@@ -140,6 +140,10 @@ public class ContentDescriptor {
 	        public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.member";
 	        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.member";
 	        
+	        public static class Indexs {
+	        	public static final String MEMBER_NAME = "member_member_name";
+	        }
+	        
 	        public static class Cols {
 	        	//can this table be used for storing/checking if cards are accept/deny ? or should membership table be used?
 	            public static final String MID = BaseColumns._ID; // convention
@@ -176,7 +180,7 @@ public class ContentDescriptor {
 	       	 	public static final String BOOK3 = "booking3";
 	       	 	public static final String LASTVISIT = "lastvisit1";
 	       	 	public static final String STATUS = "status";
-	       	 	public static final String LASTUPDATE = "lastupdated";
+	       	 	public static final String LASTUPDATE = "lastupdate";
 	        }
 	    }
 
@@ -195,6 +199,12 @@ public class ContentDescriptor {
 	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.visitor";
 	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.visitor";
 	 		
+	 		public static class Indexs {
+	 			public static final String MEMBER_ID = "visitor_member_id";
+	 			public static final String MS_ID = "visitor_membership_id";
+	 			public static final String DATE_TIME = "visitor_date_time";
+	 		}
+	 		
 	 		public static class Cols {
 	 			public static final String ID = BaseColumns._ID;
 	 			public static final String MID = "memberid";
@@ -205,7 +215,7 @@ public class ContentDescriptor {
 	       	 	public static final String TIME="stime12";
 	       	 	public static final String CARDNO = "cardno";
 	       	 	public static final String DOORNAME = "doorname";
-	       	 	public static final String LASTUPDATED = "lastupdated";
+	       	 	public static final String LASTUPDATE = "lastupdate";
 	 		}
 	 	}
 	 	
@@ -227,13 +237,18 @@ public class ContentDescriptor {
 	        public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.image";
 	        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.image";
 	        
+	        public static class Indexs {
+	        	public static final String MEMBER_ID = "image_member_id";
+	        }
+	        
 	        public static class Cols {
 	        	public static final String ID = BaseColumns._ID;
+	        	public static final String DISPLAYVALUE = "displayvalue";
 	        	public static final String MID = "memberID";
 	        	public static final String DATE = "date";
 	        	public static final String DESCRIPTION = "description";
 	        	public static final String IS_PROFILE = "is_profile";
-	        	public static final String LASTUPDATED = "lastupdated";
+	        	public static final String LASTUPDATE = "lastupdate";
 	        }
 	 	}
 	 	
@@ -307,6 +322,15 @@ public class ContentDescriptor {
 	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.bookings";
 	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.bookings";
 	 		
+	 		public static class Indexs {
+	 			public static final String BOOKING_ID = "booking_booking_id";
+	 			public static final String BOOKING_NAME = "booking_member_name";
+	 			public static final String MEMBER_ID = "booking_member_id";
+	 			public static final String MEMBERSHIP_ID = "booking_membership_id";
+	 			public static final String RESOURCE_ID = "booking_resource_id";
+	 			public static final String CLASS_ID = "booking_class_id";
+	 		}
+	 		
 	 		public static class Cols {
 	 			public static final String ID = BaseColumns._ID;
 	 			public static final String BID = "bookingid";
@@ -333,7 +357,7 @@ public class ContentDescriptor {
 	 			 */
 	 			public static final String MID = "memberid";
 	 			public static final String MSID = "membershipid";
-	 			public static final String LASTUPDATED = "lastupdate"; //since Unix Epoch
+	 			public static final String LASTUPDATE = "lastupdate"; //since Unix Epoch
 	 			public static final String CHECKIN = "checkin";
 	 			public static final String OFFSET = "offset"; // == resource.period
 	 			public static final String IS_UPLOADED = "is_uploaded"; //has the booking been uploaded?
@@ -386,7 +410,7 @@ public class ContentDescriptor {
 	 			public static final String VALIDFROM = "validfrom";
 	 			public static final String VALIDTO = "validto";
 	 			public static final String EXTERNAL = "externalname";
-	 			public static final String LASTUPDATED = "lastupdated";
+	 			public static final String LASTUPDATE = "lastupdate";
 	 		}
 	 	}
 	 	
@@ -407,7 +431,7 @@ public class ContentDescriptor {
 	 			public static final String CID = "companyid";
 	 			public static final String RTNAME = "typename";
 	 			public static final String PERIOD = "period";
-	 			public static final String LASTUPDATED = "lastupdated";
+	 			public static final String LASTUPDATE = "lastupdate";
 	 		}
 	 	}
 	 	
@@ -443,6 +467,11 @@ public class ContentDescriptor {
 	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.programme";
 	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.programme";
 	 		
+	 		public static class Indexs {
+	 			public static final String PROGRAMME_ID = "programme_programme_id";
+	 			public static final String GROUP_ID = "programme_group_id";
+	 		}
+	 		
 	 		public static class Cols implements BaseColumns{
 	 			public static final String PID = "programmeid";
 	 			public static final String GID = "groupid";
@@ -454,7 +483,7 @@ public class ContentDescriptor {
 	 			public static final String MLENGTH = "mlength";
 	 			public static final String SIGNUP = "signupfee";
 	 			public static final String NOTE = "pricenotes";
-	 			public static final String LASTUPDATED = "lastupdated";
+	 			public static final String LASTUPDATE = "lastupdate";
 	 			public static final String PRICE_DESC ="price_desc";
 	 		}
 	 	}
@@ -471,6 +500,11 @@ public class ContentDescriptor {
 	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.membership";
 	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.membership";
 	 		
+	 		public static class Indexs {
+	 			public static final String MEMBER_ID = "member_id";
+	 			public static final String MEMBERSHIP_ID = "membership_id";
+	 		}
+	 		
 	 		public static class Cols implements BaseColumns {
 	 			public static final String MID = "memberID";
 	 			public static final String MSID="membershipid";
@@ -481,7 +515,7 @@ public class ContentDescriptor {
 	 			//if membership table is used for checking cards then: see pi cache;
 	 			public static final String CARDNO = "cardno";
 	 			public static final String DENY = "deny"; //MOVE THIS TO A SEPERATE TABLE
-	 			public static final String LASTUPDATED = "lastupdated";
+	 			public static final String LASTUPDATE = "lastupdate";
 	 			public static final String PRIMARYMS = "primarymembership";
 	 			public static final String PID = "programmeid";
 	 			public static final String PGID ="programmegroupid";
@@ -506,7 +540,7 @@ public class ContentDescriptor {
 	 			public static final String ID = BaseColumns._ID; //cardno
 	 			public static final String DOOR = "door";
 	 			public static final String DATETIME = "datetime";
-	 			public static final String LASTUPDATED = "lastupdated";
+	 			public static final String LASTUPDATE = "lastupdate";
 	 		}
 	 	}
 	 	
@@ -525,7 +559,7 @@ public class ContentDescriptor {
 	 			public static final String ID = BaseColumns._ID;
 	 			public static final String NAME = "name";
 	 			public static final String COLOUR = "bgcolour";
-	 			public static final String LASTUPDATED = "lastupdated";
+	 			public static final String LASTUPDATE = "lastupdate";
 	 		}
 	 	}
 	 	
@@ -547,7 +581,7 @@ public class ContentDescriptor {
 	 			public static final String CLOSETIME = "closetime";
 	 			public static final String CLOSEID = "closeid";
 	 			public static final String NAME = "name"; //monday tuesday etc
-	 			public static final String LASTUPDATED = "lastupdated";
+	 			public static final String LASTUPDATE = "lastupdate";
 	 		}
 	 	}
 	 	
@@ -579,6 +613,11 @@ public class ContentDescriptor {
 	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.class";
 	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.class";
 	 		
+	 		public static class Indexs {
+	 			public static final String CLASS_ID = "class_class_id";
+	 			public static final String RESOURCE_ID = "class_resource_id";
+	 		}
+	 		
 	 		public static class Cols implements BaseColumns {
 	 			public static final String CID = "cid";
 	 			public static final String NAME = "name";
@@ -592,13 +631,12 @@ public class ContentDescriptor {
 	 			public static final String STIME = "starttime";
 	 			public static final String ETIME = "endtime";
 	 			public static final String RID = "resourceid";
-	 			public static final String LASTUPDATED = "lastupdated";
+	 			public static final String LASTUPDATE = "lastupdate";
 	 		}
 	 	}
 	 	
 	 	//TODO: move more uploads here:
 	 	//		-Member
-	 	//		-Image
 	 	//		-Swipe
 	 	//		-Booking
 	 	public static class PendingUploads {

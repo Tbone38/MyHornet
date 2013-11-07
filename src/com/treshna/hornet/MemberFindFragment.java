@@ -24,7 +24,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class MemberFindFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor>, OnClickListener {
+public class MemberFindFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 	
 	Cursor cur;
 	ContentResolver contentResolver;
@@ -101,16 +101,7 @@ public class MemberFindFragment extends ListFragment implements LoaderManager.Lo
 				updateCursor(s.toString());
 			}
 		});
-		
-		ImageView addMember = (ImageView) view.findViewById(R.id.add);
-		/*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-			addMember.setBackground(getResources().getDrawable(R.drawable.button));
-		} else {
-			addMember.setBackgroundDrawable(getResources().getDrawable(R.drawable.button));
-		}*/
 		getActivity().getWindow().getDecorView().setBackgroundColor(Color.WHITE);
-		addMember.setClickable(true);
-		addMember.setOnClickListener(this);
 		
 		// TODO 	- Sort up the member & membership join 		- DONE
 		//			- handle Bookings differently				- DONE
@@ -164,16 +155,6 @@ public class MemberFindFragment extends ListFragment implements LoaderManager.Lo
 		//System.out.print("\n\nCursor RESET");
 		mAdapter.changeCursor(null);
 		mAdapter.notifyDataSetChanged();
-	}
-
-	@Override
-	public void onClick(View v) {
-		switch (v.getId()){
-			case (R.id.add):{
-			Intent i = new Intent(parent, MemberAdd.class);
-			startActivity(i);
-			}
-		}
 	}
 	
 	 public interface OnMemberSelectListener {

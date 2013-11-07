@@ -142,7 +142,8 @@ public class HornetDBService extends Service {
 			}
 			
 			//do uploads
-			uploadAllImages();
+			//uploadAllImages();
+			uploadImage();
 			uploadClass();
 			uploadBookings();
 			uploadMember();
@@ -407,7 +408,7 @@ public class HornetDBService extends Service {
         		val.put(ContentDescriptor.Visitor.Cols.DENY, rs.getString("denyreason"));
         		val.put(ContentDescriptor.Visitor.Cols.CARDNO, rs.getString("cardno"));
         		val.put(ContentDescriptor.Visitor.Cols.DOORNAME, rs.getString("doorname"));
-        		val.put(ContentDescriptor.Visitor.Cols.LASTUPDATED, this_sync);
+        		val.put(ContentDescriptor.Visitor.Cols.LASTUPDATE, this_sync);
         		
         		contentResolver.insert(ContentDescriptor.Visitor.CONTENT_URI, val);
         		if (isNull == false) {
@@ -513,7 +514,7 @@ public class HornetDBService extends Service {
     
     public void visitorImages() {
     	String lastsync = Services.getAppSettings(ctx, "lastsync");
-    	cur = contentResolver.query(ContentDescriptor.Visitor.CONTENT_URI, null, ContentDescriptor.Visitor.Cols.LASTUPDATED+" >= ?",
+    	cur = contentResolver.query(ContentDescriptor.Visitor.CONTENT_URI, null, ContentDescriptor.Visitor.Cols.LASTUPDATE+" >= ?",
     			new String[] {lastsync}, null);
     	
     	queryServerForImage(cur, 1);
@@ -528,6 +529,7 @@ public class HornetDBService extends Service {
      * Image ID's are set such that id 0 for membership is always the profile picture.
      * this means that getting the profile picture from the sdcard should be 0_<memberid>.jpg
      */
+  //TODO: rewrite this with consideration to last_sync. 
     public void queryServerForImage(Cursor cursor, int index) {
     	boolean oldQuery;
     	ResultSet rs;
@@ -548,15 +550,17 @@ public class HornetDBService extends Service {
 		Log.v(TAG, "Querying Server for images");
 		query ="";
     	if (oldQuery != true){ 
-        	query = "SELECT decode(substring(imagedata from 3),'base64'), memberid, lastupdated, description, is_profile, "
+        	query = "SELECT decode(substring(imagedata from 3),'base64'), memberid, lastupdate, description, is_profile, "
 					+"created FROM IMAGE where substring(imagedata,1,2) = '1|' and length(imagedata)>200"
 					+" AND memberid = '";
         
 		} else if (oldQuery == true) { //the table doesn't have description or is_profile
-			query = "SELECT decode(substring(imagedata from 3),'base64'), memberid, lastupdated, "
+			query = "SELECT decode(substring(imagedata from 3),'base64'), memberid, lastupdate, "
 					+"created FROM IMAGE where substring(imagedata,1,2) = '1|' and length(imagedata)>200"
 					+" AND memberid = '";
 		}
+    	
+    	
     	
     	if (!openConnection()) {
     		return ; //connection failed;
@@ -599,7 +603,7 @@ public class HornetDBService extends Service {
 	        			cur.moveToNext();
 	            	}
 	            	imgExists = false;
-	            	sDate = dateFormat.parse(rs.getString("lastupdated"));
+	            	sDate = dateFormat.parse(rs.getString("lastupdate"));
 	            	for (String date : dates){
 	            		cacheDate = dateFormat.parse(date);
 	            		if (cacheDate.compareTo(sDate) == 0) imgExists = true;
@@ -616,8 +620,8 @@ public class HornetDBService extends Service {
 			            		
 			            		if (cur.getCount() > 0) {
 			            			val = new ContentValues();
-			            			val.put(ContentDescriptor.Image.Cols.ID, cur.getCount());
-			            			contentResolver.update(ContentDescriptor.Image.CONTENT_URI, val, ContentDescriptor.Image.Cols.ID +" = "+imgCount
+			            			val.put(ContentDescriptor.Image.Cols.DISPLAYVALUE, cur.getCount());
+			            			contentResolver.update(ContentDescriptor.Image.CONTENT_URI, val, ContentDescriptor.Image.Cols.DISPLAYVALUE +" = "+imgCount
 			            					+" AND "+ContentDescriptor.Image.Cols.MID+" = "+rs.getString("memberid"), null);
 			            			fileHandler.renameFile("0_"+rs.getString("memberid"), cur.getCount()+"_"+rs.getString("memberid"));
 			            		}
@@ -627,8 +631,8 @@ public class HornetDBService extends Service {
 		            		imgCount = 0;
 		            		if (cur.getCount() > 0) {
 		            			val = new ContentValues();
-		            			val.put(ContentDescriptor.Image.Cols.ID, cur.getCount());
-		            			contentResolver.update(ContentDescriptor.Image.CONTENT_URI, val, ContentDescriptor.Image.Cols.ID +" = "+imgCount
+		            			val.put(ContentDescriptor.Image.Cols.DISPLAYVALUE, cur.getCount());
+		            			contentResolver.update(ContentDescriptor.Image.CONTENT_URI, val, ContentDescriptor.Image.Cols.DISPLAYVALUE +" = "+imgCount
 		            					+" AND "+ContentDescriptor.Image.Cols.MID+" = "+rs.getString("memberid"), null);
 		            			fileHandler.renameFile("0_"+rs.getString("memberid"), cur.getCount()+"_"+rs.getString("memberid"));
 		            		}
@@ -639,9 +643,9 @@ public class HornetDBService extends Service {
 		            	
 		        		fileHandler.writeFile(is, imgCount+"_"+rs.getString("memberid"));
 		        		is = null;
-		        		val.put(ContentDescriptor.Image.Cols.ID, imgCount);
+		        		val.put(ContentDescriptor.Image.Cols.DISPLAYVALUE, imgCount);
 		        		val.put(ContentDescriptor.Image.Cols.MID, rs.getString("memberid"));
-		        		ssDate = Services.dateFormat(rs.getString("lastupdated"), "yyyy-MM-dd", "dd MMM yy hh:mm:ss aa");
+		        		ssDate = Services.dateFormat(rs.getString("lastupdate"), "yyyy-MM-dd", "dd MMM yy hh:mm:ss aa");
 		        		val.put(ContentDescriptor.Image.Cols.DATE, ssDate);
 		        		description = null;
 		        		if (oldQuery != true) {
@@ -681,121 +685,68 @@ public class HornetDBService extends Service {
     }
     
     
-    public int uploadAllImages(){
-    	if (cur != null) {
-    		cur.close();
-    		cur = null;
-    	}
-    	cur = contentResolver.query(ContentDescriptor.Image.CONTENT_URI, null, null, null, null);
-
-        int count = 0;
-        while (cur.moveToNext()) {
-                boolean result = uploadImage(cur.getInt(cur.getColumnIndex(ContentDescriptor.Image.Cols.ID)),
-                                cur.getInt(cur.getColumnIndex(ContentDescriptor.Image.Cols.MID)),
-                                cur.getString(cur.getColumnIndex(ContentDescriptor.Image.Cols.DATE)),
-                                cur.getString(cur.getColumnIndex(ContentDescriptor.Image.Cols.DESCRIPTION)),
-                                cur.getInt(cur.getColumnIndex(ContentDescriptor.Image.Cols.IS_PROFILE)));
-                count = (result == true) ? count +1 : count + 0;
-        }
-        cur.close();
-		return count;
-    }
-    
-	public boolean uploadImage(int id, int mid, String cDate, String description, int isProfile) {
-    	int idExists, imageSize, updateCount;
-    	List<String> dateList;
-    	SimpleDateFormat dateFormat;
-    	ResultSet rs;
-    	Date cacheImageDate;
-    	FileHandler fileHandler;
-    	byte[] image;
+    public int uploadImage() {
+    	int result = 0;
+    	cur = contentResolver.query(ContentDescriptor.PendingUploads.CONTENT_URI, null, ContentDescriptor.PendingUploads.Cols.TABLEID+" = ?",
+    			new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Image.getKey())}, null);
     	
-    	idExists = 0;
-    	dateList = new ArrayList<String>();
-    	dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
-    	if (!openConnection()) {
-    		return false; //connection failed;
+    	ArrayList<Integer> rowList = new ArrayList<Integer>();
+    	while (cur.moveToNext()) {
+    		rowList.add(cur.getInt(cur.getColumnIndex(ContentDescriptor.PendingUploads.Cols.ROWID)));
     	}
-  
-    	try {	
-    		rs = connection.imageCount(mid);
-    	}catch (SQLException e) {
-    		statusMessage = e.getLocalizedMessage();
-    		//e.printStackTrace();
-    		return false;
+    	 cur.close();
+    	
+    	if (!openConnection()){
+    		return -1;
     	}
-    	try {
-    		while (rs.next()){
-    			//from imageCount(), getString(1)  = lastUpdated, 2 = created
-    			idExists = rs.getRow();
-    			dateList.add(rs.getString("created")); //does this want to be lastupdated? 
+    	
+    	for (int i=0; i< rowList.size(); i+=1) {
+    		cur = contentResolver.query(ContentDescriptor.Image.CONTENT_URI, null, ContentDescriptor.Image.Cols.ID+" = ?",
+    				new String[] {String.valueOf(rowList.get(i))}, null);
+    		if (!cur.moveToFirst()) {
+    			//couldn't find row?
+    			contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, ContentDescriptor.PendingUploads.Cols.TABLEID+" = ? "
+    					+ "AND "+ContentDescriptor.PendingUploads.Cols.ROWID+" = ?", new String[] {
+    					String.valueOf(ContentDescriptor.TableIndex.Values.Image.getKey()), String.valueOf(rowList.get(i))});
+    			continue;
     		}
-    		rs.close();
-    		connection.closePreparedStatement();	
-    	}catch(SQLException e) {
-    		//e.printStackTrace();
-    		statusMessage = e.getLocalizedMessage();
-    		Log.e(TAG, e.getMessage());
-    		//return false;
-    	}
-    	cDate = Services.dateFormat(cDate, "dd MMM yy hh:mm:ss aa", "yyyy-MM-dd HH:mm:ss");
-    	cacheImageDate = null;
-    	try {
-    		cacheImageDate = dateFormat.parse(cDate);
-    	} catch (ParseException e) {
-    		//no date/image not in SQLite
-    		Log.e("HORNET", "No Date for image found in SQLite");
-    		connection.closePreparedStatement();
-    		connection.closeConnection();
-    		return false;
-    	}
-
-    	fileHandler = new FileHandler(getApplicationContext());
-    	imageSize = 20000;
-    	image = fileHandler.readImage(imageSize, Integer.toString(id)+"_"+Integer.toString(mid));
-    	updateCount = 0;
-    	
-    	if (idExists >= 1) {
-    	/* Handle Multiple images.
-    	 * do date comparison for each image found, if not found do insert.
-    	 * cannot do image updates.
-    	 */	
-    		Date sDate;
-    		boolean doesExist;
     		
-    		sDate = null;
-    	 	doesExist = false;
-    		for (String date : dateList) {
-    			try { sDate = dateFormat.parse(date);  }
-    			catch (ParseException e){/* non-proper date format given*/ }
-    			//System.out.print("\n * Cache: "+cacheImageDate);
-    			//System.out.print("\n * Server: "+sDate);
-				if ((cacheImageDate.compareTo(sDate)) == 0) { //TODO: make this more efficient
-					//image with exact same date already exists.
-					Log.v(TAG, "SKIPPING IMAGE, \nServer copy is same as local");
-					doesExist = true;
-				}
-    		}
-    		if (doesExist == false) {
-    			try {
-    				updateCount = connection.insertImage(image, mid, cacheImageDate, description, Services.isProfile(isProfile));
-    				Log.v(TAG, "Insert Result: "+updateCount);
-    			} catch (SQLException e) {
-    				statusMessage = e.getLocalizedMessage();
-    				e.printStackTrace();
-    			}
-    		}
-    	}else if(idExists == 0){
-    		try {
-    			updateCount = connection.insertImage(image, mid, cacheImageDate, description, Services.isProfile(isProfile));
-    			Log.v(TAG, String.valueOf(updateCount));
-    		} catch (SQLException e) {
-    			statusMessage = e.getLocalizedMessage();
-    			e.printStackTrace();
-    		}
+    		SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yy hh:mm:ss aa", Locale.US);
+    		String cDate = cur.getString(cur.getColumnIndex(ContentDescriptor.Image.Cols.DATE));
+        	Date cacheImageDate = null;
+        	try {
+        		cacheImageDate = dateFormat.parse(cDate);
+        	} catch (ParseException e) {
+        		cacheImageDate = new Date();
+        	}
+    		
+        	FileHandler fileHandler = new FileHandler(getApplicationContext());
+        	int imageSize = 20000;
+        	byte[] image = fileHandler.readImage(imageSize, Integer.toString(cur.getInt(cur.getColumnIndex(ContentDescriptor.Image.Cols.DISPLAYVALUE)))+
+        			"_"+Integer.toString(cur.getInt
+        			(cur.getColumnIndex(ContentDescriptor.Image.Cols.MID))));
+        	
+        	try {
+        		connection.uploadImage(image, 
+        				cur.getInt(cur.getColumnIndex(ContentDescriptor.Image.Cols.MID)), 
+        				cacheImageDate,
+        				cur.getString(cur.getColumnIndex(ContentDescriptor.Image.Cols.DESCRIPTION)), 
+        				Services.isProfile(cur.getInt(cur.getColumnIndex(ContentDescriptor.Image.Cols.IS_PROFILE))));
+        		result +=1;
+        	} catch (SQLException e) {
+        		statusMessage = e.getLocalizedMessage();
+        		e.printStackTrace();
+        		return -2;
+        	}
+        	
+        	contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, ContentDescriptor.PendingUploads.Cols.TABLEID+" = ? "
+					+ "AND "+ContentDescriptor.PendingUploads.Cols.ROWID+" = ?", new String[] {
+					String.valueOf(ContentDescriptor.TableIndex.Values.Image.getKey()), String.valueOf(rowList.get(i))});
     	}
+    	
     	closeConnection();
-	    return (updateCount != 0);	
+    	
+    	return result;
     }
     
     private int uploadMember(){
@@ -959,7 +910,7 @@ public class HornetDBService extends Service {
     	if (!openConnection()) {
     		return -1; //connection failed;
     	}
-    	cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.LASTUPDATED+" = 0", null, null);
+    	cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.LASTUPDATE+" = 0", null, null);
     	count = cur.getCount();
     	cur.close();
     	
@@ -999,11 +950,11 @@ public class HornetDBService extends Service {
 	    		val.put(ContentDescriptor.Booking.Cols.BID, rs.getString("nextval"));
 	    		
 	    		if (is_update) {
-	    			val.put(ContentDescriptor.Booking.Cols.LASTUPDATED, new Date().getTime());
+	    			val.put(ContentDescriptor.Booking.Cols.LASTUPDATE, new Date().getTime());
 	    			contentResolver.update(ContentDescriptor.Booking.CONTENT_URI, val, ContentDescriptor.Booking.Cols.ID+" = ?",
 	    					new String[] {String.valueOf(rowid)});
 	    		} else {
-	    			val.put(ContentDescriptor.Booking.Cols.LASTUPDATED, 0);
+	    			val.put(ContentDescriptor.Booking.Cols.LASTUPDATE, 0);
 	    			contentResolver.insert(ContentDescriptor.Booking.CONTENT_URI, val);
 	    		}
 	    		
@@ -1070,7 +1021,7 @@ public class HornetDBService extends Service {
     	bookinglist = new ArrayList<String>();
     	b_lastsync = Services.getAppSettings(ctx, "b_lastsync");
     	//System.out.print("\n\n**Uploading Bookings with update after:"+b_lastsync);
-    	cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.LASTUPDATED+" > ? " +
+    	cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.LASTUPDATE+" > ? " +
     			"AND "+ContentDescriptor.Booking.Cols.IS_UPLOADED+" = 0",
     			new String[] {b_lastsync}, null);
     	
@@ -1094,12 +1045,12 @@ public class HornetDBService extends Service {
 			Log.v(TAG, "OFFSET:"+cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.OFFSET)));
 			values.put(ContentDescriptor.Booking.Cols.OFFSET, cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.OFFSET)));
 			//System.out.print("\n\nBooking Modified:"+cur.getLong(cur.getColumnIndex(ContentDescriptor.Booking.Cols.LASTUPDATED)));
-			Log.v(TAG, "Booking Modified:"+cur.getLong(cur.getColumnIndex(ContentDescriptor.Booking.Cols.LASTUPDATED)));
-			Date lastupdate = new Date(cur.getLong(cur.getColumnIndex(ContentDescriptor.Booking.Cols.LASTUPDATED)));
+			Log.v(TAG, "Booking Modified:"+cur.getLong(cur.getColumnIndex(ContentDescriptor.Booking.Cols.LASTUPDATE)));
+			Date lastupdate = new Date(cur.getLong(cur.getColumnIndex(ContentDescriptor.Booking.Cols.LASTUPDATE)));
 			//System.out.print("\n\nLast-Update:"+lastupdate.getTime()+"\n");
 			Log.v(TAG, "Last-Update:"+lastupdate.getTime());
 			
-			values.put(ContentDescriptor.Booking.Cols.LASTUPDATED, String.valueOf(cur.getLong(cur.getColumnIndex(ContentDescriptor.Booking.Cols.LASTUPDATED))));
+			values.put(ContentDescriptor.Booking.Cols.LASTUPDATE, String.valueOf(cur.getLong(cur.getColumnIndex(ContentDescriptor.Booking.Cols.LASTUPDATE))));
 			
 			//below values can be null?
 			if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Booking.Cols.MSID)))
@@ -1145,7 +1096,7 @@ public class HornetDBService extends Service {
     	result = 0;
     	lastSync = Services.getAppSettings(ctx, "b_lastsync");
     	//System.out.print("\n\nLast Sync Was:"+lastSync);
-    	cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.LASTUPDATED+" > ? " +
+    	cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.LASTUPDATE+" > ? " +
     			"AND "+ContentDescriptor.Booking.Cols.RESULT+" != 0", //don't update empty bookings;
     			new String[] {lastSync}, null);//get the bookings that have changed since last sync.
     	//System.out.print("\n\n Updating "+cur.getCount()+" Bookings \n\n");
@@ -1166,7 +1117,7 @@ public class HornetDBService extends Service {
     		bookingid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Booking.Cols.BID));
     		resultstatus = cur.getInt(cur.getColumnIndex(ContentDescriptor.Booking.Cols.RESULT));
     		bookingtypeid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Booking.Cols.BOOKINGTYPE));
-    		lastupdate = cur.getLong(cur.getColumnIndex(ContentDescriptor.Booking.Cols.LASTUPDATED));
+    		lastupdate = cur.getLong(cur.getColumnIndex(ContentDescriptor.Booking.Cols.LASTUPDATE));
     		checkin = cur.getLong(cur.getColumnIndex(ContentDescriptor.Booking.Cols.CHECKIN));
     		notes = cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.NOTES));
     		//System.out.print("\n\nLast update for booking:"+bookingid+" was "+lastupdate);
@@ -1298,7 +1249,7 @@ public class HornetDBService extends Service {
 	    		 * last-update is equal to the last sync time, as using the database's last-update time can
 	    		 * cause issues when the times don't match (e.g. if the last-update time on the database is ahead, it'll break thing).. 
 	    		 */
-	    		val.put(ContentDescriptor.Booking.Cols.LASTUPDATED, this_sync);
+	    		val.put(ContentDescriptor.Booking.Cols.LASTUPDATE, this_sync);
 	    		
 	    		//get the offset for this booking;
 	    		if (!cur.isClosed()) {
@@ -1635,7 +1586,7 @@ public class HornetDBService extends Service {
     			values.put(ContentDescriptor.Membership.Cols.EXPIRERY, rs.getString("enddate"));
     			values.put(ContentDescriptor.Membership.Cols.PNAME, rs.getString("name"));
     			values.put(ContentDescriptor.Membership.Cols.VISITS, rs.getString("concession"));
-    			values.put(ContentDescriptor.Membership.Cols.LASTUPDATED, rs.getString("lastupdate"));
+    			values.put(ContentDescriptor.Membership.Cols.LASTUPDATE, rs.getString("lastupdate"));
     			
     			cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols.MSID+" = ?",
     					new String[] {rs.getString("id")},null);
@@ -1660,7 +1611,7 @@ public class HornetDBService extends Service {
     	String b_lastsync;
     	
     	b_lastsync = Services.getAppSettings(ctx, "b_lastsync");
-    	cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.LASTUPDATED+" > ?", 
+    	cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.LASTUPDATE+" > ?", 
     			new String[] {b_lastsync}, null);
     	queryServerForImage(cur, 12);
     	cur.close();
@@ -2094,7 +2045,7 @@ public class HornetDBService extends Service {
     			cur.close();
     			
     			//get a bookingid from somewhere ?
-    			cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.LASTUPDATED+" = 0",
+    			cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.LASTUPDATE+" = 0",
     					null, null);
     			if (cur.getCount() > 0) {
     				cur.moveToFirst();
@@ -2137,7 +2088,7 @@ public class HornetDBService extends Service {
     				values.put(ContentDescriptor.Booking.Cols.RESULT, 20);
     			}
     			values.put(ContentDescriptor.Booking.Cols.IS_UPLOADED, 0);
-    			values.put(ContentDescriptor.Booking.Cols.LASTUPDATED, new Date().getTime());
+    			values.put(ContentDescriptor.Booking.Cols.LASTUPDATE, new Date().getTime());
     			if (bookingid > 0) {
     				contentResolver.update(ContentDescriptor.Booking.CONTENT_URI, values, ContentDescriptor.Booking.Cols.BID+" = ?",
     						new String[] {String.valueOf(bookingid)});
@@ -2330,7 +2281,11 @@ public class HornetDBService extends Service {
     		String mid, msid, sid, reason, start, duration, freeze;
   
     		mid = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.MID));
-    		msid = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.MSID));
+    		if (cur.isNull(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.MSID))) {
+    			msid = null;
+    		} else {
+    			msid = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.MSID));
+    		}
     		sid = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.SID));
     		reason = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.REASON));
     		start = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.STARTDATE));
@@ -2452,7 +2407,7 @@ public class HornetDBService extends Service {
     			values.put(ContentDescriptor.Programme.Cols.MLENGTH, rs.getString("mlength"));
     			values.put(ContentDescriptor.Programme.Cols.SIGNUP, rs.getString("signupfee"));
     			values.put(ContentDescriptor.Programme.Cols.NOTE, rs.getString("notes"));
-    			values.put(ContentDescriptor.Programme.Cols.LASTUPDATED, rs.getString("lastupdate"));
+    			values.put(ContentDescriptor.Programme.Cols.LASTUPDATE, rs.getString("lastupdate"));
     			values.put(ContentDescriptor.Programme.Cols.PRICE_DESC, rs.getString("price_desc"));
     			
     			cur = contentResolver.query(ContentDescriptor.Programme.CONTENT_URI, null, ContentDescriptor.Programme.Cols.PID+" = ?",

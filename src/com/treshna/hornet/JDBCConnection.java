@@ -101,6 +101,21 @@ public class JDBCConnection {
     	 }
     }
     
+    public int uploadImage( byte[] image, int memberId, Date date, String description, boolean isProfile) throws SQLException {
+    	
+    	pStatement = con.prepareStatement("INSERT INTO image (imagedata, memberid, lastupdate, created, description, is_profile"
+    			+ ") VALUES ('1|'||encode(?,'base64'), ?, ?, ?, ?, ?);");
+    	pStatement.setBytes(1, image);
+    	pStatement.setInt(2, memberId);
+    	pStatement.setTimestamp(3, new Timestamp(date.getTime()));
+    	pStatement.setTimestamp(4, new Timestamp(date.getTime()));
+    	pStatement.setString(5, description);
+    	pStatement.setBoolean(6, isProfile);
+    	
+    	return pStatement.executeUpdate();
+    	
+    }
+    
     public int insertImage(byte[] image, int rowId, Date date, String description, boolean isProfile) throws SQLException{
     	int result = -1;
  
@@ -447,7 +462,7 @@ public class JDBCConnection {
        	pStatement.setString(14, booking.get(ContentDescriptor.Booking.Cols.ETIME));
     	pStatement.setString(15, booking.get(ContentDescriptor.Booking.Cols.OFFSET));
     	//todo last-updated
-    	pStatement.setDate(16, new java.sql.Date(Long.valueOf(booking.get(ContentDescriptor.Booking.Cols.LASTUPDATED))));
+    	pStatement.setDate(16, new java.sql.Date(Long.valueOf(booking.get(ContentDescriptor.Booking.Cols.LASTUPDATE))));
     	
     	Log.v(TAG, "Upload Bookings Query:"+pStatement.toString());
     	return pStatement.executeUpdate();
@@ -554,14 +569,16 @@ public class JDBCConnection {
     		pStatement.setBoolean(6, false);
     	}
     	
-    	pStatement.executeUpdate();
-    	this.closePreparedStatement();
+    	return pStatement.executeUpdate();
+    	
+    	//DOES THE BELOW NEED TO HAPPEN?
+    	/*this.closePreparedStatement();
     	
     	pStatement = con.prepareStatement("UPDATE membership SET suspendid = ? WHERE id = ? ;");
     	pStatement.setInt(1, Integer.decode(sid));
     	pStatement.setInt(2, Integer.decode(msid));
     	
-    	return pStatement.executeUpdate();
+    	return pStatement.executeUpdate();*/
     }
     
     public ResultSet getIdCards() throws SQLException {

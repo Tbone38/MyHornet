@@ -14,7 +14,7 @@
 	        android:id="@+id/member_find_color_block"
 	        android:layout_width="20dp"
 	        android:layout_height="match_parent"
-	        android:background="@color/member_blue"
+	        android:background="@color/member_grey"
 	        android:paddingTop="3dp"
 	        android:paddingBottom="3dp"
 	        android:paddingRight="3dp"
@@ -35,20 +35,9 @@
 	        android:id="@+id/find"
 	        android:layout_width="0dp"
 	        android:layout_height="wrap_content"
-	        android:layout_weight=".4"
+	        android:layout_weight=".7"
 	        android:inputType="text" 
 	        android:padding="3dp"/>
-	    
-	    <ImageView
-	        android:id="@+id/add"
-	        android:layout_width="0dp"
-	        android:layout_height="35dp"
-	        android:layout_weight=".1"
-	       	android:scaleType="centerInside"
-	        android:text="@string/plusmember"
-	        android:textSize="22sp"
-	        android:padding="3dp"
-	        android:background="@drawable/ic_action_new"/>
     </LinearLayout>
     <ListView 
         android:id="@android:id/list"

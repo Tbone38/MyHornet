@@ -4,44 +4,44 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-
-import com.treshna.hornet.R.color;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NavUtils;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.treshna.hornet.R.color;
 	//TODO: more null handling
 public class MemberDetailsFragment extends Fragment implements OnClickListener {
 	Cursor cur;
@@ -52,6 +52,7 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener {
 	String memberID;
 	private View view;
 	private String visitDate;
+	RadioGroup rg;
 	
 	private static final String TAG = "MemberDetails";
 	
@@ -60,22 +61,27 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Services.setContext(getActivity());
-		
+		Log.i(TAG, "Created At:"+new Date().toString());
 		contentResolver = getActivity().getContentResolver();
 	
 		memberID = this.getArguments().getString(Services.Statics.MID);
 		visitDate = this.getArguments().getString(Services.Statics.KEY);
 	}
 	
-	@SuppressWarnings("deprecation")
 	@SuppressLint("NewApi")
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 		  super.onCreateView(inflater, container, savedInstanceState);
-		  Log.i(TAG, "Creating View");
 	
 		  view = inflater.inflate(R.layout.member_details, container, false);
+	      view = setupView();
 		  
+		  return view;
+	}
+	
+	
+	private View setupView() {
+		
 		  cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols.MID+" = ?",
 					new String[] {memberID}, null);
 		
@@ -99,20 +105,16 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener {
 			String[] selection = {"*",ContentDescriptor.Member.Cols.PHCELL+" AS 'Mobile Number'",
 					ContentDescriptor.Member.Cols.PHHOME+" AS 'Home Number'", 
 					ContentDescriptor.Member.Cols.PHWORK+" AS 'Work Number' "};
-			cur = contentResolver.query(uri, selection, null, null, null);
 			
+			cur = contentResolver.query(uri, selection, null, null, null);
+		
 			if (cur == null) {
 				return view;
 			}
 			cur.moveToFirst();
-			/*int j;
-			for (j=0;j<cur.getColumnCount();j+=1) {
-				System.out.print("\n\n ****COLUMN("+j+"): "+cur.getColumnName(j));
-				System.out.print("\n\n ***VALUE: "+cur.getString(j));
-			}*/
+			
 			memberID = cur.getString(0);
 			TextView memberName = (TextView) view.findViewById(R.id.memberName);
-			ImageView smileView = (ImageView) view.findViewById(R.id.smiley);
 			LinearLayout memberDetails = (LinearLayout) view.findViewById(R.id.memberDetails);
 			LinearLayout memberInfo = (LinearLayout) view.findViewById(R.id.memberinfo);
 			
@@ -125,27 +127,7 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener {
 				memberName.setTextColor(Color.parseColor(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.COLOUR))));
 			}
 			
-			AssetManager am = getResources().getAssets();
-			String face = null;
-			String visits = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.HAPPINESS));
-			if (visits.length() >= 2){	
-				if (visits.substring(visits.length()-2, visits.length()).equals(":)")){
-					face = "face-smile.png";
-				} else if (visits.substring(visits.length()-2, visits.length()).equals(":|")){
-					face = "face-plain.png";
-				} else if (visits.substring(visits.length()-2, visits.length()).equals(":(")){
-					face = "face-sad.png";
-			}	}
-			if (face != null) {
-				InputStream is = null;
-				try {
-					is = am.open(face);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				Bitmap sm = BitmapFactory.decodeStream(is);
-				smileView.setImageBitmap(sm);
-			}
+			
 			LinearLayout.LayoutParams llparams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 			TextView numberH = new TextView(getActivity());
 			numberH.setPadding(Services.convertdpToPxl(getActivity(), 35), 0, 0, 0);
@@ -169,6 +151,7 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener {
 				TextView membershipH = (TextView) view.findViewById(R.id.memberinfoH);
 				membershipH.setVisibility(View.GONE);
 			}
+		
 			for (int i=0;i <memberships.size(); i +=1) {
 				int null_count = 0;
 				/**
@@ -314,42 +297,11 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener {
 					msWindow.addView(visitsT);
 				} else {
 					null_count +=8;
-				}
-				
-				//add hold/edit membership button here.
-				if (null_count < 8  && member.get(0) != null && member.get(0).compareTo("null") != 0) {
-					Log.v(TAG, "creating HOLD Button.");
-					TextView hold = new TextView(getActivity());
-					hold.setId(55008);
-					hold.setTag(member.get(0));
-					hold.setPadding(15, 15, 15, 15);
-					hold.setText("Hold");
-					hold.setTextSize(20);
-					hold.setTextColor(Color.parseColor("#FF5FBDBC"));
-					hold.setGravity(Gravity.CENTER);
-					
-					params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-					params.addRule(RelativeLayout.BELOW, 55005);
-					params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
-					params.addRule(RelativeLayout.ALIGN_TOP, 55007);
-					//params.addRule(RelativeLayout.ALIGN_BOTTOM, 55007);
-					params.setMargins(3, 3, 13, 3);
-					hold.setLayoutParams(params);
-					hold.setClickable(true);
-					hold.setOnClickListener(this);
-					
-					msWindow.addView(hold);
-				}
-				
+				}				
 				
 				memberInfo.addView(msWindow);
 			}
-			
-			TextView addMembership = (TextView) view.findViewById(R.id.addMembership);
-			addMembership.setTag(memberID);
-			addMembership.setClickable(true);
-			addMembership.setOnClickListener(this);
-			
+						
 			LinearLayout notesGroup = (LinearLayout) view.findViewById(R.id.membernotes);
 			if (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.NOTES)) != null) {
 				if (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.NOTES)).compareTo("null") != 0) {
@@ -384,6 +336,7 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener {
 				tasksH.setTextSize(13);
 				tasksH.setLayoutParams(llparams);
 				notesGroup.addView(tasksH);
+				
 				
 				int l;
 				for(l=12;l<=14;l+=1){ //cur.getColumnIndex(ContentDescriptor.Member.Cols.TASK1)
@@ -434,7 +387,7 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener {
 				}
 			}
 			
-			if (visitDate != null && visitDate.compareTo("") == 0) { //fix this
+			if (visitDate != null && visitDate.compareTo("") != 0) { //fix this
 				TextView visitTH = new TextView(getActivity());
 				visitTH.setPadding(Services.convertdpToPxl(getActivity(), 35), 0, 0, 0);
 				visitTH.setText("Visit Time");
@@ -470,159 +423,77 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener {
 				notesGroup.addView(lastVT);
 			}
 			
+			LinearLayout addMembership = (LinearLayout) view.findViewById(R.id.button_add_membership);
+			addMembership.setTag(memberID);
+			addMembership.setOnClickListener(this);
+			
+			LinearLayout addPhoto = (LinearLayout) view.findViewById(R.id.button_add_image);
+			addPhoto.setTag(memberID);
+			addPhoto.setOnClickListener(this);
 			
 			
-			/*
-			 * Dynamically build Views & Buttons as required.
-			 */
-			LinearLayout layout = (LinearLayout) view.findViewById(R.id.membercontact);
-			layout.setOrientation(LinearLayout.VERTICAL);
-			int i;
-			
-			for (i=7;i<=9;i+=1) {
-				if (cur.getString(i) != null) {
-					if (cur.getString(i).compareTo("") != 0) {
-						TextView heading = new TextView(getActivity());
-						heading.setId(i+20);
-						heading.setPadding(3, 5, 5, 0);
-						RelativeLayout.LayoutParams rlayout = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-						rlayout.setMargins(100, 2, 15, 0); //hard-coded?
-						heading.setLayoutParams(rlayout);
-						heading.setTextSize(13);
-						heading.setText(cur.getColumnName(i));
-						
-						TextView phone = new TextView(getActivity());
-						phone.setId(i+10);
-						phone.setPadding(3, 0, 5, 5);
-						rlayout = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-						rlayout.setMargins(100, 0, 15, 3);//hard-coded?
-						rlayout.addRule(RelativeLayout.BELOW, heading.getId());
-						phone.setLayoutParams(rlayout);
-						phone.setTextSize(18);
-						phone.setText(cur.getString(i));
-			
-						View bottom = new View(getActivity());
-						rlayout = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, 1);
-						rlayout.addRule(RelativeLayout.BELOW, phone.getId());
-						bottom.setBackgroundColor(Color.parseColor(COLOUR));
-						bottom.setLayoutParams(rlayout);
-						
-						TextView call = new TextView(getActivity());
-						call.setPadding(20, 12, 30, 5);
-						call.setText("Call");
-						call.setTextSize(18);
-						call.setId(i);
-						
-						rlayout = new RelativeLayout.LayoutParams
-								(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-						rlayout.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-						rlayout.addRule(RelativeLayout.ALIGN_TOP, heading.getId());
-						rlayout.addRule(RelativeLayout.ALIGN_BOTTOM, phone.getId());
-						rlayout.setMargins(20, 0, 20, 0);
-						call.setLayoutParams(rlayout);
-						
-						View line = new View(getActivity());
-						rlayout = new RelativeLayout.LayoutParams(1, LayoutParams.MATCH_PARENT);
-						rlayout.addRule(RelativeLayout.LEFT_OF, call.getId());
-						rlayout.addRule(RelativeLayout.ALIGN_TOP, heading.getId());
-						rlayout.addRule(RelativeLayout.ALIGN_BOTTOM, phone.getId());
-						line.setBackgroundColor(Color.parseColor(COLOUR));
-						line.setLayoutParams(rlayout);
-						
-						RelativeLayout row = new RelativeLayout(getActivity());
-						row.setId(i+100);
-						row.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-						row.addView(heading);
-						row.addView(phone);
-						row.addView(call);
-						row.setOnClickListener(this);
-						row.setClickable(true);
-						row.setTag(cur.getString(i));
-						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-							row.setBackground(getResources().getDrawable(R.drawable.button));
-						} else {
-							row.setBackgroundDrawable(getResources().getDrawable(R.drawable.button));
-						}
-		
-						row.addView(bottom);
-						layout.addView(row);
-					}
-				}
-			}		 
-			
-			// Null-Handling (shit-in, shit-out) - do it At the other end?
+			LinearLayout email = (LinearLayout) view.findViewById(R.id.button_email);
 			if (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMAIL)) != null) {
 				if (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMAIL)).compareTo("null") != 0) {
-					
-					TextView heading = new TextView(getActivity());
-					heading.setId(15+20);
-					heading.setPadding(3, 5, 5, 0);
-					RelativeLayout.LayoutParams rlayout = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-					rlayout.setMargins(100, 2, 15, 0); //hard-coded?
-					heading.setLayoutParams(rlayout);
-					heading.setTextSize(13);
-					heading.setText("Email :");
-					
-					TextView email = new TextView(getActivity());
-					email.setId(15+10);
-					rlayout = new RelativeLayout.LayoutParams
-							(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-					rlayout.setMargins(100, 2, 15, 3); //hard-coded?
-					rlayout.addRule(RelativeLayout.BELOW, heading.getId());
-					email.setLayoutParams(rlayout);
-					email.setTextSize(18);
-					email.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMAIL)));
-					
-					TextView send = new TextView(getActivity());
-					send.setText("Email");
-					send.setTextSize(18);
-					send.setPadding(20, 12, 26, 5);
-					send.setId(15);
-					
-					rlayout = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-					//rlayout.addRule(RelativeLayout.RIGHT_OF, line.getId());
-					rlayout.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-					rlayout.addRule(RelativeLayout.ALIGN_TOP, heading.getId());
-					rlayout.addRule(RelativeLayout.ALIGN_BOTTOM, email.getId());
-					rlayout.setMargins(20, 0, 10, 0);
-					send.setLayoutParams(rlayout);
-					
-					View line = new View(getActivity());
-					rlayout = new RelativeLayout.LayoutParams(1, LayoutParams.MATCH_PARENT);
-					rlayout.addRule(RelativeLayout.LEFT_OF, send.getId());
-					rlayout.addRule(RelativeLayout.ALIGN_TOP, heading.getId());
-					rlayout.addRule(RelativeLayout.ALIGN_BOTTOM, email.getId());
-					line.setBackgroundColor(Color.parseColor(COLOUR));
-					line.setId(100);
-					line.setLayoutParams(rlayout);
-					
-					RelativeLayout row = new RelativeLayout(getActivity());
-					row.setId(115);
-					row.addView(heading);
-					row.addView(email);
-					row.addView(send);
-					row.setTag(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMAIL)));
-					row.setClickable(true);
-					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-						row.setBackground(getResources().getDrawable(R.drawable.button));
-					} else {
-						row.setBackgroundDrawable(getResources().getDrawable(R.drawable.button));
-					}
-					row.setOnClickListener(this);
-					layout.addView(row);
-			} }
+					email.setOnClickListener(this);
+					email.setTag(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMAIL)));
+				} else {
+					email.setVisibility(View.GONE);
+				}
+			} else {
+				email.setVisibility(View.GONE);
+			}
+			
+			LinearLayout call = (LinearLayout) view.findViewById(R.id.button_call);
+			LinearLayout sms = (LinearLayout) view.findViewById(R.id.button_sms);
+			ArrayList<String> callTag = new ArrayList<String>();
+			boolean has_number = false;
+			
+			if (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHHOME)) != null &&
+					cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHHOME)).compareTo("null") != 0) {
+				
+				callTag.add("Home: "+cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHHOME)));
+				has_number = true;
+			}
+			if (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHWORK)) != null &&
+					cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHWORK)).compareTo("null") != 0) {
+				
+				callTag.add("Work: "+cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHWORK)));
+				has_number = true;
+			}
+			if (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHCELL)) != null &&
+					cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHCELL)).compareTo("null") !=0) {
+				
+				sms.setTag(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHCELL)));
+				sms.setOnClickListener(this);
+				
+				callTag.add("Cell: "+cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHCELL)));
+				has_number = true;
+			} else {
+				sms.setVisibility(View.GONE);
+			}
+			
+			if (has_number) {
+				call.setTag(callTag);
+				call.setOnClickListener(this);
+			} else {
+				call.setVisibility(View.GONE);
+			}
+			
+			LinearLayout hold = (LinearLayout) view.findViewById(R.id.button_hold);
+			hold.setOnClickListener(this);
 
 			
 			cur.close();
-			String[] projection = {ContentDescriptor.Image.Cols.ID};
+			String[] projection = {ContentDescriptor.Image.Cols.DISPLAYVALUE};
 			cur = contentResolver.query(ContentDescriptor.Image.CONTENT_URI, projection,
-					null, null,ContentDescriptor.Image.Cols.ID+" DESC LIMIT 1");
+					null, null,ContentDescriptor.Image.Cols.DISPLAYVALUE+" DESC LIMIT 1");
 			cur.moveToFirst();
 			int highestImgId = 0;
 			if (cur.getCount() > 0) highestImgId = cur.getInt(0)+1;
 			cur.close();
 			List<String> images = new ArrayList<String>();
-			i = 0; 
+			int i = 0; 
 			for(i=0;i<highestImgId;i+=1){
 				String imgDir = getActivity().getExternalFilesDir(null)+"/"+i+"_"+memberID+".jpg";
 				File imgFile = new File(imgDir);
@@ -630,7 +501,6 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener {
 					images.add(imgDir);
 				}
 			}
-			images.add("-1");
 			
 			mPager = (ViewPager) view.findViewById(R.id.gallery);
 			
@@ -647,38 +517,26 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener {
 			  
 			ImageView moveleft, moveright;
 			moveleft = (ImageView) view.findViewById(R.id.moveimageLeft);
-			moveleft.setClickable(true);
-			moveleft.setOnClickListener(this);
+			moveleft.setVisibility(View.GONE);
+			//moveleft.setClickable(true);
+			//moveleft.setOnClickListener(this);
 			
 			moveright = (ImageView) view.findViewById(R.id.moveimageRight);
-			moveright.setClickable(true);
-			moveright.setOnClickListener(this);
+			moveright.setVisibility(View.GONE);
+			//moveright.setClickable(true);
+			//moveright.setOnClickListener(this);
+			
 			
 			
 		  return view;
 	}
 
 	
+	@SuppressWarnings("unchecked")
 	@Override
-	public void onClick(View v) {//id == column from cursor.
+	public void onClick(View v) {
 		
 		switch(v.getId()) {
-		case (107): //if contacting doesn't work, ensure these numbers match the phone-row id. (100 +i)
-		case (108):
-		case (109):{
-				String ph ="tel:"+ v.getTag().toString();
-				Intent intent = new Intent(Intent.ACTION_DIAL); //ACTION_DIAL, OR ACTION_CALL
-				intent.setData(Uri.parse(ph));
-				startActivity(intent);
-				break;
-				}
-		case (115):{
-				String email="mailto:"+Uri.encode(v.getTag().toString())+"?subject="+Uri.encode("Gymmaster");
-				Intent intent = new Intent(Intent.ACTION_SENDTO);
-				intent.setData(Uri.parse(email));
-				startActivity(intent);
-				break;
-				}
 		case (R.id.moveimageLeft):{
 			if (mPager.getCurrentItem() > 0) {
 				mPager.setCurrentItem(mPager.getCurrentItem()-1);
@@ -691,18 +549,7 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener {
 			}
 			break;
 		}
-		case (55008):{
-			String membershipid = null;
-			if (v.getTag() instanceof String) {
-				membershipid = (String) v.getTag();
-			}
-			Intent i = new Intent(getActivity(), MembershipHold.class);
-			i.putExtra(Services.Statics.KEY, memberID);
-			i.putExtra(Services.Statics.MSID, membershipid);
-			startActivity(i);
-			break;
-		}
-		case (R.id.addMembership):{
+		case (R.id.button_add_membership):{
 			String memberid = null;
 			if (v.getTag() instanceof String) {
 				memberid = (String) v.getTag();
@@ -711,17 +558,108 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener {
 			i.putExtra(Services.Statics.KEY, Services.Statics.FragmentType.MembershipAdd.getKey());
 			i.putExtra(Services.Statics.MID, memberid);
 			startActivity(i);
+			break;
+		}
+		case (R.id.button_add_image):{
+			String memberid = (String) v.getTag();
+			Intent camera = new Intent(getActivity(), CameraWrapper.class);
+			camera.putExtra(VisitorsViewAdapter.EXTRA_ID,memberid);
+			getActivity().startActivity(camera);
+			break;
+		}
+		case (R.id.button_email):{
+			String email="mailto:"+Uri.encode(v.getTag().toString())+"?subject="+Uri.encode("Gym Details");
+			Intent intent = new Intent(Intent.ACTION_SENDTO);
+			intent.setData(Uri.parse(email));
+			startActivity(intent);
+			break;
+		}
+		case (R.id.button_sms):{
+			String smsNo = (String) v.getTag();
+			Intent smsIntent = new Intent(Intent.ACTION_VIEW);
+			smsIntent.setType("vnd.android-dir/mms-sms");
+			smsIntent.putExtra("address",smsNo);
+			try {
+				startActivity(smsIntent);
+			} catch (ActivityNotFoundException e) {
+				Toast.makeText(getActivity(), "Cannot send SMS from this device.", Toast.LENGTH_LONG).show();
+			}
+			break;
+		}
+		case (R.id.button_call):{
+			ArrayList<String> tag = null;
+			if (v.getTag() instanceof ArrayList<?>) {
+				tag = (ArrayList<String>) v.getTag();
+			}
+			if (tag.size() == 1) {
+				String ph ="tel:"+tag.get(0).substring(tag.get(0).indexOf(":")+1);
+				Intent intent = new Intent(Intent.ACTION_DIAL);
+				intent.setData(Uri.parse(ph));
+				startActivity(intent);
+			} 
+			else {
+				//show popup window, let user select the number to call.
+				showWindow(tag);
+			}
+			break;
+		}
+		case (R.id.button_hold):{
+			Intent i = new Intent(getActivity(), MembershipHold.class);
+			i.putExtra(Services.Statics.KEY, memberID);
+			startActivity(i);
+			break;
 		}
 		}
 	}
 	
+	private void showWindow(ArrayList<String> phones) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		LayoutInflater inflater = getActivity().getLayoutInflater();
+		View layout = inflater.inflate(R.layout.alert_select_call, null);
+		
+		//do for loop, create and append radio option
+		rg = (RadioGroup) layout.findViewById(R.id.alertrg);
+		
+		
+		for (int i=0; i< phones.size(); i +=1) {
+			RadioButton rb = new RadioButton(getActivity());
+			rb.setText(phones.get(i));
+			rb.setTag(phones.get(i).substring(phones.get(i).indexOf(":")+1));
+			rg.addView(rb);
+		}	
+        builder.setView(layout);
+        builder.setTitle("Select Number to Call");
+        builder.setPositiveButton("Call", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+            		
+            		String selectedNo = null;
+	            	int cid = rg.getCheckedRadioButtonId();  
+	            	if (cid == -1) {
+	            		Toast.makeText(getActivity(), "Select a Phone Number", Toast.LENGTH_LONG).show();
+	            		
+	            	} else {
+		            	RadioButton rb = (RadioButton) rg.findViewById(cid);
+		            	selectedNo = (String) rb.getTag();
+		    
+		            	String ph ="tel:"+selectedNo;
+						Intent intent = new Intent(Intent.ACTION_DIAL);
+						intent.setData(Uri.parse(ph));
+						startActivity(intent);
+	            	}
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        	@Override
+            public void onClick(DialogInterface dialog, int id) {
+        		dialog.dismiss();
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+	}
 	
 	
-	/***************************/
-	/**
-	 * TODO: fix the broken swiping.
-	 */
-	//public class ImageAdapter extends FragmentStatePagerAdapter {
 	public class ImageAdapter extends PagerAdapter {
 		
 		private List<String> imageList;
@@ -762,33 +700,10 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener {
 			String imgDir = imageList.get(position);
 			TextView imgText = null;
 			File imgFile = null;
-			if (imgDir.compareTo("-1") == 0){
-				//add Image display
-				imgText = new TextView(ctx);
-				imgText.setText(R.string.button_add_picture);
-				imgText.setTextSize(18);
-				imgText.setGravity(Gravity.CENTER);
-				rlayout = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-				
-				rlayout.addRule(RelativeLayout.ALIGN_LEFT, img.getId());
-				rlayout.addRule(RelativeLayout.ALIGN_TOP, img.getId());
-				rlayout.addRule(RelativeLayout.ALIGN_RIGHT, img.getId());
-				rlayout.addRule(RelativeLayout.ALIGN_BOTTOM, img.getId());
-				rlayout.addRule(RelativeLayout.CENTER_IN_PARENT);
-				rlayout.setMargins(1, 1, 1, 1);
-				imgText.setLayoutParams(rlayout);
-				imgText.bringToFront();
-				img.setPadding(5, 5, 5, 5);
-			    
-				try {
-					imgFile = File.createTempFile("img", null);
-				} catch (IOException e) {
-					imgFile = new File(imgDir);
-				}
-			} else {
+			
 				img.bringToFront();
 				imgFile = new File(imgDir);
-			}
+
 			final BitmapFactory.Options options = new BitmapFactory.Options();
 		    options.inJustDecodeBounds = true;
 		    BitmapFactory.decodeFile(imgFile.getAbsolutePath(), options);
@@ -802,13 +717,8 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener {
 			img.setLayoutParams(rlayout);
 		  
 		    rootView.addView(img);
-		    if (imgText == null){
-		    	rootView.setTag(tagInfo);
+		    rootView.setTag(tagInfo);
 		    	
-		    } else {
-		    	rootView.addView(imgText);
-		    	rootView.setTag(tagInfo);
-		    }
 		    
 		    rootView.setClickable(true);
 		    rootView.setOnClickListener(new OnClickListener() {
@@ -833,7 +743,7 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener {
 						ctx.startActivity(camera);
 					} else {
 						
-						selection = ContentDescriptor.Image.Cols.ID+" = "+rowid
+						selection = ContentDescriptor.Image.Cols.DISPLAYVALUE+" = "+rowid
 								+" AND "+ContentDescriptor.Image.Cols.MID+" = "+memberid;
 						cur = cResolver.query(ContentDescriptor.Image.CONTENT_URI, null, selection, null, null);
 						if (cur.getCount() <= 0) return;

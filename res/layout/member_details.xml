@@ -60,23 +60,7 @@
 	        android:gravity="center"
 	        android:background="@drawable/ic_action_next_item"/>
 	</RelativeLayout>
-    
-    <!-- <TextView
-    	android:id="@+id/memberDetailsH"
-        android:padding="3dp"
-    	android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="@color/white"
-        android:background="@color/gym"
-        android:text="@string/heading_member_info"
-        android:layout_width="match_parent"
-    	android:layout_height="wrap_content"
-        android:textIsSelectable="false"
-        android:layout_below="@id/gallery"        
-    /> -->
-     
-    
-    
+  
     <!-- <ImageView
         android:id="@+id/smiley"
         android:layout_width="wrap_content"
@@ -114,18 +98,11 @@
     	android:orientation="vertical"
     	tools:context=".MemberDetails">
 	</LinearLayout>
-	<TextView 
-	    android:id="@+id/addMembership"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_below="@id/memberinfo"
-	    android:textSize="18sp"
-	    android:text="@string/membership_add" />
 	<LinearLayout
 	    android:id="@+id/membernotes"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    android:layout_below="@id/addMembership"
+	    android:layout_below="@id/memberinfo"
 	    android:orientation="vertical" >
 	    
 	    <TextView
@@ -142,39 +119,15 @@
 	    
 	</LinearLayout>
 	 
-    <LinearLayout android:id="@+id/membercontact"
-    	android:layout_width="match_parent"
-    	android:layout_height="wrap_content"
-    	android:layout_below="@id/membernotes"
-    	android:orientation="vertical"
-    	tools:context=".MemberDetails">
-		
-		<TextView
-    		android:id="@+id/memberContactH"
-        	android:padding="3dp"
-    		android:textSize="20sp"
-        	android:textStyle="bold"
-        	android:textColor="@color/white"
-        	android:background="@color/gym"
-        	android:text="@string/heading_member_contact"
-        	android:layout_width="match_parent"
-    		android:layout_height="wrap_content"
-        	android:textIsSelectable="false"
-    	/>
-       
-    
+	<LinearLayout 
+	    android:id="@+id/memberActions"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@id/membernotes">
+    	<include 
+    	    android:id="@+id/memberActionsList"
+    	    layout="@layout/member_details_actions" />
     </LinearLayout>
-    <TextView
-        android:id="@+id/memberActionsH"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/membercontact"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="@color/white"
-        android:background="@color/gym"
-        android:text="Actions"
-        android:padding="3dp" />
-    
+		    
 </RelativeLayout>
 </ScrollView>

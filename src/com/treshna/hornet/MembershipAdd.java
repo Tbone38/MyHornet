@@ -6,9 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
-
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -54,8 +52,6 @@ public class MembershipAdd extends Fragment implements OnClickListener {
 	private EditText mPrice;
 	private EditText mSignup;
 	private String memberid;
-	private String cardid = null;
-	private AlertDialog alertDialog = null;
 	private int groupid;
 	private long mLength;
 	
@@ -99,8 +95,8 @@ public class MembershipAdd extends Fragment implements OnClickListener {
 			public void afterTextChanged(Editable s) {
 				if(!s.toString().equals(currentPrice)){
 					mPrice.removeTextChangedListener(this);
-					String replaceable = String.format("[%s,.]", 
-							NumberFormat.getCurrencyInstance().getCurrency().getSymbol()); 
+					String replaceable = String.format(Locale.US,"[%s,.]", 
+							NumberFormat.getCurrencyInstance(Locale.US).getCurrency().getSymbol());
 					String cleanString = s.toString().replaceAll(replaceable, "");
 					
 				    double parsed = 0d;
@@ -110,7 +106,7 @@ public class MembershipAdd extends Fragment implements OnClickListener {
 				    	//happens when the string is empty sometimes.
 				    	parsed = 0d;
 				    }
-				    String formated = NumberFormat.getCurrencyInstance().format((parsed/100));
+				    String formated = NumberFormat.getCurrencyInstance(Locale.US).format((parsed/100));
 
 				    currentPrice = formated;
 				    mPrice.setText(formated);
@@ -134,8 +130,8 @@ public class MembershipAdd extends Fragment implements OnClickListener {
 			public void afterTextChanged(Editable s) {
 				if(!s.toString().equals(currentSignup)){
 					mSignup.removeTextChangedListener(this);
-					String replaceable = String.format("[%s,.]", 
-							NumberFormat.getCurrencyInstance().getCurrency().getSymbol()); 
+					String replaceable = String.format(Locale.US, "[%s,.]", 
+							NumberFormat.getCurrencyInstance(Locale.US).getCurrency().getSymbol()); 
 					String cleanString = s.toString().replaceAll(replaceable, "");
 					
 				    double parsed = 0d;
@@ -145,7 +141,7 @@ public class MembershipAdd extends Fragment implements OnClickListener {
 				    	//happens when the string is empty sometimes.
 				    	parsed = 0d;
 				    }
-				    String formated = NumberFormat.getCurrencyInstance().format((parsed/100));
+				    String formated = NumberFormat.getCurrencyInstance(Locale.US).format((parsed/100));
 
 				    currentSignup = formated;
 				    mSignup.setText(formated);

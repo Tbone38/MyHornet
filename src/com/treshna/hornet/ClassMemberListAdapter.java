@@ -178,7 +178,7 @@ public class ClassMemberListAdapter extends SimpleCursorAdapter implements Compo
 			values.putNull(ContentDescriptor.Booking.Cols.CHECKIN);
 			values.put(ContentDescriptor.Booking.Cols.RESULT, 20);
 		}
-		values.put(ContentDescriptor.Booking.Cols.LASTUPDATED, new Date().getTime());
+		values.put(ContentDescriptor.Booking.Cols.LASTUPDATE, new Date().getTime());
 		contentResolver.update(ContentDescriptor.Booking.CONTENT_URI, values, ContentDescriptor.Booking.Cols.BID+" = ?",
 				new String[] {bookingid});
 		

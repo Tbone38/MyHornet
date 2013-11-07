@@ -324,7 +324,7 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 					//set result-status = 5; and lastupdate = now()
 					ContentValues values = new ContentValues();
 					values.put(ContentDescriptor.Booking.Cols.RESULT, 5);
-					values.put(ContentDescriptor.Booking.Cols.LASTUPDATED, new Date().getTime());
+					values.put(ContentDescriptor.Booking.Cols.LASTUPDATE, new Date().getTime());
 					
 					contentResolver.update(ContentDescriptor.Booking.CONTENT_URI, values, 
 							ContentDescriptor.Booking.Cols.BID+" = ?", new String[] {bookingID});
@@ -349,7 +349,7 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 					//set result = 20, lastupdate = now()
 					ContentValues values = new ContentValues();
 					values.put(ContentDescriptor.Booking.Cols.RESULT, 20);
-					values.put(ContentDescriptor.Booking.Cols.LASTUPDATED, new Date().getTime());
+					values.put(ContentDescriptor.Booking.Cols.LASTUPDATE, new Date().getTime());
 					values.put(ContentDescriptor.Booking.Cols.CHECKIN, new Date().getTime());
 					
 					contentResolver.update(ContentDescriptor.Booking.CONTENT_URI, values, 
@@ -372,7 +372,7 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 					//set result = 15, lastupdate = now()
 					ContentValues values = new ContentValues();
 					values.put(ContentDescriptor.Booking.Cols.RESULT, 15);
-					values.put(ContentDescriptor.Booking.Cols.LASTUPDATED, new Date().getTime());
+					values.put(ContentDescriptor.Booking.Cols.LASTUPDATE, new Date().getTime());
 					
 					contentResolver.update(ContentDescriptor.Booking.CONTENT_URI, values, 
 							ContentDescriptor.Booking.Cols.BID+" = ?", new String[] {bookingID});

@@ -413,7 +413,7 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 		cur.close();
 		
 		//bookingid as well.
-		cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.LASTUPDATED+" = 0",
+		cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.LASTUPDATE+" = 0",
 				null, null);
 		if (cur.getCount() > 0) {
 			cur.moveToFirst();
@@ -438,7 +438,7 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 		values.put(ContentDescriptor.Booking.Cols.BOOKINGTYPE, 0); //class attendant = 0, probably shouldn't be hardcoded.
 		values.put(ContentDescriptor.Booking.Cols.RESULT, 20); //these default to 20?
 		values.put(ContentDescriptor.Booking.Cols.IS_UPLOADED, 0);
-		values.put(ContentDescriptor.Booking.Cols.LASTUPDATED, new Date().getTime());
+		values.put(ContentDescriptor.Booking.Cols.LASTUPDATE, new Date().getTime());
 		values.put(ContentDescriptor.Booking.Cols.PARENTID, bookingID);
 		values.put(ContentDescriptor.Booking.Cols.FNAME, firstname);
 		values.put(ContentDescriptor.Booking.Cols.SNAME, surname);

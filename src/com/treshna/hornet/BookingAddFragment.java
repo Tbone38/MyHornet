@@ -401,7 +401,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		int _id, result = 0;
 		String bookingid, arrival, resourceid, offset;
 		
-		cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.LASTUPDATED+" = 0",
+		cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.LASTUPDATE+" = 0",
 				null, null);
 		if (cur.getCount() == 0) {
 			//no free booking id's.
@@ -516,7 +516,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		
 		values.put(ContentDescriptor.Booking.Cols.ARRIVAL, Services.dateFormat(input.get(1), "yyyy MM dd", "yyyyMMdd"));
 		System.out.print("\n\nCreating Booking at:"+System.currentTimeMillis());
-		values.put(ContentDescriptor.Booking.Cols.LASTUPDATED, System.currentTimeMillis()); //new Date().getTime();
+		values.put(ContentDescriptor.Booking.Cols.LASTUPDATE, System.currentTimeMillis()); //new Date().getTime();
 		result = contentResolver.update(ContentDescriptor.Booking.CONTENT_URI, values, ContentDescriptor.Booking.Cols.ID+" = ?", 
 				new String[] {String.valueOf(_id)});
 		if (result == 0){ //no free BID's found.

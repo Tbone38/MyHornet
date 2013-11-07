@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 /*
  * 
@@ -64,7 +65,11 @@ public class MemberFindSuperFragment extends Fragment implements OnMemberSelectL
 			intent.putExtra(Services.Statics.KEY, Services.Statics.FragmentType.MemberDetails.getKey());
 			intent.putStringArrayListExtra(VisitorsViewAdapter.EXTRA_ID, tag);
 			getActivity().startActivity(intent);
-		} else {
+		} else { //double panel
+			//redraw the list view
+			ListView theList = (ListView) view.findViewById(android.R.id.list);
+			theList.invalidateViews();
+			//show member details
 			FragmentManager fragmentManager = this.getChildFragmentManager();
 	        FragmentTransaction ft = fragmentManager.beginTransaction();
 	        MemberDetailsFragment f = new MemberDetailsFragment();

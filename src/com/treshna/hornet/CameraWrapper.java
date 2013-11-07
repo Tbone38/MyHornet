@@ -16,6 +16,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -105,24 +106,32 @@ public class CameraWrapper extends Activity {
              if (cur.getPosition() == -1) {
              	imgCount = 0;
              } else {
-             	imgCount = cur.getInt(0);
+             	imgCount = cur.getInt(cur.getColumnIndex(ContentDescriptor.Image.Cols.DISPLAYVALUE));
              	imgCount +=1;
              }
          cur.close();
-         FileHandler fileHandler = new FileHandler(this);
-         System.out.print("\n\n**Writing "+imgCount+"_"+id);
-         fileHandler.writeFile(byteArray, imgCount+"_"+id);
+         
         
          SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yy hh:mm:ss aa", Locale.US);
  		 java.util.Date date = new Date();
  		 ContentValues val = new ContentValues();
- 		 val.put(ContentDescriptor.Image.Cols.ID, imgCount);
+ 		 val.put(ContentDescriptor.Image.Cols.DISPLAYVALUE, imgCount);
          val.put(ContentDescriptor.Image.Cols.MID, id);
          val.put(ContentDescriptor.Image.Cols.DATE, dateFormat.format(date));
          val.put(ContentDescriptor.Image.Cols.IS_PROFILE, (imgCount==0));
          val.put(ContentDescriptor.Image.Cols.DESCRIPTION, description);
-         contentResolver.insert(ContentDescriptor.Image.CONTENT_URI, val);
-         System.out.println("Updating Image Table");
+         Uri row = contentResolver.insert(ContentDescriptor.Image.CONTENT_URI, val);
+         int rowid = Integer.parseInt(row.getLastPathSegment());
+         
+         FileHandler fileHandler = new FileHandler(this);
+         System.out.print("\n\n**Writing "+imgCount+"_"+id);
+         fileHandler.writeFile(byteArray, imgCount+"_"+id);
+         
+         val = new ContentValues();
+         val.put(ContentDescriptor.PendingUploads.Cols.TABLEID, ContentDescriptor.TableIndex.Values.Image.getKey());
+         val.put(ContentDescriptor.PendingUploads.Cols.ROWID, rowid);
+         contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, val);
+         //System.out.println("Updating Image Table");
   
          Intent intent = new Intent(this, HornetDBService.class);
          //intent.putExtra(Services.Statics.KEY,Services.Statics.UPLOAD);

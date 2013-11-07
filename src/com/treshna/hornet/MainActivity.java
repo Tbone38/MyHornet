@@ -85,10 +85,9 @@ public class MainActivity extends NFCActivity implements BookingsListFragment.On
 	}
 	
 	@Override
-	public void onStop() {
-		super.onStop();
-        
-        try {
+	public void onPause() {
+		super.onPause();
+		try {
         	unregisterReceiver(Services.getPollingHandler()); //?
         } catch (Exception e) {
         	//doesn't matter.
@@ -146,7 +145,8 @@ public class MainActivity extends NFCActivity implements BookingsListFragment.On
 	
 	public static int getContentViewCompat() {
 	    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH ?
-	               android.R.id.content : R.id.action_bar_activity_content;
+	               //android.R.id.content : R.id.action_bar_activity_content;
+	    			android.R.id.content : android.R.id.content;
 	}
 	
 	public static Context getContext(){

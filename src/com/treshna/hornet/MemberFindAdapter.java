@@ -28,6 +28,8 @@ public class MemberFindAdapter extends SimpleCursorAdapter implements OnClickLis
 	private OnMemberSelectListener mCallback;
 	private static final String TAG = "MemberFindAdapter";
 	
+	private int selectedPos = -1;
+	
 	@SuppressWarnings("deprecation")
 	public MemberFindAdapter(Context context, int layout, Cursor c,
 			String[] from, int[] to, boolean booking, OnMemberSelectListener act) {
@@ -47,10 +49,20 @@ public class MemberFindAdapter extends SimpleCursorAdapter implements OnClickLis
 		/*for (int i=0; i<cursor.getColumnCount(); i++){
 			System.out.print("\n\nColumn:"+i+" Name:"+cursor.getColumnName(i)+"  Value:"+cursor.getString(i));
 		}*/
+		View colour_block = (View) rowLayout.findViewById(R.id.member_row_colour_block);
+		if (selectedPos == cursor.getPosition()) {
+			colour_block.setBackgroundColor(context.getResources().getColor(R.color.member_blue));
+		} else {
+			colour_block.setBackgroundColor(context.getResources().getColor(R.color.member_grey));
+		}
 		if (cursor.getInt(cursor.getColumnIndex(ContentDescriptor.Member.Cols.STATUS)) == 2) {
 			//expired!
-			rowLayout.setClickable(false);
-			
+			rowLayout.setClickable(true);
+			ArrayList<String> tagInfo = new ArrayList<String>();
+			tagInfo.add(cursor.getString(0));
+			tagInfo.add(null);
+			tagInfo.add(String.valueOf(cursor.getPosition()));
+			rowLayout.setTag(tagInfo);
 			
 			TextView details = (TextView) rowLayout.findViewById(R.id.details);
 			if (!cursor.isNull(cursor.getColumnIndex(ContentDescriptor.Membership.Cols.EXPIRERY)) &&
@@ -68,6 +80,7 @@ public class MemberFindAdapter extends SimpleCursorAdapter implements OnClickLis
 			rowLayout.setBackgroundColor(Color.WHITE);
 			tagInfo.add(cursor.getString(0)); //cursor.getColumnIndex(ContentDescriptor.Member.Cols.MID)
 			tagInfo.add(null);
+			tagInfo.add(String.valueOf(cursor.getPosition()));
 			rowLayout.setTag(tagInfo);
 			rowLayout.setClickable(true);
 			rowLayout.setOnClickListener(this);
@@ -85,6 +98,7 @@ public class MemberFindAdapter extends SimpleCursorAdapter implements OnClickLis
 			rowLayout.setBackgroundColor(Color.WHITE);
 			tagInfo.add(cursor.getString(0)); //cursor.getColumnIndex(ContentDescriptor.Member.Cols.MID)
 			tagInfo.add(null);
+			tagInfo.add(String.valueOf(cursor.getPosition()));
 			rowLayout.setTag(tagInfo);
 			rowLayout.setClickable(true);
 			rowLayout.setOnClickListener(this);
@@ -154,6 +168,10 @@ public class MemberFindAdapter extends SimpleCursorAdapter implements OnClickLis
 				} else {
 					break;
 				}
+				
+				selectedPos = Integer.parseInt(tagInfo.get(2));
+				View colour_block = (View) v.findViewById(R.id.member_row_colour_block);
+				colour_block.setBackgroundColor(context.getResources().getColor(R.color.member_blue));
 				
 				mCallback.onMemberSelect(tagInfo.get(0));
 				
