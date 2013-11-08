@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/listRow"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    tools:context=".MainActivty" >
+	
+    <TextView
+        android:id="@+id/booking_resource_time"
+        android:layout_width="60dp"
+        android:layout_height="match_parent"
+        android:gravity="center|top"
+        android:textSize="16sp"
+        android:textColor="@color/booking_resource_grey"
+        android:text="HH:mm"
+        android:padding="2dp" />
+    <View
+        android:id="@+id/booking_resource_colour_block"
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@id/booking_resource_time"
+        android:background="@color/booking_resource_blue"
+        android:padding="2dp"
+        android:layout_margin="3dp" />
+    <TextView
+        android:id="@+id/booking_resource_booking_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:text="Booking Name"
+        android:layout_toRightOf="@id/booking_resource_colour_block"
+        android:padding="2dp"
+        android:layout_margin="1dp" />
+    <TextView
+        android:id="@+id/booking_resource_booking_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/booking_resource_colour_block"
+        android:layout_below="@id/booking_resource_booking_name"
+        android:textSize="16sp"
+        android:textColor="@color/booking_resource_grey"
+        android:text="DD MMM HH:mm - HH:mm, Recurring?"
+        android:padding="2dp" />
+    
+    <TextView
+        android:id="@+id/button_booking_resource_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/booking_resource_booking_time"
+        android:layout_toRightOf="@id/booking_resource_colour_block"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:text="@string/button_booking_resource_edit"
+        android:background="@color/booking_resource_grey"
+        android:padding="13dp" />
+    
+</RelativeLayout>

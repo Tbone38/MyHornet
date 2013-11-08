@@ -123,6 +123,8 @@ public class VisitorsViewAdapter extends SimpleCursorAdapter implements OnClickL
 			Bitmap sm = BitmapFactory.decodeStream(is);
 			taskView.setImageBitmap(sm);
 		} }
+		
+		//TODO: move this to a asynchronus task. (it's causing memory issues on large db's).
 		//0 is default/first image.
 		String imgDir = context.getExternalFilesDir(null)+"/0_"+cursor.getString(cursor.getColumnIndex(ContentDescriptor.Visitor.Cols.MID))+".jpg"; //or column 6
 		File imgFile = new File(imgDir);
@@ -148,7 +150,12 @@ public class VisitorsViewAdapter extends SimpleCursorAdapter implements OnClickL
 		    options.inSampleSize = Services.calculateInSampleSize(options,REQ_WIDTH, REQ_HEIGHT);
 		    // Decode bitmap with inSampleSize set
 		    options.inJustDecodeBounds = false;
-		    Bitmap bm = BitmapFactory.decodeFile(imgFile.getAbsolutePath(), options);
+		    Bitmap bm = null;
+		    try {
+		    	bm = BitmapFactory.decodeFile(imgFile.getAbsolutePath(), options);
+		    } catch (OutOfMemoryError e) {
+		    	bm = null;
+		    }
 		
 		    imageView.setImageBitmap(bm);
 		}

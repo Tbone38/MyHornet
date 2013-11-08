@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+ <string name="button_member_navigation_memberships">Memberships</string>
+ <string name="button_member_navigation_notes">Notes</string>
+ <string name="button_member_navigation_visits">Visits</string>
+ <string name="button_member_navigation_finance">Finance</string>
+ <string name="button_member_navigation_information">Information</string>
+</resources>

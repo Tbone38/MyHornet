@@ -513,21 +513,7 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener {
 			 mPager.setPageMargin(15);
 			 mPager.setClipToPadding(false);
 			 mPager.setOverScrollMode(View.OVER_SCROLL_ALWAYS);
-			 //mPager.set
-			  
-			ImageView moveleft, moveright;
-			moveleft = (ImageView) view.findViewById(R.id.moveimageLeft);
-			moveleft.setVisibility(View.GONE);
-			//moveleft.setClickable(true);
-			//moveleft.setOnClickListener(this);
-			
-			moveright = (ImageView) view.findViewById(R.id.moveimageRight);
-			moveright.setVisibility(View.GONE);
-			//moveright.setClickable(true);
-			//moveright.setOnClickListener(this);
-			
-			
-			
+						
 		  return view;
 	}
 
@@ -537,18 +523,6 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener {
 	public void onClick(View v) {
 		
 		switch(v.getId()) {
-		case (R.id.moveimageLeft):{
-			if (mPager.getCurrentItem() > 0) {
-				mPager.setCurrentItem(mPager.getCurrentItem()-1);
-			}
-			break;
-			}
-		case (R.id.moveimageRight):{
-			if (mPager.getCurrentItem() < (mPager.getChildCount()-1)) {
-				mPager.setCurrentItem(mPager.getCurrentItem()+1);
-			}
-			break;
-		}
 		case (R.id.button_add_membership):{
 			String memberid = null;
 			if (v.getTag() instanceof String) {
