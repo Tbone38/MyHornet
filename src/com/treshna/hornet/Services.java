@@ -208,6 +208,7 @@ public class Services {
 		public static final int RESOURCESELECTED = 11;
 		public static final int NEWDATABASE = 12;
 		public static final int CLASSSWIPE = 5;
+		public static final int MANUALSWIPE = 13;
 		//used for referencing various bundles and stuff stored in intents;
 		public static final String KEY = "key";
 		public static final String IS_BOOKING = "booking";

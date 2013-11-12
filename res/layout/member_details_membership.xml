@@ -1,0 +1,38 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" 
+    android:id="@+id/pageLayout"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:padding="7dp"
+    tools:context=".MemberDetails" >  
+	<TextView
+    	android:id="@+id/memberinfoH"
+    	android:textSize="24sp"
+        android:text="@string/heading_member_details"
+        android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+        android:textIsSelectable="false"
+        android:padding="5dp"
+        android:paddingBottom="1dp"
+        android:layout_marginLeft="2dp"/>
+	<View 
+	    android:id="@+id/memberinfoHline"
+	    android:layout_width="wrap_content"
+	    android:layout_height="1dp"
+	    android:layout_below="@id/memberinfoH"
+	    android:layout_alignLeft="@id/memberinfoH"
+	    android:layout_alignRight="@id/memberinfoH"
+	    android:background="@color/block_header_blue"
+	    android:paddingLeft="7dp"
+	    android:layout_marginLeft="2dp" />	
+	    
+	<LinearLayout
+	    android:id="@+id/member_ms_list"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@id/memberinfoHline"
+	    android:orientation="vertical" >
+	    
+	</LinearLayout>
+</RelativeLayout>

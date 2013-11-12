@@ -9,7 +9,7 @@
     tools:context=".MemberFind" >
 	<View
 	    android:id="@+id/member_row_colour_block"
-	    android:layout_width="20dp"
+	    android:layout_width="10dp"
 	    android:layout_height="80dp"
 	    android:background="@color/member_grey"
 	    android:padding="3dp"
@@ -19,7 +19,6 @@
         android:contentDescription="@string/image_description"
         android:layout_alignParentTop="true"
         android:paddingLeft="5dp"
-        
      	android:layout_width="80sp"
      	android:layout_height="80sp"
      	android:layout_toRightOf="@id/member_row_colour_block" />

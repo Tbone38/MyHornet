@@ -20,6 +20,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -65,7 +67,8 @@ public class HornetDBService extends Service {
 	   ctx = getApplicationContext();
 	   
 	   currentCall = intent.getIntExtra(Services.Statics.KEY, -1);
-	   resourceid = intent.getStringExtra("newtime"); 
+	   Bundle bundle = intent.getExtras();
+	   //resourceid = intent.getStringExtra("newtime");
 	   /**
 	    * magical queue-ing, used to enforce one network operation at a time.
 	    * 
@@ -74,14 +77,14 @@ public class HornetDBService extends Service {
 	   if (thread == null) {
 		   thread = new NetworkThread();
 	   }
-	   thread.addNetwork(currentCall, resourceid, this);
+	   thread.addNetwork(currentCall, bundle, this);
 	   if (!thread.isAlive() && thread.getState() == Thread.State.NEW) {
 		   Log.v(TAG, "STARTING THREAD");
 		   thread.start();
 	   } else if (thread.getState() == Thread.State.TERMINATED || !thread.isAlive()) {
 		   Log.v(TAG, "RESTARTING THREAD");
 		   thread = new NetworkThread();
-		   thread.addNetwork(currentCall, resourceid, this);
+		   thread.addNetwork(currentCall, bundle, this);
 		   thread.start();
 	   } else {
 		   Log.v(TAG, "Thread State:"+thread.getState());
@@ -105,7 +108,7 @@ public class HornetDBService extends Service {
      * It should only be run from a seperate thread, as otherwise the networking blocks the 
      * UI..
      */
-    public void startNetworking(int currentcall, String theResource){
+    public void startNetworking(int currentcall, Bundle bundle){
     	switch (currentCall){
  	   	case (Services.Statics.LASTVISITORS): { //this should be run frequently
  	   		
@@ -256,6 +259,7 @@ public class HornetDBService extends Service {
 		   
 		   int rcount = getResource();
 		   int days = getOpenHours();
+		   getDoors();
 		   
 		   int midcount = getMemberID();
 		   if (midcount != 0) statusMessage = midcount+" Sign-up's available";
@@ -303,6 +307,7 @@ public class HornetDBService extends Service {
  		   Log.v(TAG, "STARTING RESOURCE SETUP");
  		   	thread.is_networking = true; //set because we're rebuilding tables, don't try referencing them while we do!
  		   	Services.showProgress(Services.getContext(), "Setting up resource", handler, currentCall, false);
+ 		   	String theResource = bundle.getString("newtime");
 	   	  	resourceid = theResource;
 	   	  	Log.v(TAG, "Selected Resource:"+resourceid);
 	   	  	//rebuild times, then update the reference in date.
@@ -322,6 +327,18 @@ public class HornetDBService extends Service {
  			   Log.e(TAG, statusMessage);
  			   Log.e(TAG, "Class Swipe returned Error-Code:"+result);
  		   }
+ 		   thread.is_networking = false;
+ 	   }
+ 	   case (Services.Statics.MANUALSWIPE):{
+ 		   thread.is_networking = true;
+ 		   
+ 		   int doorid, memberid, membershipid;
+ 		   doorid = bundle.getInt("doorid");
+ 		   memberid = bundle.getInt("memberid");
+ 		   membershipid = bundle.getInt("membershipid");
+ 		   
+ 		   this.manualCheckin(doorid, memberid, membershipid);
+ 		   
  		   thread.is_networking = false;
  	   }
  	   }
@@ -1014,22 +1031,26 @@ public class HornetDBService extends Service {
      */
     private int uploadBookings(){
     	int result;
-    	ArrayList<String> bookinglist;
-    	String b_lastsync;
-    	
     	result = 0;
-    	bookinglist = new ArrayList<String>();
-    	b_lastsync = Services.getAppSettings(ctx, "b_lastsync");
-    	//System.out.print("\n\n**Uploading Bookings with update after:"+b_lastsync);
-    	cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.LASTUPDATE+" > ? " +
-    			"AND "+ContentDescriptor.Booking.Cols.IS_UPLOADED+" = 0",
-    			new String[] {b_lastsync}, null);
+
+    	cur = contentResolver.query(ContentDescriptor.PendingUploads.CONTENT_URI, null, ContentDescriptor.PendingUploads.Cols.TABLEID+" = ?",
+    			new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Booking.getKey())}, null);
+    	ArrayList<String> idlist = new ArrayList<String>();
+    	while (cur.moveToNext()) {
+    		idlist.add(cur.getString(cur.getColumnIndex(ContentDescriptor.PendingUploads.Cols.ROWID)));
+    	}
+    	cur.close();
     	
     	if (!openConnection()) {
     		return -1; //connection failed;
     	}
-    	while (cur.moveToNext()) { //why isn't this using ContentValues() ?
-			Map<String, String> values = new HashMap<String, String>();
+    	
+    	for (int i = 0; i< idlist.size();i +=1) {
+    		cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.ID+" = ?",
+    				new String[] {idlist.get(i)}, null);
+    		cur.moveToFirst();
+		
+    		Map<String, String> values = new HashMap<String, String>();//seriously, why isn't this a contentValue?
 			values.put(ContentDescriptor.Booking.Cols.BID, cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.BID)));
 			values.put(ContentDescriptor.Booking.Cols.BOOKINGTYPE, cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.BOOKINGTYPE)));
 			values.put(ContentDescriptor.Booking.Cols.ETIME, cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.ETIME)));
@@ -1041,13 +1062,10 @@ public class HornetDBService extends Service {
 			values.put(ContentDescriptor.Booking.Cols.ARRIVAL, Services.dateFormat(cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.ARRIVAL)),
 					"yyyyMMdd","yyyy-MM-dd"));
 			values.put(ContentDescriptor.Booking.Cols.RID, cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.RID)));
-			//System.out.print("\n\nOFFSET:"+cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.OFFSET)));
 			Log.v(TAG, "OFFSET:"+cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.OFFSET)));
 			values.put(ContentDescriptor.Booking.Cols.OFFSET, cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.OFFSET)));
-			//System.out.print("\n\nBooking Modified:"+cur.getLong(cur.getColumnIndex(ContentDescriptor.Booking.Cols.LASTUPDATED)));
 			Log.v(TAG, "Booking Modified:"+cur.getLong(cur.getColumnIndex(ContentDescriptor.Booking.Cols.LASTUPDATE)));
 			Date lastupdate = new Date(cur.getLong(cur.getColumnIndex(ContentDescriptor.Booking.Cols.LASTUPDATE)));
-			//System.out.print("\n\nLast-Update:"+lastupdate.getTime()+"\n");
 			Log.v(TAG, "Last-Update:"+lastupdate.getTime());
 			
 			values.put(ContentDescriptor.Booking.Cols.LASTUPDATE, String.valueOf(cur.getLong(cur.getColumnIndex(ContentDescriptor.Booking.Cols.LASTUPDATE))));
@@ -1063,10 +1081,10 @@ public class HornetDBService extends Service {
 			try {
 				int state = 0;
 	    		state = connection.uploadBookings(values);
-	    		if (state ==1) {
-	    			//upload success
-	    			//change the is_uploaded to 
-	    			bookinglist.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.BID)));
+	    		if (state >=1) {
+	    			contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, ContentDescriptor.PendingUploads.Cols.ROWID+" = ? AND "
+	    					+ContentDescriptor.PendingUploads.Cols.TABLEID+" = ?", new String[] {idlist.get(i), 
+	    					String.valueOf(ContentDescriptor.TableIndex.Values.Booking.getKey())});
 	    		}
 	    		result += state;
 	    		connection.closePreparedStatement();
@@ -1074,17 +1092,12 @@ public class HornetDBService extends Service {
 	    		e.printStackTrace();
 	    		statusMessage = e.getLocalizedMessage();
 	    	}
+			
+			i +=1;
     	}
-    	//System.out.print("\n\nUploaded "+result+" Bookings \n\n");
+    	
     	Log.v(TAG, "Uploaded "+result+" Bookings");
     	closeConnection();
-    	
-    	ContentValues values = new ContentValues();
-		values.put(ContentDescriptor.Booking.Cols.IS_UPLOADED, 1);
-    	for (int j=0; j<bookinglist.size(); j+=1) {
-    		contentResolver.update(ContentDescriptor.Booking.CONTENT_URI, values, ContentDescriptor.Booking.Cols.BID+" = ?",
-    				new String[] {bookinglist.get(j)});
-    	}
     	
     	return result;
     }
@@ -1095,11 +1108,9 @@ public class HornetDBService extends Service {
     	
     	result = 0;
     	lastSync = Services.getAppSettings(ctx, "b_lastsync");
-    	//System.out.print("\n\nLast Sync Was:"+lastSync);
     	cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.LASTUPDATE+" > ? " +
     			"AND "+ContentDescriptor.Booking.Cols.RESULT+" != 0", //don't update empty bookings;
     			new String[] {lastSync}, null);//get the bookings that have changed since last sync.
-    	//System.out.print("\n\n Updating "+cur.getCount()+" Bookings \n\n");
     	
     	if (cur.getCount()<= 0) { //no booking found for that
     		cur.close();
@@ -2045,11 +2056,13 @@ public class HornetDBService extends Service {
     			cur.close();
     			
     			//get a bookingid from somewhere ?
+    			int rowid = -1;
     			cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.LASTUPDATE+" = 0",
     					null, null);
     			if (cur.getCount() > 0) {
     				cur.moveToFirst();
     				bookingid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Booking.Cols.BID));
+    				rowid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Booking.Cols.ID));
     			} else {
     				//we haven't got any spare booking-id's. what should I do?
     				bookingid = -1;
@@ -2087,14 +2100,20 @@ public class HornetDBService extends Service {
     				//we're on time!
     				values.put(ContentDescriptor.Booking.Cols.RESULT, 20);
     			}
-    			values.put(ContentDescriptor.Booking.Cols.IS_UPLOADED, 0);
+    			//values.put(ContentDescriptor.Booking.Cols.IS_UPLOADED, 0);
+    
     			values.put(ContentDescriptor.Booking.Cols.LASTUPDATE, new Date().getTime());
     			if (bookingid > 0) {
     				contentResolver.update(ContentDescriptor.Booking.CONTENT_URI, values, ContentDescriptor.Booking.Cols.BID+" = ?",
     						new String[] {String.valueOf(bookingid)});
     			} else { //insert;
-    				contentResolver.insert(ContentDescriptor.Booking.CONTENT_URI, values);
+    				Uri row = contentResolver.insert(ContentDescriptor.Booking.CONTENT_URI, values);
+    				rowid = Integer.parseInt(row.getLastPathSegment());
     			}
+    			
+    			values = new ContentValues();
+    			values.put(ContentDescriptor.PendingUploads.Cols.TABLEID, ContentDescriptor.TableIndex.Values.Booking.getKey());
+    			values.put(ContentDescriptor.PendingUploads.Cols.ROWID, rowid);
     			
     		} else {
     			Log.v(TAG, "Checking in Existing Member");
@@ -2548,6 +2567,63 @@ public class HornetDBService extends Service {
     	closeConnection();
     	
     	return result;
+    }
+    
+    private int getDoors() {
+    	int result = 0;
+    	ResultSet rs = null;
+    	if (!openConnection()) {
+    		return -1;
+    		//see statusMessage for details;
+    	}
+    	
+    	try {
+    		rs = connection.getDoors();
+    		
+    		while (rs.next()) {
+    			ContentValues values = new ContentValues();
+    			
+    			values.put(ContentDescriptor.Door.Cols.DOORID, rs.getInt("id"));
+    			values.put(ContentDescriptor.Door.Cols.DOORNAME, rs.getString("name"));
+    			
+    			cur = contentResolver.query(ContentDescriptor.Door.CONTENT_URI, null, ContentDescriptor.Door.Cols.DOORID+" = ?", 
+    					new String[] {String.valueOf(rs.getInt("id"))}, null);
+    			if (cur.getCount()> 0 ) { //update
+    				contentResolver.update(ContentDescriptor.Door.CONTENT_URI, values, ContentDescriptor.Door.Cols.DOORID+" = ?",
+    						new String[] {String.valueOf(rs.getInt("id"))});
+    			} else { //insert
+    				contentResolver.insert(ContentDescriptor.Door.CONTENT_URI, values);
+    			}
+    			cur.close();
+    			result +=1;
+    		}
+    	} catch (SQLException e) {
+    		statusMessage = e.getLocalizedMessage();
+    		e.printStackTrace();
+    		return -2;
+    	}
+    	closeConnection();
+    	
+    	return result;
+    }
+    
+    private boolean manualCheckin (int doorid, int memberid, int membershipid) {    	
+    	if (!openConnection()) {
+    		return false;
+    		//see statusMessage for details;
+    	}
+    	
+    	try {
+    		connection.manualCheckIn(doorid, membershipid, memberid);
+    	} catch (SQLException e) {
+    		statusMessage = e.getLocalizedMessage();
+    		e.printStackTrace();
+    		return false;
+    	}
+    	
+    	closeConnection();
+    	
+    	return true;
     }
     
 }

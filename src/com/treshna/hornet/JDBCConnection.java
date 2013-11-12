@@ -665,6 +665,31 @@ public class JDBCConnection {
     	return pStatement.executeUpdate();
     }
     
+    public ResultSet getDoors() throws SQLException {
+    	ResultSet rs = null;
+    	pStatement = con.prepareStatement("SELECT id, name FROM door;");
+    	
+    	rs = pStatement.executeQuery();
+    	return rs;
+    }
+    
+    public boolean manualCheckIn(int doorid, int membershipid, int memberid) throws SQLException {
+    	pStatement = con.prepareStatement("SELECT swipe_manual(?, ?, ?, NULL);");
+    	pStatement.setInt(1, doorid);
+    	pStatement.setInt(2, membershipid);
+    	pStatement.setInt(3, memberid);
+    	
+    	return pStatement.execute();
+    }
+    
+    //this is currently unused.
+    public void OpenDoor(int doorid) throws SQLException {
+    	pStatement = con.prepareStatement("NOTIFY opendoor?");
+    	pStatement.setInt(1, doorid);
+    	
+    	pStatement.execute();
+    }
+    
     
     public ResultSet startStatementQuery(String query) throws SQLException {
     	ResultSet rs = null;

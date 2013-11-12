@@ -5,4 +5,6 @@
  <string name="button_member_navigation_visits">Visits</string>
  <string name="button_member_navigation_finance">Finance</string>
  <string name="button_member_navigation_information">Information</string>
+ <string name="button_member_navigation_booking">Bookings</string>
+ <string name="button_member_navigation_actions">Actions</string>
 </resources>

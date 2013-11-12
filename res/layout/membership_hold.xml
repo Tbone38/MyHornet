@@ -14,19 +14,25 @@
 	
 	 	<TextView
 	 	    android:id="@+id/membername"
-	 	    android:layout_width="match_parent"
+	 	    android:layout_width="wrap_content"
 	 	    android:layout_height="wrap_content"
-	 	    android:gravity="center"
-	 	    android:background="@color/gym"
-	 	    android:textSize="18sp"
+	 	    android:textSize="25sp"
 	 	    android:padding="5dp"
-	 	    android:layout_margin="3dp" /> 
+	 	    android:paddingBottom="2dp"
+	 	    android:layout_margin="3dp" />
+	 	<View
+	 	    android:id="@+id/membernameline"
+	 	    android:layout_width="match_parent"
+	 	    android:layout_height="5dp"
+	 	    android:layout_below="@id/membername"
+	 	    android:background="@color/member_blue"
+	 	    android:padding="3dp" />
 	 	    
 	 	<TextView 
 	 	    android:id="@+id/membershipname"
 	 	    android:layout_height="wrap_content"
 	 	    android:layout_width="wrap_content"
-	 	    android:layout_below="@id/membername"
+	 	    android:layout_below="@id/membernameline"
 	 	    android:gravity="center"
 	 	    android:textSize="16sp"
 	 	    android:padding="5dp"

@@ -15,6 +15,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
@@ -391,7 +392,7 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 	private void startTransaction(String membership, String memberid, String firstname, String surname) {
 		// get all the other variables, and insert them into SQLite
 		String resourceid, startid, stime, endid, etime, arrival, offset;
-		int bookingid;
+		int bookingid, rowid = -1;
 		
 		ContentResolver contentResolver = getActivity().getContentResolver();
 		Cursor cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.BID+" = ?",
@@ -418,6 +419,7 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 		if (cur.getCount() > 0) {
 			cur.moveToFirst();
 			bookingid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Booking.Cols.BID));
+			rowid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Booking.Cols.ID));
 		} else {
 			//we haven't got any spare booking-id's. what should I do?
 			bookingid = -1;
@@ -437,18 +439,25 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 		values.put(ContentDescriptor.Booking.Cols.BID, bookingid);
 		values.put(ContentDescriptor.Booking.Cols.BOOKINGTYPE, 0); //class attendant = 0, probably shouldn't be hardcoded.
 		values.put(ContentDescriptor.Booking.Cols.RESULT, 20); //these default to 20?
-		values.put(ContentDescriptor.Booking.Cols.IS_UPLOADED, 0);
+		//values.put(ContentDescriptor.Booking.Cols.IS_UPLOADED, 0);
 		values.put(ContentDescriptor.Booking.Cols.LASTUPDATE, new Date().getTime());
 		values.put(ContentDescriptor.Booking.Cols.PARENTID, bookingID);
 		values.put(ContentDescriptor.Booking.Cols.FNAME, firstname);
 		values.put(ContentDescriptor.Booking.Cols.SNAME, surname);
 		
 		if (bookingid <= 0) {
-			contentResolver.insert(ContentDescriptor.Booking.CONTENT_URI, values);
+			Uri row = contentResolver.insert(ContentDescriptor.Booking.CONTENT_URI, values);
+			rowid = Integer.parseInt(row.getLastPathSegment());
 		} else { //has real bookingid, update that booking.
 			contentResolver.update(ContentDescriptor.Booking.CONTENT_URI, values, ContentDescriptor.Booking.Cols.BID+" = ?",
 					new String[] {String.valueOf(bookingid)});
-		} 
+		}
+		
+		values = new ContentValues();
+		values.put(ContentDescriptor.PendingUploads.Cols.TABLEID, ContentDescriptor.TableIndex.Values.Booking.getKey());
+		values.put(ContentDescriptor.PendingUploads.Cols.ROWID, rowid);
+		
+		contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, values);
 		//refresh the view.
 		mLoaderManager.restartLoader(0, null, this);
 	}

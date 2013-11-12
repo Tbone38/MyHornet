@@ -163,6 +163,11 @@ public class HornetContentProvider extends ContentProvider {
         	getContext().getContentResolver().notifyChange(uri, null);
         	return rows;
         }
+        case ContentDescriptor.Door.PATH_TOKEN:{
+        	int rows = db.delete(ContentDescriptor.Door.NAME, selection, selectionArgs);
+        	getContext().getContentResolver().notifyChange(uri, null);
+        	return rows;
+        }
         
         case ContentDescriptor.TOKEN_DROPTABLE:{ //special case, drops tables/deletes database.
         	FileHandler fh = new FileHandler(ctx);
@@ -299,6 +304,11 @@ public class HornetContentProvider extends ContentProvider {
             	long id = db.insert(ContentDescriptor.Programme.NAME, null, values);
             	getContext().getContentResolver().notifyChange(uri, null);
             	return ContentDescriptor.Programme.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
+            }
+            case ContentDescriptor.Door.PATH_TOKEN:{
+            	long id = db.insert(ContentDescriptor.Door.NAME, null, values);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return ContentDescriptor.Door.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
             }
             
             default: {
@@ -569,6 +579,11 @@ public class HornetContentProvider extends ContentProvider {
             			ContentDescriptor.Programme.Cols.GNAME}, selection, selectionArgs, 
             			ContentDescriptor.Programme.Cols.GNAME, null, null);
             }
+            case ContentDescriptor.Door.PATH_TOKEN:{
+            	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+            	builder.setTables(ContentDescriptor.Door.NAME);
+            	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+            }
             
             default: throw new UnsupportedOperationException("URI: " + uri + " not supported.");
         }
@@ -691,6 +706,11 @@ public class HornetContentProvider extends ContentProvider {
             }
             case ContentDescriptor.Programme.PATH_TOKEN:{
             	int result = db.update(ContentDescriptor.Programme.NAME, values, selection, selectionArgs);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return result;
+            }
+            case ContentDescriptor.Door.PATH_TOKEN:{
+            	int result = db.update(ContentDescriptor.Door.NAME, values, selection, selectionArgs);
             	getContext().getContentResolver().notifyChange(uri, null);
             	return result;
             }

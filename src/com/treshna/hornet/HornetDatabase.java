@@ -13,6 +13,7 @@ import com.treshna.hornet.ContentDescriptor.Bookingtype;
 import com.treshna.hornet.ContentDescriptor.Class;
 import com.treshna.hornet.ContentDescriptor.Company;
 import com.treshna.hornet.ContentDescriptor.Date;
+import com.treshna.hornet.ContentDescriptor.Door;
 import com.treshna.hornet.ContentDescriptor.IdCard;
 import com.treshna.hornet.ContentDescriptor.Image;
 import com.treshna.hornet.ContentDescriptor.Member;
@@ -152,7 +153,7 @@ public class HornetDatabase extends SQLiteOpenHelper {
 				+Booking.Cols.LASTUPDATE+" NUMERIC, "+Booking.Cols.STIME+" TEXT, "
 				+Booking.Cols.MSID+" INTEGER, "+Booking.Cols.CHECKIN+" NUMERIC, " //timestamp ?
 				+Booking.Cols.RID+" INTEGER, "+Booking.Cols.ARRIVAL+" INTEGER, "
-				+Booking.Cols.OFFSET+" TEXT, "+Booking.Cols.IS_UPLOADED+" INTEGER DEFAULT 1, "
+				+Booking.Cols.OFFSET+" TEXT, "/*+Booking.Cols.IS_UPLOADED+" INTEGER DEFAULT 1, "*/
 				+Booking.Cols.CLASSID+" INTEGER DEFAULT 0, "+Booking.Cols.PARENTID+" INTEGER DEFAULT 0, "
 				+"FOREIGN KEY ("+Booking.Cols.STIMEID
 				+") REFERENCES "+ContentDescriptor.Time.NAME+" ("+ContentDescriptor.Time.Cols.ID+") "
@@ -274,7 +275,9 @@ public class HornetDatabase extends SQLiteOpenHelper {
 				+PaymentMethod.Cols.PAYMENTID+" INTEGER, "+PaymentMethod.Cols.NAME+" TEXT "
 				+");");
 		
-		
+		db.execSQL("CREATE TABLE "+Door.NAME+" ("+Door.Cols._ID+" INTEGER PRIMARY KEY, "
+				+Door.Cols.DOORID+" INTEGER, "+Door.Cols.DOORNAME+" TEXT "
+				+");");
 		
 		repopulateTable(db);
 	}
@@ -328,6 +331,7 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS "+IdCard.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+PaymentMethod.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+PendingDownloads.NAME);
+		db.execSQL("DROP TABLE IF EXISTS "+Door.NAME);
 	}
 	
 	private void repopulateTable(SQLiteDatabase db) {

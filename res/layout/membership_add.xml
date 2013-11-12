@@ -78,15 +78,13 @@
 		
 		<TextView
 		    android:id="@+id/membershippriceH"
-		    android:layout_width="match_parent"
+		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
 		    android:layout_below="@+id/membershipsdate"
-		    android:textSize="20sp"
+		    android:textSize="13sp"
 		    android:text="@string/membership_add_price"
-		    android:layout_margin="3dp"
-		  	android:padding="5dp"
-		  	android:background="@color/gym"
-		  	android:textColor="@color/white" />
+		  	android:padding="5dp" />
+
 		<LinearLayout
 		    android:id="@+id/paymentrow"
 		    android:layout_width="match_parent"
@@ -112,38 +110,16 @@
 			  	    android:layout_margin="3dp"
 			  	    android:padding="5dp" />
 		</LinearLayout>
-		<!-- <TextView 
-	    	android:id="@+id/membershippaymentdateH"
-	    	android:layout_width="match_parent"
-	    	android:layout_height="wrap_content"
-	    	android:layout_below="@id/paymentrow"
-	    	android:textSize="20sp"
-	    	android:text="@string/membership_add_payment_date"
-	    	android:layout_margin="3dp"
-		  	android:padding="5dp"
-		  	android:background="@color/gym"
-		  	android:textColor="@color/white" />
-		<TextView 
-		    android:id="@+id/membershippaymentdate"
-		    android:layout_width="match_parent"
-		    android:layout_height="wrap_content"
-		    android:layout_below="@id/membershippaymentdateH"
-		    android:textSize="18sp"
-		    android:text="@string/membership_add_paymentdate"
-		    android:layout_margin="3dp"
-		  	android:padding="5dp"/> -->
 		
 		<TextView
 		    android:id="@+id/membershipsignupfeeH"
-		    android:layout_width="match_parent"
+		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
 		    android:layout_below="@id/paymentrow"
-		    android:textSize="20sp"
+		    android:textSize="13sp"
 		    android:text="@string/membership_add_signup_fee"
-		    android:layout_margin="3dp"
-		  	android:padding="5dp"
-		  	android:background="@color/gym"
-		  	android:textColor="@color/white" />
+		  	android:padding="5dp" />
+		
 		<EditText
 		    android:id="@+id/membershipsignupfee"
 		    android:layout_height="wrap_content"

@@ -18,6 +18,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -440,7 +441,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		offset = cur.getString(cur.getColumnIndex(ContentDescriptor.Resource.Cols.PERIOD));
 		values.put(ContentDescriptor.Booking.Cols.RID, resourceid);
 		values.put(ContentDescriptor.Booking.Cols.OFFSET, offset);
-		values.put(ContentDescriptor.Booking.Cols.IS_UPLOADED, 0);
+		//values.put(ContentDescriptor.Booking.Cols.IS_UPLOADED, 0);
 		cur.close();
 		int correctspace = get_mod(input.get(3), input.get(2),offset);
 		if (correctspace != 0) {
@@ -519,6 +520,13 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		values.put(ContentDescriptor.Booking.Cols.LASTUPDATE, System.currentTimeMillis()); //new Date().getTime();
 		result = contentResolver.update(ContentDescriptor.Booking.CONTENT_URI, values, ContentDescriptor.Booking.Cols.ID+" = ?", 
 				new String[] {String.valueOf(_id)});
+		
+		values = new ContentValues();
+		values.put(ContentDescriptor.PendingUploads.Cols.TABLEID, ContentDescriptor.TableIndex.Values.Booking.getKey());
+		values.put(ContentDescriptor.PendingUploads.Cols.ROWID, _id);
+		
+		contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, values);
+		
 		if (result == 0){ //no free BID's found.
 			statusMessage = "Insert Failed";
 			return 0;
@@ -546,6 +554,9 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 			
 			values.put(ContentDescriptor.BookingTime.Cols.TIMEID, curtimeid);
 			contentResolver.insert(ContentDescriptor.BookingTime.CONTENT_URI, values);
+			
+			
+			
 			curtimeid +=1;
 		}
 		return result;

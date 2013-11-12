@@ -65,7 +65,7 @@ public class LastVisitorsSuperFragment extends Fragment {
 		
 		FragmentManager fragmentManager = this.getChildFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
-        MemberDetailsFragment f = new MemberDetailsFragment();
+        NewMemberDetailsFragment f = new NewMemberDetailsFragment();
         Bundle bdl = new Bundle(2);
         bdl.putString(Services.Statics.MID, tag.get(0));
         bdl.putString(Services.Statics.KEY, tag.get(1));

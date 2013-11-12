@@ -1,26 +1,36 @@
-<LinearLayout 
+<RelativeLayout 
 	xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/member_actions_list"
     android:tag="single_list"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:layout_height="wrap_content" >
     <TextView
         android:id="@+id/memberActionsH"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="@color/white"
-        android:background="@color/gym"
+        android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+        android:textSize="24sp"
         android:text="@string/action"
-        android:padding="3dp" />
+        android:textIsSelectable="false"
+        android:padding="5dp"
+        android:paddingBottom="1dp"
+        android:layout_marginLeft="2dp"/>
+	<View 
+	    android:id="@+id/memberActionsHline"
+	    android:layout_width="wrap_content"
+	    android:layout_height="1dp"
+	    android:layout_below="@id/memberActionsH"
+	    android:layout_alignLeft="@id/memberActionsH"
+	    android:layout_alignRight="@id/memberActionsH"
+	    android:background="@color/block_header_blue"
+	    android:paddingLeft="7dp"
+	    android:layout_marginLeft="2dp" />	
     
     <LinearLayout 
         android:id="@+id/button_add_image"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/memberActionsHline"
         android:orientation="horizontal"
         android:clickable="true"
         android:background="@drawable/button">
@@ -44,6 +54,7 @@
         android:id="@+id/button_call"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/button_add_image"
         android:orientation="horizontal"
         android:clickable="true"
         android:background="@drawable/button" >
@@ -67,6 +78,7 @@
         android:id="@+id/button_sms"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/button_call"
         android:orientation="horizontal"
         android:clickable="true"
         android:background="@drawable/button" >
@@ -90,6 +102,7 @@
         android:id="@+id/button_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/button_sms"
         android:orientation="horizontal"
         android:clickable="true"
         android:background="@drawable/button">
@@ -113,6 +126,7 @@
         android:id="@+id/button_hold"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/button_email"
         android:orientation="horizontal"
         android:clickable="true"
         android:background="@drawable/button">
@@ -136,6 +150,7 @@
         android:id="@+id/button_add_membership"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/button_hold"
         android:orientation="horizontal"
         android:clickable="true"
         android:background="@drawable/button" >
@@ -154,4 +169,27 @@
             android:text="@string/action_add_membership"
             android:padding="3dp" />
     </LinearLayout>
-</LinearLayout>
+    <LinearLayout 
+        android:id="@+id/button_manual_checkin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/button_add_membership"
+        android:orientation="horizontal"
+        android:clickable="true"
+        android:background="@drawable/button">
+        <ImageView
+            android:id="@+id/button_manual_checkin_drawable"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/ic_action_import_export"
+            android:padding="3dp" />
+        <TextView
+            android:id="@+id/button_manual_checkin_text"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:text="@string/action_manual_checkin"
+            android:padding="3dp" />
+    </LinearLayout>    
+</RelativeLayout>

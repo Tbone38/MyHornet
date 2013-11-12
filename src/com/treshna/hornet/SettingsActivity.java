@@ -89,6 +89,8 @@ public class SettingsActivity extends PreferenceActivity {
 		fakeHeader.setTitle(R.string.pref_header_display);
 		getPreferenceScreen().addPreference(fakeHeader);
 		addPreferencesFromResource(R.xml.pref_display);
+		Preference doorlist = getDoorList();
+		getPreferenceScreen().addPreference(doorlist);
 
 		// Add 'data and sync' preferences, and a corresponding header.
 		fakeHeader = new PreferenceCategory(this);
@@ -144,6 +146,35 @@ public class SettingsActivity extends PreferenceActivity {
     		Services.getProgress().dismiss();
     		//Services.setProgress(null);
     	}
+	}
+	
+	private Preference getDoorList() {
+		ListPreference doorlist = new ListPreference(this);
+		ContentResolver contentResolver = this.getContentResolver();
+		Cursor cur = null;
+		
+		doorlist.setTitle(getString(R.string.pref_title_door));
+		doorlist.setKey("door");
+		
+		List<String> entries = new ArrayList<String>();
+		List<String> entryValues = new ArrayList<String>();
+		
+		cur = contentResolver.query(ContentDescriptor.Door.CONTENT_URI, null, null, null, null);
+		while (cur.moveToNext()) {
+			entries.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Door.Cols.DOORNAME)));
+			entryValues.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Door.Cols.DOORID)));
+		}
+		cur.close();
+		String[] entriesA = new String[entries.size()];
+		String[] entryValuesA = new String[entryValues.size()];
+		for (int i=0;i<entries.size();i+=1) {
+			entriesA[i] = entries.get(i);
+			entryValuesA[i] = entryValues.get(i);
+		}
+		doorlist.setEntries(entriesA);
+		doorlist.setEntryValues(entryValuesA);
+		
+		return doorlist;
 	}
 
 	private Preference createClearData() {

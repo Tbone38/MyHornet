@@ -85,13 +85,8 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 		cur = contentResolver.query(ContentDescriptor.Booking.BOOKING_TIME_URI,null, "b."+ContentDescriptor.Booking.Cols.BID+"= "+bookingID, null, null);
 		
 		cur.moveToFirst();
-		//for (int j=0;j<cur.getCount(); j+=1){
-			for (int i=0; i<cur.getColumnCount(); i+=1){
-				System.out.print("\nColumn: "+i+"  Name:"+cur.getColumnName(i)+"  Value:"+cur.getString(i)+"\n");
-			}
-		//}
 		msID = cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.MSID));
-		//System.out.print("\n\n***msID:"+msID+"***\n\n\n\n");
+
 		if (cur.getCount() <= 0) {
 			return;
 		}
@@ -226,18 +221,18 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 				// onclick, alert dialog box, select * number to call ?
 				String[] callNo = new String[3];
 				int l = 0;
-				for (int k=8;k<=10;k +=1) { //give options for number to call
+				for (int k=7;k<=9;k +=1) { //give options for number to call
 					if (!cur.isNull(k)){
 						if (cur.getString(k).compareTo(" ") != 0) {
 							String pht = "";
 							switch (k){
-							case (8):{
+							case (7):{
 								pht = "Home";
 								break;
-							} case (9):{
+							} case (8):{
 								pht = "Cell";
 								break;
-							} case (10):{
+							} case (9):{
 								pht = "Work";
 								break;
 							}

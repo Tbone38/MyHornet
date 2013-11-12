@@ -1,8 +1,6 @@
 package com.treshna.hornet;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,13 +13,11 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -33,14 +29,18 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.treshna.hornet.ContentDescriptor.Member;
 import com.treshna.hornet.R.color;
 	//TODO: more null handling
 public class MemberDetailsFragment extends Fragment implements OnClickListener {
@@ -482,6 +482,9 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener {
 			
 			LinearLayout hold = (LinearLayout) view.findViewById(R.id.button_hold);
 			hold.setOnClickListener(this);
+			
+			LinearLayout manualcheckin = (LinearLayout) view.findViewById(R.id.button_manual_checkin);
+			manualcheckin.setOnClickListener(this);
 
 			
 			cur.close();
@@ -573,7 +576,7 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener {
 			} 
 			else {
 				//show popup window, let user select the number to call.
-				showWindow(tag);
+				showPhoneWindow(tag);
 			}
 			break;
 		}
@@ -583,10 +586,17 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener {
 			startActivity(i);
 			break;
 		}
+		case (R.id.button_manual_checkin):{
+			//show a window which: 	lets the user select a membership to checkin,
+			//						lets the user select a door to check in at.
+			//						(shows the user the member name?)
+			showCheckinWindow();
+			break;
+		}
 		}
 	}
 	
-	private void showWindow(ArrayList<String> phones) {
+	private void showPhoneWindow(ArrayList<String> phones) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		LayoutInflater inflater = getActivity().getLayoutInflater();
 		View layout = inflater.inflate(R.layout.alert_select_call, null);
@@ -633,6 +643,85 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener {
         alertDialog.show();
 	}
 	
+	
+	private void showCheckinWindow(){
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		LayoutInflater inflater = getActivity().getLayoutInflater();
+		View layout = inflater.inflate(R.layout.alert_manual_checkin, null);
+		String name = null;
+		cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, new String[] {Member.Cols.FNAME, Member.Cols.SNAME},
+				"m."+ContentDescriptor.Member.Cols.MID+" = ?", new String[] {String.valueOf(memberID)}, null);
+		if (!cur.moveToFirst()) {
+			return;
+		}
+		name = cur.getString(0)+" "+cur.getString(1);
+		cur.close();
+		
+		EditText nameView = (EditText) layout.findViewById(R.id.manual_checkin_name);
+		nameView.setText(name);
+		
+		ArrayList<String> doorlist = new ArrayList<String>();
+		cur = contentResolver.query(ContentDescriptor.Door.CONTENT_URI, null, null, null, null);
+		while (cur.moveToNext()) {
+			doorlist.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Door.Cols.DOORNAME)));
+		}
+		cur.close();
+		Spinner doorspinner = (Spinner) layout.findViewById(R.id.manual_checkin_door);
+		ArrayAdapter<String> doorAdapter = new ArrayAdapter<String>(getActivity(),
+				android.R.layout.simple_spinner_item, doorlist);
+		doorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		doorspinner.setAdapter(doorAdapter);
+		
+		ArrayList<String> membershiplist = new ArrayList<String>();
+		cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols.MID+" = ?",
+				new String[] {memberID}, null);
+		while (cur.moveToNext()) {
+			//Log.v(TAG, "membership:"+cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PNAME)));
+			membershiplist.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PNAME)));
+		}
+		cur.close();
+		Spinner membershipSpinner = (Spinner) layout.findViewById(R.id.manual_checkin_membership);
+		ArrayAdapter<String> membershipAdapter = new ArrayAdapter<String>(getActivity(), 
+				android.R.layout.simple_spinner_item, membershiplist);
+		//membershipAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		membershipSpinner.setAdapter(membershipAdapter);
+		
+		 	builder.setView(layout);
+	        builder.setTitle("Manual Check-In");
+	        builder.setPositiveButton("Check In", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					//get spinner details.
+					View view = getView().findViewById(R.id.manual_checkin_door);
+					Spinner membershipSpinner = (Spinner) view.findViewById(R.id.manual_checkin_membership);
+					cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols.MID+" = ?",
+							new String[] {memberID}, null);
+					cur.moveToPosition(membershipSpinner.getSelectedItemPosition());
+					
+					int membershipid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MSID));
+					cur.close();
+					
+					Spinner doorSpinner = (Spinner) view.findViewById(R.id.manual_checkin_door);
+					cur = contentResolver.query(ContentDescriptor.Door.CONTENT_URI, null, null, null, null);
+					cur.moveToPosition(doorSpinner.getSelectedItemPosition());
+					
+					int doorid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Door.Cols.DOORID));
+					cur.close();
+					
+					//parse the details to the Service.
+					Intent updateInt = new Intent(getActivity(), HornetDBService.class);
+					Bundle extras = new Bundle(3);
+					extras.putInt("doorid", doorid);
+					extras.putInt("memberid", Integer.parseInt(memberID));
+					extras.putInt("membershipid", membershipid);
+					
+					updateInt.putExtras(extras);
+					updateInt.putExtra(Services.Statics.KEY, Services.Statics.MANUALSWIPE);
+				 	getActivity().startService(updateInt);
+				}
+	        });
+	        builder.show();
+	}
 	
 	public class ImageAdapter extends PagerAdapter {
 		

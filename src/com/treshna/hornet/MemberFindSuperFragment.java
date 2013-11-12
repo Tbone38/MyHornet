@@ -72,7 +72,7 @@ public class MemberFindSuperFragment extends Fragment implements OnMemberSelectL
 			//show member details
 			FragmentManager fragmentManager = this.getChildFragmentManager();
 	        FragmentTransaction ft = fragmentManager.beginTransaction();
-	        MemberDetailsFragment f = new MemberDetailsFragment();
+	        NewMemberDetailsFragment f = new NewMemberDetailsFragment();
 	        Bundle bdl = new Bundle(1);
 	        bdl.putString(Services.Statics.MID, id);
 	        f.setArguments(bdl);

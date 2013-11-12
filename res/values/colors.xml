@@ -21,8 +21,11 @@
     <color name="visitors_green">#FF8EAD00</color>
     <color name="visitors_red">#FFB74C4C</color>
     <color name="member_grey">#FFECECEC</color>
+    <color name="member_number_grey">#FF949494</color>
+    <color name="member_number_grey2">#FF5F5F5F</color>
     <color name="member_blue">#FF00AEF0</color>
     <color name="booking_resource_grey">#FF626262</color>
     <color name="booking_resource_blue">#FF00AEF0</color>
     <color name="booking_resource_green">#FF8EAD00</color>
+    <color name="block_header_blue">#FF0072BC</color>
 </resources>

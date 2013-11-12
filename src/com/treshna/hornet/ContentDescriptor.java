@@ -17,9 +17,11 @@ import android.provider.BaseColumns;
  *   12:								135:
  *   13 = PendingUploads				140 = Visitor
  *   50:								150:
- *   55 = Company (unused)
+ *   55 = Company (unused)				
  *   60:
- *   61 = Payment Method				155:
+ *   61 = Payment Method
+ *   62:
+ *   63 = door							155:
  *   80:								160:
  *   90 = ResultStatus					165 = Images
  *   91:								200:
@@ -119,6 +121,8 @@ public class ContentDescriptor {
 	     matcher.addURI(authority, PaymentMethod.PATH, PaymentMethod.PATH_TOKEN);
 	     matcher.addURI(authority, Programme.PATH, Programme.PATH_TOKEN);
 	     matcher.addURI(authority, Programme.PATH_FOR_GROUP, Programme.PATH_FOR_GROUP_TOKEN);
+	     
+	     matcher.addURI(authority, Door.PATH, Door.PATH_TOKEN);
 	     
 	     matcher.addURI(authority, DROPTABLE, TOKEN_DROPTABLE);
 	     
@@ -360,7 +364,7 @@ public class ContentDescriptor {
 	 			public static final String LASTUPDATE = "lastupdate"; //since Unix Epoch
 	 			public static final String CHECKIN = "checkin";
 	 			public static final String OFFSET = "offset"; // == resource.period
-	 			public static final String IS_UPLOADED = "is_uploaded"; //has the booking been uploaded?
+	 			//public static final String IS_UPLOADED = "is_uploaded"; //has the booking been uploaded?
 	 			public static final String CLASSID ="classid";
 	 			public static final String PARENTID = "parentid";
 	 		}
@@ -638,7 +642,6 @@ public class ContentDescriptor {
 	 	//TODO: move more uploads here:
 	 	//		-Member
 	 	//		-Swipe
-	 	//		-Booking
 	 	public static class PendingUploads {
 	 		public static final String NAME = "PendingUploads";
 	 		public static final String PATH = "PendingUploads";
@@ -657,6 +660,7 @@ public class ContentDescriptor {
 	 		}
 	 	}
 	 	
+	 	//currently unused.
 	 	public static class PendingDownloads {
 	 		public static final String NAME = "PendingDownloads";
 	 		public static final String PATH = "PendingDownloads";
@@ -730,6 +734,23 @@ public class ContentDescriptor {
 	 		}
 	 	}
 	 	
+	 	public static class Door {
+	 		public static final String NAME = "door";
+	 		public static final String PATH = "door";
+	 		public static final int PATH_TOKEN = 62;
+	 		public static final String PATH_FOR_ID = "door/*";
+	 		public static final int PATH_FOR_ID_TOKEN = 63;
+	 		
+	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
+	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.door";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.door";
+	 		
+	 		public static class Cols implements BaseColumns {
+	 			public static final String DOORID = "doorid";
+	 			public static final String DOORNAME = "doorname";
+	 		}
+	 	}
+	 	
 	 	public static class TableIndex {
 	 		public static final String NAME = "TableIndex";
 	 		public static final String PATH = "TableIndex";
@@ -750,7 +771,7 @@ public class ContentDescriptor {
 	 		 */
 	 		public static enum Values {
 	 			Booking(1), Class(2), Swipe(3),Membership(4) /*when adding memberships*/,
-	 					Pending(5) /*when adding members/prospects*/,Image(6),
+	 					Member(5) /*when adding members/prospects*/,Image(6),
 	 					MembershipSuspend(7);
 	 			
 	 			private final int key;

@@ -10,20 +10,29 @@
 	    android:orientation="vertical" >
 	    <TextView
 	        android:id="@+id/bookingAddH"
-	        android:layout_width="match_parent"
+	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_alignParentTop="true"
 	        android:gravity="center"
-	        android:textSize="20sp"
-	        android:background="@color/gym"
+	        android:textSize="24sp"
+	        android:textStyle="bold"
 	        android:text="@string/bookingAddH"
 	        android:padding="5dp"
-	        android:layout_margin="3dp" />
+	        android:paddingBottom="1dp"
+	        android:layout_margin="3dp"
+	        android:layout_marginBottom="1dp" />
+	    <View
+	    android:id="@+id/bookingAddHline"
+	    android:layout_width="match_parent"
+	    android:layout_height="5dp"
+	    android:layout_below="@id/bookingAddH"
+	    android:background="@color/block_header_blue"
+	    android:layout_margin="2dp" />
 		<TextView
 	        android:id="@+id/bookingNameH"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:layout_below="@id/bookingAddH"
+	        android:layout_below="@id/bookingAddHline"
 	        android:textSize="16sp"
 	        android:text="@string/bookingNameH"
 	        android:padding="5dp"
@@ -33,22 +42,32 @@
 		    android:layout_width="match_parent"
 		    android:layout_height="wrap_content"
 		    android:layout_below="@id/bookingNameH"
-		    android:background="@color/gym"
+			android:background="@drawable/button"
 		    android:gravity="center" >
-		    <TextView 
-			    android:id="@+id/bookingFName"
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content"
-			    android:gravity="center"
-			    android:textSize="18sp"
-			    android:text="@string/addBookingName"
-			    android:padding="5dp"
-			    android:layout_margin="3dp" />
+		    <ImageView
+		        android:id="@+id/bookingNameDrawable"
+		        android:layout_width="50dp"
+		        android:layout_height="50dp"
+		        android:background="@drawable/ic_action_add_person"
+		        android:padding="2dp" />
+		    <TextView
+		        android:id="@+id/bookingFName"
+		        android:layout_width="wrap_content"
+		        android:layout_height="match_parent"
+		        android:layout_centerVertical="true"
+		        android:layout_margin="3dp"
+		        android:layout_toRightOf="@+id/bookingNameDrawable"
+		        android:gravity="center"
+		        android:padding="5dp"
+		        android:text="@string/addBookingName"
+		        android:textSize="18sp" />
+		    
 		    <TextView 
 		        android:id="@+id/bookingSName"
 		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
+		        android:layout_height="match_parent"
 		        android:layout_toRightOf="@id/bookingFName"
+		        android:layout_centerVertical="true"
 		        android:gravity="center"
 		        android:textSize="18sp"
 		        android:padding="5dp"

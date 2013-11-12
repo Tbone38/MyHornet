@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white" >
+	
+    <TextView
+        android:id="@+id/manual_checkin_nameL"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="13sp"
+        android:text="Member Name"
+        android:padding="3dp" />
+    <EditText 
+        android:id="@+id/manual_checkin_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/manual_checkin_nameL"
+        android:textSize="18sp"
+        android:enabled="false"
+        android:padding="3dp" />
+    
+    <TextView
+        android:id="@+id/manual_checkin_doorL"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/manual_checkin_name"
+        android:textSize="13sp"
+        android:text="Door"
+        android:padding="3dp" />
+    <Spinner
+        android:id="@+id/manual_checkin_door"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/manual_checkin_doorL"
+        android:padding="3dp" />
+    <TextView 
+        android:id="@+id/manual_checkin_membershipL"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/manual_checkin_door"
+        android:textSize="13sp"
+        android:text="Membership"
+        android:padding="3dp"/>
+    <Spinner
+        android:id="@+id/manual_checkin_membership"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/manual_checkin_membershipL"
+        android:padding="3dp" />
+    
+</RelativeLayout>
