@@ -24,6 +24,13 @@ public class BookingsResourceFragment extends ListFragment {
     private View view;
     private String selectedDate;
     
+    //TODO:
+    /* 		- Get the selected Date
+     * 		- Get the selected Resource
+     * 		- Create a working Date-Selector
+     * 		- Tidy-up the layout.
+     */
+    
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
