@@ -135,6 +135,7 @@ public class MemberActionsFragment extends Fragment implements OnClickListener {
 		return view;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void onClick(View v) {
 		switch(v.getId()) {

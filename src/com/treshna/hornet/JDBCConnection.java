@@ -264,11 +264,11 @@ public class JDBCConnection {
     	return rs;
     }
     
-    public ResultSet getBookings(java.sql.Date yesterday, java.sql.Date tomorrow, int resourceid, long last_sync) throws SQLException{    	
+    public ResultSet getBookings(java.sql.Date yesterday, java.sql.Date tomorrow, long last_sync) throws SQLException{    	
     	
     	ResultSet rs = null;
-    	if (last_sync > 0) {
-    		//System.out.print("\n\nGetting Bookings with update After "+new java.sql.Date(last_sync));
+    
+    		System.out.print("\n\nGetting Bookings with update After "+new java.sql.Date(last_sync));
     		Log.v(TAG, "Getting Bookings with update After "+new java.sql.Timestamp(last_sync));
 	    	pStatement = con.prepareStatement("SELECT resourceid, booking.firstname, booking.surname, "
 	    			+"CASE WHEN bookingtype.externalname IS NOT NULL THEN bookingtype.externalname ELSE bookingtype.name END AS bookingname, "
@@ -276,26 +276,11 @@ public class JDBCConnection {
 	    			+"booking.memberid, booking.lastupdate AS bookinglastupdate, booking.membershipid, booking.checkin, "
 	    			+ "booking.classname, booking.classid, booking.parentid FROM booking "
 	    			+"LEFT JOIN bookingtype ON (booking.bookingtypeid = bookingtype.id) "
-	    			+"WHERE booking.arrival BETWEEN ?::date AND ?::date AND booking.resourceid = ? AND booking.lastupdate > ? ORDER BY booking.id DESC;");
+	    			+"WHERE booking.arrival BETWEEN ?::date AND ?::date AND booking.lastupdate > ? ORDER BY booking.id DESC;");
 	    	// removing resourceid break things ?
 	    	pStatement.setDate(1, yesterday);
 	    	pStatement.setDate(2, tomorrow);
-	    	pStatement.setInt(3, resourceid);
-	    	pStatement.setDate(4, new java.sql.Date(last_sync));
-    	} else {
-    		pStatement = con.prepareStatement("SELECT resourceid, booking.firstname, booking.surname, "
-	    			+"CASE WHEN bookingtype.externalname IS NOT NULL THEN bookingtype.externalname ELSE bookingtype.name END AS bookingname, "
-	    			+"booking.startid, booking.endid, booking.arrival, booking.id AS bookingid, bookingtype.id AS bookingtypeid, booking.endtime, booking.notes, booking.result, "
-	    			+"booking.memberid, booking.lastupdate AS bookinglastupdate, booking.membershipid, booking.checkin,"
-	    			+ " booking.classname, booking.classid, booking.parentid FROM booking "
-	    			+"LEFT JOIN bookingtype ON (booking.bookingtypeid = bookingtype.id) "
-	    			+"WHERE booking.arrival BETWEEN ?::date AND ?::date AND booking.resourceid = ? ORDER BY booking.id DESC;"); // AND booking.resourceid = ?
-    		
-    		pStatement.setDate(1, yesterday);
-        	pStatement.setDate(2, tomorrow);
-        	pStatement.setInt(3, resourceid);
-    	}
-    	
+	    	pStatement.setDate(3, new java.sql.Date(last_sync));    	
     	
     	rs = pStatement.executeQuery();
     	return rs;

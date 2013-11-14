@@ -46,6 +46,8 @@ public class HornetDBService extends Service {
     private static int currentCall;
     private String resourceid;
     Context ctx;
+    private long this_sync;
+    private long last_sync;
     
     /****/
     private static NetworkThread thread;
@@ -126,8 +128,8 @@ public class HornetDBService extends Service {
  	   			return;
  	   		}
  	   		
- 	   		long this_sync = System.currentTimeMillis();
- 	   		String last_sync = Services.getAppSettings(ctx, "lastsync"); //use this for checking lastupdate
+ 	   		this_sync = System.currentTimeMillis();
+ 	   		last_sync = Long.parseLong(Services.getAppSettings(ctx, "lastsync")); //use this for checking lastupdate
  	   		
  	   		//get Visitors
  	   		boolean result = getLastVisitors();
@@ -183,13 +185,15 @@ public class HornetDBService extends Service {
  		   	break;
  	   } 
  	   /****/
- 	   case (Services.Statics.BOOKING):{ //this should be rolled into last-visitors, if rid not set, then skip.
- 		   statusMessage = null;
+ 	   case (Services.Statics.BOOKING):{ 
+ 		   break;
+ 		   /*statusMessage = null;
  		   thread.is_networking = true;
  		   int uploadcount, bookingcount, classcount;
- 		 
+ 		   
  		  //check resource state.
- 		  long last_sync = Long.parseLong(Services.getAppSettings(ctx, "b_lastsync"));
+ 		  this_sync = System.currentTimeMillis();
+ 		  last_sync = Long.parseLong(Services.getAppSettings(ctx, "b_lastsync")); //#fix this.
  		  int sresource = Integer.parseInt(Services.getAppSettings(ctx, "resourcelist"));
  		  if (last_sync <=10 && sresource < 0) {
  			  cur = contentResolver.query(ContentDescriptor.Resource.CONTENT_URI, null, null, null, null);
@@ -206,7 +210,7 @@ public class HornetDBService extends Service {
 		   bookingcount = getBookings();
 		   bookingImages();
 		   
-		   classcount = getClasses(null);
+		   classcount = getClasses(0);
 		   
 		   thread.is_networking = false;
 		  
@@ -226,7 +230,7 @@ public class HornetDBService extends Service {
 		   sendBroadcast(bcIntent);
 
 		   Log.v(TAG, "Sending Intent, Stopping Service");
- 		   break;
+ 		   break;*/
  	   }
  	   
  	   case (Services.Statics.SWIPE):{
@@ -269,8 +273,8 @@ public class HornetDBService extends Service {
 		   //statusMessage = null;
 		   int rscount = getResultStatus();
 		   int btcount = getBookingType();
-		   int mcount = getMember(null);
-		   int mscount = getMembership(null);
+		   int mcount = getMember(-1);
+		   int mscount = getMembership(-1);
 		   memberImages();
 		   
 		   getBookingID();
@@ -278,7 +282,7 @@ public class HornetDBService extends Service {
 		   //do Memberships!
 		   getIdCards();
 		   getPaymentMethods();
-		   getProgrammes(null);
+		   getProgrammes(0);
 		   
 		   thread.is_networking = false;
 		   Services.stopProgress(handler, currentCall);
@@ -1128,7 +1132,7 @@ public class HornetDBService extends Service {
     		bookingid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Booking.Cols.BID));
     		resultstatus = cur.getInt(cur.getColumnIndex(ContentDescriptor.Booking.Cols.RESULT));
     		bookingtypeid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Booking.Cols.BOOKINGTYPE));
-    		lastupdate = cur.getLong(cur.getColumnIndex(ContentDescriptor.Booking.Cols.LASTUPDATE));
+    		lastupdate = cur.getLong(cur.getColumnIndex(ContentDescriptor.Booking.Cols.LASTUPDATE)); //TODO: change this to now();
     		checkin = cur.getLong(cur.getColumnIndex(ContentDescriptor.Booking.Cols.CHECKIN));
     		notes = cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.NOTES));
     		//System.out.print("\n\nLast update for booking:"+bookingid+" was "+lastupdate);
@@ -1148,7 +1152,7 @@ public class HornetDBService extends Service {
     
     private int getBookings(){
     	ResultSet rs;
-    	int result, lastrid, theResource;
+    	int result, theResource;
     	Calendar cal;
     	java.sql.Date yesterday, tomorrow;
     	long this_sync, last_sync;
@@ -1162,20 +1166,10 @@ public class HornetDBService extends Service {
     	cal.add(Calendar.MONTH, +2);
     	tomorrow = new java.sql.Date(cal.getTime().getTime());
     	
-    	this_sync = new Date().getTime();
+    	//this_sync = new Date().getTime(); TODO: fix this.
     	last_sync = Long.parseLong(Services.getAppSettings(ctx, "b_lastsync"));
-    	String rid = Services.getAppSettings(ctx, "last_rid");
-    	if (rid == null || rid.compareTo("null") == 0) {
-    		lastrid = -1;
-    	} else {
-    		lastrid = Integer.decode(rid);
-    	}
-    	
-    	
+    	    	
     	theResource = Integer.decode(Services.getAppSettings(this, "resourcelist"));
-    	if (lastrid != theResource) {
-    		last_sync = 0;
-    	}
     	if (theResource < 0 ) {
     		statusMessage = "please set resource in the application settings";
     		return -1;
@@ -1189,6 +1183,7 @@ public class HornetDBService extends Service {
 	   	  	setTime(); 
 	   	  	setDate();
 	   	  	updateOpenHours();
+	   	  	//we need to invalidate everything in bookingTime if this occurs.
     	}
     	if (!openConnection()) {
     		return -1; //connection failed;
@@ -1196,7 +1191,7 @@ public class HornetDBService extends Service {
     	
     	
     	try {
-    		rs = connection.getBookings(yesterday, tomorrow, theResource, last_sync);
+    		rs = connection.getBookings(yesterday, tomorrow, last_sync);
     		Log.v(TAG, "getBookings() Row Count"+rs.getFetchSize()); 
 	    	while (rs.next()) {
 	    		ContentValues val;
@@ -1260,7 +1255,7 @@ public class HornetDBService extends Service {
 	    		 * last-update is equal to the last sync time, as using the database's last-update time can
 	    		 * cause issues when the times don't match (e.g. if the last-update time on the database is ahead, it'll break thing).. 
 	    		 */
-	    		val.put(ContentDescriptor.Booking.Cols.LASTUPDATE, this_sync);
+	    		//val.put(ContentDescriptor.Booking.Cols.LASTUPDATE, this_sync); //HOW DO I FIX THIS?
 	    		
 	    		//get the offset for this booking;
 	    		if (!cur.isClosed()) {
@@ -1337,9 +1332,9 @@ public class HornetDBService extends Service {
     	closeConnection();
 
     	Log.v(TAG, "BookingCount:"+result);
-    	Log.v(TAG,"Bookings Sync'd at:"+this_sync);
+    	//Log.v(TAG,"Bookings Sync'd at:"+this_sync);
     	Services.setPreference(ctx, "last_rid", String.valueOf(resourceid));
-    	Services.setPreference(ctx, "b_lastsync", String.valueOf(this_sync));//String.valueOf(System.currentTimeMillis())
+    	//Services.setPreference(ctx, "b_lastsync", String.valueOf(this_sync));//String.valueOf(System.currentTimeMillis())
     	return result;
     }
     
@@ -1527,7 +1522,7 @@ public class HornetDBService extends Service {
 			}
     }
     
-    private int getMember(String last_sync){
+    private int getMember(long last_sync){
     	Log.v(TAG, "Getting MemberID's");
     	int result;
     	ResultSet rs;
@@ -1539,10 +1534,10 @@ public class HornetDBService extends Service {
     		return -1; //connection failed;
     	}
     	try {
-    		if (last_sync == null) {
+    		if (last_sync == -1) {
     			rs = connection.getMembers(null);
     		} else {
-    			rs = connection.getMembers(last_sync);
+    			rs = connection.getMembers(String.valueOf(last_sync));
     		}
     		while (rs.next()) {
     			ContentValues values = new ContentValues();
@@ -1577,7 +1572,7 @@ public class HornetDBService extends Service {
     	return result;
     }
     
-    private int getMembership(String last_sync) { //why would this fail?
+    private int getMembership(long last_sync) { //why would this fail?
     	int result = 0;
     	ResultSet rs = null;
     	
@@ -1586,7 +1581,7 @@ public class HornetDBService extends Service {
     	}
     	
     	try {
-    		rs = connection.getMembership(last_sync);
+    		rs = connection.getMembership(String.valueOf(last_sync));
     		while (rs.next()){
     			ContentValues values = new ContentValues();
     			
@@ -1874,7 +1869,7 @@ public class HornetDBService extends Service {
      * @return
      */
     
-    private int getClasses(String last_sync) {
+    private int getClasses(long last_sync) {
     	int result = 0;
     	
     	if (!openConnection()) {
@@ -1882,7 +1877,7 @@ public class HornetDBService extends Service {
     	}
     	ResultSet rs = null;
     	try {
-    		rs = connection.getClasses(last_sync);
+    		rs = connection.getClasses(String.valueOf(last_sync));
     		//do handling here.
     		while (rs.next()){
     			ContentValues values = new ContentValues();
@@ -2398,7 +2393,7 @@ public class HornetDBService extends Service {
     	return result;
     }
     
-    private int getProgrammes(String last_sync) {
+    private int getProgrammes(long last_sync) {
     	int result = 0;
     	ResultSet rs;
     	
@@ -2406,7 +2401,7 @@ public class HornetDBService extends Service {
     		return -1; //check statusMessage for reason
     	}
     	try {
-    		rs = connection.getProgrammes(last_sync);
+    		rs = connection.getProgrammes(String.valueOf(last_sync));
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
     		e.printStackTrace();

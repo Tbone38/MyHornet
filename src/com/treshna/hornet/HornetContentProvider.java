@@ -532,12 +532,15 @@ public class HornetContentProvider extends ContentProvider {
             	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
             }
             
-            case ContentDescriptor.BookingTime.PATH_TOKEN:{
+            case ContentDescriptor.BookingTime.PATH_TOKEN:{ //changed 2013-11-14, check nothings been broken by this.
             	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
             	builder.setTables(ContentDescriptor.BookingTime.NAME+" bt LEFT JOIN "
             			+ContentDescriptor.Booking.NAME+" b ON (bt."
             			+ContentDescriptor.BookingTime.Cols.BID+" = b."
-            			+ContentDescriptor.Booking.Cols.BID+")");
+            			+ContentDescriptor.Booking.Cols.BID+")"
+            			+ "LEFT JOIN "+ContentDescriptor.Time.NAME+" t ON (bt."
+            			+ContentDescriptor.BookingTime.Cols.TIMEID+" = t."
+            			+ContentDescriptor.Time.Cols.ID+")");
             	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);	
             }
             

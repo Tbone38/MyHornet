@@ -30,6 +30,7 @@ public class MainActivity extends NFCActivity implements BookingsListFragment.On
 	private static Tab visitortab;
 	private static Tab bookingtab;
 	private static Context context;
+	private static int selectedTab;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -59,12 +60,20 @@ public class MainActivity extends NFCActivity implements BookingsListFragment.On
 				.setTabListener(new TabListener<LastVisitorsSuperFragment>(
 						this, "lastvisitors", LastVisitorsSuperFragment.class));
 		ab.addTab(visitortab);
-		bookingtab = ab.newTab()
+		/*bookingtab = ab.newTab()
 				.setText("Bookings")
 				.setTabListener(new TabListener<BookingsSlideFragment>(
 						this, "bookings", BookingsSlideFragment.class));
+		ab.addTab(bookingtab);*/
+		bookingtab = ab.newTab()
+				.setText("Bookings")
+				.setTabListener(new TabListener<BookingsListSuperFragment>(
+						this, "bookings", BookingsListSuperFragment.class));
 		ab.addTab(bookingtab);
-		
+		if (savedInstanceState != null) {
+			selectedTab = savedInstanceState.getInt("selectedTab");
+		}
+		ab.setSelectedNavigationItem(selectedTab);
 		
 		/**the below code needs to run on app start.
          */
@@ -78,6 +87,13 @@ public class MainActivity extends NFCActivity implements BookingsListFragment.On
 		Log.v("MainActivity", "Finished onCreate");
 	}
 	
+	@Override
+	public void onSaveInstanceState(Bundle savedInstanceState) {
+		super.onSaveInstanceState(savedInstanceState);
+		
+		savedInstanceState.putInt("selectedTab", selectedTab);
+	}
+	
 	public void startReciever(){
 		IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION);
@@ -85,15 +101,14 @@ public class MainActivity extends NFCActivity implements BookingsListFragment.On
 	}
 	
 	@Override
-	public void onPause() {
-		super.onPause();
+	public void onStop() {
+		super.onStop();
 		try {
         	unregisterReceiver(Services.getPollingHandler()); //?
         } catch (Exception e) {
         	//doesn't matter.
         }
 	}
-
 
 	
 	@Override
@@ -189,12 +204,11 @@ public class MainActivity extends NFCActivity implements BookingsListFragment.On
 	         if (mFragment == null) {
 	            // If not, instantiate and add it to the activity
 	            mFragment = Fragment.instantiate(mActivity, mClass.getName());
-	            Log.i("TabListener", "Adding Fragment:"+mTag);
 	          
 	            ft.replace(getContentViewCompat(), mFragment, mTag);
+	            selectedTab = tab.getPosition();
 	        } else {
 	            // If it exists, simply attach it in order to show it
-	        	Log.i("TabListener", "Attaching Fragment:"+mTag);
 	        	//ft.replace(getContentViewCompat(), mFragment, mTag);
 	        	ft.attach(mFragment);
 	        }
@@ -204,7 +218,6 @@ public class MainActivity extends NFCActivity implements BookingsListFragment.On
 	    	mFragment = mActivity.getSupportFragmentManager().findFragmentByTag(mTag);
 	    	if (mFragment != null) {
 	            // Detach the fragment, because another one is being attached
-	    		Log.i("TabListener", "Detaching Fragment:"+mTag);
 	    		ft.detach(mFragment);
 	        } else {
 	        	Log.i("TabListener", "Fragment not dettached, for tab:"+tab.getText());

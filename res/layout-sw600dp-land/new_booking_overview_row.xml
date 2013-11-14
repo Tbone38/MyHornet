@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/listRow"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    tools:context=".MainActivty" >
+	
+    <TextView
+        android:id="@+id/booking_resource_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:text="Resource"
+        android:padding="2dp" />
+    <LinearLayout 
+        android:id="@+id/booking_resource_timeslots"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/booking_resource_name"
+        android:orientation="horizontal">
+        <RelativeLayout 
+            android:id="@+id/booking_timeslot_1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.0625"
+            android:padding="2dp">
+            <include layout="@layout/new_booking_overview_time" />
+        </RelativeLayout>
+        <RelativeLayout 
+            android:id="@+id/booking_timeslot_2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.0625"
+            android:padding="2dp">
+            <include layout="@layout/new_booking_overview_time" />
+        </RelativeLayout>
+        <RelativeLayout 
+            android:id="@+id/booking_timeslot_3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.0625"
+            android:padding="2dp">
+            <include layout="@layout/new_booking_overview_time" />
+        </RelativeLayout>
+        <RelativeLayout 
+            android:id="@+id/booking_timeslot_4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.0625"
+            android:padding="2dp">
+            <include layout="@layout/new_booking_overview_time" />
+        </RelativeLayout>
+        <RelativeLayout 
+            android:id="@+id/booking_timeslot_5"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.0625"
+            android:padding="2dp">
+            <include layout="@layout/new_booking_overview_time" />
+        </RelativeLayout>
+        <RelativeLayout 
+            android:id="@+id/booking_timeslot_6"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.0625"
+            android:padding="2dp">
+            <include layout="@layout/new_booking_overview_time" />
+        </RelativeLayout>
+        <RelativeLayout 
+            android:id="@+id/booking_timeslot_7"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.0625"
+            android:padding="2dp">
+            <include layout="@layout/new_booking_overview_time" />
+        </RelativeLayout>
+        <RelativeLayout 
+            android:id="@+id/booking_timeslot_8"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.0625"
+            android:padding="2dp">
+            <include layout="@layout/new_booking_overview_time" />
+        </RelativeLayout>
+        <RelativeLayout 
+            android:id="@+id/booking_timeslot_9"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.0625"
+            android:padding="2dp">
+            <include layout="@layout/new_booking_overview_time" />
+        </RelativeLayout>
+        <RelativeLayout 
+            android:id="@+id/booking_timeslot_10"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.0625"
+            android:padding="2dp">
+            <include layout="@layout/new_booking_overview_time" />
+        </RelativeLayout>
+        <RelativeLayout 
+            android:id="@+id/booking_timeslot_11"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.0625"
+            android:padding="2dp">
+            <include layout="@layout/new_booking_overview_time" />
+        </RelativeLayout>
+        <RelativeLayout 
+            android:id="@+id/booking_timeslot_12"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.0625"
+            android:padding="2dp">
+            <include layout="@layout/new_booking_overview_time" />
+        </RelativeLayout>
+        <RelativeLayout 
+            android:id="@+id/booking_timeslot_13"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.0625"
+            android:padding="2dp">
+            <include layout="@layout/new_booking_overview_time" />
+        </RelativeLayout>
+        <RelativeLayout 
+            android:id="@+id/booking_timeslot_14"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.0625"
+            android:padding="2dp">
+            <include layout="@layout/new_booking_overview_time" />
+        </RelativeLayout>
+        <RelativeLayout 
+            android:id="@+id/booking_timeslot_15"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.0625"
+            android:padding="2dp">
+            <include layout="@layout/new_booking_overview_time" />
+        </RelativeLayout>
+        <RelativeLayout 
+            android:id="@+id/booking_timeslot_16"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.0625"
+            android:padding="2dp">
+            <include layout="@layout/new_booking_overview_time" />
+        </RelativeLayout>
+        
+    </LinearLayout>
+</RelativeLayout>

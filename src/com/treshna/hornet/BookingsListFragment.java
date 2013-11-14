@@ -39,9 +39,6 @@ public class BookingsListFragment extends ListFragment implements OnClickListene
         public void onDateChange(Date date);
     }
 
-    //TODO: refresh adapter on sync completion.
-    // using cursor adapter ?
-    
     private SimpleCursorAdapter mAdapter;
     private Date date;
     private Date newdate;
@@ -200,6 +197,7 @@ public class BookingsListFragment extends ListFragment implements OnClickListene
 			}
 		}
 	}
+	
 	@SuppressLint("NewApi")
 	private View createCalendarLayout(){
 		RelativeLayout rl = new RelativeLayout(getActivity());

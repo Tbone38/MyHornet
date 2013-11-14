@@ -43,5 +43,20 @@
         android:textSize="16sp"
         android:textColor="@color/booking_resource_grey"
         android:text="DD MMM HH:mm - HH:mm, Recurring?"
-        android:padding="2dp" />    
+        android:padding="2dp" />
+    
+    <TextView
+        android:id="@+id/button_booking_resource_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:text="@string/button_booking_resource_edit"
+        android:background="@color/booking_resource_grey"
+        android:padding="13dp"
+        android:layout_margin="3dp" />
+    
 </RelativeLayout>
