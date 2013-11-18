@@ -1,28 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/booking_frame_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:baselineAligned="false"
+    tools:context=".DisplayResultsActivity" >
     <RelativeLayout 
-        android:id="@+id/booking_resource_calendar_wrapper"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+        android:id="@+id/booking_resource_calendar_wrapper_3"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".24" >
         
     </RelativeLayout>
-    <Spinner 
-        android:id="@+id/booking_resource_resource_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/booking_resource_calendar_wrapper"
-        android:textSize="18sp"
-        android:textColor="@color/booking_resource_grey"
-        android:padding="3dp"/>
-    
-    <ListView 
-        android:id="@android:id/list"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:layout_below="@id/booking_resource_resource_name">
-    </ListView>
-	
-</RelativeLayout>
+    <RelativeLayout
+	    android:id="@+id/booking_list"
+	    android:layout_width="match_parent"
+	    android:layout_height="0dp"
+	    android:layout_weight=".75" >
+	    <Spinner 
+	        android:id="@+id/booking_resource_resource_name"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="18sp"
+	        android:textColor="@color/booking_resource_grey"
+	        android:padding="3dp"/>
+	    
+	    <ListView 
+	        android:id="@android:id/list"
+	        android:layout_height="wrap_content"
+	        android:layout_width="match_parent"
+	        android:layout_below="@id/booking_resource_resource_name">
+	    </ListView>
+	</RelativeLayout>
+</LinearLayout>

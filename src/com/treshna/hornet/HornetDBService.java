@@ -1183,7 +1183,7 @@ public class HornetDBService extends Service {
 	   	  	setTime(); 
 	   	  	setDate();
 	   	  	updateOpenHours();
-	   	  	//we need to invalidate everything in bookingTime if this occurs.
+	   	  	
     	}
     	if (!openConnection()) {
     		return -1; //connection failed;

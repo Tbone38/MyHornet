@@ -30,10 +30,7 @@ public class BookingsListAdapter extends SimpleCursorAdapter implements OnClickL
 	@Override
 	public void bindView(View rowLayout, Context context, Cursor cursor){
 		super.bindView(rowLayout, context, cursor);
-		/*for (int j=0;j<cursor.getColumnCount();j+=1){
-			System.out.print("\n column:"+j+" title: "+cursor.getColumnName(j)+" Value:"+cursor.getString(j));
-		}*/
-		//System.out.print(cursor.getInt(15));
+		
 		switch (cursor.getInt(cursor.getColumnIndex("result"))){
 		case (7):
 		case (8):
@@ -63,13 +60,12 @@ public class BookingsListAdapter extends SimpleCursorAdapter implements OnClickL
 			rowLayout.setBackgroundColor(context.getResources().getColor(R.color.white));
 		}
 		
-		TextView time = (TextView) rowLayout.findViewById(R.id.bookingstart);
-		time.setText(cursor.getString(cursor.getColumnIndex("time")));
-		//time.setGravity(Gravity.CENTER_VERTICAL);
+	
+		TextView time = (TextView) rowLayout.findViewById(R.id.booking_resource_time);
+		time.setText(cursor.getString(cursor.getColumnIndex("time")).substring(0, 5));
 		
-		//fill in non-empty rows with details.
 		if ( !cursor.isNull(7)) { //_id for booking
-			TextView name = (TextView) rowLayout.findViewById(R.id.bookingname);
+			TextView name = (TextView) rowLayout.findViewById(R.id.booking_resource_booking_name);
 			String ntext = null;
 			if (!cursor.isNull(cursor.getColumnIndex(ContentDescriptor.Booking.Cols.FNAME))) {
 				ntext = cursor.getString(cursor.getColumnIndex(ContentDescriptor.Booking.Cols.FNAME))+" ";
@@ -83,8 +79,7 @@ public class BookingsListAdapter extends SimpleCursorAdapter implements OnClickL
 				name.setText("");
 			}
 			
-			
-			TextView booking = (TextView) rowLayout.findViewById(R.id.bookingtype);
+			TextView booking = (TextView) rowLayout.findViewById(R.id.booking_resource_booking_time);
 			switch (cursor.getInt(cursor.getColumnIndex("result"))) {
 			case (8):{
 				booking.setText("Not Available");
@@ -106,9 +101,9 @@ public class BookingsListAdapter extends SimpleCursorAdapter implements OnClickL
 			rowLayout.setClickable(true);
 			rowLayout.setOnClickListener(this);
 		} else {
-			TextView name = (TextView) rowLayout.findViewById(R.id.bookingname);
+			TextView name = (TextView) rowLayout.findViewById(R.id.booking_resource_booking_name);
 			name.setText("");
-			TextView booking = (TextView) rowLayout.findViewById(R.id.bookingtype);
+			TextView booking = (TextView) rowLayout.findViewById(R.id.booking_resource_booking_time);
 			booking.setText("Click to Add Booking");
 			ArrayList<String> tagInfo = new ArrayList<String>();
 			tagInfo.add(String.valueOf(0));
@@ -129,14 +124,7 @@ public class BookingsListAdapter extends SimpleCursorAdapter implements OnClickL
 	@Override
 	public void onClick(View v) {
 		//do Photo taking stuff here.
-		switch(v.getId()){
-		case(101):{ //addphoto
-			String id = v.getTag().toString();
-	        System.out.println("Add Photo for ID: "+id+" Pushed");
-	        Intent camera = new Intent(context, CameraWrapper.class);
-	        camera.putExtra(EXTRA_ID,id);
-	        context.startActivity(camera);
-	        break;} 
+		switch(v.getId()){ 
 		case(R.id.listRow):{
 			System.out.println("**Row Selected, Displaying More Info:");
 			ArrayList<String> tagInfo;
@@ -145,20 +133,11 @@ public class BookingsListAdapter extends SimpleCursorAdapter implements OnClickL
 			} else {
 				break;
 			}
-			
-			//if (Integer.valueOf(tagInfo.get(0)) == 1) {
-				Intent intent = new Intent(context, BookingPage.class);
-				intent.putStringArrayListExtra(Services.Statics.KEY, tagInfo);
-				//intent.putExtra(Services.Statics.KEY,tagInfo.get(1));
-				context.startActivity(intent);
-			//} else {
-				//add member!
-				//System.out.println("**Add member Selected");
-				//Intent intent = new Intent(context, BookingDetails.class);
-				//intent.putExtra(Services.Statics.KEY, "-1");
-				//context.startActivity(intent);
-			//}
-			break; }
+			Intent intent = new Intent(context, BookingPage.class);
+			intent.putStringArrayListExtra(Services.Statics.KEY, tagInfo);
+			context.startActivity(intent);
+			break; 
+			}
 		}	
     }
 }

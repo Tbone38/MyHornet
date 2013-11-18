@@ -107,7 +107,7 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
 	        params.addRule(RelativeLayout.BELOW, 30);
 	        calendar.setLayoutParams(params);
 	        calendar.setShowWeekNumber(false);
-	        calendar.setFocusedMonthDateColor(color.member_blue);
+	        //calendar.setFocusedMonthDateColor(color.member_blue);
 	        calendar.setOnDateChangeListener(new OnDateChangeListener() {
 				@Override
 				public void onSelectedDayChange(CalendarView view, int year,

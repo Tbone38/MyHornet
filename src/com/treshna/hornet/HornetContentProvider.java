@@ -453,6 +453,7 @@ public class HornetContentProvider extends ContentProvider {
             	 */
             	return builder.query(db, projection, selection, null, "_id", null, sortOrder);
             }
+            
             //another special case
             case ContentDescriptor.Booking.PATH_JOIN_TOKEN:{ 
             	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
