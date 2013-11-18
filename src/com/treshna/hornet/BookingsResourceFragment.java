@@ -7,6 +7,7 @@ import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,14 +20,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.CalendarView;
-import android.widget.Spinner;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.CalendarView.OnDateChangeListener;
 import android.widget.DatePicker;
 import android.widget.DatePicker.OnDateChangedListener;
 import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
+import android.widget.Spinner;
 
 
 public class BookingsResourceFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor>{
@@ -93,6 +95,7 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
 		Log.d(TAG, "FINISHING ON RESUME");
 	}
 	
+	
 	@Override
 	public void onPause() {
 		Log.d(TAG, "STARTING ON PAUSE");
@@ -106,54 +109,80 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
 		RelativeLayout calendarwrapper = (RelativeLayout) view.findViewById(R.id.booking_resource_calendar_wrapper_3);
         
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-        	CalendarView calendar = null;
-        	try {
-	        	calendar = new CalendarView(getActivity());
-	        } catch (ClassCastException e) {
-	        	e.printStackTrace();
-	        	Log.e(TAG, "WHY IS THIS HAPPENING??!!!!", e);
-	        }
-	        
-	        Calendar cal = Calendar.getInstance(Locale.US);
-	        calendar.setDate(cal.getTime().getTime());
-	        selectedDate = Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");
-	        calendar.setMinimumHeight(200);
-	        cal.add(Calendar.MONTH, -1);
-	        calendar.setMinDate(cal.getTimeInMillis());
-	        cal.add(Calendar.MONTH, 2);
-	        calendar.setMaxDate(cal.getTimeInMillis());
-	        
-	        //RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, 500);
-	        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(200, 200);
-	        try {
-	        	calendar.setLayoutParams(params);
-	        } catch (Exception e) {
-	        	Log.e(TAG, "Still looking for where the error is being thrown", e);
-	        }
-	        calendar.setShowWeekNumber(false);
-	        //calendar.setFocusedMonthDateColor(color.member_blue);
-	        calendar.setOnDateChangeListener(new OnDateChangeListener() {
-				@Override
-				public void onSelectedDayChange(CalendarView view, int year,
-						int month, int dayOfMonth) {
-						Calendar cal = Calendar.getInstance();
-						cal.set(year, month, dayOfMonth);
-						Date date = cal.getTime();
-						selectedDate = Services.dateFormat(date.toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");
-						updateSelection(-1);
-				}
-	        	
-	        });
-	        try {
-	        	calendarwrapper.addView(calendar);
-	        } catch	(ClassCastException e) {
-	        	e.printStackTrace();
-	        	Log.e(TAG, "SERIOUSLY, WHY MEEE?!!", e);
-	        }
+        	//this calendar widget breaks things when view is in portrait mode. Seems to be a bug with something,
+        	//not sure where the bug is yet.
+        	if (getResources().getConfiguration().orientation != Configuration.ORIENTATION_PORTRAIT) {
+	        	CalendarView calendar = null;
+	        	try {
+		        	calendar = new CalendarView(getActivity());
+		        } catch (ClassCastException e) {
+		        	e.printStackTrace();
+		        	Log.e(TAG, "WHY IS THIS HAPPENING??!!!!", e);
+		        }
+		        
+		        Calendar cal = Calendar.getInstance(Locale.US);
+		        calendar.setDate(cal.getTime().getTime());
+		        selectedDate = Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");
+		        calendar.setMinimumHeight(200);
+		        cal.add(Calendar.MONTH, -1);
+		        calendar.setMinDate(cal.getTimeInMillis());
+		        cal.add(Calendar.MONTH, 2);
+		        calendar.setMaxDate(cal.getTimeInMillis());
+		        
+		        //RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, 500);
+		        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(200, 200);
+		        try {
+		        	calendar.setLayoutParams(params);
+		        } catch (Exception e) {
+		        	Log.e(TAG, "Still looking for where the error is being thrown", e);
+		        }
+		        calendar.setShowWeekNumber(false);
+		        //calendar.setFocusedMonthDateColor(color.member_blue);
+		        calendar.setOnDateChangeListener(new OnDateChangeListener() {
+					@Override
+					public void onSelectedDayChange(CalendarView view, int year,
+							int month, int dayOfMonth) {
+							Calendar cal = Calendar.getInstance();
+							cal.set(year, month, dayOfMonth);
+							Date date = cal.getTime();
+							selectedDate = Services.dateFormat(date.toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");
+							updateSelection(-1);
+					}
+		        	
+		        });
+		        try {
+		        	calendarwrapper.addView(calendar);
+		        } catch	(ClassCastException e) {
+		        	e.printStackTrace();
+		        	Log.e(TAG, "SERIOUSLY, WHY MEEE?!!", e);
+		        }
+        	} else {
+        		DatePicker date = new DatePicker(getActivity());
+            	Calendar cal = Calendar.getInstance(Locale.US);
+            	selectedDate = Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");
+            	date.setCalendarViewShown(false);
+            	date.init(cal.get(Calendar.YEAR),
+            			cal.get(Calendar.MONTH), 
+            			cal.get(Calendar.DAY_OF_MONTH), new OnDateChangedListener() {
+    						@Override
+    						public void onDateChanged(DatePicker view, int year,
+    								int monthOfYear, int dayOfMonth) {
+    							Calendar cal = Calendar.getInstance();
+    							cal.set(year, monthOfYear, dayOfMonth);
+    							Log.d(TAG, "Calendar Time:"+cal.getTime());
+    							Date date = cal.getTime();
+    							selectedDate = Services.dateFormat(date.toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");
+    							updateSelection(-1);
+    						}
+            	});
+            	calendarwrapper.addView(date);
+        	}
 	        
         } else {
         	DatePicker date = new DatePicker(getActivity());
         	Calendar cal = Calendar.getInstance(Locale.US);
+        	selectedDate = Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");
+        	date.setCalendarViewShown(false);
         	date.init(cal.get(Calendar.YEAR),
         			cal.get(Calendar.MONTH), 
         			cal.get(Calendar.DAY_OF_MONTH), new OnDateChangedListener() {
@@ -162,6 +191,7 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
 								int monthOfYear, int dayOfMonth) {
 							Calendar cal = Calendar.getInstance();
 							cal.set(year, monthOfYear, dayOfMonth);
+							Log.d(TAG, "Calendar Time:"+cal.getTime());
 							Date date = cal.getTime();
 							selectedDate = Services.dateFormat(date.toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");
 							updateSelection(-1);

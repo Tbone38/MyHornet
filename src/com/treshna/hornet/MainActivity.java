@@ -31,6 +31,7 @@ public class MainActivity extends NFCActivity implements BookingsListFragment.On
 	private static Tab bookingtab;
 	private static Context context;
 	private static int selectedTab;
+	private static String TAG = "MainActivity";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +109,20 @@ public class MainActivity extends NFCActivity implements BookingsListFragment.On
         } catch (Exception e) {
         	//doesn't matter.
         }
+	}
+	
+	@Override
+	public void onPostResume() {
+		Log.d(TAG, "STARTING ACTIVITY ON POST RESUME");
+		super.onPostResume();
+		Log.d(TAG, "FINISHING ACTIVITY ON POST RESUME");
+	}
+	
+	@Override
+	public void onResume(){
+		Log.d(TAG, "STARTING ACTIVITY ON RESUME");
+		super.onResume();
+		Log.d(TAG, "FINISHING ACTIVITY ON RESUME");
 	}
 
 	
