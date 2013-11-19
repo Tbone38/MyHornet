@@ -28,7 +28,6 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.treshna.hornet.ContentDescriptor.Membership;
-import com.treshna.hornet.ContentDescriptor.Resource;
 
 /* TODO: consider refactoring this service out into:
  * 	Bookings, LastVisitors, Swipes, and Signups.
@@ -44,7 +43,7 @@ public class HornetDBService extends Service {
     private String statusMessage = "";
     private static Handler handler;
     private static int currentCall;
-    private String resourceid;
+
     Context ctx;
     private long this_sync;
     private long last_sync;
@@ -70,7 +69,6 @@ public class HornetDBService extends Service {
 	   
 	   currentCall = intent.getIntExtra(Services.Statics.KEY, -1);
 	   Bundle bundle = intent.getExtras();
-	   //resourceid = intent.getStringExtra("newtime");
 	   /**
 	    * magical queue-ing, used to enforce one network operation at a time.
 	    * 
@@ -185,54 +183,7 @@ public class HornetDBService extends Service {
  		   	break;
  	   } 
  	   /****/
- 	   case (Services.Statics.BOOKING):{ 
- 		   break;
- 		   /*statusMessage = null;
- 		   thread.is_networking = true;
- 		   int uploadcount, bookingcount, classcount;
- 		   
- 		  //check resource state.
- 		  this_sync = System.currentTimeMillis();
- 		  last_sync = Long.parseLong(Services.getAppSettings(ctx, "b_lastsync")); //#fix this.
- 		  int sresource = Integer.parseInt(Services.getAppSettings(ctx, "resourcelist"));
- 		  if (last_sync <=10 && sresource < 0) {
- 			  cur = contentResolver.query(ContentDescriptor.Resource.CONTENT_URI, null, null, null, null);
- 			  if (cur.getCount() > 0) {
- 				  Services.setPreference(ctx, "resourcelist", "1");
- 			  }
- 			  cur.close();
- 		  }
- 		   
-		   Services.showProgress(Services.getContext(), "Syncing Bookings From Server", handler, currentCall, false);
-		   //upload bookings, then update bookings, then get bookings.
-		   uploadcount = uploadBookings();
-		   updateBookings(); //this should be in last visitors as well
-		   bookingcount = getBookings();
-		   bookingImages();
-		   
-		   classcount = getClasses(0);
-		   
-		   thread.is_networking = false;
-		  
-		   if (bookingcount >= 0) {
-			   statusMessage = "Retrieved "+bookingcount+" Bookings\n Uploaded "+uploadcount+" Bookings";
-		   }
-		   Services.stopProgress(handler, currentCall);
-		   Services.showToast(getApplicationContext(), statusMessage, handler);
-		  
-		   Intent bcIntent = new Intent();
-		   if (bookingcount >= 0) {
-			   bcIntent.putExtra(Services.Statics.IS_SUCCESSFUL, true);
-		   } else {
-			   bcIntent.putExtra(Services.Statics.IS_SUCCESSFUL, false);
-		   }
-		   bcIntent.setAction("com.treshna.hornet.serviceBroadcast");
-		   sendBroadcast(bcIntent);
-
-		   Log.v(TAG, "Sending Intent, Stopping Service");
- 		   break;*/
- 	   }
- 	   
+ 	    	   
  	   case (Services.Statics.SWIPE):{
  		   statusMessage = null;
  		   thread.is_networking = true;
@@ -261,31 +212,46 @@ public class HornetDBService extends Service {
 		   Services.showProgress(Services.getContext(), "Syncing Local Database setting from Server", handler, currentCall, true);
 		   //the above box should probably always show.
 		   
+		   //config
 		   int rcount = getResource();
 		   int days = getOpenHours();
 		   getDoors();
 		   
+		   //id's
+		   getBookingID();
 		   int midcount = getMemberID();
 		   if (midcount != 0) statusMessage = midcount+" Sign-up's available";
 		   if (statusMessage != null && statusMessage.length() >3 ) {
 				   Services.showToast(getApplicationContext(), statusMessage, handler);
 		   }
-		   //statusMessage = null;
+
+		   //stuff
 		   int rscount = getResultStatus();
 		   int btcount = getBookingType();
 		   int mcount = getMember(-1);
 		   int mscount = getMembership(-1);
+		   getBookings();
 		   memberImages();
 		   
-		   getBookingID();
+		   
 		  
 		   //do Memberships!
 		   getIdCards();
 		   getPaymentMethods();
 		   getProgrammes(0);
 		   
-		   thread.is_networking = false;
+		   
 		   Services.stopProgress(handler, currentCall);
+		   
+		   Services.showProgress(Services.getContext(), "Setting up resource", handler, currentCall, false);
+
+	   	  	//rebuild times, then update the reference in date.
+	   	  	setTime(); 
+	   	  	setDate();
+	   	  	updateOpenHours();
+	   	  	Services.stopProgress(handler, currentCall);
+	   	  	
+	   	 thread.is_networking = false;
 		   if (statusMessage != null) {
 			   Services.showToast(getApplicationContext(), statusMessage, handler);
 		   }
@@ -307,22 +273,7 @@ public class HornetDBService extends Service {
  	    * user selections, It's been placed in this service for ease of use.
  	    * It's threaded so it doesn't block the UI.
  	    */
- 	   case (Services.Statics.RESOURCESELECTED):{
- 		   Log.v(TAG, "STARTING RESOURCE SETUP");
- 		   	thread.is_networking = true; //set because we're rebuilding tables, don't try referencing them while we do!
- 		   	Services.showProgress(Services.getContext(), "Setting up resource", handler, currentCall, false);
- 		   	String theResource = bundle.getString("newtime");
-	   	  	resourceid = theResource;
-	   	  	Log.v(TAG, "Selected Resource:"+resourceid);
-	   	  	//rebuild times, then update the reference in date.
-	   	  	setTime(); 
-	   	  	setDate();
-	   	  	updateOpenHours();
-	   	  	Services.stopProgress(handler, currentCall);
-	   	  	thread.is_networking = false;
-			
-	   	  	break;
- 	   }
+ 	   
  	   case (Services.Statics.CLASSSWIPE):{
  		   thread.is_networking = true;
  		   int result;
@@ -1152,7 +1103,7 @@ public class HornetDBService extends Service {
     
     private int getBookings(){
     	ResultSet rs;
-    	int result, theResource;
+    	int result;
     	Calendar cal;
     	java.sql.Date yesterday, tomorrow;
     	long this_sync, last_sync;
@@ -1166,19 +1117,12 @@ public class HornetDBService extends Service {
     	cal.add(Calendar.MONTH, +2);
     	tomorrow = new java.sql.Date(cal.getTime().getTime());
     	
-    	//this_sync = new Date().getTime(); TODO: fix this.
+    	this_sync = new Date().getTime(); 
     	last_sync = Long.parseLong(Services.getAppSettings(ctx, "b_lastsync"));
     	    	
-    	theResource = Integer.decode(Services.getAppSettings(this, "resourcelist"));
-    	if (theResource < 0 ) {
-    		statusMessage = "please set resource in the application settings";
-    		return -1;
-    	}
     	cur = contentResolver.query(ContentDescriptor.BookingTime.CONTENT_URI, null, null, null, null);
     	if (cur.getCount() <= 0) {
     		Log.e(TAG, "**No Rows returned by BookingTime");
-    		resourceid = String.valueOf(theResource);
-	   	  	Log.v(TAG, "Selected Resource:"+resourceid);
 	   	  	//rebuild times, then update the reference in date.
 	   	  	setTime(); 
 	   	  	setDate();
@@ -1333,8 +1277,7 @@ public class HornetDBService extends Service {
 
     	Log.v(TAG, "BookingCount:"+result);
     	//Log.v(TAG,"Bookings Sync'd at:"+this_sync);
-    	Services.setPreference(ctx, "last_rid", String.valueOf(resourceid));
-    	//Services.setPreference(ctx, "b_lastsync", String.valueOf(this_sync));//String.valueOf(System.currentTimeMillis())
+    	Services.setPreference(ctx, "b_lastsync", String.valueOf(this_sync));//String.valueOf(System.currentTimeMillis())
     	return result;
     }
     
@@ -1463,32 +1406,6 @@ public class HornetDBService extends Service {
 		int interval;
 		Calendar day, upperlimit, lowerlimit;
 		
-		{
-			Log.v(TAG, "resource:"+resourceid);
-			if (resourceid == null) {
-				resourceid = Services.getAppSettings(this, "resourcelist");
-			}
-			
-			cur = contentResolver.query(ContentDescriptor.Resource.CONTENT_URI, new String[] {Resource.Cols.PERIOD}, Resource.Cols.ID+" = ?", 
-					new String[] {resourceid}, null);
-			
-			if (cur.getCount() <= 0) {
-				cur.close();
-			} else {
-				cur.moveToFirst();
-				String intv;
-				int intvl;
-				
-				Log.v(TAG, "Period:"+cur.getString(0));
-				intv = cur.getString(0).replaceAll(":", "");
-				intvl = (Integer.parseInt(intv)/100); //div by 100 to get integer representing minutes
-				Services.setPreference(ctx, "timeslot", String.valueOf(intvl));
-				cur.close();
-			}
-		}
-		
-		interval = Integer.decode(Services.getAppSettings(this, "timeslot"));
-		Log.v(TAG, "Interval:"+interval);
 		/*
 		if (interval != 15 && interval != 30 && interval != 60) interval = 15; //default every 15 minutes.
 		*/

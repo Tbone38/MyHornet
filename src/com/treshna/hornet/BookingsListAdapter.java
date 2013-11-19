@@ -16,15 +16,20 @@ public class BookingsListAdapter extends SimpleCursorAdapter implements OnClickL
 	Context context;
 	String[] FROM;
 	Cursor cursor;
+	String mDate;
 
 	@SuppressWarnings("deprecation")
 	public BookingsListAdapter(Context context, int layout, Cursor c,
-			String[] from, int[] to) {
+			String[] from, int[] to, String date) {
 		super(context, layout, c, from, to);
 		this.context = context;
 		this.FROM = from;
 		this.cursor = c;
-		
+		this.mDate = date;
+	}
+	
+	public void updateDate(String date) {
+		mDate = date;
 	}
 	
 	@Override
@@ -134,6 +139,7 @@ public class BookingsListAdapter extends SimpleCursorAdapter implements OnClickL
 				break;
 			}
 			Intent intent = new Intent(context, BookingPage.class);
+			tagInfo.add(mDate);
 			intent.putStringArrayListExtra(Services.Statics.KEY, tagInfo);
 			context.startActivity(intent);
 			break; 

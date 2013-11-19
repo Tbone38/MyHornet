@@ -201,15 +201,13 @@ public class Services {
 	
 	public static class Statics {
 		public static final int LASTVISITORS = 1;
-		//public static final int UPLOAD = 2;
 		public static final int SWIPE = 3;
-		public static final int BOOKING = 4;		
 		public static final int FIRSTRUN = 10;
-		public static final int RESOURCESELECTED = 11;
 		public static final int NEWDATABASE = 12;
 		public static final int CLASSSWIPE = 5;
 		public static final int MANUALSWIPE = 13;
 		//used for referencing various bundles and stuff stored in intents;
+		public static final String DATE = "date";
 		public static final String KEY = "key";
 		public static final String IS_BOOKING = "booking";
 		public static final String IS_BOOKING_F = "firstname";

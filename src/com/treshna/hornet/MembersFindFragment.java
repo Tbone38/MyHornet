@@ -24,15 +24,15 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class MemberFindFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class MembersFindFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 	
 	Cursor cur;
 	ContentResolver contentResolver;
-	MemberFindAdapter mAdapter;
+	MembersFindAdapter mAdapter;
 	LoaderManager loadermanager;
 	Context parent;
 	View view;
-	private String input;
+	private static String input;
 	private boolean is_booking;
 	private OnMemberSelectListener mCallback;
 	private static final String TAG = "MemberFindFragment";
@@ -42,6 +42,10 @@ public class MemberFindFragment extends ListFragment implements LoaderManager.Lo
 		super.onCreate(savedInstanceState);
 		// Show the Up button in the action bar.
 		Log.v(TAG, "Creating MemberFindFragment");
+		
+		if (savedInstanceState != null) {
+			input = savedInstanceState.getString("input");
+		}
 	 	is_booking = false;
 	 	Bundle b = null;
 	 	try {
@@ -70,6 +74,13 @@ public class MemberFindFragment extends ListFragment implements LoaderManager.Lo
 	  }
 	 
 	 @Override
+	 public void onSaveInstanceState(Bundle savedInstanceState) {
+		 super.onSaveInstanceState(savedInstanceState);
+		 
+		 savedInstanceState.putString("input", input);
+	}
+	 
+	 @Override
 	 public void onResume(){
 		 super.onResume();
 		 Log.v(TAG, "Resuming MemberFindFragment");
@@ -84,6 +95,9 @@ public class MemberFindFragment extends ListFragment implements LoaderManager.Lo
 		int[] to = new int[] {R.id.name};
 		
 		EditText inputField = (EditText) view.findViewById(R.id.find);
+		if (input != null) {
+			inputField.setText(input);
+		}
 		inputField.addTextChangedListener(new TextWatcher() {
 			@Override
 			public void afterTextChanged(Editable s) {				
@@ -107,9 +121,9 @@ public class MemberFindFragment extends ListFragment implements LoaderManager.Lo
 		//			- handle Bookings differently				- DONE
 		//			-
 		if (is_booking) {
-			mAdapter = new MemberFindAdapter(parent,R.layout.member_find_row, null, from, to, true, mCallback);
+			mAdapter = new MembersFindAdapter(parent,R.layout.member_find_row, null, from, to, true, mCallback);
 		} else {
-			mAdapter = new MemberFindAdapter(parent,R.layout.member_find_row, null, from, to, false, mCallback);
+			mAdapter = new MembersFindAdapter(parent,R.layout.member_find_row, null, from, to, false, mCallback);
 		}
 		setListAdapter(mAdapter);
 		System.out.print("\n\nADAPTER SET: ");

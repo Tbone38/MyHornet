@@ -433,6 +433,7 @@ public class ContentDescriptor {
 	 			public static final String ID = BaseColumns._ID;
 	 			public static final String NAME = "name";
 	 			public static final String CID = "companyid";
+	 			public static final String RTID = "resourcetypeid"; //
 	 			public static final String RTNAME = "typename";
 	 			public static final String PERIOD = "period";
 	 			public static final String LASTUPDATE = "lastupdate";

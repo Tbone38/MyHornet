@@ -61,8 +61,8 @@
     	        android:clickable="true">
     	        <ImageView
     	            android:id="@+id/button_mn_memberships_drawable"
-    	            android:layout_width="50dp"
-    	            android:layout_height="50dp"
+    	            android:layout_width="40dp"
+    	            android:layout_height="40dp"
     	            android:background="@drawable/ic_action_add_to_queue"
     	            android:padding="1dp" />
     	        <TextView
@@ -86,8 +86,8 @@
     		    android:clickable="true" >
     		    <ImageView
     		        android:id="@+id/button_mn_notes_drawable"
-    		        android:layout_width="50dp"
-    		        android:layout_height="50dp"
+    		        android:layout_width="40dp"
+    		        android:layout_height="40dp"
     		        android:background="@drawable/ic_action_edit"
     		        android:padding="1dp" />
     		    <TextView
@@ -111,8 +111,8 @@
     		    android:clickable="true" >
     		    <ImageView
     		        android:id="@+id/button_mn_visits_drawable"
-    		        android:layout_width="50dp"
-    		        android:layout_height="50dp"
+    		        android:layout_width="40dp"
+    		        android:layout_height="40dp"
     		        android:background="@drawable/ic_action_group"
     		        android:padding="1dp" />
     		    <TextView 
@@ -136,8 +136,8 @@
     		    android:clickable="true" >
     		    <ImageView
     		        android:id="@+id/button_mn_booking_drawable"
-    		        android:layout_width="50dp"
-    		        android:layout_height="50dp"
+    		        android:layout_width="40dp"
+    		        android:layout_height="40dp"
     		        android:background="@drawable/ic_action_event"
     		        android:padding="1dp" />
     		    <TextView
@@ -162,8 +162,8 @@
     		    android:clickable="true" >
     		    <ImageView
     		        android:id="@+id/button_mn_finance_drawable"
-    		        android:layout_width="50dp"
-    		        android:layout_height="50dp"
+    		        android:layout_width="40dp"
+    		        android:layout_height="40dp"
     		        android:background="@drawable/ic_action_network_cell"
     		        android:padding="1dp" />
     		    <TextView
@@ -187,8 +187,8 @@
     		    android:clickable="true" >
     		    <ImageView
     		        android:id="@+id/button_mn_actions_drawable"
-    		        android:layout_width="50dp"
-    		        android:layout_height="50dp"
+    		        android:layout_width="40dp"
+    		        android:layout_height="40dp"
     		        android:background="@drawable/ic_action_view_as_list"
     		        android:padding="1dp" />
     		    <TextView

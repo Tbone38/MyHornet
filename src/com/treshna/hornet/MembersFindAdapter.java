@@ -16,10 +16,10 @@ import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
-import com.treshna.hornet.MemberFindFragment.OnMemberSelectListener;
+import com.treshna.hornet.MembersFindFragment.OnMemberSelectListener;
 import com.treshna.hornet.R.color;
 
-public class MemberFindAdapter extends SimpleCursorAdapter implements OnClickListener {
+public class MembersFindAdapter extends SimpleCursorAdapter implements OnClickListener {
 	
 	public final static String EXTRA_ID = "com.treshna.hornet.ID";
 	Context context;
@@ -31,7 +31,7 @@ public class MemberFindAdapter extends SimpleCursorAdapter implements OnClickLis
 	private int selectedPos = -1;
 	
 	@SuppressWarnings("deprecation")
-	public MemberFindAdapter(Context context, int layout, Cursor c,
+	public MembersFindAdapter(Context context, int layout, Cursor c,
 			String[] from, int[] to, boolean booking, OnMemberSelectListener act) {
 		super(context, layout, c, from, to);
 		this.context = context;

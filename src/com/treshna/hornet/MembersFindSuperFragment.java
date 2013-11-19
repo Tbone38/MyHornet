@@ -2,7 +2,7 @@ package com.treshna.hornet;
 
 import java.util.ArrayList;
 
-import com.treshna.hornet.MemberFindFragment.OnMemberSelectListener;
+import com.treshna.hornet.MembersFindFragment.OnMemberSelectListener;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -21,7 +21,7 @@ import android.widget.ListView;
 /*
  * 
  */
-public class MemberFindSuperFragment extends Fragment implements OnMemberSelectListener{
+public class MembersFindSuperFragment extends Fragment implements OnMemberSelectListener{
    
 	private static final String TAG = "LastVisitorsFragment";
 	private View view;
@@ -39,7 +39,7 @@ public class MemberFindSuperFragment extends Fragment implements OnMemberSelectL
 		
 		FragmentManager fragmentManager = this.getChildFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
-        MemberFindFragment f = new MemberFindFragment();
+        MembersFindFragment f = new MembersFindFragment();
         f.setMemberSelectListener(this);
         ft.replace(R.id.frame_right, f);
         ft.commit();
@@ -72,7 +72,7 @@ public class MemberFindSuperFragment extends Fragment implements OnMemberSelectL
 			//show member details
 			FragmentManager fragmentManager = this.getChildFragmentManager();
 	        FragmentTransaction ft = fragmentManager.beginTransaction();
-	        NewMemberDetailsFragment f = new NewMemberDetailsFragment();
+	        MemberDetailsFragment f = new MemberDetailsFragment();
 	        Bundle bdl = new Bundle(1);
 	        bdl.putString(Services.Statics.MID, id);
 	        f.setArguments(bdl);

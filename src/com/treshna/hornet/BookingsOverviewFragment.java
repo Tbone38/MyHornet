@@ -1,5 +1,7 @@
 package com.treshna.hornet;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -50,6 +52,7 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
         if (cur != null) cur.close();
         	
     }
+	
 	
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 	@Override
@@ -618,10 +621,21 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
 		switch (v.getId()){
 		case (R.id.listRow):{
 			String resourceid = (String) v.getTag();
-			//new Fragment, replace this fragment.
-			//Fragment f = new BookingsSlideFragment();
+			Services.setPreference(getActivity(), "resourcelist", resourceid);
+			
 			Fragment f = new BookingsResourceFragment();
-			((BookingsListSuperFragment)this.getParentFragment()).changeFragment(f);
+			Bundle bdl = new Bundle(2);
+			SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd", Locale.US);
+			Date date;
+			try {
+				date = format.parse(selectedDate);
+			} catch (ParseException e) {
+				date = new Date();
+			}
+        	bdl.putLong("date", date.getTime());
+        	bdl.putBoolean("hasOverview", true);
+        	f.setArguments(bdl);
+			((BookingsListSuperFragment)this.getParentFragment()).changeFragment(f, "ResourceFragment");
 		}
 		default:
 			break;

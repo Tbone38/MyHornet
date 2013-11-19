@@ -92,7 +92,7 @@ public class EmptyActivity extends NFCActivity{
 			}
 		
 		} else if (view == Services.Statics.FragmentType.MemberDetails.getKey()) {
-			Fragment f = new NewMemberDetailsFragment();
+			Fragment f = new MemberDetailsFragment();
 			f.setArguments(bdl);
 			ft.replace(R.id.empty_layout, f);
 		}

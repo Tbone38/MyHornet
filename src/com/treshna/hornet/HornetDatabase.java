@@ -282,6 +282,10 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		repopulateTable(db);
 	}
 
+	/**
+	 * TODO: rather than drop all the tables each time I make a db change, do like the GymMaster:
+	 * modify each table to ensure it's up to date, and then tell the application to resync the data for that table.
+	 */
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		Log.w(HornetDatabase.class.getName(),

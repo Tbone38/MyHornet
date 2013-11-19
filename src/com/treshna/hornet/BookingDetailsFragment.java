@@ -27,6 +27,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -184,19 +185,19 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 					public void onNothingSelected(AdapterView<?> arg0) {
 						//leave alone (doesn't matter?)
 					}});
-			TextView cancel = (TextView) page.findViewById(R.id.bookingcancel);
+			LinearLayout cancel = (LinearLayout) page.findViewById(R.id.button_booking_cancel);
 			cancel.setClickable(true);
 			cancel.setOnClickListener(this);
-			TextView checkin = (TextView) page.findViewById(R.id.bookingcheckin);
+			LinearLayout checkin = (LinearLayout) page.findViewById(R.id.button_booking_checkin);
 			checkin.setClickable(true);
 			checkin.setOnClickListener(this);
-			TextView noshow = (TextView) page.findViewById(R.id.bookingnoshow);
+			LinearLayout noshow = (LinearLayout) page.findViewById(R.id.button_booking_noshow);
 			noshow.setClickable(true);
 			noshow.setOnClickListener(this);
 			
 			cur.close();
 			cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, "m."+ContentDescriptor.Member.Cols.MID+" = "+memberID, null, null);
-			TextView sms = (TextView) page.findViewById(R.id.bookingsms);
+			LinearLayout sms = (LinearLayout) page.findViewById(R.id.button_booking_sms);
 			String smsno = "";
 			cur.moveToFirst();
 			if (cur.getCount()>0) {
@@ -209,15 +210,17 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 						sms.setClickable(true);
 						sms.setOnClickListener(this);
 					} else {
-						sms.setTextColor(color.grey);
+						TextView smstext = (TextView)sms.findViewById(R.id.button_booking_sms_text);
+						smstext.setTextColor(color.grey);
 					}
 				}else {
-					sms.setTextColor(color.grey);
+					TextView smstext = (TextView)sms.findViewById(R.id.button_booking_sms_text);
+					smstext.setTextColor(color.grey);
 				}
 				/*for (int l=0; l<cur.getColumnCount(); l+=1){
 					System.out.print("\nColumn: "+l+"  Name:"+cur.getColumnName(l)+"  Value:"+cur.getString(l));
 				}*/
-				TextView call = (TextView) page.findViewById(R.id.bookingcall);
+				LinearLayout call = (LinearLayout) page.findViewById(R.id.button_booking_call);
 				// onclick, alert dialog box, select * number to call ?
 				String[] callNo = new String[3];
 				int l = 0;
@@ -243,7 +246,8 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 					}
 				}
 				if (callNo[0].isEmpty() && callNo[1].isEmpty() && callNo[2].isEmpty()) {
-					call.setTextColor(color.grey);
+					TextView calltext = (TextView) call.findViewById(R.id.button_booking_call_text);
+					calltext.setTextColor(color.grey);
 				} else {
 					call.setTag(callNo);
 					call.setClickable(true);
@@ -278,7 +282,7 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 			programme.setVisibility(View.GONE);
 		}
 		
-		TextView reschedule = (TextView) page.findViewById(R.id.bookingreschedule);
+		TextView reschedule = (TextView) page.findViewById(R.id.button_booking_reschedule_text);
 		reschedule.setTextColor(color.grey);
 		
 		//SHOW IMAGE;
@@ -310,7 +314,7 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 	@Override
 	public void onClick(View v) {
 		switch(v.getId()){
-		case(R.id.bookingcancel):{
+		case(R.id.button_booking_cancel):{
 			AlertDialog.Builder alert = new AlertDialog.Builder(ctx);
 		      alert.setMessage("Really Cancel Booking for "+bookingName+"?");
 		      alert.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
@@ -335,7 +339,7 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 		      alert.show();
 		      break;
 		}
-		case(R.id.bookingcheckin):{
+		case(R.id.button_booking_checkin):{
 			AlertDialog.Builder alert = new AlertDialog.Builder(ctx);
 		      alert.setMessage("Check-In "+bookingName+"?");
 		      alert.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
@@ -358,7 +362,7 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 		      alert.show();
 		      break;
 		}
-		case(R.id.bookingnoshow):{
+		case(R.id.button_booking_noshow):{
 			AlertDialog.Builder alert = new AlertDialog.Builder(ctx);
 		      alert.setMessage("Set no-show for "+bookingName+"?");
 		      alert.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
@@ -396,7 +400,7 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 		      alert.show();
 		      break;
 		}*/
-		case (R.id.bookingsms):{
+		case (R.id.button_booking_sms):{
 			//send a text reminder
 			Intent smsIntent = new Intent(Intent.ACTION_VIEW);
 			smsIntent.setType("vnd.android-dir/mms-sms");
@@ -407,7 +411,7 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 			startActivity(smsIntent);
 			break;
 		}
-		case (R.id.bookingcall):{
+		case (R.id.button_booking_call):{
 			//show a pop-up to select the number to call (work, home, cell)
 			String[] numbers = (String[]) v.getTag();
 			selectCall(numbers);

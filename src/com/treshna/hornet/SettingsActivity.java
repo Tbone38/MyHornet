@@ -271,16 +271,6 @@ public class SettingsActivity extends PreferenceActivity {
 		}
 		resource.setEntries(entriesA);
 		resource.setEntryValues(entryValuesA);
-		resource.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-
-			@Override
-			public boolean onPreferenceChange(Preference preference, Object newValue) {
-				System.out.print("\n\n"+newValue);
-				buildTimeSlot((String)newValue);
-				return true;
-			}
-			
-		});
 		category.addPreference(resource);
 		
        
@@ -326,13 +316,6 @@ public class SettingsActivity extends PreferenceActivity {
 		//return result;
 	}
 	
-	
-	private void buildTimeSlot(String value){
-		Intent updateInt = new Intent(this, HornetDBService.class);
-		updateInt.putExtra(Services.Statics.KEY, Services.Statics.RESOURCESELECTED);
-		updateInt.putExtra("newtime", value);
-	 	this.startService(updateInt);
-	}
 
 	/** {@inheritDoc} */
 	@Override
