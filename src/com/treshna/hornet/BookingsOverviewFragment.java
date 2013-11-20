@@ -9,7 +9,11 @@ import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
@@ -42,7 +46,16 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
 	private View view;
 	private String selectedDate;
 	private LayoutInflater mInflater;
+	private DatePickerFragment mDatePicker;
 	TextView mMonth = null, mDay = null, mYear = null;
+	
+	private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        @Override //when the data-picker finishes, sends out a broadcast.
+        public void onReceive(Context context, Intent intent) {
+            BookingsOverviewFragment.this.receivedBroadcast(intent);
+        }	
+    };
+	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,13 +66,35 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
         	
     }
 	
+	private void receivedBroadcast(Intent i) {
+		selectedDate = mDatePicker.getReturnValue();
+		selectedDate = Services.dateFormat(selectedDate, "yyyy MM dd", "yyyyMMdd");
+		updateDate();
+		getList(mInflater);
+	}
+	
+	@Override 
+	public void onResume() {
+		super.onResume();
+		IntentFilter iff = new IntentFilter();
+	    iff.addAction(ClassCreate.CLASSBROADCAST);
+	    getActivity().registerReceiver(this.mBroadcastReceiver,iff);
+	}
+	
+	@Override
+	public void onPause(){
+		super.onPause();
+		getActivity().unregisterReceiver(this.mBroadcastReceiver);
+	}
+	
 	
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {	
 		super.onCreateView(inflater, container, savedInstanceState);
-        view = inflater.inflate(R.layout.new_booking_overview, container, false);
+        view = inflater.inflate(R.layout.booking_overview, container, false);
         mInflater = inflater;
+        mDatePicker = new DatePickerFragment();
         
         RelativeLayout calendarwrapper = (RelativeLayout) view.findViewById(R.id.booking_overview_calendar_wrapper);
         
@@ -69,7 +104,7 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
         	RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         	
         	mMonth = new TextView(getActivity());
-        	mMonth.setTextSize(18);
+        	mMonth.setTextSize(49);
         	mMonth.setTextColor(this.getResources().getColor(R.color.android_blue));
         	mMonth.setLayoutParams(params);
         	mMonth.setId(10);
@@ -81,7 +116,7 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
         	params.addRule(RelativeLayout.BELOW, 10);
         	
         	mDay = new TextView(getActivity());
-        	mDay.setTextSize(24);
+        	mDay.setTextSize(55);
         	mDay.setTextColor(this.getResources().getColor(R.color.android_blue));
         	mDay.setLayoutParams(params);
         	mDay.setId(20);
@@ -93,13 +128,14 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
         	params.addRule(RelativeLayout.BELOW, 20);
         	
         	mYear = new TextView(getActivity());
-        	mYear.setTextSize(16);
+        	mYear.setTextSize(47);
         	mYear.setTextColor(this.getResources().getColor(R.color.android_blue));
         	mYear.setLayoutParams(params);
         	mYear.setId(30);
         	mYear.setGravity(Gravity.CENTER_HORIZONTAL);
-        	
-	        CalendarView calendar = new CalendarView(getActivity());
+        	selectedDate = Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");
+	        updateDate();
+	        /*CalendarView calendar = new CalendarView(getActivity());
 	        
 	        Calendar cal = Calendar.getInstance(Locale.US);
 	        calendar.setDate(cal.getTime().getTime());
@@ -123,11 +159,13 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
 						updateDate();
 				}
 	        	
-	        });
+	        });*/
 	        calendarwrapper.addView(mMonth);
 	        calendarwrapper.addView(mDay);
 	        calendarwrapper.addView(mYear);
-	        calendarwrapper.addView(calendar);
+	        calendarwrapper.setClickable(true);
+	        calendarwrapper.setOnClickListener(this);
+	        //calendarwrapper.addView(calendar);
 	        
         } else {
         	DatePicker date = new DatePicker(getActivity());
@@ -184,7 +222,7 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
 		 LinearLayout list = (LinearLayout) view.findViewById(R.id.booking_resource_list); 
 		 list.removeAllViews();
 		 for (int i=0; i<resource.size(); i++) {
-			 View row = inflater.inflate(R.layout.new_booking_overview_row, null);
+			 View row = inflater.inflate(R.layout.booking_overview_row, null);
 			 row.setClickable(true);
 			 row.setTag(resource.get(i)[0]);
 			 row.setOnClickListener(this);
@@ -636,6 +674,13 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
         	bdl.putBoolean("hasOverview", true);
         	f.setArguments(bdl);
 			((BookingsListSuperFragment)this.getParentFragment()).changeFragment(f, "ResourceFragment");
+		}
+		case (R.id.booking_overview_calendar_wrapper):{
+			Bundle bdl = new Bundle(1);
+			bdl.putString(Services.Statics.KEY, selectedDate);
+			
+			mDatePicker.setArguments(bdl);
+			mDatePicker.show(this.getChildFragmentManager(), "DatePicker");
 		}
 		default:
 			break;

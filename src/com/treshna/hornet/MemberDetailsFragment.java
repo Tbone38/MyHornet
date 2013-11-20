@@ -71,7 +71,7 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 		  super.onCreateView(inflater, container, savedInstanceState);
 	
-		  view = inflater.inflate(R.layout.new_member_details, container, false);
+		  view = inflater.inflate(R.layout.member_details, container, false);
 	      //view = setupView();
 		  view = setupLayout();
 		  
@@ -125,10 +125,7 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener {
 	    LinearLayout visits = (LinearLayout) view.findViewById(R.id.button_member_navigation_visits);
 	    visits.setOnClickListener(this);
 	    visits.setVisibility(View.GONE);
-		
-	    LinearLayout actions = (LinearLayout) view.findViewById(R.id.button_member_navigation_actions);
-	    actions.setOnClickListener(this);
-	    
+			    
 	    LinearLayout finance = (LinearLayout) view.findViewById(R.id.button_member_navigation_finance);
 	    finance.setOnClickListener(this);
 	    finance.setVisibility(View.GONE);
@@ -163,7 +160,7 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener {
 	private void reDrawButtonMember(){
 		int[] layouts = {R.id.button_member_navigation_booking, R.id.button_member_navigation_finance,
 				R.id.button_member_navigation_memberships, R.id.button_member_navigation_notes,
-				R.id.button_member_navigation_visits, R.id.button_member_navigation_actions};
+				R.id.button_member_navigation_visits};
 		
 		for (int i=0; i <layouts.length; i++) {
 			LinearLayout button = (LinearLayout) view.findViewById(layouts[i]);
@@ -200,15 +197,6 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener {
 	        bdl.putString(Services.Statics.MID, memberID);
 	        f.setArguments(bdl);
 	        selectedFragment = R.id.button_member_navigation_memberships;
-	        setupFragment(f);
-	        break;
-		}
-		case (R.id.button_member_navigation_actions):{
-			Fragment f = new MemberActionsFragment();
-			Bundle bdl = new Bundle(1);
-	        bdl.putString(Services.Statics.MID, memberID);
-	        f.setArguments(bdl);
-	        selectedFragment = R.id.button_member_navigation_actions;
 	        setupFragment(f);
 	        break;
 		}

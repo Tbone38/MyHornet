@@ -1,123 +1,30 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" 
-    android:layout_width="fill_parent" 
-    android:layout_height="fill_parent">
-<RelativeLayout
-    android:id="@+id/pageLayout"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:padding="7dp"
-    tools:context=".MemberDetails" >  
-    
-    <TextView android:id="@+id/memberName"
-        android:padding="3dp"
-    	android:textSize="26sp"
-        android:textStyle="bold"
-        android:layout_width="match_parent"
-    	android:layout_height="wrap_content"
-    	android:gravity="center"
-        android:textIsSelectable="true"/>
-    
-    <android.support.v4.view.ViewPager
-    	android:id="@+id/gallery"
-    	android:layout_width="match_parent"
-    	android:layout_height="240dp"
-    	android:layout_below="@id/memberName"
-    	android:layout_gravity="center"
-    	/>  
-    	
-    <RelativeLayout
-        android:id="@+id/overlayleft"
-        android:layout_width="50dp"
-        android:layout_height="240dp"
-        android:layout_alignLeft="@id/gallery"
-        android:layout_alignTop="@id/gallery"
-        android:background="@color/overlay"
-        android:gravity="center"
-        android:layout_below="@id/memberName" >
-	    
-	</RelativeLayout>
-    
-    <RelativeLayout
-        android:id="@+id/overlayright"
-        android:layout_width="50dp"
-        android:layout_height="240dp"
-        android:layout_alignRight="@id/gallery"
-        android:layout_alignTop="@id/gallery"
-        android:background="@color/overlay"
-        android:gravity="center"
-        android:layout_below="@id/memberName" >
-    
-	    
-	</RelativeLayout>
-  
-    <!-- <ImageView
-        android:id="@+id/smiley"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignBottom="@id/memberName"
-        android:layout_alignTop="@id/memberName"
-       	android:layout_below="@id/memberDetailsH"
-        android:contentDescription="@string/smiley_description"/> -->
-	 
-	 <LinearLayout android:id="@+id/memberDetails"
-    	android:layout_width="match_parent"
-    	android:layout_height="wrap_content"
-    	android:layout_below="@id/gallery"
-    	android:orientation="vertical"
-    	tools:context=".MemberDetails">
-	</LinearLayout>
-	 <TextView
-    	android:id="@+id/memberinfoH"
-        android:padding="3dp"
-    	android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="@color/white"
-        android:background="@color/gym"
-        android:text="@string/heading_member_details"
-        android:layout_width="match_parent"
-    	android:layout_height="wrap_content"
-        android:textIsSelectable="false"
-        android:layout_below="@id/memberDetails"
-    />
-	<LinearLayout android:id="@+id/memberinfo"
-    	android:layout_width="match_parent"
-    	android:layout_height="wrap_content"
-    	android:layout_below="@id/memberinfoH"
-    	android:orientation="vertical"
-    	tools:context=".MemberDetails">
-	</LinearLayout>
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"> 
 	<LinearLayout
-	    android:id="@+id/membernotes"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    android:layout_below="@id/memberinfo"
-	    android:orientation="vertical" >
-	    
-	    <TextView
-    	android:id="@+id/membernotesH"
-        android:padding="3dp"
-    	android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="@color/white"
-        android:background="@color/gym"
-        android:text="@string/heading_member_notes"
-        android:layout_width="match_parent"
-    	android:layout_height="wrap_content"
-        android:textIsSelectable="false" />
-	    
+	    android:id="@+id/panel_frame"
+	    android:tag="dual_panel"
+	    android:orientation="vertical"
+	    android:baselineAligned="false"
+	    tools:context=".MainActivity" >
+		
+		<FrameLayout
+		    android:id="@+id/frame_top"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content" >
+			    <include layout="@layout/member_details_navigation"/>
+		</FrameLayout>
+		
+		<FrameLayout
+		    android:id="@+id/frame_bottom"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content" >
+		</FrameLayout>
+		
 	</LinearLayout>
-	 
-	<LinearLayout 
-	    android:id="@+id/memberActions"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:layout_below="@id/membernotes">
-    	<include 
-    	    android:id="@+id/memberActionsList"
-    	    layout="@layout/member_details_actions" />
-    </LinearLayout>
-		    
-</RelativeLayout>
 </ScrollView>

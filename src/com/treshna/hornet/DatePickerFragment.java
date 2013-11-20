@@ -55,6 +55,7 @@ public class DatePickerFragment extends DialogFragment
 		bcIntent = new Intent();
 		bcIntent.setAction(ClassCreate.CLASSBROADCAST);
 		getActivity().sendBroadcast(bcIntent);
+		this.dismiss();
 	}
 	
 	public String getReturnValue() {

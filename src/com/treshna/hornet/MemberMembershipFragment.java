@@ -1,12 +1,9 @@
 package com.treshna.hornet;
 
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
+
 import android.content.ContentResolver;
 import android.database.Cursor;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +12,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
-public class MemberMembershipFragment extends Fragment {
+public class MemberMembershipFragment extends MemberActionsFragment{
 	Cursor cur;
 	ContentResolver contentResolver;
 	String memberID;
@@ -58,10 +55,12 @@ public class MemberMembershipFragment extends Fragment {
 			name.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PNAME)));
 			
 			TextView start = (TextView) membershipRow.findViewById(R.id.member_ms_started);
-			start.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MSSTART)));
+			start.setText(Services.dateFormat(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MSSTART))
+					, "yyyy-MM-dd", "dd MMM yyyy"));
 			
 			TextView end = (TextView) membershipRow.findViewById(R.id.member_ms_expired);
-			end.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.EXPIRERY)));
+			end.setText(Services.dateFormat(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.EXPIRERY))
+					, "yyyy-MM-dd", "dd MMM yyyy"));
 			
 			TextView visits = (TextView) membershipRow.findViewById(R.id.member_ms_visits);
 			visits.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.VISITS)));
@@ -69,7 +68,8 @@ public class MemberMembershipFragment extends Fragment {
 			mslist.addView(membershipRow);
 		}
 		cur.close();
-		
+		super.setupActions(view, memberID);
 		return view;
 	}
+	
 }

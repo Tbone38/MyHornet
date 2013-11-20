@@ -675,6 +675,37 @@ public class JDBCConnection {
     	pStatement.execute();
     }
     
+    public ResultSet getMemberNotes(Long lastupdate) throws SQLException {
+    	ResultSet rs = null;
+    	
+    	pStatement = con.prepareStatement("SELECT membernotes.* FROM membernotes LEFT JOIN member ON ("
+    			+ "membernotes.memberid = member.id) WHERE member.status != 3 AND membernotes.occurred >= ?::date;");
+    	pStatement.setString(1, Services.dateFormat(new Date(lastupdate).toString(),
+				"EEE MMM dd HH:mm:ss zzz yyyy", "dd-MM-yyyy"));
+    	rs = pStatement.executeQuery();
+    	
+    	return rs;
+    }
+    
+    
+    public int uploadMemberNotes(int membernoteid, int memberid, String notes, String occured) throws SQLException {
+    	pStatement = con.prepareStatement("INSERT INTO membernotes (id, memberid, notes, occurred) VALUES "
+    			+ "(?, ?, ?, ?::date");
+    	pStatement.setInt(1, membernoteid);
+    	pStatement.setInt(2, memberid);
+    	pStatement.setString(3, notes);
+    	pStatement.setString(4, occured);
+    	
+    	pStatement.executeUpdate();
+    	closePreparedStatement();
+    	//this shouldn't break things, as the update notes trigger checks if it exists first.
+    	pStatement = con.prepareStatement("UPDATE member SET (notes) = (?) WHERE id = ?");
+    	pStatement.setString(1, notes);
+    	pStatement.setInt(2, memberid);
+    	
+    	return pStatement.executeUpdate();
+    }
+    
     
     public ResultSet startStatementQuery(String query) throws SQLException {
     	ResultSet rs = null;

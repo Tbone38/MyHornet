@@ -105,7 +105,7 @@ public class EmptyActivity extends NFCActivity{
 	}
 	
 	public void setTitle(String title) {
-		this.setTitle(title);
+		super.setTitle(title);
 	}
 	
 	@Override

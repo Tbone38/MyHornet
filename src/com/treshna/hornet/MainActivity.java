@@ -102,6 +102,7 @@ public class MainActivity extends NFCActivity {
 				BookingsResourceFragment resourceFragment = (BookingsResourceFragment) f.getCurrentFragment();
 				if (resourceFragment.hasOverView()) {
 					f.onBackPressed();
+					
 				} else {
 					ActionBar ab = this.getSupportActionBar();
 					ab.setSelectedNavigationItem(0); //just go back to the Find Member View?

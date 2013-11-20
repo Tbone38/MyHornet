@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import com.treshna.hornet.MembersFindFragment.OnMemberSelectListener;
+
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.ContentResolver;
@@ -19,6 +20,7 @@ import android.nfc.tech.NfcA;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
@@ -126,6 +128,15 @@ public class BookingPage extends ActionBarActivity implements OnMemberSelectList
 			}
 			ft.commit();
 		}
+	}
+	
+	@Override
+	public void onBackPressed() {
+		Fragment f = frm.findFragmentByTag("AddBooking");
+		if (f != null && f.isVisible()) { //hack to remove empty fragment on back press (from add Booking).
+			super.onBackPressed();
+		}
+		super.onBackPressed();
 	}
 
 	@Override

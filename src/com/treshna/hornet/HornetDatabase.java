@@ -17,6 +17,7 @@ import com.treshna.hornet.ContentDescriptor.Door;
 import com.treshna.hornet.ContentDescriptor.IdCard;
 import com.treshna.hornet.ContentDescriptor.Image;
 import com.treshna.hornet.ContentDescriptor.Member;
+import com.treshna.hornet.ContentDescriptor.MemberNotes;
 import com.treshna.hornet.ContentDescriptor.Membership;
 import com.treshna.hornet.ContentDescriptor.MembershipSuspend;
 import com.treshna.hornet.ContentDescriptor.OpenTime;
@@ -279,6 +280,11 @@ public class HornetDatabase extends SQLiteOpenHelper {
 				+Door.Cols.DOORID+" INTEGER, "+Door.Cols.DOORNAME+" TEXT "
 				+");");
 		
+		db.execSQL("CREATE TABLE "+MemberNotes.NAME+" ("+MemberNotes.Cols._ID+" INTEGER PRIMARY KEY, "
+				+MemberNotes.Cols.MNID+" INTEGER NOT NULL DEFAULT 0, "+MemberNotes.Cols.MID+" INTEGER NOT NULL DEFAULT 0, "
+				+MemberNotes.Cols.NOTES+" TEXT, "+MemberNotes.Cols.OCCURRED+" TEXT "
+				+" );");
+		
 		repopulateTable(db);
 	}
 
@@ -336,6 +342,7 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS "+PaymentMethod.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+PendingDownloads.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+Door.NAME);
+		db.execSQL("DROP TABLE IF EXISTS "+MemberNotes.NAME);
 	}
 	
 	private void repopulateTable(SQLiteDatabase db) {

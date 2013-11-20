@@ -16,11 +16,11 @@ import android.provider.BaseColumns;
  *   11 = TableIndex					130:
  *   12:								135:
  *   13 = PendingUploads				140 = Visitor
- *   50:								150:
- *   55 = Company (unused)				
+ *   50:								111:
+ *   55 = Company (unused)				112 = MemberNotes
  *   60:
  *   61 = Payment Method
- *   62:
+ *   62:								150:
  *   63 = door							155:
  *   80:								160:
  *   90 = ResultStatus					165 = Images
@@ -123,6 +123,7 @@ public class ContentDescriptor {
 	     matcher.addURI(authority, Programme.PATH_FOR_GROUP, Programme.PATH_FOR_GROUP_TOKEN);
 	     
 	     matcher.addURI(authority, Door.PATH, Door.PATH_TOKEN);
+	     matcher.addURI(authority, MemberNotes.PATH, MemberNotes.PATH_TOKEN);
 	     
 	     matcher.addURI(authority, DROPTABLE, TOKEN_DROPTABLE);
 	     
@@ -752,6 +753,25 @@ public class ContentDescriptor {
 	 		}
 	 	}
 	 	
+	 	public static class MemberNotes {
+	 		public static final String NAME = "membernotes";
+	 		public static final String PATH  = "membernotes";
+	 		public static final int PATH_TOKEN = 111;
+	 		public static final String PATH_FOR_ID = "membernotes/*";
+	 		public static final int PATH_FOR_ID_TOKEN = 112;
+	 		
+	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
+	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.membernotes";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.membernotes";
+	 		
+	 		public static class Cols implements BaseColumns {
+	 			public static final String MNID = "membernoteid";
+	 			public static final String MID = "memberid";
+	 			public static final String OCCURRED = "occurred";
+	 			public static final String NOTES = "notes";
+	 		}
+	 	}
+	 	
 	 	public static class TableIndex {
 	 		public static final String NAME = "TableIndex";
 	 		public static final String PATH = "TableIndex";
@@ -773,7 +793,7 @@ public class ContentDescriptor {
 	 		public static enum Values {
 	 			Booking(1), Class(2), Swipe(3),Membership(4) /*when adding memberships*/,
 	 					Member(5) /*when adding members/prospects*/,Image(6),
-	 					MembershipSuspend(7);
+	 					MembershipSuspend(7), MemberNotes(8);
 	 			
 	 			private final int key;
 	 			

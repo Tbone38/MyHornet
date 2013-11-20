@@ -12,6 +12,9 @@ import android.database.Cursor;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,7 +27,7 @@ import android.widget.SimpleCursorAdapter;
 /*
  * 
  */
-public class LastVisitorsFragment extends ListFragment implements OnClickListener{
+public class LastVisitorsFragment extends ListFragment implements OnClickListener,  LoaderManager.LoaderCallbacks<Cursor>{
 	private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override //when the server sync finishes, it sends out a broadcast.
         public void onReceive(Context context, Intent intent) {
@@ -33,9 +36,9 @@ public class LastVisitorsFragment extends ListFragment implements OnClickListene
         }
     };
 	
-	private static ContentResolver contentResolver = null;
-    private static Cursor cur = null;
+    private Cursor cur = null;
     private SimpleCursorAdapter mAdapter;
+    private LoaderManager mLoader;
 	private static int currentDisplay = -1; //make this private.
     
 	public static final int LASTVISITORS = 1;
@@ -54,7 +57,7 @@ public class LastVisitorsFragment extends ListFragment implements OnClickListene
         Services.setContext(getActivity());
         Log.v(TAG, "Creating Last Visitors");
         context = getActivity().getApplicationContext();
-        contentResolver = getActivity().getContentResolver();
+        mLoader = this.getLoaderManager();
         if (cur != null) cur.close();
         
         /**the below code needs to run on app start.
@@ -73,9 +76,15 @@ public class LastVisitorsFragment extends ListFragment implements OnClickListene
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {	
 		super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.new_visitor_list, container, false);
-		//View view = inflater.inflate(R.layout.new_visitor_frame, container, false);
+        View view = inflater.inflate(R.layout.visitor_list, container, false);
 		
+        getActivity().setTitle("Last Visitors");
+        String[] from = {};
+        int[] to = {};
+        mLoader.initLoader(0, null, this);
+        mAdapter = new VisitorsViewAdapter(getActivity(), R.layout.visitor_row, cur, from, to, this);
+        setListAdapter(mAdapter);
+        
         return view;
     }
 	
@@ -126,24 +135,7 @@ public class LastVisitorsFragment extends ListFragment implements OnClickListene
 	 }
 	
 	 private void getList(){
-		 mAdapter = null;
-	
-		 System.out.println("Displaying Last Visitors"); //Display Last Visitors
-       	
-       	 getActivity().setTitle("Last Visitors");
-       	 try {
-       		 cur.close();
-       	 } catch (Exception e) {
-       		 cur = null;
-       	 }
-       	 cur = contentResolver.query(ContentDescriptor.Visitor.VISITOR_JOIN_MEMBER_URI, null, null, null, ContentDescriptor.Visitor.Cols.DATETIME+" DESC limit 100");
-		 String[] from = {};
-		 int[] to = {};
-		 mAdapter = new VisitorsViewAdapter(getActivity(), R.layout.new_visitor_row, cur, from, to, this);
-		 setListAdapter(mAdapter);
-		 ListView listView = getListView();
-		 listView.setTextFilterEnabled(true);
-		 //TEXTFILTER + FILTER will help search?
+		 mLoader.restartLoader(0, null, this);
 	 }
 		
 	private void receivedBroadcast(Intent i) {
@@ -187,6 +179,26 @@ public class LastVisitorsFragment extends ListFragment implements OnClickListene
 			}
 		}
 		}
+	}
+
+	@Override
+	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
+		return new CursorLoader(getActivity(), 
+				ContentDescriptor.Visitor.VISITOR_JOIN_MEMBER_URI, 
+				null, null, null, 
+				ContentDescriptor.Visitor.Cols.DATETIME+" DESC limit 100");
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+		mAdapter.changeCursor(cursor);		
+		mAdapter.notifyDataSetChanged();
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+		mAdapter.changeCursor(null);
+		mAdapter.notifyDataSetChanged();
 	}    
 }
 

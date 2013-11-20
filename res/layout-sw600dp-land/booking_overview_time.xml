@@ -30,7 +30,7 @@
 	       <View 
 	           android:id="@+id/overview_timeslot_mid1"
 	           android:layout_width="match_parent"
-	           android:layout_height="66dp"
+	           android:layout_height="33dp"
 	           android:background="@color/overview_timeslot_mid_grey"/>
 	       <View 
 	           android:id="@+id/overview_timeslot_bottom1"
@@ -53,7 +53,7 @@
 	       <View 
 	           android:id="@+id/overview_timeslot_mid2"
 	           android:layout_width="match_parent"
-	           android:layout_height="66dp"
+	           android:layout_height="33dp"
 	           android:background="@color/overview_timeslot_mid_grey"/>
 	       <View 
 	           android:id="@+id/overview_timeslot_bottom2"
@@ -76,7 +76,7 @@
 	       <View 
 	           android:id="@+id/overview_timeslot_mid3"
 	           android:layout_width="match_parent"
-	           android:layout_height="66dp"
+	           android:layout_height="33dp"
 	           android:background="@color/overview_timeslot_mid_grey"/>
 	       <View 
 	           android:id="@+id/overview_timeslot_bottom3"
@@ -99,7 +99,7 @@
 	       <View 
 	           android:id="@+id/overview_timeslot_mid4"
 	           android:layout_width="match_parent"
-	           android:layout_height="66dp"
+	           android:layout_height="33dp"
 	           android:background="@color/overview_timeslot_mid_grey"/>
 	       <View 
 	           android:id="@+id/overview_timeslot_bottom4"

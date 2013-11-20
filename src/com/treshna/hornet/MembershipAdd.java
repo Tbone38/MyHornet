@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -18,6 +19,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -312,7 +314,7 @@ public class MembershipAdd extends Fragment implements OnClickListener {
 	private void receivedBroadcast(Intent i) {
 		sdate = sDatePicker.getReturnValue();
 		if (sdate != null) {
-			sdate = Services.dateFormat(sdate, "yyyy MM dd", "dd MMM yyyy");// TODO: apply this format everywhere.
+			sdate = Services.dateFormat(sdate, "yyyy MM dd", "dd MMM yyyy");
 		}
 		edate = eDatePicker.getReturnValue();
 		if (edate != null) {
@@ -376,12 +378,9 @@ public class MembershipAdd extends Fragment implements OnClickListener {
 				updateView(emptyviews);
 			} else {
 				ArrayList<String> results = getInput();
-				//insert results
-				int row = insertMembership(results);
-				//continue to next page
 				
 				Bundle bdl = new Bundle(1);
-				bdl.putInt(Services.Statics.KEY, row);
+				bdl.putStringArrayList(Services.Statics.KEY, results);//(Services.Statics.KEY, );
 				EmptyActivity parent = (EmptyActivity) getActivity();
 				parent.setFragment(Services.Statics.FragmentType.MembershipComplete.getKey(), bdl);
 			}
@@ -510,61 +509,5 @@ public class MembershipAdd extends Fragment implements OnClickListener {
 		
 		return input;
 	}
-
-	private int insertMembership(ArrayList<String> input) {
-		ContentValues values = new ContentValues();
-		
-		values.put(ContentDescriptor.Membership.Cols.MID, input.get(0));
-		values.put(ContentDescriptor.Membership.Cols.PGID, input.get(1));
-		values.put(ContentDescriptor.Membership.Cols.PID, input.get(2));
-		values.put(ContentDescriptor.Membership.Cols.MSSTART, input.get(3));
-		if (input.get(4) != null) {
-			values.put(ContentDescriptor.Membership.Cols.EXPIRERY, input.get(4));
-		}
-		values.put(ContentDescriptor.Membership.Cols.PRICE, input.get(5));
-		//payment-date?
-		values.put(ContentDescriptor.Membership.Cols.SIGNUP, input.get(7));
-		if (input.get(8) != null) {
-			values.put(ContentDescriptor.Membership.Cols.CARDNO, input.get(8));
-		}
-		values.put(ContentDescriptor.Membership.Cols.CREATION, Services.dateFormat(new Date().toString(),
-				"EEE MMM dd HH:mm:ss zzz yyyy", "dd MMM yyyy HH:mm:ss"));
-		cur = contentResolver.query(ContentDescriptor.Programme.CONTENT_URI, null, ContentDescriptor.Programme.Cols.PID+" = ?",
-				new String[] {input.get(2)}, null);
-		if (cur.moveToFirst()) {
-			values.put(ContentDescriptor.Membership.Cols.PNAME, 
-					cur.getString(cur.getColumnIndex(ContentDescriptor.Programme.Cols.NAME)));
-		}
-		cur.close();
-		
-		int msid;
-		String rowid = "-1";
-		cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols.MID+" = 0",
-				null, null);
-		if (!cur.moveToFirst()) {
-			msid = -1;
-		} else {
-			msid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MSID));
-			rowid = cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols._ID));
-		}
-		cur.close();
-		
-		if (msid > 0) {
-			contentResolver.update(ContentDescriptor.Membership.CONTENT_URI, values, ContentDescriptor.Membership.Cols.MSID+" = ?",
-					new String[] {String.valueOf(msid)});
-			
-			values = new ContentValues();
-			values.put(ContentDescriptor.PendingUploads.Cols.TABLEID, ContentDescriptor.TableIndex.Values.Membership.getKey());
-			values.put(ContentDescriptor.PendingUploads.Cols.ROWID, rowid);
-			contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, values);
-		} else {
-			values.put(ContentDescriptor.Membership.Cols.MSID, msid);
-			Uri row =contentResolver.insert(ContentDescriptor.Membership.CONTENT_URI, values);
-			rowid = row.getLastPathSegment();
-		}
-		Log.v(TAG, "insert rowid: "+rowid);
-		
-		return Integer.parseInt(rowid);
-	}
-
+	
 }

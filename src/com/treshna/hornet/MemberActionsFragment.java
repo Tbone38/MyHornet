@@ -18,7 +18,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -31,39 +30,22 @@ import android.widget.Toast;
 public class MemberActionsFragment extends Fragment implements OnClickListener {
 	Cursor cur;
 	ContentResolver contentResolver;
-	String memberID;
-	private View view;
 	LayoutInflater mInflater;
 	RadioGroup rg;
 	View checkinWindow;
+	private String mId; 
 	
-	private static final String TAG = "MemberDetails";
+	private static final String TAG = "MemberActions";
 	
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		Services.setContext(getActivity());
-		contentResolver = getActivity().getContentResolver();
-		memberID = this.getArguments().getString(Services.Statics.MID);
-	}
-	
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-		super.onCreateView(inflater, container, savedInstanceState);
-	
-		view = inflater.inflate(R.layout.member_details_actions, container, false);
-		
-		mInflater = getActivity().getLayoutInflater();
-		view = setupView();
-		return view;
-	}
-		
-	private View setupView() {
+			
+	public void setupActions(View view, String memberID) {
+		this.mId = memberID;
 		Uri uri = Uri.withAppendedPath(ContentDescriptor.Image.IMAGE_JOIN_MEMBER_URI,
 				memberID);
+		contentResolver = this.getActivity().getContentResolver();
 		cur = contentResolver.query(uri, null, null, null, null);
 		if (!cur.moveToFirst()){
-			return view;
+			return;
 		}
 		
 		LinearLayout addMembership = (LinearLayout) view.findViewById(R.id.button_add_membership);
@@ -132,7 +114,7 @@ public class MemberActionsFragment extends Fragment implements OnClickListener {
 		
 		cur.close();
 		
-		return view;
+		return ;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -195,7 +177,7 @@ public class MemberActionsFragment extends Fragment implements OnClickListener {
 		}
 		case (R.id.button_hold):{
 			Intent i = new Intent(getActivity(), MembershipHold.class);
-			i.putExtra(Services.Statics.KEY, memberID);
+			i.putExtra(Services.Statics.KEY, mId);
 			startActivity(i);
 			break;
 		}
@@ -263,7 +245,7 @@ public class MemberActionsFragment extends Fragment implements OnClickListener {
 		checkinWindow = inflater.inflate(R.layout.alert_manual_checkin, null);
 		String name = null;
 		cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, new String[] {Member.Cols.FNAME, Member.Cols.SNAME},
-				"m."+ContentDescriptor.Member.Cols.MID+" = ?", new String[] {String.valueOf(memberID)}, null);
+				"m."+ContentDescriptor.Member.Cols.MID+" = ?", new String[] {String.valueOf(mId)}, null);
 		if (!cur.moveToFirst()) {
 			return;
 		}
@@ -287,7 +269,7 @@ public class MemberActionsFragment extends Fragment implements OnClickListener {
 		
 		ArrayList<String> membershiplist = new ArrayList<String>();
 		cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols.MID+" = ?",
-				new String[] {memberID}, null);
+				new String[] {mId}, null);
 		while (cur.moveToNext()) {
 			//Log.v(TAG, "membership:"+cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PNAME)));
 			membershiplist.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PNAME)));
@@ -308,7 +290,7 @@ public class MemberActionsFragment extends Fragment implements OnClickListener {
 					Spinner membershipSpinner = (Spinner) checkinWindow.findViewById(R.id.manual_checkin_membership);
 					cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, new String[] 
 							{ContentDescriptor.Membership.Cols.MSID}, ContentDescriptor.Membership.Cols.MID+" = ?",
-							new String[] {memberID}, null);
+							new String[] {mId}, null);
 					cur.moveToPosition(membershipSpinner.getSelectedItemPosition());
 					for (int column = 0; column < cur.getColumnCount(); column +=1) {
 						try {
@@ -331,7 +313,7 @@ public class MemberActionsFragment extends Fragment implements OnClickListener {
 					Intent updateInt = new Intent(getActivity(), HornetDBService.class);
 					Bundle extras = new Bundle(3);
 					extras.putInt("doorid", doorid);
-					extras.putInt("memberid", Integer.parseInt(memberID));
+					extras.putInt("memberid", Integer.parseInt(mId));
 					extras.putInt("membershipid", membershipid);
 					
 					updateInt.putExtras(extras);

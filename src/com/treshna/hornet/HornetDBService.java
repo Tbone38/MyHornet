@@ -136,6 +136,7 @@ public class HornetDBService extends Service {
 			}
 			//TODO: check for error messages when running these commands.
 			//get ID's
+			getMemberNoteID();
 			getMemberID();
 			getBookingID();
 			getMembershipID();
@@ -145,7 +146,7 @@ public class HornetDBService extends Service {
 			}
 			
 			//do uploads
-			//uploadAllImages();
+			uploadMemberNotes();
 			uploadImage();
 			uploadClass();
 			uploadBookings();
@@ -157,6 +158,7 @@ public class HornetDBService extends Service {
 			}
 			
 			//downloads!
+			getMemberNotes(last_sync);
 			getMember(last_sync);
 			getProgrammes(last_sync);
 			getMembership(last_sync);
@@ -218,6 +220,7 @@ public class HornetDBService extends Service {
 		   getDoors();
 		   
 		   //id's
+		   getMemberNoteID();
 		   getBookingID();
 		   int midcount = getMemberID();
 		   if (midcount != 0) statusMessage = midcount+" Sign-up's available";
@@ -226,6 +229,7 @@ public class HornetDBService extends Service {
 		   }
 
 		   //stuff
+		   getMemberNotes(-1);
 		   int rscount = getResultStatus();
 		   int btcount = getBookingType();
 		   int mcount = getMember(-1);
@@ -435,14 +439,8 @@ public class HornetDBService extends Service {
 	        					new String[] {rs.getString("membershipid")} , null);
 	        			
 	        			if (cur.getCount() == 0) {
-	        			//	System.out.print("\n\nInserting ("+membershipid+","+rs.getString("msexpiry")+","+rs.getString("msvisits")
-		        		//			+","+rs.getString("pname")+","+rs.getString("msstart")+","+memberid+","+rs.getString("cardno")
-		        		//			+","+rs.getString("result"));
 	        				contentResolver.insert(Membership.CONTENT_URI, val);
 	        			} else if (cur.getCount() >0) {
-	        				//System.out.print("\n\nUpdating "+membershipid+" WITH ("+rs.getString("msexpiry")+","+rs.getString("msvisits")
-		        			//		+","+rs.getString("pname")+","+rs.getString("msstart")+","+memberid+","+rs.getString("cardno")
-		        			//		+","+rs.getString("result"));
 	        				contentResolver.update(Membership.CONTENT_URI, val, Membership.Cols.MSID+" = ?",
 	        						new String[] {rs.getString("membershipid")});
 	        			}
@@ -1458,6 +1456,18 @@ public class HornetDBService extends Service {
     		}
     		while (rs.next()) {
     			ContentValues values = new ContentValues();
+    			/* TODO: something about the below code.
+    			 * int notesid = -1;
+    			cur = contentResolver.query(ContentDescriptor.MemberNotes.CONTENT_URI, null, 
+    					ContentDescriptor.MemberNotes.Cols.MID+" = ? AND "+ContentDescriptor.MemberNotes.Cols.NOTES+" = ?",
+    					new String[] {rs.getString("id"), rs.getString("mnotes")}, null);
+    			if (!cur.moveToNext()) {
+    				//not found.
+    			} else {
+    				notesid = cur.getInt(cur.getColumnIndex(ContentDescriptor.MemberNotes.Cols.MNID));
+    			}*/
+    			
+    			values = new ContentValues();
     			values.put(ContentDescriptor.Member.Cols.MID, rs.getString("id"));
     			values.put(ContentDescriptor.Member.Cols.FNAME, rs.getString("firstname"));
     			values.put(ContentDescriptor.Member.Cols.SNAME, rs.getString("surname"));
@@ -1466,7 +1476,7 @@ public class HornetDBService extends Service {
     			values.put(ContentDescriptor.Member.Cols.PHWORK, rs.getString("mphwork"));
     			values.put(ContentDescriptor.Member.Cols.PHCELL, rs.getString("mphcell"));
     			values.put(ContentDescriptor.Member.Cols.EMAIL, rs.getString("memail"));
-    			values.put(ContentDescriptor.Member.Cols.NOTES, rs.getString("mnotes"));
+    			values.put(ContentDescriptor.Member.Cols.NOTES, rs.getString("mnotes")); 
     			values.put(ContentDescriptor.Member.Cols.STATUS, rs.getString("status"));
     			
     			cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, "m."+ContentDescriptor.Member.Cols.MID+" = ?",
@@ -2536,6 +2546,157 @@ public class HornetDBService extends Service {
     	closeConnection();
     	
     	return true;
+    }
+    
+    private int getMemberNotes(long last_update) {
+    	int result = 0;
+    	
+    	if (!openConnection()) {
+    		return -1;
+    	}
+    	ResultSet rs;
+    	try { //TODO: this_sync OR 0
+    		rs = connection.getMemberNotes(last_update);
+    	} catch (SQLException e) {
+    		statusMessage = e.getLocalizedMessage();
+    		return -2;
+    	}
+    	try {
+    		while (rs.next()) {
+    			ContentValues values = new ContentValues();
+    			
+    			values.put(ContentDescriptor.MemberNotes.Cols.MNID, rs.getString("id"));
+    			values.put(ContentDescriptor.MemberNotes.Cols.MID, rs.getString("memberid"));
+    			values.put(ContentDescriptor.MemberNotes.Cols.NOTES, rs.getString("notes"));
+    			values.put(ContentDescriptor.MemberNotes.Cols.OCCURRED, rs.getString("occurred"));
+    			
+    			cur = contentResolver.query(ContentDescriptor.MemberNotes.CONTENT_URI, null, 
+    					ContentDescriptor.MemberNotes.Cols.MNID+" = ?", new String[] {rs.getString("id")}, null);
+    			
+    			if (cur.getCount() > 0 ) {
+    				cur.moveToFirst();
+    				int rowid = cur.getInt(cur.getColumnIndex(ContentDescriptor.MemberNotes.Cols._ID));
+    				contentResolver.update(ContentDescriptor.MemberNotes.CONTENT_URI, values,
+    						ContentDescriptor.MemberNotes.Cols._ID+" = ?", new String[] {String.valueOf(rowid)});
+    			} else {
+    				contentResolver.insert(ContentDescriptor.MemberNotes.CONTENT_URI, values);
+    			}
+    			cur.close();
+    			result +=1;
+    		}
+    	rs.close();
+    	} catch (SQLException e) {
+    		statusMessage = e.getLocalizedMessage();
+    		return -3;
+    	}
+    	
+    	connection.closeConnection();
+    	
+    	return result;
+    }
+    
+    private int getMemberNoteID() {
+    	int result = 0;
+    	String query = "SELECT nextval('membernotes_id_seq');";
+    	
+    	if (!openConnection()) {
+    		return -1;
+    		//see statusMessage for error;
+    	}
+    	cur = contentResolver.query(ContentDescriptor.MemberNotes.CONTENT_URI, null, 
+    			ContentDescriptor.MemberNotes.Cols.MID+" = 0", null, null);
+    	
+    	int id_count = cur.getCount();
+    	cur.close();
+    	
+    	cur = contentResolver.query(ContentDescriptor.MemberNotes.CONTENT_URI, null, 
+    			ContentDescriptor.MemberNotes.Cols.MNID+" = 0", null, null);
+    	int req_count = cur.getCount();
+    	cur.close();
+    	
+    	for (int i = ((25+req_count)-id_count); i > 0; i-=1) {
+    		try {
+    			ResultSet rs = connection.startStatementQuery(query);
+    			rs.next();
+    			
+    			ContentValues values = new ContentValues();
+    			values.put(ContentDescriptor.MemberNotes.Cols.MNID, rs.getString("nextval"));
+    			
+    			if (req_count > 0) {
+    				int rowid;
+    				cur = contentResolver.query(ContentDescriptor.MemberNotes.CONTENT_URI, null, 
+    						ContentDescriptor.MemberNotes.Cols.MNID+" = 0", null, null);
+    				cur.moveToFirst();
+    				rowid = cur.getInt(cur.getColumnIndex(ContentDescriptor.MemberNotes.Cols._ID));
+    				cur.close();
+    				
+    				contentResolver.update(ContentDescriptor.MemberNotes.CONTENT_URI, values, 
+    						ContentDescriptor.MemberNotes.Cols._ID+" = ?", new String[] {String.valueOf(rowid)});
+    				req_count -= 1;
+    				//add it to pending uploads.
+    				values = new ContentValues();
+    				values.put(ContentDescriptor.PendingUploads.Cols.TABLEID, 
+    						ContentDescriptor.TableIndex.Values.MemberNotes.getKey());
+    				values.put(ContentDescriptor.PendingUploads.Cols.ROWID, rowid);
+    				contentResolver.insert(ContentDescriptor.PendingDownloads.CONTENT_URI, values);
+    			} else {
+    				contentResolver.insert(ContentDescriptor.MemberNotes.CONTENT_URI, values);
+    			}
+    			result +=1;
+    		} catch (SQLException e) {
+    			statusMessage = e.getLocalizedMessage();
+    			return -2;
+    		}
+    	}
+    	
+    	return result;
+    }
+    
+    private int uploadMemberNotes(){
+    	int result = 0;
+    	
+    	ArrayList<String> rowids = new ArrayList<String>();
+    	cur = contentResolver.query(ContentDescriptor.PendingUploads.CONTENT_URI, null, 
+    			ContentDescriptor.PendingUploads.Cols.TABLEID+" = ? ", new String[] {String.valueOf(
+    					ContentDescriptor.TableIndex.Values.MemberNotes.getKey())}, null);
+    	
+    	while (cur.moveToNext()) {
+    		rowids.add(cur.getString(cur.getColumnIndex(ContentDescriptor.PendingUploads.Cols.ROWID)));
+    	}
+    	cur.close();
+    	
+    	if (!openConnection()){
+    		return -1;
+    		//see StatusMessage for why;
+    	}
+    	
+    	for (int i=0; i < rowids.size(); i++) {
+    		cur = contentResolver.query(ContentDescriptor.MemberNotes.CONTENT_URI, null, 
+    				ContentDescriptor.MemberNotes.Cols._ID+" = ?", new String[] {rowids.get(i)}, null );
+    		
+    		if (!cur.moveToFirst()) {
+    			statusMessage = "Error Occured retrieving data";
+    			contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, 
+    					ContentDescriptor.PendingUploads.Cols.TABLEID+" = ? AND "
+    					+ContentDescriptor.PendingUploads.Cols.ROWID+" = ?", new String[] 
+    							{String.valueOf(ContentDescriptor.TableIndex.Values.MemberNotes.getKey()),
+    							rowids.get(i)} 
+    			);
+    			continue;
+    		}
+    		try {
+	    		connection.uploadMemberNotes(cur.getInt(cur.getColumnIndex(ContentDescriptor.MemberNotes.Cols.MNID)),
+	    				cur.getInt(cur.getColumnIndex(ContentDescriptor.MemberNotes.Cols.MID)),
+	    				cur.getString(cur.getColumnIndex(ContentDescriptor.MemberNotes.Cols.NOTES)),
+	    				cur.getString(cur.getColumnIndex(ContentDescriptor.MemberNotes.Cols.OCCURRED)));
+    		} catch (SQLException e) {
+    			statusMessage = e.getLocalizedMessage();
+    			e.printStackTrace();
+    			return -2;
+    		}
+    	}
+    	
+    	return result;
     }
     
 }

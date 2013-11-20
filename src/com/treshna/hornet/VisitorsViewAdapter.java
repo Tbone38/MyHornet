@@ -31,7 +31,7 @@ public class VisitorsViewAdapter extends SimpleCursorAdapter implements OnClickL
 	private static int REQ_WIDTH = 100;
 	private static int REQ_HEIGHT = 100;
 	private boolean showDoorname = false;
-	private boolean showMembership = false;
+	
 	private OnClickListener theClicker;
 	
 	@SuppressWarnings("deprecation")
@@ -40,15 +40,14 @@ public class VisitorsViewAdapter extends SimpleCursorAdapter implements OnClickL
 		super(context, layout, c, from, to);
 		this.context = context;
 		this.FROM = from;
-		this.cursor = c;
 		this.theClicker = clicker;
 		
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 	    showDoorname = preferences.getBoolean("show_doorname", false);
-	    showMembership = preferences.getBoolean("show_membership", false);
 	}
 	
-	private View displayLVLayout(View rowView, int position){
+	@Override
+	public void bindView(View rowView, Context context, Cursor cursor) {
 		
 		//TextView imageText = (TextView) rowView.findViewById(R.id.imageText);
 		TextView nameView = (TextView) rowView.findViewById(R.id.name);	
@@ -59,14 +58,7 @@ public class VisitorsViewAdapter extends SimpleCursorAdapter implements OnClickL
 		ImageView taskView = (ImageView) rowView.findViewById(R.id.task);
 		View colorBlock = (View) rowView.findViewById(R.id.visitor_colour_block);
 		colorBlock.setBackgroundColor(context.getResources().getColor(R.color.visitors_green));
-		cursor.moveToPosition(position);
-
-		if(cursor.isBeforeFirst())
-        {
-            cursor.moveToFirst();
-        }
-		
-		
+				
 		ArrayList<String> tagInfo = new ArrayList<String>();
 		tagInfo.add(cursor.getString(cursor.getColumnIndex(ContentDescriptor.Visitor.Cols.MID))); 
 		tagInfo.add(cursor.getString(cursor.getColumnIndex(ContentDescriptor.Visitor.Cols.DATETIME)));
@@ -164,11 +156,7 @@ public class VisitorsViewAdapter extends SimpleCursorAdapter implements OnClickL
 	    displayText += cursor.getString(cursor.getColumnIndex(ContentDescriptor.Visitor.Cols.TIME))+" "
 	    		+cursor.getString(cursor.getColumnIndex(ContentDescriptor.Visitor.Cols.DATE));
 	    String denyText = "";
-		if(showMembership == true) {
-			if (cursor.isNull(cursor.getColumnIndex(ContentDescriptor.Membership.Cols.EXPIRERY)) == false) {
-				if (cursor.getString(cursor.getColumnIndex(ContentDescriptor.Membership.Cols.EXPIRERY)).compareTo("null") != 0) {
-					denyText += "expires "+cursor.getString(cursor.getColumnIndex(ContentDescriptor.Membership.Cols.EXPIRERY))+" \n\n";
-		}	}	}
+		
 		if (showDoorname == true) {
 			if (cursor.getString(cursor.getColumnIndex(ContentDescriptor.Visitor.Cols.DENY)).compareTo("Granted") == 0){
 				denyText += "Access Granted at "+cursor.getString(cursor.getColumnIndex(ContentDescriptor.Visitor.Cols.DOORNAME));
@@ -193,26 +181,7 @@ public class VisitorsViewAdapter extends SimpleCursorAdapter implements OnClickL
 			nameView.setText(cursor.getString(cursor.getColumnIndex(ContentDescriptor.Member.Cols.FNAME))+" "
 					+cursor.getString(cursor.getColumnIndex(ContentDescriptor.Member.Cols.SNAME)));
 		}
-		return rowView;
-	}
-	
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		/*
-		 * This function will need changed to handle other info (bookings vs. visitors)
-		 */ 
-		 
-		LayoutInflater inflater = (LayoutInflater) context
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			
-			View rowView = inflater.inflate(R.layout.new_visitor_row, parent, false);
-			
-				/***Last Visitors***/
-				//buildLVLayout(rowView);
-				rowView = displayLVLayout(rowView, position);
-				/***LastVisitors***/
-			
-			return rowView;
+		
 	}
 	
 	/*

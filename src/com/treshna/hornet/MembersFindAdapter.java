@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -124,11 +123,10 @@ public class MembersFindAdapter extends SimpleCursorAdapter implements OnClickLi
 				memberName.setTextColor(Color.BLACK);
 			}
 		} else {
-			memberName.setTextColor(Color.parseColor(cursor.getString(cursor.getColumnIndex(ContentDescriptor.Member.Cols.COLOUR))));
+			//WHAT ARE WE DOING HERE INSTEAD? TODO
+			//memberName.setTextColor(Color.parseColor(cursor.getString(cursor.getColumnIndex(ContentDescriptor.Member.Cols.COLOUR))));
 		}
-		/*System.out.print("\n\nID for "+cursor.getString(cursor.getColumnIndex(ContentDescriptor.Member.Cols.FNAME))
-				+" "+cursor.getString(cursor.getColumnIndex(ContentDescriptor.Member.Cols.SNAME))+" IS:"
-				+cursor.getString(0)+"\n\n");*/
+		
 		String imgDir = context.getExternalFilesDir(null)+"/0_"+cursor.getString(0)+".jpg"; //cursor.getColumnIndex(ContentDescriptor.Member.Cols.MID)
 		File imgFile = new File(imgDir);
 		ImageView imageView = (ImageView) rowLayout.findViewById(R.id.rowimage);

@@ -168,6 +168,11 @@ public class HornetContentProvider extends ContentProvider {
         	getContext().getContentResolver().notifyChange(uri, null);
         	return rows;
         }
+        case ContentDescriptor.MemberNotes.PATH_TOKEN:{
+        	int rows = db.delete(ContentDescriptor.MemberNotes.NAME, selection, selectionArgs);
+        	getContext().getContentResolver().notifyChange(uri, null);
+        	return rows;
+        }
         
         case ContentDescriptor.TOKEN_DROPTABLE:{ //special case, drops tables/deletes database.
         	FileHandler fh = new FileHandler(ctx);
@@ -310,6 +315,11 @@ public class HornetContentProvider extends ContentProvider {
             	getContext().getContentResolver().notifyChange(uri, null);
             	return ContentDescriptor.Door.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
             }
+            case ContentDescriptor.MemberNotes.PATH_TOKEN:{
+            	long id = db.insert(ContentDescriptor.MemberNotes.NAME, null, values);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return ContentDescriptor.MemberNotes.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
+            }
             
             default: {
                 throw new UnsupportedOperationException("URI: " + uri + " not supported.");
@@ -320,13 +330,10 @@ public class HornetContentProvider extends ContentProvider {
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection,
 			String[] selectionArgs, String sortOrder) {
-		
-		if(selection == null){
-			selection="";
+		if (selection == null) {
+			selection = "";
 		}
-		if(sortOrder == null){
-			sortOrder = "";
-		}		
+				
 		SQLiteDatabase db = hornetDb.getReadableDatabase();		
         final int match = ContentDescriptor.URI_MATCHER.match(uri);
         switch(match){
@@ -588,6 +595,11 @@ public class HornetContentProvider extends ContentProvider {
             	builder.setTables(ContentDescriptor.Door.NAME);
             	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
             }
+            case ContentDescriptor.MemberNotes.PATH_TOKEN:{
+            	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+            	builder.setTables(ContentDescriptor.MemberNotes.NAME);
+            	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+            }
             
             default: throw new UnsupportedOperationException("URI: " + uri + " not supported.");
         }
@@ -597,9 +609,7 @@ public class HornetContentProvider extends ContentProvider {
 	public int update(Uri uri, ContentValues values, String selection,
 			String[] selectionArgs) {
 		SQLiteDatabase db = hornetDb.getWritableDatabase();
-		if(selection == null){
-			selection="";
-		}
+		
         int token = ContentDescriptor.URI_MATCHER.match(uri);
         switch(token){
             case ContentDescriptor.Member.PATH_TOKEN:{
@@ -715,6 +725,11 @@ public class HornetContentProvider extends ContentProvider {
             }
             case ContentDescriptor.Door.PATH_TOKEN:{
             	int result = db.update(ContentDescriptor.Door.NAME, values, selection, selectionArgs);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return result;
+            }
+            case ContentDescriptor.MemberNotes.PATH_TOKEN:{
+            	int result = db.update(ContentDescriptor.MemberNotes.NAME, values, selection, selectionArgs);
             	getContext().getContentResolver().notifyChange(uri, null);
             	return result;
             }

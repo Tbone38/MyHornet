@@ -212,10 +212,12 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 					} else {
 						TextView smstext = (TextView)sms.findViewById(R.id.button_booking_sms_text);
 						smstext.setTextColor(color.grey);
+						sms.setClickable(false);
 					}
 				}else {
 					TextView smstext = (TextView)sms.findViewById(R.id.button_booking_sms_text);
 					smstext.setTextColor(color.grey);
+					sms.setClickable(false);
 				}
 				/*for (int l=0; l<cur.getColumnCount(); l+=1){
 					System.out.print("\nColumn: "+l+"  Name:"+cur.getColumnName(l)+"  Value:"+cur.getString(l));
@@ -248,6 +250,7 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 				if (callNo[0].isEmpty() && callNo[1].isEmpty() && callNo[2].isEmpty()) {
 					TextView calltext = (TextView) call.findViewById(R.id.button_booking_call_text);
 					calltext.setTextColor(color.grey);
+					call.setClickable(false);
 				} else {
 					call.setTag(callNo);
 					call.setClickable(true);

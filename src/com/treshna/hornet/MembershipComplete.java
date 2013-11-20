@@ -1,5 +1,8 @@
 package com.treshna.hornet;
 
+import java.util.ArrayList;
+import java.util.Date;
+
 import com.treshna.hornet.BookingPage.TagFoundListener;
 
 import android.app.AlertDialog;
@@ -9,6 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -26,10 +30,11 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 	ContentResolver contentResolver;
 	Cursor cur;
 	View page;
-	int rowid;
+	//int rowid;
+	ArrayList<String> results;
 	String memberid;
 	private AlertDialog alertDialog = null;
-	private String cardid;
+	private String cardid = null;
 	
 	
 	@Override
@@ -38,7 +43,7 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 		 // Inflate the layout for this fragment
 		 ctx = getActivity();
 		 contentResolver = getActivity().getContentResolver();
-		 rowid = this.getArguments().getInt(Services.Statics.KEY);
+		 results = this.getArguments().getStringArrayList(Services.Statics.KEY);
 		 page = inflater.inflate(R.layout.membership_complete, container, false);
 		 page = setupView();
 		 
@@ -49,20 +54,19 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 
 
 	private View setupView() {
-		cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols._ID+" = ?",
-				new String[] {String.valueOf(rowid)}, null);
-		if (!cur.moveToFirst()) {
-			//the row wasn't found.
-			Log.e(TAG, "ContentProvider could not find row with _id:"+rowid);
-			return page;
-		}
-		
+		//TODO
 		EditText programmeName = (EditText) page.findViewById(R.id.membership_programme_name);
-		programmeName.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PNAME)));
+		cur = contentResolver.query(ContentDescriptor.Programme.CONTENT_URI, null, ContentDescriptor.Programme.Cols.PID+" = ?",
+				new String[] {results.get(2)}, null);
+		if (cur.moveToFirst()) {
+			programmeName.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Programme.Cols.NAME)));
+		}
+		cur.close();
 		
 		EditText memberCard = (EditText) page.findViewById(R.id.membership_tag);
-		if (cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.CARDNO)) != null) {
-			memberCard.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.CARDNO)));
+		if (results.get(8) != null) {
+			memberCard.setText(results.get(8));
+			cardid = results.get(8);
 		} else {
 			//no unique card no, or cardno from other membership found.
 			memberCard.setText("Warning - No Membership Card");
@@ -70,21 +74,21 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 		}
 		
 		EditText membershipStartEnd = (EditText) page.findViewById(R.id.membership_start_end);
-		if (cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.EXPIRERY)) != null) {
-			membershipStartEnd.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MSSTART))+" to "
-					+cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.EXPIRERY)));
+		if (results.get(4) != null) {
+			membershipStartEnd.setText(results.get(3)+" to "
+					+results.get(4));
 		} else {
-			membershipStartEnd.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MSSTART))
+			membershipStartEnd.setText(results.get(3)
 					+" Open Ended");
 		}
 		
 		EditText membershipSignup = (EditText) page.findViewById(R.id.membership_signup_fee);
-		membershipSignup.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.SIGNUP)));
+		membershipSignup.setText(results.get(7));
 		
 		EditText membershipPrice = (EditText) page.findViewById(R.id.membership_price);
-		membershipPrice.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PRICE)));
+		membershipPrice.setText(results.get(5));
 		
-		memberid = cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MID));
+		memberid = results.get(0);
 		cur.close();
 		
 		//EditText memberAmountOutstanding = (EditText) page.findViewById(R.id.membership_amount_outstanding);
@@ -110,12 +114,12 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case (R.id.button_accept):{
-			
+			//should do actual insertion here.
+			insertMembership(results);
+			getActivity().finish();
 			break;
 		}
 		case (R.id.button_cancel):{
-			contentResolver.delete(ContentDescriptor.Membership.CONTENT_URI, ContentDescriptor.Membership.Cols._ID+" = ?",
-					new String[] {String.valueOf(rowid)});
 			getActivity().finish();
 			break;
 		}
@@ -177,17 +181,68 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 					alertDialog.dismiss();
 					alertDialog = null;
 				}
-				
-				ContentValues values = new ContentValues();
-				values.put(ContentDescriptor.Membership.Cols.CARDNO, cardid);
-				contentResolver.update(ContentDescriptor.Membership.CONTENT_URI, values, 
-						ContentDescriptor.Membership.Cols._ID+" = ?", new String[] {String.valueOf(rowid)});
 			}
 		}
 		cur.close();
 		//TOAST!
 		Toast.makeText(ctx, message, Toast.LENGTH_LONG).show();
 		setupView();
+	}
+	
+	private int insertMembership(ArrayList<String> input) {
+		ContentValues values = new ContentValues();
+		
+		values.put(ContentDescriptor.Membership.Cols.MID, input.get(0));
+		values.put(ContentDescriptor.Membership.Cols.PGID, input.get(1));
+		values.put(ContentDescriptor.Membership.Cols.PID, input.get(2));
+		values.put(ContentDescriptor.Membership.Cols.MSSTART, Services.dateFormat(input.get(3), "dd MMM yyyy", "yyyy-MM-dd"));
+		if (input.get(4) != null) {
+			values.put(ContentDescriptor.Membership.Cols.EXPIRERY, Services.dateFormat(input.get(4), "dd MMM yyyy", "yyyy-MM-dd"));
+		}
+		values.put(ContentDescriptor.Membership.Cols.PRICE, input.get(5));
+		//payment-date?
+		values.put(ContentDescriptor.Membership.Cols.SIGNUP, input.get(7));
+		if (input.get(8) != null) {
+			values.put(ContentDescriptor.Membership.Cols.CARDNO, cardid);
+		}
+		values.put(ContentDescriptor.Membership.Cols.CREATION, Services.dateFormat(new Date().toString(),
+				"EEE MMM dd HH:mm:ss zzz yyyy", "dd MMM yyyy HH:mm:ss"));
+		cur = contentResolver.query(ContentDescriptor.Programme.CONTENT_URI, null, ContentDescriptor.Programme.Cols.PID+" = ?",
+				new String[] {input.get(2)}, null);
+		if (cur.moveToFirst()) {
+			values.put(ContentDescriptor.Membership.Cols.PNAME, 
+					cur.getString(cur.getColumnIndex(ContentDescriptor.Programme.Cols.NAME)));
+		}
+		cur.close();
+		
+		int msid;
+		String rowid = "-1";
+		cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols.MID+" = 0",
+				null, null);
+		if (!cur.moveToFirst()) {
+			msid = -1;
+		} else {
+			msid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MSID));
+			rowid = cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols._ID));
+		}
+		cur.close();
+		
+		if (msid > 0) {
+			contentResolver.update(ContentDescriptor.Membership.CONTENT_URI, values, ContentDescriptor.Membership.Cols.MSID+" = ?",
+					new String[] {String.valueOf(msid)});
+			
+			values = new ContentValues();
+			values.put(ContentDescriptor.PendingUploads.Cols.TABLEID, ContentDescriptor.TableIndex.Values.Membership.getKey());
+			values.put(ContentDescriptor.PendingUploads.Cols.ROWID, rowid);
+			contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, values);
+		} else {
+			values.put(ContentDescriptor.Membership.Cols.MSID, msid);
+			Uri row =contentResolver.insert(ContentDescriptor.Membership.CONTENT_URI, values);
+			rowid = row.getLastPathSegment();
+		}
+		Log.v(TAG, "insert rowid: "+rowid);
+		
+		return Integer.parseInt(rowid);
 	}
 	
 }

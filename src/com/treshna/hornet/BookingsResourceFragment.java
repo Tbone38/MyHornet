@@ -68,7 +68,7 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 		Log.d(TAG, "ON CREATE VIEW");
 		try {
-			view = inflater.inflate(R.layout.new_booking_resource, container, false);
+			view = inflater.inflate(R.layout.booking_resource, container, false);
 		} catch (ClassCastException e) {
 			Log.e(TAG, "OnCreate View, inflate", e);
 		}
@@ -286,7 +286,7 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
   
 		//mLoader.restartLoader(0, null, this);
        	mLoader.initLoader(0, null, this);
-		mAdapter = new BookingsListAdapter(getActivity(), R.layout.new_booking_resource_row, null, from, to, selectedDate);
+		mAdapter = new BookingsListAdapter(getActivity(), R.layout.booking_resource_row, null, from, to, selectedDate);
 		setListAdapter(mAdapter);
 		
 		

@@ -40,7 +40,7 @@
 	    android:layout_toRightOf="@id/member_ms_startedL"
 	    android:textSize="15sp"
 	    android:textColor="@color/member_number_grey2"
-	    android:text="Expired"
+	    android:text="Expires"
 	    android:padding="3dp"
 	    android:layout_marginLeft="60dp" />
 	<TextView 
