@@ -150,11 +150,10 @@ public class ContentDescriptor {
 	        }
 	        
 	        public static class Cols {
-	        	//can this table be used for storing/checking if cards are accept/deny ? or should membership table be used?
+	        	
 	            public static final String MID = BaseColumns._ID; // convention
 	            //public static final String MID = "memberid";
 	            
-	           // public static final String NAME="mname"; //TODO: replace this with separate first-name & surname;
 	            public static final String FNAME="firstname";
 	            public static final String SNAME="surname";
 	       	 	public static final String DATE="sdate";
@@ -184,6 +183,15 @@ public class ContentDescriptor {
 	       	 	public static final String BOOK2 = "booking2";
 	       	 	public static final String BOOK3 = "booking3";
 	       	 	public static final String LASTVISIT = "lastvisit1";
+	       	 	/**
+	       	 	 * Member Status's:
+	       	 	 * 			0 = Current;
+	       	 	 * 			1 = Suspended;
+	       	 	 * 			2 = Expired Recently;
+	       	 	 * 			3 = Expired;
+	       	 	 * 			4 = Promotion;
+	       	 	 * 			5 = Casual;
+	       	 	 */
 	       	 	public static final String STATUS = "status";
 	       	 	public static final String LASTUPDATE = "lastupdate";
 	        }
@@ -697,8 +705,8 @@ public class ContentDescriptor {
 	 			public static final String LENGTH = "length";
 	 			public static final String REASON = "reason";
 	 			public static final String MID = "memberid";
-	 			public static final String MSID = "membershipid"; //insert the suspendid into membership row ?
 	 			public static final String FREEZE = "freeze_fees";
+	 			public static final String ENDDATE = "enddate";
 	 		}
 	 	}
 	 	

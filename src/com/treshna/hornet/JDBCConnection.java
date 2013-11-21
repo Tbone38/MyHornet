@@ -34,6 +34,7 @@ public class JDBCConnection {
     private String Type = "PostgreSQL", Username = "", Password = "", Address = "", Port = "5432";
     private String Database = "";
     //TODO: set default username & pw = gymmaster/7urb0
+    // Hard-code?
     private Connection con = null;
     private Statement statement;
     private PreparedStatement pStatement;
@@ -334,7 +335,6 @@ public class JDBCConnection {
     	return rs;
     }
     
-    //being used for bookings, TODO: last-visitors as well; ?
     public ResultSet getMembers(String lastupdate) throws SQLException {
     	ResultSet rs = null;
     	String query = "SELECT id, member.firstname, member.surname, " //get_name
@@ -537,6 +537,19 @@ public class JDBCConnection {
     	return rs;
     }
     
+    
+    public ResultSet getSuspends(long last_sync) throws SQLException {
+    	pStatement = con.prepareStatement("SELECT membership_suspend.id, memberid, membership_suspend.startdate,"
+    			+ "howlong, membership_suspend.reason, (startdate+howlong)::date AS edate "
+    			+ "FROM membership_suspend LEFT JOIN member ON "
+    			+ "(membership_suspend.memberid = member.id) "
+    			+ "WHERE member.status != 3 AND membership_suspend.created >= ?::TIMESTAMP WITHOUT TIME ZONE;");
+    	
+    	pStatement.setString(1, Services.dateFormat(new Date(last_sync).toString(), 
+				"EEE MMM dd HH:mm:ss zzz yyyy", "dd-MM-yyyy HH:mm:ss"));
+    	
+    	return pStatement.executeQuery();
+    }
     
     public int uploadSuspend(String sid, String mid, String msid, String startdate, String duration, 
     		String reason, String freeze) throws SQLException {

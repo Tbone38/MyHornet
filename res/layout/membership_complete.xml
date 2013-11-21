@@ -102,8 +102,6 @@
 		    android:layout_below="@id/membership_signup_fee"
 		    android:textSize="20sp"
 		    android:text="@string/membership_add_actions"
-		    android:textColor="@color/white"
-		    android:background="@color/gym"
 		    android:layout_margin="3dp"
 		    android:padding="5dp" />
 		<LinearLayout

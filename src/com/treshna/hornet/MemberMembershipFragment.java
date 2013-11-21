@@ -59,8 +59,12 @@ public class MemberMembershipFragment extends MemberActionsFragment{
 					, "yyyy-MM-dd", "dd MMM yyyy"));
 			
 			TextView end = (TextView) membershipRow.findViewById(R.id.member_ms_expired);
-			end.setText(Services.dateFormat(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.EXPIRERY))
-					, "yyyy-MM-dd", "dd MMM yyyy"));
+			String enddate = Services.dateFormat(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.EXPIRERY))
+					, "yyyy-MM-dd", "dd MMM yyyy");
+			if (enddate == null) {
+				end.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.EXPIRERY)));
+			}
+			end.setText(enddate);
 			
 			TextView visits = (TextView) membershipRow.findViewById(R.id.member_ms_visits);
 			visits.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.VISITS)));

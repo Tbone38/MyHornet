@@ -38,7 +38,7 @@ import com.treshna.hornet.R.color;
 /*
  * 
  */
-public class BookingsOverviewFragment extends Fragment implements OnClickListener {
+public class BookingsOverviewFragment extends Fragment implements OnClickListener, DatePickerFragment.DatePickerSelectListener {
 	
 	private static ContentResolver contentResolver = null;
     private static Cursor cur = null;
@@ -49,13 +49,6 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
 	private DatePickerFragment mDatePicker;
 	TextView mMonth = null, mDay = null, mYear = null;
 	
-	private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
-        @Override //when the data-picker finishes, sends out a broadcast.
-        public void onReceive(Context context, Intent intent) {
-            BookingsOverviewFragment.this.receivedBroadcast(intent);
-        }	
-    };
-	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,29 +57,7 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
         contentResolver = getActivity().getContentResolver();
         if (cur != null) cur.close();
         	
-    }
-	
-	private void receivedBroadcast(Intent i) {
-		selectedDate = mDatePicker.getReturnValue();
-		selectedDate = Services.dateFormat(selectedDate, "yyyy MM dd", "yyyyMMdd");
-		updateDate();
-		getList(mInflater);
-	}
-	
-	@Override 
-	public void onResume() {
-		super.onResume();
-		IntentFilter iff = new IntentFilter();
-	    iff.addAction(ClassCreate.CLASSBROADCAST);
-	    getActivity().registerReceiver(this.mBroadcastReceiver,iff);
-	}
-	
-	@Override
-	public void onPause(){
-		super.onPause();
-		getActivity().unregisterReceiver(this.mBroadcastReceiver);
-	}
-	
+    }	
 	
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 	@Override
@@ -95,98 +66,51 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
         view = inflater.inflate(R.layout.booking_overview, container, false);
         mInflater = inflater;
         mDatePicker = new DatePickerFragment();
+        mDatePicker.setDatePickerSelectListener(this);
         
         RelativeLayout calendarwrapper = (RelativeLayout) view.findViewById(R.id.booking_overview_calendar_wrapper);
         
-        
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-        	
-        	RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-        	
-        	mMonth = new TextView(getActivity());
-        	mMonth.setTextSize(49);
-        	mMonth.setTextColor(this.getResources().getColor(R.color.android_blue));
-        	mMonth.setLayoutParams(params);
-        	mMonth.setId(10);
-        	mMonth.setGravity(Gravity.CENTER_HORIZONTAL);
-        	
-        	
-        	params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-        	params.addRule(RelativeLayout.CENTER_HORIZONTAL);
-        	params.addRule(RelativeLayout.BELOW, 10);
-        	
-        	mDay = new TextView(getActivity());
-        	mDay.setTextSize(55);
-        	mDay.setTextColor(this.getResources().getColor(R.color.android_blue));
-        	mDay.setLayoutParams(params);
-        	mDay.setId(20);
-        	mDay.setGravity(Gravity.CENTER_HORIZONTAL);
-        	
-        	
-        	params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-        	params.addRule(RelativeLayout.CENTER_HORIZONTAL);
-        	params.addRule(RelativeLayout.BELOW, 20);
-        	
-        	mYear = new TextView(getActivity());
-        	mYear.setTextSize(47);
-        	mYear.setTextColor(this.getResources().getColor(R.color.android_blue));
-        	mYear.setLayoutParams(params);
-        	mYear.setId(30);
-        	mYear.setGravity(Gravity.CENTER_HORIZONTAL);
-        	selectedDate = Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");
-	        updateDate();
-	        /*CalendarView calendar = new CalendarView(getActivity());
-	        
-	        Calendar cal = Calendar.getInstance(Locale.US);
-	        calendar.setDate(cal.getTime().getTime());
-	        selectedDate = Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");
-	        updateDate();
-	        
-	        params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, 500);
-	        params.addRule(RelativeLayout.BELOW, 30);
-	        calendar.setLayoutParams(params);
-	        calendar.setShowWeekNumber(false);
-	        //calendar.setFocusedMonthDateColor(color.member_blue);
-	        calendar.setOnDateChangeListener(new OnDateChangeListener() {
-				@Override
-				public void onSelectedDayChange(CalendarView view, int year,
-						int month, int dayOfMonth) {
-						Calendar cal = Calendar.getInstance();
-						cal.set(year, month, dayOfMonth);
-						Date date = cal.getTime();
-						selectedDate = Services.dateFormat(date.toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");
-						getList(mInflater);
-						updateDate();
-				}
-	        	
-	        });*/
-	        calendarwrapper.addView(mMonth);
-	        calendarwrapper.addView(mDay);
-	        calendarwrapper.addView(mYear);
-	        calendarwrapper.setClickable(true);
-	        calendarwrapper.setOnClickListener(this);
-	        //calendarwrapper.addView(calendar);
-	        
-        } else {
-        	DatePicker date = new DatePicker(getActivity());
-        	Calendar cal = Calendar.getInstance(Locale.US);
-        	date.init(cal.get(Calendar.YEAR),
-        			cal.get(Calendar.MONTH), 
-        			cal.get(Calendar.DAY_OF_MONTH), new OnDateChangedListener() {
-						@Override
-						public void onDateChanged(DatePicker view, int year,
-								int monthOfYear, int dayOfMonth) {
-							Calendar cal = Calendar.getInstance();
-							cal.set(year, monthOfYear, dayOfMonth);
-							Date date = cal.getTime();
-							selectedDate = Services.dateFormat(date.toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");
-							getList(mInflater);
-							
-						}
-        	});
-        	calendarwrapper.addView(date);
-        }
-        
+    	RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+    	
+    	mMonth = new TextView(getActivity());
+    	mMonth.setTextSize(49);
+    	mMonth.setTextColor(this.getResources().getColor(R.color.android_blue));
+    	mMonth.setLayoutParams(params);
+    	mMonth.setId(10);
+    	mMonth.setGravity(Gravity.CENTER_HORIZONTAL);
+    	
+    	
+    	params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+    	params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+    	params.addRule(RelativeLayout.BELOW, 10);
+    	
+    	mDay = new TextView(getActivity());
+    	mDay.setTextSize(55);
+    	mDay.setTextColor(this.getResources().getColor(R.color.android_blue));
+    	mDay.setLayoutParams(params);
+    	mDay.setId(20);
+    	mDay.setGravity(Gravity.CENTER_HORIZONTAL);
+    	
+    	
+    	params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+    	params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+    	params.addRule(RelativeLayout.BELOW, 20);
+    	
+    	mYear = new TextView(getActivity());
+    	mYear.setTextSize(47);
+    	mYear.setTextColor(this.getResources().getColor(R.color.android_blue));
+    	mYear.setLayoutParams(params);
+    	mYear.setId(30);
+    	mYear.setGravity(Gravity.CENTER_HORIZONTAL);
+    	selectedDate = Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");
+        updateDate();
+       
+        calendarwrapper.addView(mMonth);
+        calendarwrapper.addView(mDay);
+        calendarwrapper.addView(mYear);
+        calendarwrapper.setClickable(true);
+        calendarwrapper.setOnClickListener(this);
+          
         getList(inflater);
         
         return view;
@@ -686,6 +610,14 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
 			break;
 		}
 		
+	}
+
+	@Override
+	public void onDateSelect(String date, DatePickerFragment theDatePicker) {
+		selectedDate = date;
+		selectedDate = Services.dateFormat(selectedDate, "yyyy MM dd", "yyyyMMdd");
+		updateDate();
+		getList(mInflater);
 	}
 		    
 }

@@ -6,6 +6,7 @@
     android:paddingTop="3dp"
     android:paddingBottom="3dp"
     android:paddingLeft="2dp"
+    android:background="@drawable/button"
     tools:context=".MemberFind" >
 	<View
 	    android:id="@+id/member_row_colour_block"

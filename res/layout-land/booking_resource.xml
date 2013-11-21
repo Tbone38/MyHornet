@@ -31,7 +31,8 @@
     <RelativeLayout 
         android:id="@+id/booking_resource_calendar_wrapper"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight=".24" >
+        android:layout_height="match_parent"
+        android:layout_weight=".24"
+        android:gravity="center" >
     </RelativeLayout>    
 </LinearLayout>

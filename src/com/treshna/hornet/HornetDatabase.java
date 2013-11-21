@@ -44,7 +44,6 @@ public class HornetDatabase extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		//TODO add foreign Keys.
 		
 		//Member Table.
 		db.execSQL("CREATE TABLE "+Member.NAME+" ("+Member.Cols.MID+" INTEGER PRIMARY KEY, "
@@ -137,7 +136,6 @@ public class HornetDatabase extends SQLiteOpenHelper {
 				+ContentDescriptor.OpenTime.Cols.OPENID+" INTEGER, "+ContentDescriptor.OpenTime.Cols.CLOSETIME+" TEXT, "
 				+ContentDescriptor.OpenTime.Cols.CLOSEID+" INTEGER, "+ContentDescriptor.OpenTime.Cols.NAME+" TEXT );");
 		
-		//Date table. TODO: remove this and the time-slots table.
 		db.execSQL("CREATE TABLE "+ContentDescriptor.Date.NAME+" ("+ContentDescriptor.Date.Cols._ID+" INTEGER PRIMARY KEY AUTOINCREMENT, "
 				+ContentDescriptor.Date.Cols.DATE+" INTEGER, "+ContentDescriptor.Date.Cols.DAYOFWEEK+" INTEGER, "
 				+" FOREIGN KEY ("+ContentDescriptor.Date.Cols.DAYOFWEEK+" ) REFERENCES "+ContentDescriptor.OpenTime.NAME
@@ -176,7 +174,6 @@ public class HornetDatabase extends SQLiteOpenHelper {
 				+Booking.Cols.RID+");");
 		
 		
-		//magical combination table. TODO: rework bookings so this isn't neccissary.?
 		db.execSQL("CREATE TABLE "+BookingTime.NAME+" ("+BookingTime.Cols._ID+" INTEGER PRIMARY KEY, "
 				+BookingTime.Cols.TIMEID+" INTEGER, "+BookingTime.Cols.BID+" INTEGER, "
 				+BookingTime.Cols.RID+" INTEGER, "+BookingTime.Cols.ARRIVAL+" INTEGER, "
@@ -262,8 +259,8 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		db.execSQL("CREATE TABLE "+MembershipSuspend.NAME+" ("+MembershipSuspend.Cols._ID+" INTEGER PRIMARY KEY, "
 				+MembershipSuspend.Cols.SID+" INTEGER, "+MembershipSuspend.Cols.MID+" INTEGER DEFAULT 0, "
 				+MembershipSuspend.Cols.STARTDATE+" INTEGER, "+MembershipSuspend.Cols.REASON+" TEXT, "
-				+MembershipSuspend.Cols.LENGTH+" INTEGER, " //# of days ?
-				+MembershipSuspend.Cols.FREEZE+" INTEGER, "+MembershipSuspend.Cols.MSID+" INTEGER "
+				+MembershipSuspend.Cols.LENGTH+" INTEGER, "+MembershipSuspend.Cols.ENDDATE+" TEXT, "
+				+MembershipSuspend.Cols.FREEZE+" INTEGER "
 				+");");
 		
 		//idCard table
@@ -302,6 +299,7 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		
 	}
 	
+	//TODO: why am I dropping all the data everytime something changes?
 	public void dropTables(SQLiteDatabase db) {
 		db.execSQL("DROP TABLE IF EXISTS "+Member.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+Image.NAME);

@@ -39,22 +39,13 @@ import android.widget.ToggleButton;
  *
  */
 
-public class MembershipHold extends ActionBarActivity implements OnClickListener {
+public class MembershipHold extends ActionBarActivity implements OnClickListener, DatePickerFragment.DatePickerSelectListener {
 	
 	private String datevalue;
 	DatePickerFragment datePicker;
 	private String mMemberId;
 	private String mMembershipId = null;
-	private static final String TAG = "MembershipHold";
-
-	private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
-        @Override //when the server sync finishes, it sends out a broadcast.
-        public void onReceive(Context context, Intent intent) {
-        	System.out.println("*INTENT RECIEVED*");
-            MembershipHold.this.receivedBroadcast(intent);
-        }	
-    };
-	
+	private static final String TAG = "MembershipHold";	
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -64,11 +55,12 @@ public class MembershipHold extends ActionBarActivity implements OnClickListener
 	    actionBar.setDisplayHomeAsUpEnabled(true);
 		
 		datePicker = new DatePickerFragment();
+		datePicker.setDatePickerSelectListener(this);
 		datevalue = null;
 		
 		Intent creationIntent = getIntent();
 		mMemberId = creationIntent.getStringExtra(Services.Statics.KEY);
-		mMembershipId = creationIntent.getStringExtra(Services.Statics.MSID);
+		
 		
 		setupView();
 	}
@@ -144,30 +136,7 @@ public class MembershipHold extends ActionBarActivity implements OnClickListener
 			cur.close();
 		}
 	}
-	
-	
-	private void receivedBroadcast(Intent intent) {	
-		datevalue = datePicker.getReturnValue();
-		setupDate();
-	}
-	
-	
-	@Override 
-	public void onResume() {
-		super.onResume();
-		IntentFilter iff = new IntentFilter();
-	    iff.addAction(ClassCreate.CLASSBROADCAST);
-	    this.registerReceiver(this.mBroadcastReceiver,iff);
-	}
-	
-	
-	@Override
-	public void onPause(){
-		super.onPause();
-		this.unregisterReceiver(this.mBroadcastReceiver);
-	}
-
-	
+		
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.not_main, menu);
@@ -262,7 +231,6 @@ public class MembershipHold extends ActionBarActivity implements OnClickListener
 		ContentValues values = new ContentValues();
 		
 		values.put(ContentDescriptor.MembershipSuspend.Cols.MID, mMemberId);
-		values.put(ContentDescriptor.MembershipSuspend.Cols.MSID, mMembershipId);
 		
 		ToggleButton gifttime = (ToggleButton) this.findViewById(R.id.gifttime);
 		if (gifttime.isChecked()) {
@@ -347,6 +315,13 @@ public class MembershipHold extends ActionBarActivity implements OnClickListener
 		
 		emptyViews.add(0, String.valueOf(validated));
 		return emptyViews;
+	}
+
+
+	@Override
+	public void onDateSelect(String date, DatePickerFragment theDatePicker) {
+		datevalue = date;
+		setupDate();
 	}
 
 }

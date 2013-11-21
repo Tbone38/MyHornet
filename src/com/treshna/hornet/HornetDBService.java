@@ -162,6 +162,7 @@ public class HornetDBService extends Service {
 			getMember(last_sync);
 			getProgrammes(last_sync);
 			getMembership(last_sync);
+			getMembershipSuspends(last_sync);
 			
 			//do bookings!
 			updateBookings(); 
@@ -234,11 +235,10 @@ public class HornetDBService extends Service {
 		   int btcount = getBookingType();
 		   int mcount = getMember(-1);
 		   int mscount = getMembership(-1);
+		   getMembershipSuspends(-1);
 		   getBookings();
 		   memberImages();
 		   
-		   
-		  
 		   //do Memberships!
 		   getIdCards();
 		   getPaymentMethods();
@@ -2195,6 +2195,58 @@ public class HornetDBService extends Service {
     	return result;
     }
     
+    //should this get historic suspends?
+    //
+    private int getMembershipSuspends(long last_sync) {
+    	int result = 0;
+    	
+    	if (!openConnection()) {
+    		return -1;
+    		//see statusMessage for details;
+    	}
+    	ResultSet rs;
+    	try {
+    		rs = connection.getSuspends(last_sync);
+    	} catch (SQLException e) {
+    		statusMessage = e.getLocalizedMessage();
+    		e.printStackTrace();
+    		return -2;
+    	}
+    	try {
+    		while (rs.next()) {
+    			ContentValues values = new ContentValues();
+    			values.put(ContentDescriptor.MembershipSuspend.Cols.SID, rs.getString("id"));
+    			values.put(ContentDescriptor.MembershipSuspend.Cols.MID, rs.getString("memberid"));
+    			values.put(ContentDescriptor.MembershipSuspend.Cols.STARTDATE, Services.dateFormat(
+    					rs.getString("startdate"), "yyyy-MM-dd", "yyyMMdd"));
+    			values.put(ContentDescriptor.MembershipSuspend.Cols.LENGTH, rs.getString("howlong"));
+    			values.put(ContentDescriptor.MembershipSuspend.Cols.REASON, rs.getString("reason"));
+    			values.put(ContentDescriptor.MembershipSuspend.Cols.ENDDATE, rs.getString("edate"));
+    			
+    			cur = contentResolver.query(ContentDescriptor.MembershipSuspend.CONTENT_URI, null, 
+    					ContentDescriptor.MembershipSuspend.Cols.SID+" = ?", new String[] {rs.getString("id")}, null);
+    			if (cur.moveToFirst()) {
+    				int rowid = cur.getInt(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols._ID));
+    				
+    				contentResolver.update(ContentDescriptor.MembershipSuspend.CONTENT_URI, values, 
+    						ContentDescriptor.MembershipSuspend.Cols._ID+" = ?", new String[] {String.valueOf(rowid)});
+    			} else {
+    				contentResolver.insert(ContentDescriptor.MembershipSuspend.CONTENT_URI, values);
+    			}
+    			cur.close();
+    		}
+    		rs.close();
+    	} catch (SQLException e) {
+    		statusMessage = e.getLocalizedMessage();
+    		e.printStackTrace();
+    		return -3;
+    	}
+    	
+    	closeConnection();
+    	
+    	return result;
+    }
+    
     private int uploadSuspends(){
     	int result = 0;
     	
@@ -2222,11 +2274,7 @@ public class HornetDBService extends Service {
     		String mid, msid, sid, reason, start, duration, freeze;
   
     		mid = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.MID));
-    		if (cur.isNull(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.MSID))) {
-    			msid = null;
-    		} else {
-    			msid = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.MSID));
-    		}
+   			msid = null;
     		sid = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.SID));
     		reason = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.REASON));
     		start = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.STARTDATE));

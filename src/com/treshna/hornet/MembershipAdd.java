@@ -31,12 +31,13 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-public class MembershipAdd extends Fragment implements OnClickListener {
+public class MembershipAdd extends Fragment implements OnClickListener, DatePickerFragment.DatePickerSelectListener {
 	private static final String TAG ="MembershipAdd";
 	Context ctx;
 	ContentResolver contentResolver;
@@ -57,13 +58,6 @@ public class MembershipAdd extends Fragment implements OnClickListener {
 	private int groupid;
 	private long mLength;
 	
-	private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
-        @Override //when the data-picker finishes, sends out a broadcast.
-        public void onReceive(Context context, Intent intent) {
-            MembershipAdd.this.receivedBroadcast(intent);
-        }	
-    };
-	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			 Bundle savedInstanceState) {
@@ -72,8 +66,11 @@ public class MembershipAdd extends Fragment implements OnClickListener {
 		 contentResolver = getActivity().getContentResolver();
 		 
 		 sDatePicker = new DatePickerFragment();
+		 sDatePicker.setDatePickerSelectListener(this);
 		 eDatePicker = new DatePickerFragment();
+		 eDatePicker.setDatePickerSelectListener(this);
 		 pDatePicker = new DatePickerFragment();
+		 pDatePicker.setDatePickerSelectListener(this);
 		 
 		 //get memberID.
 		 memberid = this.getArguments().getString(Services.Statics.MID);
@@ -84,9 +81,6 @@ public class MembershipAdd extends Fragment implements OnClickListener {
 		 return page;
 	}
 
-	
-	
-	
 	@SuppressWarnings("deprecation")
 	@SuppressLint("NewApi")
 	private View setupView() {
@@ -311,36 +305,6 @@ public class MembershipAdd extends Fragment implements OnClickListener {
 		}*/
 	}
 	
-	private void receivedBroadcast(Intent i) {
-		sdate = sDatePicker.getReturnValue();
-		if (sdate != null) {
-			sdate = Services.dateFormat(sdate, "yyyy MM dd", "dd MMM yyyy");
-		}
-		edate = eDatePicker.getReturnValue();
-		if (edate != null) {
-			edate = Services.dateFormat(edate, "yyyy MM dd", "dd MMM yyyy");
-		}
-		pdate = pDatePicker.getReturnValue();
-		if (pdate != null) {
-			pdate = Services.dateFormat(pdate, "yyyy MM dd", "dd MMM yyyy");
-		}
-		setupDates();
-	}
-	
-	@Override 
-	public void onResume() {
-		super.onResume();
-		IntentFilter iff = new IntentFilter();
-	    iff.addAction(ClassCreate.CLASSBROADCAST);
-	    getActivity().registerReceiver(this.mBroadcastReceiver,iff);
-	}
-	
-	@Override
-	public void onPause(){
-		super.onPause();
-		getActivity().unregisterReceiver(this.mBroadcastReceiver);
-	}
-
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
@@ -508,6 +472,27 @@ public class MembershipAdd extends Fragment implements OnClickListener {
 		}
 		
 		return input;
+	}
+
+	@Override
+	public void onDateSelect(String date, DatePickerFragment theDatePicker) {
+		
+		if (sDatePicker == theDatePicker) {
+			sdate = date;
+			sdate = Services.dateFormat(sdate, "yyyy MM dd", "dd MMM yyyy");
+		}
+		
+		if (eDatePicker == theDatePicker) {
+			edate = date;
+			edate = Services.dateFormat(edate, "yyyy MM dd", "dd MMM yyyy");
+		}
+		
+		if (pDatePicker == theDatePicker) {
+			pdate = date;
+			pdate = Services.dateFormat(pdate, "yyyy MM dd", "dd MMM yyyy");
+		}
+		setupDates();
+		
 	}
 	
 }

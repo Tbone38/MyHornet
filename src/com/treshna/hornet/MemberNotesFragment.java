@@ -81,8 +81,7 @@ public class MemberNotesFragment extends MemberActionsFragment{
 			
 			TextView tasks = (TextView) view.findViewById(R.id.membertasksH);
 			tasks.setVisibility(View.GONE);
-			View line = (View) view.findViewById(R.id.membertasksHline);
-			line.setVisibility(View.GONE);
+			
 			
 		} else {
 			LinearLayout tasksGroup = (LinearLayout) view.findViewById(R.id.membertasks);			

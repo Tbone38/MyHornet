@@ -4,18 +4,23 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
+import com.treshna.hornet.MembersFindFragment.OnMemberSelectListener;
+
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 import android.widget.DatePicker;
 
 public class DatePickerFragment extends DialogFragment
 	implements DatePickerDialog.OnDateSetListener {
 
 	String returnValue = null;
-	
+	DatePickerSelectListener mCallback;
+	private static final String TAG = "DatePickerFragment";
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		// Use the current date as the default date in the picker
@@ -51,14 +56,29 @@ public class DatePickerFragment extends DialogFragment
 		
 		SimpleDateFormat format = new SimpleDateFormat("yyyy MM dd", Locale.US);
 		returnValue = format.format(cal.getTime());
+		mCallback.onDateSelect(returnValue, this);
+	}
 		
-		bcIntent = new Intent();
-		bcIntent.setAction(ClassCreate.CLASSBROADCAST);
-		getActivity().sendBroadcast(bcIntent);
-		this.dismiss();
-	}
+	 public interface DatePickerSelectListener {
+	        public void onDateSelect(String date, DatePickerFragment theDatePicker);
+	 }
+	 
+	 @Override
+	 public void onAttach(Activity activity) {
+	        super.onAttach(activity);
+	        
+	        // This makes sure that the container activity has implemented
+	        // the callback interface. If not, it throws an exception
+	        try {
+	            mCallback = (DatePickerSelectListener) activity;
+	        } catch (ClassCastException e) {
+	            //mCallback not set
+	        	Log.e(TAG, "ERROR, CLASS STILL USING BROADCASTER", e);
+	        }
+	    }
+	 
+	 public void setDatePickerSelectListener(DatePickerSelectListener theListener) {
+		 this.mCallback = theListener;
+	 }
 	
-	public String getReturnValue() {
-		return this.returnValue;
-	}
 }

@@ -30,7 +30,8 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ClassCreate extends NFCActivity implements OnClickListener{
+public class ClassCreate extends NFCActivity implements OnClickListener, DatePickerFragment.DatePickerSelectListener, 
+	TimePickerFragment.TimePickerSelectListener{
 	
 	public static final String CLASSBROADCAST = "com.treshna.hornet.createclass"; 
 	
@@ -39,13 +40,6 @@ public class ClassCreate extends NFCActivity implements OnClickListener{
 	TimePickerFragment stimePicker, etimePicker;
 	AlertDialog alertDialog;
 	
-	private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
-        @Override //when the server sync finishes, it sends out a broadcast.
-        public void onReceive(Context context, Intent intent) {
-        	System.out.println("*INTENT RECIEVED*");
-            ClassCreate.this.receivedBroadcast(intent);
-        }
-    };
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,10 +50,12 @@ public class ClassCreate extends NFCActivity implements OnClickListener{
 		//TODO:
 		//	- setup date-selector. 				-- DONE
 		datePicker = new DatePickerFragment();
-		
+		datePicker.setDatePickerSelectListener(this);
 		//	- setup time-selector.				-- DONE
 		stimePicker = new TimePickerFragment();
+		stimePicker.setTimePickerSelectListener(this);
 		etimePicker = new TimePickerFragment();
+		etimePicker.setTimePickerSelectListener(this);
 		//										
 		//	- setup dialog for resource selection. (see membership selection for example).
 		//										-- DONE
@@ -109,17 +105,12 @@ public class ClassCreate extends NFCActivity implements OnClickListener{
 	
 	private void receivedBroadcast(Intent intent) {
 		//get all of the variables!
-		datevalue = datePicker.getReturnValue();
-		starttimevalue = stimePicker.getReturnValue();
-		endtimevalue = etimePicker.getReturnValue();
 		
-		setText();
 	}
 	
 	@Override
 	public void onPause(){
 		super.onPause();
-		this.unregisterReceiver(this.mBroadcastReceiver);
 		
 		if (alertDialog != null && alertDialog.isShowing()) {
 			alertDialog.dismiss();
@@ -127,13 +118,6 @@ public class ClassCreate extends NFCActivity implements OnClickListener{
 		}
 	}
 	
-	@Override 
-	public void onResume() {
-		super.onResume();
-		IntentFilter iff = new IntentFilter();
-	    iff.addAction(CLASSBROADCAST);
-	    this.registerReceiver(this.mBroadcastReceiver,iff);
-	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -471,6 +455,25 @@ public class ClassCreate extends NFCActivity implements OnClickListener{
 		}
 		
 		return input;
+	}
+
+	@Override
+	public void onDateSelect(String date, DatePickerFragment theDatePicker) {
+		if (theDatePicker == datePicker) {
+			datevalue = date;
+		}
+		setText();
+	}
+
+	@Override
+	public void onTimeSelect(String time, TimePickerFragment theTimePicker) {
+		if (theTimePicker == stimePicker) {
+			starttimevalue = time;
+		}
+		if (theTimePicker == etimePicker) {
+			endtimevalue = time;
+		}
+		setText();
 	}
 
 }

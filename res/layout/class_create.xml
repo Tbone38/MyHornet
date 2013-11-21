@@ -175,7 +175,8 @@
 	            android:textSize="20sp"
 	            android:text="@string/buttonAccept"
 	            android:textColor="@color/gym"
-	            android:padding="5dp" />
+	            android:padding="5dp"
+	            android:background="@drawable/button" />
 	        <TextView
 	            android:id="@+id/buttonCancel"
 	            android:layout_width="0dp"
@@ -185,7 +186,8 @@
 	            android:textSize="20sp"
 	            android:text="@string/buttonCancel"
 	            android:textColor="@color/gym"
-	            android:padding="5dp" />
+	            android:padding="5dp"
+	            android:background="@drawable/button" />
 	        
 	    </LinearLayout>
 	

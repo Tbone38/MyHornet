@@ -23,23 +23,13 @@
         android:textIsSelectable="false"
         android:paddingLeft="3dp"
         android:paddingRight="14dp" />
-     <View
-         android:id="@+id/memberDetailsHline"
-         android:layout_width="wrap_content"
-         android:layout_height="1dp"
-         android:layout_below="@id/memberDetailsH"
-         android:layout_alignLeft="@id/memberDetailsH"
-         android:layout_alignRight="@id/memberDetailsH"
-         android:background="@color/member_blue"
-         android:padding="7dp"
-         android:layout_marginBottom="3dp" />
-    
+         
     <TextView
         android:id="@+id/labelFirstName"
         android:layout_width="wrap_content"
     	android:layout_height="wrap_content"
     	android:text="@string/labelFirstName"
-    	android:layout_below="@id/memberDetailsHline"
+    	android:layout_below="@id/memberDetailsH"
     	/>
 
     <EditText
@@ -142,23 +132,13 @@
        	android:textIsSelectable="false"
        	android:paddingLeft="3dp"
         android:paddingRight="14dp"/>
-    <View
-        android:id="@+id/memberContactHline"
-        android:layout_width="wrap_content"
-        android:layout_height="1dp"
-        android:layout_below="@id/memberContactH"
-        android:layout_alignLeft="@id/memberContactH"
-        android:layout_alignRight="@id/memberContactH"
-        android:background="@color/member_blue"
-        android:padding="7dp"
-        android:layout_marginBottom="3dp" />
     
     <TextView
         android:id="@+id/labelStreet"
         android:layout_width="wrap_content"
     	android:layout_height="wrap_content"
     	android:text="@string/labelStreet"
-     	android:layout_below="@id/memberContactHline"
+     	android:layout_below="@id/memberContactH"
     	/>
     <EditText
 	    android:id="@+id/memberStreet"
@@ -282,22 +262,13 @@
         android:paddingLeft="3dp"
         android:paddingRight="14dp"
     />
-	<View 
-	    android:id="@+id/memberinfoHline"
-	    android:layout_width="wrap_content"
-	    android:layout_height="1dp"
-	    android:layout_below="@id/memberinfoH"
-	    android:layout_alignLeft="@id/memberinfoH"
-	    android:layout_alignRight="@id/memberinfoH"
-	    android:background="@color/member_blue"
-	    android:padding="7dp"
-	    android:layout_marginBottom="3dp"/>
-		<TextView
+	
+	<TextView
         android:id="@+id/labelSignupType"
         android:layout_width="wrap_content"
     	android:layout_height="wrap_content"
     	android:text="@string/labelSignupType"
-    	android:layout_below="@+id/memberinfoHline"
+    	android:layout_below="@+id/memberinfoH"
     	android:visibility="gone"
    	/>
 	<RadioGroup android:layout_width="fill_parent" 

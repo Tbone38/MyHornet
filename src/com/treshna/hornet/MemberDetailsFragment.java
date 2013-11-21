@@ -72,7 +72,7 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener {
 		  super.onCreateView(inflater, container, savedInstanceState);
 	
 		  view = inflater.inflate(R.layout.member_details, container, false);
-	      //view = setupView();
+	     
 		  view = setupLayout();
 		  
 		  setupFragment(null);
@@ -90,14 +90,17 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener {
 		TextView memberName = (TextView) view.findViewById(R.id.member_navigation_name);
 		memberName.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.FNAME))
 					+" "+cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.SNAME)));
-		if (cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.COLOUR)) == true) {
+		/*if (cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.COLOUR)) == true) {
 			memberName.setTextColor(Color.BLACK);
 		} else {
 			memberName.setTextColor(Color.parseColor(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.COLOUR))));
-		}
+		}*/
 		
 		TextView memberNumber = (TextView) view.findViewById(R.id.member_navigation_number);
 		memberNumber.setText("#"+memberID);
+		
+		TextView memberBalance = (TextView) view.findViewById(R.id.member_status_balance);
+		memberBalance.setVisibility(View.GONE);
 		
 		ImageView img = (ImageView) view.findViewById(R.id.member_navigation_image);
 		String imgDir = getActivity().getExternalFilesDir(null)+"/0_"+memberID+".jpg";
@@ -115,6 +118,45 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener {
 		    img.setOnClickListener(this);
 		}
 	    
+		String happiness = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.HAPPINESS));
+		if (happiness.compareTo(":(") == 0) {
+			ImageView sad;
+			sad = (ImageView) view.findViewById(R.id.member_status_sad);
+			sad.setVisibility(View.VISIBLE);
+		} else if (happiness.compareTo(":|") == 0) {
+			ImageView plain;
+			plain = (ImageView) view.findViewById(R.id.member_status_plain);
+			plain.setVisibility(View.VISIBLE);
+		} else if (happiness.compareTo(":)") == 0) {
+			ImageView happy;
+			happy = (ImageView) view.findViewById(R.id.member_status_happy);
+			happy.setVisibility(View.VISIBLE);
+		}
+
+		int status = cur.getInt(cur.getColumnIndex(ContentDescriptor.Member.Cols.STATUS));
+		if (status == 0) { //Current
+			ImageView statusView;
+			statusView = (ImageView) view.findViewById(R.id.member_status_ok);
+			statusView.setVisibility(View.VISIBLE);
+			statusView.setColorFilter(Services.ColorFilterGenerator.setColourGreen());
+		} else if (status == 1) { //on hold
+			ImageView statusView;
+			statusView = (ImageView) view.findViewById(R.id.member_status_hold);
+			statusView.setVisibility(View.VISIBLE);
+			statusView.setColorFilter(Services.ColorFilterGenerator.setColourBlue());
+		} else if (status == 2|| status == 3) { //expired
+			ImageView statusView;
+			statusView = (ImageView) view.findViewById(R.id.member_status_expired);
+			statusView.setVisibility(View.VISIBLE);
+			statusView.setColorFilter(Services.ColorFilterGenerator.setColourRed());
+		} else if (status == 4 || status == 5) { //promotion/casual
+			ImageView statusView;
+			statusView = (ImageView) view.findViewById(R.id.member_status_casual);
+			statusView.setVisibility(View.VISIBLE);
+			statusView.setColorFilter(Services.ColorFilterGenerator.setColourBlue());
+		}
+		
+		
 	    //onclick listeners
 	    LinearLayout memberships = (LinearLayout) view.findViewById(R.id.button_member_navigation_memberships);
 	    memberships.setOnClickListener(this);

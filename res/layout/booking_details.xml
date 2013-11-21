@@ -106,17 +106,11 @@
 	    android:text="@string/bookingaction"
 	    android:padding="5dp"
 	    android:paddingBottom="2dp" />
-	<View android:id="@+id/line7"
-        android:layout_width="wrap_content"
-        android:layout_height="1dp"
-        android:layout_below="@id/bookingactions"
-        android:layout_alignLeft="@id/bookingactions"
-        android:layout_alignRight="@id/bookingactions"
-        android:background="@color/member_blue"/>
+	
 	<LinearLayout android:id="@+id/buttonrow1"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    android:layout_below="@id/line7"
+	    android:layout_below="@id/bookingactions"
 	    android:orientation="horizontal">
 	    <LinearLayout
 	        android:id="@+id/button_booking_checkin"

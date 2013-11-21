@@ -69,7 +69,7 @@ public class BookingPage extends ActionBarActivity implements OnMemberSelectList
 		frm = getSupportFragmentManager();
 		FragmentTransaction ft = frm.beginTransaction();
 	
-		setContentView(R.layout.booking_page);
+		setContentView(R.layout.empty_activity);
 		if (savedInstanceState == null) {
 			if (Integer.parseInt(bookingID) > 0) {
 				Cursor cur;
@@ -106,14 +106,14 @@ public class BookingPage extends ActionBarActivity implements OnMemberSelectList
 					bdl = new Bundle(1);
 					bdl.putString(Services.Statics.KEY, bookingID);
 					f.setArguments(bdl);
-					ft.add(R.id.booking_frame, f);
+					ft.add(R.id.empty_layout, f);
 				} else {
 					bookingID = tagInfo.get(1);
 					BookingDetailsFragment f = new BookingDetailsFragment();
 					Bundle bdl = new Bundle(1);
 		            bdl.putString(Services.Statics.KEY, bookingID);
 		            f.setArguments(bdl);
-					ft.add(R.id.booking_frame, f);
+					ft.add(R.id.empty_layout, f);
 				}
 			} else {
 				//add Booking
@@ -123,7 +123,7 @@ public class BookingPage extends ActionBarActivity implements OnMemberSelectList
 	            bdl.putString(Services.Statics.KEY, starttime);
 	            bdl.putString(Services.Statics.DATE, tagInfo.get(2));
 	            f.setArguments(bdl);
-				ft.add(R.id.booking_frame,f, "AddBooking");
+				ft.add(R.id.empty_layout,f, "AddBooking");
 				ft.addToBackStack(null);
 			}
 			ft.commit();
