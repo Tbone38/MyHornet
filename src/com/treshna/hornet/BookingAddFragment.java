@@ -68,9 +68,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 			 curdate = getArguments().getString(Services.Statics.DATE);
 			 curdate = Services.dateFormat(curdate, "yyyyMMdd", "dd MMM yyyy");
 		 }
-		 //bookingFName = getArguments().getString(Services.Statics.IS_BOOKING_F);
-		 //bookingSName = getArguments().getString(Services.Statics.IS_BOOKING_S);
-		 //msID = getArguments().getString(Services.Statics.MSID);
+		 
 		 contentResolver = getActivity().getContentResolver();
 		 page = inflater.inflate(R.layout.booking_add, container, false);
 		 if (curdate == null) {
@@ -117,9 +115,9 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 			
 			TextView surname = (TextView) page.findViewById(R.id.bookingSName);
 			surname.setText(bookingSName);
-			//member.setText(bookingName); //the selected value ? passed back from the find member list ?
+			
 		} else {
-			//member.setText("");
+			
 		}
 		member.setClickable(true);
 		member.setOnClickListener(this);
@@ -178,7 +176,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		rlparams.addRule(RelativeLayout.BELOW, R.id.bookingResourceRow);
 		rlparams.addRule(RelativeLayout.RIGHT_OF, 10);
 		typespinner.setLayoutParams(rlparams);
-		//Spinner typespinner = (Spinner) findViewById(R.id.bookingType);
+		
 		cur = contentResolver.query(ContentDescriptor.Bookingtype.CONTENT_URI, null, null, null, null);
 		List<String> typelist = new ArrayList<String>();
 		while (cur.moveToNext()) {
@@ -190,22 +188,11 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 				android.R.layout.simple_spinner_item, typelist);
 			dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			typespinner.setAdapter(dataAdapter);
-			typespinner.setOnItemSelectedListener(new OnItemSelectedListener(){
-				@Override
-				public void onItemSelected(AdapterView<?> parent, View view,
-						int pos, long id) {
-					// set the booking type, and update table;					
-				}
-
-				@Override
-				public void onNothingSelected(AdapterView<?> arg0) {
-					//leave alone (doesn't matter?)
-				}});
-		cur.close();
+			cur.close();
 		layout.addView(typespinner);
 		
 		LinearLayout buttonRow = new LinearLayout(ctx);
-		//
+		
 		rlparams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		rlparams.addRule(RelativeLayout.BELOW, 11);
 		rlparams.setMargins(3, 3, 3, 3);
@@ -315,7 +302,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		case (R.id.bookingEndTime):{
 			Bundle bdl = new Bundle(1);
 			bdl.putString(Services.Statics.KEY, (String) v.getTag());
-			//System.out.print("\n\n"+v.getTag());
+		
 			DialogFragment newFragment = new TimePickerFragment();
 			newFragment.setArguments(bdl);
 		    newFragment.show(getActivity().getSupportFragmentManager(), "timePicker");
@@ -404,7 +391,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 						updateView(error);
 						break;
 					}
-					case (-7):{
+					case (-7):{ //what kind of error is this?
 						ArrayList<String> error = new ArrayList<String>();
 						error.add(null); //filler, where the boolean value was
 						error.add(String.valueOf(R.id.bookingStartTimeH));
@@ -596,8 +583,6 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 			values.put(ContentDescriptor.BookingTime.Cols.TIMEID, curtimeid);
 			contentResolver.insert(ContentDescriptor.BookingTime.CONTENT_URI, values);
 			
-			
-			
 			curtimeid +=1;
 		}
 		return result;
@@ -614,7 +599,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 	}
 	
 	private ArrayList<String> getInput(){
-		//screen = getView();
+
 		ArrayList<String> input = new ArrayList<String>();
 		
 		TextView fname = (TextView) page.findViewById(R.id.bookingFName);
@@ -654,7 +639,6 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		ArrayList<String> emptyFields = new ArrayList<String>();
 		
 		TextView name = (TextView) page.findViewById(R.id.bookingFName);
-		System.out.print("\n\nNAME:"+name.getText().toString());
 		if (name.getText().toString().compareTo("Select Member")==0){
 			result = false;
 			emptyFields.add(String.valueOf(R.id.bookingNameH));
@@ -664,7 +648,6 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		}
 		
 		TextView date = (TextView) page.findViewById(R.id.bookingDate);
-		System.out.print("\n\nDATE:"+date.getText().toString());
 		if (date.getText().toString().compareTo(getString(R.string.addbookingDate)) ==0){
 			System.out.print("\n\nDATE NOT SET \n");
 			result = false;
@@ -740,7 +723,6 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			String starttime = (String) getArguments().get(Services.Statics.KEY);
-			//System.out.print("\n\n"+starttime);
 			// Use the current time as the default values for the picker
 			final Calendar c = Calendar.getInstance();
 			c.set(Calendar.HOUR_OF_DAY, Integer.parseInt(starttime.substring(0, 2)));

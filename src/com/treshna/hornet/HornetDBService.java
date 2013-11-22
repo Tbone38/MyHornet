@@ -157,9 +157,12 @@ public class HornetDBService extends Service {
 				Services.showToast(getApplicationContext(), statusMessage, handler);
 			}
 			
+			getPendingDownloads();
+			
 			//downloads!
 			getMemberNotes(last_sync);
 			getMember(last_sync);
+			getMemberBalance(last_sync);
 			getProgrammes(last_sync);
 			getMembership(last_sync);
 			getMembershipSuspends(last_sync);
@@ -169,6 +172,8 @@ public class HornetDBService extends Service {
 			getBookings();
 			bookingImages();
 			getClasses(last_sync);
+			
+			getDeletedRecords(last_sync);
 			
 
 			Services.setPreference(ctx, "lastsync", String.valueOf(this_sync));
@@ -236,6 +241,7 @@ public class HornetDBService extends Service {
 		   int mcount = getMember(-1);
 		   int mscount = getMembership(-1);
 		   getMembershipSuspends(-1);
+		   getMemberBalance(-1);
 		   getBookings();
 		   memberImages();
 		   
@@ -720,97 +726,101 @@ public class HornetDBService extends Service {
     }
     
     private int uploadMember(){
-    	//if isUsed = 1, upload member to database, else skip.
+    	
     	String email, medical, suburb, hphone, cphone, gender, dob, add, city, post;
-    	String[] memberid;
     	int result = 0;
     	
-    	cur = contentResolver.query(ContentDescriptor.Pending.CONTENT_URI, null, ContentDescriptor.Pending.Cols.ISUSED+" = 1", null, null);
-    	if (cur.getColumnCount() <= 0) {
-    		cur.close();
-    		Log.v(TAG, "No Pending members");
-    		return 0;
+    	cur = contentResolver.query(ContentDescriptor.PendingUploads.CONTENT_URI, null, 
+    			ContentDescriptor.PendingUploads.Cols.TABLEID+" = ?", 
+    			new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Member.getKey())}, null);
+    	ArrayList<String> rows = new ArrayList<String>();
+    	while (cur.moveToNext()) {
+    		rows.add(cur.getString(cur.getColumnIndex(ContentDescriptor.PendingUploads.Cols.ROWID)));
     	}
-    	cur.moveToFirst();
+    	cur.close();
+    	
     	if (!openConnection()) {
     		return -1; //connection failed;
     	}
-    	try {
-	    	while (cur.getPosition() < cur.getCount()) {
-	    		/*****************/ //null handling
-	        	if (cur.isNull(cur.getColumnIndex(ContentDescriptor.Pending.Cols.EMAIL))) email = "";
-	        	else email = cur.getString(cur.getColumnIndex(ContentDescriptor.Pending.Cols.EMAIL));
-	        	if (cur.isNull(cur.getColumnIndex(ContentDescriptor.Pending.Cols.MEDICAL))) medical = "";
-	        	else medical = cur.getString(cur.getColumnIndex(ContentDescriptor.Pending.Cols.MEDICAL));
-	        	if (cur.isNull(cur.getColumnIndex(ContentDescriptor.Pending.Cols.SUBURB))) suburb = "";
-	        	else suburb = cur.getString(cur.getColumnIndex(ContentDescriptor.Pending.Cols.SUBURB));
-	        	if (cur.isNull(cur.getColumnIndex(ContentDescriptor.Pending.Cols.HPHONE))) hphone = "";
-	        	else hphone = cur.getString(cur.getColumnIndex(ContentDescriptor.Pending.Cols.HPHONE));
-	        	if (cur.isNull(cur.getColumnIndex(ContentDescriptor.Pending.Cols.CPHONE))) cphone = "";
-	        	else cphone = cur.getString(cur.getColumnIndex(ContentDescriptor.Pending.Cols.CPHONE));
-	        	if (cur.isNull(cur.getColumnIndex(ContentDescriptor.Pending.Cols.STREET))) add = "";
-	        	else add = cur.getString(cur.getColumnIndex(ContentDescriptor.Pending.Cols.STREET));
-	        	if (cur.isNull(cur.getColumnIndex(ContentDescriptor.Pending.Cols.CITY))) city = "";
-	        	else city = cur.getString(cur.getColumnIndex(ContentDescriptor.Pending.Cols.CITY));
-	        	if (cur.isNull(cur.getColumnIndex(ContentDescriptor.Pending.Cols.POSTAL))) post = "";
-	        	else post = cur.getString(cur.getColumnIndex(ContentDescriptor.Pending.Cols.POSTAL));
-	        	
-	        	gender = cur.getString(cur.getColumnIndex(ContentDescriptor.Pending.Cols.GENDER));
-	        	if (gender.compareTo(getString(R.string.radioMale))== 0) gender = "M";
-	        	else gender = "F";
-	        	dob = cur.getString(cur.getColumnIndex(ContentDescriptor.Pending.Cols.DOB));
-	        	dob = Services.dateFormat(dob, "dd/MM/yyyy", "yyyy-MM-dd");
-	        	/****************/
-	    		if (cur.getString(cur.getColumnIndex(ContentDescriptor.Pending.Cols.SIGNUP)).compareTo(
-	    				getString(R.string.radioMember)) == 0){
-	    			
-	    			
-	    			result += connection.addMember(cur.getInt(cur.getColumnIndex(ContentDescriptor.Pending.Cols.MID)),
-	    					cur.getString(cur.getColumnIndex(ContentDescriptor.Pending.Cols.SNAME)),
-	    					cur.getString(cur.getColumnIndex(ContentDescriptor.Pending.Cols.FNAME)),
-	    					gender,
-	    					email,
-	    					dob, 
-	    					add,
-	    					suburb,
-	    					city,
-	    					post,
-	    					hphone,
-	    					cphone,
-	    					medical);
-	    			memberid = new String[] {cur.getString(cur.getColumnIndex(ContentDescriptor.Pending.Cols.MID))};
-	    			connection.closePreparedStatement();
-	        		contentResolver.delete(ContentDescriptor.Pending.CONTENT_URI, ContentDescriptor.Pending.Cols.MID+" = ?", memberid);
-	        		//after successful upload, remove from local database.
-	    		} 
-	    		/** Prospects are deprecated in the full application, but available via the signup app.*/
-	    		else {
-	    			result += connection.addProspect(cur.getString(cur.getColumnIndex(ContentDescriptor.Pending.Cols.SNAME)), 
-	    					cur.getString(cur.getColumnIndex(ContentDescriptor.Pending.Cols.FNAME)),
-	    					gender,
-	    					email,
-	    					dob,
-	    					add,
-	    					suburb,
-	    					city,
-	    					post,
-	    					hphone,
-	    					cphone,
-	    					medical);
-	    			memberid = new String[] {cur.getString(cur.getColumnIndex(ContentDescriptor.Pending.Cols.ID))};
-	    			connection.closePreparedStatement();
-	        		contentResolver.delete(ContentDescriptor.Pending.CONTENT_URI, ContentDescriptor.Pending.Cols.ID+" = ?", memberid);
-	    		}
-	    		
-	    		cur.moveToNext();
-	    	}
-    	} catch (SQLException e){
-	    	statusMessage = e.getLocalizedMessage();
-	    	e.printStackTrace();
-	    }
+    	
+    	for (int i = 0; i <rows.size(); i ++) {
+    		cur = contentResolver.query(ContentDescriptor.Member.URI_FREE_IDS, null, 
+    				ContentDescriptor.Member.Cols._ID+" = ?", new String[] {rows.get(i)}, null);
+    		if (!cur.moveToFirst()) {
+    			Log.e(TAG, "COUD NOT FIND ROW ID :"+rows.get(i));
+    			contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, 
+    					ContentDescriptor.PendingUploads.Cols.TABLEID+" = ? AND "
+    					+ContentDescriptor.PendingUploads.Cols.ROWID+" = ?", new String[] {
+    					String.valueOf(ContentDescriptor.TableIndex.Values.Member.getKey()),
+    					rows.get(i)});
+    			continue;
+    		}
+    		
+    		if (cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMAIL))) email = "";
+        	else email = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMAIL));
+        	if (cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.MEDICAL))) medical = "";
+        	else medical = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.MEDICAL));
+        	if (cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.SUBURB))) suburb = "";
+        	else suburb = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.SUBURB));
+        	if (cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHHOME))) hphone = "";
+        	else hphone = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHHOME));
+        	if (cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHCELL))) cphone = "";
+        	else cphone = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHCELL));
+        	if (cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.STREET))) add = "";
+        	else add = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.STREET));
+        	if (cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.CITY))) city = "";
+        	else city = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.CITY));
+        	if (cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.POSTAL))) post = "";
+        	else post = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.POSTAL));
+        	
+        	gender = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.GENDER));
+        	if (gender.compareTo(getString(R.string.radioMale))== 0) gender = "M";
+        	else gender = "F";
+        	dob = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.DOB));
+        	dob = Services.dateFormat(dob, "dd/MM/yyyy", "dd MMM yyyy");
+        	
+        	try {
+	    		result += connection.addMember(cur.getInt(cur.getColumnIndex(ContentDescriptor.Member.Cols.MID)),
+						cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.SNAME)),
+						cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.FNAME)),
+						gender,
+						email,
+						dob, 
+						add,
+						suburb,
+						city,
+						post,
+						hphone,
+						cphone,
+						medical);
+	    		connection.closePreparedStatement();
+        	} catch (SQLException e) {
+        		statusMessage = e.getLocalizedMessage();
+        		e.printStackTrace();
+        		return -2;
+        	}
+        	
+    		contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, 
+					ContentDescriptor.PendingUploads.Cols.TABLEID+" = ? AND "
+					+ContentDescriptor.PendingUploads.Cols.ROWID+" = ?", new String[] {
+					String.valueOf(ContentDescriptor.TableIndex.Values.Member.getKey()),
+					rows.get(i)});
+    		
+    		ContentValues values = new ContentValues();
+    		values.put(ContentDescriptor.PendingDownloads.Cols.TABLEID, 
+    				ContentDescriptor.TableIndex.Values.Member.getKey());
+    		values.put(ContentDescriptor.PendingDownloads.Cols.ROWID,
+    				cur.getInt(cur.getColumnIndex(ContentDescriptor.Member.Cols.MID)));
+    		contentResolver.insert(ContentDescriptor.PendingDownloads.CONTENT_URI, values);
+    		
+    		cur.close();
+    	}
+    	
     	closeConnection();
     	return result;
     }
+    	
+    	
     /* Retrieves and stores free memberID's from the database,
      * the memberID's are assigned to members upon signup through the app.
      */
@@ -822,7 +832,8 @@ public class HornetDBService extends Service {
     		return -1; //connection failed; see statusMessage for why
     	}
     	
-    	cur = contentResolver.query(ContentDescriptor.Pending.CONTENT_URI, null, ContentDescriptor.Pending.Cols.ISUSED+" = 0", null, null);
+    	cur = contentResolver.query(ContentDescriptor.Member.URI_FREE_IDS, null, ContentDescriptor.Member.Cols.STATUS+" = -1",
+    			null, null);
     	count = cur.getCount();
     	cur.close();
     	if (count>= 7) {
@@ -839,24 +850,30 @@ public class HornetDBService extends Service {
     		
 	    		ContentValues val = new ContentValues();
 	    		Log.v(TAG, "MID: "+rs.getString("nextval"));
-	    		val.put(ContentDescriptor.Pending.Cols.MID, rs.getString("nextval"));
+	    		val.put(ContentDescriptor.Member.Cols.MID, rs.getString("nextval"));
 	    		
-	    		cur = contentResolver.query(ContentDescriptor.Pending.CONTENT_URI, null, ContentDescriptor.Pending.Cols.ISUSED+" = 2", null, null);
+	    		cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null,
+	    				ContentDescriptor.Member.Cols.MID+" = -1", null, null);
+	    		
 	    		Log.v(TAG, "Pending Uploads (without ID):"+cur.getCount());
 	    		if (cur.getCount() != 0) {
 	    			cur.moveToFirst();
-	    			Log.v(TAG, "Upading Record where id="+cur.getInt(cur.getColumnIndex(ContentDescriptor.Pending.Cols.ID)));
-	    			Log.v(TAG, " with "+rs.getString("nextval"));
-	    			
-	    			id = cur.getInt(cur.getColumnIndex(ContentDescriptor.Pending.Cols.ID));
+	    			id = cur.getInt(cur.getColumnIndex(ContentDescriptor.Member.Cols._ID));
 		    		cur.close();
-	    			val.put(ContentDescriptor.Pending.Cols.ISUSED, 1);
-	    			contentResolver.update(ContentDescriptor.Pending.CONTENT_URI, val, ContentDescriptor.Pending.Cols.ID+" = "+id, null);
-	    			l +=1; //get another id, because this one was used?
+	    			contentResolver.update(ContentDescriptor.Member.CONTENT_URI, val, 
+	    					ContentDescriptor.Member.Cols._ID+" = "+id, null);
+	    			val = new ContentValues();
+	    			val.put(ContentDescriptor.PendingUploads.Cols.TABLEID, 
+	    					ContentDescriptor.TableIndex.Values.Member.getKey());
+	    			val.put(ContentDescriptor.PendingUploads.Cols.ROWID, id);
+	    			
+	    			contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, val);
+	    			
+	    			l +=1; 
 	    		}
 	    		else { 
-	    			val.put(ContentDescriptor.Pending.Cols.ISUSED, 0);
-	    			contentResolver.insert(ContentDescriptor.Pending.CONTENT_URI, val);
+	    			val.put(ContentDescriptor.Member.Cols.STATUS, -1);
+	    			contentResolver.insert(ContentDescriptor.Member.CONTENT_URI, val);
 		    		
 		    		cur.close();
 	    		}
@@ -1467,17 +1484,7 @@ public class HornetDBService extends Service {
     				notesid = cur.getInt(cur.getColumnIndex(ContentDescriptor.MemberNotes.Cols.MNID));
     			}*/
     			
-    			values = new ContentValues();
-    			values.put(ContentDescriptor.Member.Cols.MID, rs.getString("id"));
-    			values.put(ContentDescriptor.Member.Cols.FNAME, rs.getString("firstname"));
-    			values.put(ContentDescriptor.Member.Cols.SNAME, rs.getString("surname"));
-    			values.put(ContentDescriptor.Member.Cols.HAPPINESS, rs.getString("happiness"));
-    			values.put(ContentDescriptor.Member.Cols.PHHOME, rs.getString("mphhome"));
-    			values.put(ContentDescriptor.Member.Cols.PHWORK, rs.getString("mphwork"));
-    			values.put(ContentDescriptor.Member.Cols.PHCELL, rs.getString("mphcell"));
-    			values.put(ContentDescriptor.Member.Cols.EMAIL, rs.getString("memail"));
-    			values.put(ContentDescriptor.Member.Cols.NOTES, rs.getString("mnotes")); 
-    			values.put(ContentDescriptor.Member.Cols.STATUS, rs.getString("status"));
+    			values = insertMember(rs);
     			
     			cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, "m."+ContentDescriptor.Member.Cols.MID+" = ?",
     					new String[] {rs.getString("id")}, null);
@@ -2743,6 +2750,150 @@ public class HornetDBService extends Service {
     			return -2;
     		}
     	}
+    	
+    	return result;
+    }
+    
+    private int getMemberBalance(long last_update) {
+    	Log.d(TAG, "Getting Member Balance");
+    	int result = 0;
+    	final long TWELEVEHOURS = 43200000;
+    	if (!openConnection()) {
+    		return -1;
+    	}
+    	cur = contentResolver.query(ContentDescriptor.Member.URI_JOIN_BALANCE, new String[] {"m."
+    	+ContentDescriptor.Member.Cols.MID}, "("+ContentDescriptor.MemberBalance.Cols.LASTUPDATE+" <= ? OR "
+    	+ContentDescriptor.MemberBalance.Cols.LASTUPDATE+" IS NULL )",
+    	new String[] {new Date(last_sync+TWELEVEHOURS).toString()}, null);
+    	
+    	ArrayList<String> idlist = new ArrayList<String>();
+    	while (cur.moveToNext()) {
+    		idlist.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.MID)));
+    	}
+    	cur.close();
+    	
+    	try {
+    		for (int i = 0; i < idlist.size(); i++) {
+    			ResultSet rs = connection.getBalance(idlist.get(i));
+    			if (!rs.next()) {
+    				//bad member id? no balance was returned.
+    				continue;
+    			}
+    			ContentValues values = new ContentValues();
+    			values.put(ContentDescriptor.MemberBalance.Cols.BALANCE, rs.getString("owing"));
+    			values.put(ContentDescriptor.MemberBalance.Cols.MID, idlist.get(i));
+    			values.put(ContentDescriptor.MemberBalance.Cols.LASTUPDATE, this_sync);
+    			
+    			cur = contentResolver.query(ContentDescriptor.MemberBalance.CONTENT_URI, null,
+    					ContentDescriptor.MemberBalance.Cols.MID+" = ?", new String[] {idlist.get(i)}, null);
+    			if (cur.moveToFirst()) {//update
+    				 int rowid = cur.getInt(cur.getColumnIndex(ContentDescriptor.MemberBalance.Cols._ID));
+    				 contentResolver.update(ContentDescriptor.MemberBalance.CONTENT_URI, values, 
+    						 ContentDescriptor.MemberBalance.Cols._ID+" = ?", new String[] {String.valueOf(rowid)});
+    			} else { //insert
+    				contentResolver.insert(ContentDescriptor.MemberBalance.CONTENT_URI, values);
+    			}
+    			rs.close();
+    			cur.close();
+    			result +=1;
+    		}
+    	} catch (SQLException e) {
+    		statusMessage = e.getLocalizedMessage();
+    		e.printStackTrace();
+    		return -2;
+    	}
+    	
+    	closeConnection();
+    	
+    	return result;
+    }
+    
+    private ContentValues insertMember(ResultSet rs) throws SQLException {
+    	ContentValues values = new ContentValues();
+		values.put(ContentDescriptor.Member.Cols.MID, rs.getString("id"));
+		values.put(ContentDescriptor.Member.Cols.FNAME, rs.getString("firstname"));
+		values.put(ContentDescriptor.Member.Cols.SNAME, rs.getString("surname"));
+		values.put(ContentDescriptor.Member.Cols.HAPPINESS, rs.getString("happiness"));
+		values.put(ContentDescriptor.Member.Cols.PHHOME, rs.getString("mphhome"));
+		values.put(ContentDescriptor.Member.Cols.PHWORK, rs.getString("mphwork"));
+		values.put(ContentDescriptor.Member.Cols.PHCELL, rs.getString("mphcell"));
+		values.put(ContentDescriptor.Member.Cols.EMAIL, rs.getString("memail"));
+		values.put(ContentDescriptor.Member.Cols.NOTES, rs.getString("mnotes")); 
+		values.put(ContentDescriptor.Member.Cols.STATUS, rs.getString("status"));
+		
+		return values;
+    }
+    
+    private int getPendingDownloads() {
+    	int result = 0;
+    	
+    	ArrayList<String> member = new ArrayList<String>();
+    	
+    	cur = contentResolver.query(ContentDescriptor.PendingDownloads.CONTENT_URI, null, null, null, null);
+    	while (cur.moveToNext()){
+    		if (cur.getInt(cur.getColumnIndex(ContentDescriptor.PendingDownloads.Cols.TABLEID)) == 
+    				ContentDescriptor.TableIndex.Values.Member.getKey()) {
+    			member.add(cur.getString(cur.getColumnIndex(ContentDescriptor.PendingDownloads.Cols.ROWID)));
+    		} else {
+    			//put it somewhere else;
+    		}
+    	}
+    	cur.close();
+    	
+    	if (!openConnection()) {
+    		return -1;
+    	}
+    	
+    	for (int i = 0; i < member.size(); i++) {
+    		String query = "SELECT id, member.firstname, member.surname, " //get_name
+        			+"CASE WHEN member.happiness = 1 THEN ':)' WHEN member.happiness = 0 THEN ':|'"
+        			+" WHEN member.happiness <= -1 THEN ':(' WHEN member.happiness = 2 THEN '||' ELSE '' END AS happiness, "
+        			+"member.phonehome AS mphhome, member.phonework AS mphwork, member.phonecell AS mphcell, "
+        			+"member.email AS memail, member.notes AS mnotes, member.status FROM member"
+        			+" WHERE id = "+member.get(i)+";";
+    		ResultSet rs;
+    		try {
+    			rs = connection.startStatementQuery(query);
+    			if (rs.next()) {
+    				ContentValues values = insertMember(rs);
+    				
+    				contentResolver.update(ContentDescriptor.Member.CONTENT_URI, values, ContentDescriptor.Member.Cols.MID+" = ?",
+        						new String[] {rs.getString("id")});
+    			}
+    		} catch (SQLException e) {
+    			statusMessage = e.getLocalizedMessage();
+    			e.printStackTrace();
+    			return -2;
+    		}
+    	}
+    	
+    	return result;
+    }
+    
+    private int getDeletedRecords(long last_sync) {
+    	int result = 0;
+    	
+    	if (!openConnection()) {
+    		return -1;
+    	}
+    	ResultSet rs;
+    	try {
+    		rs = connection.getDeletedRecords(last_sync);
+    		
+    		while (rs.next()) {
+    			ContentValues values = new ContentValues();
+    			values.put(ContentDescriptor.DeletedRecords.TABLENAME, rs.getString("tablename"));
+    			values.put(ContentDescriptor.DeletedRecords.ROWID, rs.getString("deletedid"));
+    			
+    			contentResolver.update(ContentDescriptor.DeletedRecords.CONTENT_URI, values, null, null);
+    		}
+    	} catch (SQLException e) {
+    		statusMessage = e.getLocalizedMessage();
+    		e.printStackTrace();
+    		return -3;
+    	}
+    	
+    	closeConnection();
     	
     	return result;
     }

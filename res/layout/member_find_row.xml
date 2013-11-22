@@ -22,7 +22,8 @@
         android:paddingLeft="5dp"
      	android:layout_width="80sp"
      	android:layout_height="80sp"
-     	android:layout_toRightOf="@id/member_row_colour_block" />
+     	android:layout_toRightOf="@id/member_row_colour_block"
+     	android:layout_marginRight="5dp" />
 	
 	<TextView android:id="@+id/name"
         android:padding="3dp"

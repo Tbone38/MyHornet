@@ -35,7 +35,7 @@ public class BookingsListAdapter extends SimpleCursorAdapter implements OnClickL
 	@Override
 	public void bindView(View rowLayout, Context context, Cursor cursor){
 		super.bindView(rowLayout, context, cursor);
-		
+
 		switch (cursor.getInt(cursor.getColumnIndex("result"))){
 		case (7):
 		case (8):
@@ -71,6 +71,7 @@ public class BookingsListAdapter extends SimpleCursorAdapter implements OnClickL
 		
 		if ( !cursor.isNull(7)) { //_id for booking
 			TextView name = (TextView) rowLayout.findViewById(R.id.booking_resource_booking_name);
+			name.setVisibility(View.VISIBLE);
 			String ntext = null;
 			if (!cursor.isNull(cursor.getColumnIndex(ContentDescriptor.Booking.Cols.FNAME))) {
 				ntext = cursor.getString(cursor.getColumnIndex(ContentDescriptor.Booking.Cols.FNAME))+" ";
@@ -107,7 +108,7 @@ public class BookingsListAdapter extends SimpleCursorAdapter implements OnClickL
 			rowLayout.setOnClickListener(this);
 		} else {
 			TextView name = (TextView) rowLayout.findViewById(R.id.booking_resource_booking_name);
-			name.setText("");
+			name.setVisibility(View.GONE);
 			TextView booking = (TextView) rowLayout.findViewById(R.id.booking_resource_booking_time);
 			booking.setText("Click to Add Booking");
 			ArrayList<String> tagInfo = new ArrayList<String>();

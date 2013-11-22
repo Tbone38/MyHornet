@@ -43,7 +43,7 @@ public class Services {
 			date = input.parse(dateString);
 		} catch (ParseException e) {
 			Log.e(TAG, "Error Parsing Date:", e);
-			return null; //or null?
+			return null;
 		}
 		SimpleDateFormat output = new SimpleDateFormat(outputLayout, Locale.US);
 		String dateText = output.format(date);
@@ -338,7 +338,7 @@ public class Services {
 		public static final String IS_CLASSSWIPE = "com.treshna.hornet.class_swipe";
 		
 		public static enum FragmentType {
-			MembershipAdd(1), MembershipComplete(2), MemberDetails(3);
+			MembershipAdd(1), MembershipComplete(2), MemberDetails(3), MemberGallery(4);
 			
 			private final int key;
 			

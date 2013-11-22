@@ -35,7 +35,8 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 	
 	public static final String CLASSBROADCAST = "com.treshna.hornet.createclass"; 
 	
-	String datevalue = null, resourcevalue = null, resourceid = null, starttimevalue = null, endtimevalue = null;
+	String datevalue = null, resourcevalue = null, resourceid = null, starttimevalue = null, 
+			endtimevalue = null, period = null;
 	DatePickerFragment datePicker;
 	TimePickerFragment stimePicker, etimePicker;
 	AlertDialog alertDialog;
@@ -47,21 +48,19 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 		setContentView(R.layout.class_create);
 		ActionBar actionBar = getSupportActionBar();
 	    actionBar.setDisplayHomeAsUpEnabled(true);
-		//TODO:
-		//	- setup date-selector. 				-- DONE
+		
 		datePicker = new DatePickerFragment();
 		datePicker.setDatePickerSelectListener(this);
-		//	- setup time-selector.				-- DONE
+		
 		stimePicker = new TimePickerFragment();
 		stimePicker.setTimePickerSelectListener(this);
 		etimePicker = new TimePickerFragment();
 		etimePicker.setTimePickerSelectListener(this);
-		//										
-		//	- setup dialog for resource selection. (see membership selection for example).
-		//										-- DONE
+		
 		setText();
 	}
 	
+	@SuppressWarnings("deprecation")
 	private void setText() {
 		TextView date, resource, starttime, endtime, buttonaccept, buttoncancel;		
 		
@@ -70,7 +69,7 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 		date.setClickable(true);
 		date.setOnClickListener(this);
 		if (datevalue != null) {
-			date.setText(datevalue);
+			date.setText(Services.dateFormat(datevalue, "yyyy MM dd", "dd MMM yyyy"));
 		}
 		
 		starttime = (TextView) this.findViewById(R.id.classStartTime);
@@ -78,11 +77,22 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 		starttime.setOnClickListener(this);
 		if (starttimevalue != null) {
 			starttime.setText(starttimevalue);
+			if (endtimevalue == null && period != null) {
+				int year = 2013, month = 10, day = 2;
+				Date tempdate = new Date(year, month, day, 0, 0);
+				Date enddate = new Date(year, month, day, Integer.parseInt(period.substring(0, 2)), 
+						Integer.parseInt(period.substring(3, 5)));
+				Date startdate = new Date(year, month, day, Integer.parseInt(starttimevalue.substring(0, 2)),
+						Integer.parseInt(starttimevalue.substring(3, 5)));
+				Long difference = enddate.getTime() - tempdate.getTime();
+				difference = difference *2;
+			
+				endtimevalue = Services.dateFormat(new Date((startdate.getTime()+difference)).toString(), 
+						"EEE MMM dd HH:mm:ss zzz yyyy", "HH:mm:ss");
+			}
 		}
 		
 		endtime = (TextView) this.findViewById(R.id.classEndTime);
-		endtime.setClickable(true);
-		endtime.setOnClickListener(this);
 		if (endtimevalue != null) {
 			endtime.setText(endtimevalue);
 		}
@@ -101,11 +111,6 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 		buttoncancel = (TextView) this.findViewById(R.id.buttonCancel);
 		buttoncancel.setClickable(true);
 		buttoncancel.setOnClickListener(this);
-	}
-	
-	private void receivedBroadcast(Intent intent) {
-		//get all of the variables!
-		
 	}
 	
 	@Override
@@ -160,15 +165,6 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 	    	Services.setPreference(this, "sync_frequency", "-1");
 	    	return true;
 	    }
-	    /*case (R.id.action_bookings):{
-	    	Intent bookings = new Intent(this, HornetDBService.class);
-			bookings.putExtra(Services.Statics.KEY, Services.Statics.BOOKING);
-		 	this.startService(bookings);
-	    	
-		 	Intent intent = new Intent(this, BookingsSlidePager.class);
-	       	startActivity(intent);
-	       	return true;
-	    }*/
 	    case (R.id.action_addMember):{
 	    	Intent intent = new Intent(this, MemberAdd.class);
 	    	startActivity(intent);
@@ -202,7 +198,10 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 			
 			rb = new RadioButton(this);
 			rb.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Resource.Cols.NAME)));
-			rb.setTag(cur.getString(cur.getColumnIndex(ContentDescriptor.Resource.Cols.ID)));
+			ArrayList<String> tag = new ArrayList<String>();
+			tag.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Resource.Cols.ID)));
+			tag.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Resource.Cols.PERIOD)));
+			rb.setTag(tag);
 			rg.addView(rb);
 		}
 		
@@ -225,7 +224,9 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 				selectedRadio = (RadioButton) rg.findViewById(selectedid);
 				
 				resourcevalue = selectedRadio.getText().toString();
-				resourceid = (String) selectedRadio.getTag();
+				ArrayList<String> tag = (ArrayList<String>) selectedRadio.getTag();
+				resourceid = (String) tag.get(0);
+				period = tag.get(1);
 				
 				setText();
 			}
@@ -392,16 +393,7 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 			}
 		}
 		
-		classmemberlimit = (EditText) this.findViewById(R.id.classMemberLimit);
-		if (classmemberlimit.getText().toString().compareTo("") == 0)
-		{
-			emptyViews.add(String.valueOf(R.id.classMemberLimitL));
-			validated = false;
-		} else {
-			TextView label;
-			label = (TextView) this.findViewById(R.id.classMemberLimitL);
-			label.setTextColor(Color.BLACK);
-		}
+		
 		
 		resource = (TextView) this.findViewById(R.id.classResource);
 		if (resource.getText().toString().compareTo(this.getString(R.string.classresourcedefault)) == 0)
@@ -430,7 +422,8 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 		input.put(ContentDescriptor.Class.Cols.NAME, classname.getEditableText().toString());
 		
 		date = (TextView) this.findViewById(R.id.classDate);
-		input.put(ContentDescriptor.Class.Cols.SDATE, date.getText().toString().replace(" ", ""));
+		input.put(ContentDescriptor.Class.Cols.SDATE, Services.dateFormat(date.getText().toString(),
+				"dd MMM yyyy", "yyyyMMdd"));
 		
 		stime = (TextView) this.findViewById(R.id.classStartTime);
 		input.put(ContentDescriptor.Class.Cols.STIME, stime.getText().toString());
@@ -439,7 +432,11 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 		input.put(ContentDescriptor.Class.Cols.ETIME, etime.getText().toString());
 		
 		classmemberlimit = (EditText) this.findViewById(R.id.classMemberLimit);
-		input.put(ContentDescriptor.Class.Cols.MAX_ST, classmemberlimit.getEditableText().toString());
+		if (classmemberlimit.getText().toString().compareTo("") == 0) {
+			input.put(ContentDescriptor.Class.Cols.MAX_ST, 25);
+		} else {
+			input.put(ContentDescriptor.Class.Cols.MAX_ST, classmemberlimit.getEditableText().toString());
+		}
 		
 		repeating = (CheckBox) this.findViewById(R.id.classRepeating);
 		if (repeating.isChecked()) {

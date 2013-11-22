@@ -17,12 +17,12 @@ import com.treshna.hornet.ContentDescriptor.Door;
 import com.treshna.hornet.ContentDescriptor.IdCard;
 import com.treshna.hornet.ContentDescriptor.Image;
 import com.treshna.hornet.ContentDescriptor.Member;
+import com.treshna.hornet.ContentDescriptor.MemberBalance;
 import com.treshna.hornet.ContentDescriptor.MemberNotes;
 import com.treshna.hornet.ContentDescriptor.Membership;
 import com.treshna.hornet.ContentDescriptor.MembershipSuspend;
 import com.treshna.hornet.ContentDescriptor.OpenTime;
 import com.treshna.hornet.ContentDescriptor.PaymentMethod;
-import com.treshna.hornet.ContentDescriptor.Pending;
 import com.treshna.hornet.ContentDescriptor.PendingDownloads;
 import com.treshna.hornet.ContentDescriptor.PendingUploads;
 import com.treshna.hornet.ContentDescriptor.Programme;
@@ -36,7 +36,7 @@ import com.treshna.hornet.ContentDescriptor.Visitor;
 public class HornetDatabase extends SQLiteOpenHelper {
 	
 	 public static final String DATABASE_NAME="hornet.db";
-	 private static final int DATABASE_VERSION = 87;
+	 private static final int DATABASE_VERSION = 89;
 	 
 	 public HornetDatabase (Context context) {
 		 super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -46,7 +46,8 @@ public class HornetDatabase extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		
 		//Member Table.
-		db.execSQL("CREATE TABLE "+Member.NAME+" ("+Member.Cols.MID+" INTEGER PRIMARY KEY, "
+		db.execSQL("CREATE TABLE "+Member.NAME+" ("+Member.Cols._ID+" INTEGER PRIMARY KEY, "
+				+Member.Cols.MID+" INTEGER NOT NULL, "
 				+Member.Cols.COLOUR+" TEXT, "+Member.Cols.HAPPINESS+" TEXT, "
 				+Member.Cols.LENGTH+" TEXT, "+Member.Cols.BOOKP+" INTEGER, "
 				+Member.Cols.TASKP+" INTEGER, "+Member.Cols.RESULT+" TEXT, "
@@ -57,7 +58,10 @@ public class HornetDatabase extends SQLiteOpenHelper {
 				+Member.Cols.BOOK1+" TEXT, "+Member.Cols.BOOK2+" TEXT, "
 				+Member.Cols.BOOK3+" TEXT, "+Member.Cols.LASTVISIT+" TEXT, "
 				+Member.Cols.STATUS+" INTEGER, "+Member.Cols.FNAME+" TEXT, "
-				+Member.Cols.SNAME+" TEXT "
+				+Member.Cols.SNAME+" TEXT, "+Member.Cols.GENDER+" TEXT, "
+				+Member.Cols.DOB+" TEXT, "+Member.Cols.MEDICAL+" TEXT, "
+				+Member.Cols.STREET+" TEXT, "+Member.Cols.SUBURB+" TEXT, "
+				+Member.Cols.CITY+" TEXT, "+Member.Cols.POSTAL+" TEXT "
 				+");");
 		//Member indexs.
 		db.execSQL("CREATE INDEX "+Member.Indexs.MEMBER_NAME+" ON "+Member.NAME+" ( "
@@ -111,20 +115,6 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		//image Indexs
 		db.execSQL("CREATE INDEX "+Image.Indexs.MEMBER_ID+" ON "+Image.NAME+" ( "
 				+Image.Cols.MID+" );");
-		
-	
-		// add member/prospect --> pending uploads table?
-		// use this table for holding unused MID's?
-		//TODO: fix this table. It's the pending Member Uploads table atm.
-		db.execSQL(" CREATE TABLE "+Pending.NAME+" ("+Pending.Cols.ID+" INTEGER PRIMARY KEY, "
-				+Pending.Cols.FNAME+" TEXT, "+Pending.Cols.SNAME+" TEXT, "
-				+Pending.Cols.DOB+" TEXT, "+Pending.Cols.GENDER+" TEXT, "
-				+Pending.Cols.MEDICAL+" TEXT, "+Pending.Cols.STREET+" TEXT, "
-				+Pending.Cols.SUBURB+" TEXT, "+Pending.Cols.CITY+" TEXT, "
-				+Pending.Cols.POSTAL+" TEXT, "+Pending.Cols.EMAIL+" TEXT, "
-				+Pending.Cols.HPHONE+" TEXT, "+Pending.Cols.CPHONE+" TEXT, "
-				+Pending.Cols.SIGNUP+" TEXT, "+Pending.Cols.MID+" INTEGER, "
-				+Pending.Cols.ISUSED+" INTEGER );");
 		
 		//time slots table.
 		db.execSQL("CREATE TABLE "+ContentDescriptor.Time.NAME+" ("+ContentDescriptor.Time.Cols.ID+" INTEGER PRIMARY KEY, "
@@ -282,31 +272,45 @@ public class HornetDatabase extends SQLiteOpenHelper {
 				+MemberNotes.Cols.NOTES+" TEXT, "+MemberNotes.Cols.OCCURRED+" TEXT "
 				+" );");
 		
+		db.execSQL("CREATE TABLE "+MemberBalance.NAME+" ("+MemberBalance.Cols._ID+" INTEGER PRIMARY KEY, "
+				+MemberBalance.Cols.MID+" INTEGER NOT NULL, "+MemberBalance.Cols.BALANCE+" TEXT, "
+				+MemberBalance.Cols.LASTUPDATE+" NUMERIC "
+				+");");
+		
 		repopulateTable(db);
 	}
 
-	/**
-	 * TODO: rather than drop all the tables each time I make a db change, do like the GymMaster:
-	 * modify each table to ensure it's up to date, and then tell the application to resync the data for that table.
-	 */
+	
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		Log.w(HornetDatabase.class.getName(),
 				"Upgrading database from version " + oldVersion + " to "
-						+ newVersion + ", which will destroy all old data");
-		dropTables(db);
-		onCreate(db);
+						+ newVersion );
+		
+		for (int version = (oldVersion+1); version <= newVersion; version++) {
+			if (version < 89) {
+				//baseline everything to version 89, after wards use ALTERS etc to make modifications.
+				dropTables(db);
+				onCreate(db);
+			}
+			switch (version){
+			case (89):{
+				dropTables(db);
+				onCreate(db);
+				break;
+			}
+			}
+		}
 		
 	}
 	
-	//TODO: why am I dropping all the data everytime something changes?
+	
 	public void dropTables(SQLiteDatabase db) {
 		db.execSQL("DROP TABLE IF EXISTS "+Member.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+Image.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+Visitor.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+Membership.NAME); //save this
 		
-		db.execSQL("ALTER TABLE "+Pending.NAME+" RENAME TO old_"+Pending.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+BookingTime.NAME);
 		
 		//below code is to move unused bookingID's into the rebuilt database. (save getting them again).
@@ -341,19 +345,15 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS "+PendingDownloads.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+Door.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+MemberNotes.NAME);
+		db.execSQL("DROP TABLE IF EXISTS "+MemberBalance.NAME);
 	}
 	
 	private void repopulateTable(SQLiteDatabase db) {
 		
-		Cursor cur = db.query("sqlite_master", new String[] {"name"}, "type='table' AND name='old_Pending'", null, null, null, null);
-		if (cur.getCount() != 0) {
-			db.execSQL("INSERT INTO "+Pending.NAME+" SELECT * FROM old_"+Pending.NAME+";");
-			db.execSQL("DROP TABLE old_"+Pending.NAME);
-		}
-		cur.close();
+		
 		
 		//restore saved bookingID's
-		cur = db.query("sqlite_master", new String[] {"name"}, "type='table' AND name='old_"+Booking.NAME+"'", null, null, null, null);
+		Cursor cur = db.query("sqlite_master", new String[] {"name"}, "type='table' AND name='old_"+Booking.NAME+"'", null, null, null, null);
 		if (cur.getCount() != 0) {
 			cur.close();
 			cur = db.query("old_"+Booking.NAME, null, null, null, null, null, null);

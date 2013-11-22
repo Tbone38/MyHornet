@@ -99,8 +99,6 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener {
 		TextView memberNumber = (TextView) view.findViewById(R.id.member_navigation_number);
 		memberNumber.setText("#"+memberID);
 		
-		TextView memberBalance = (TextView) view.findViewById(R.id.member_status_balance);
-		memberBalance.setVisibility(View.GONE);
 		
 		ImageView img = (ImageView) view.findViewById(R.id.member_navigation_image);
 		String imgDir = getActivity().getExternalFilesDir(null)+"/0_"+memberID+".jpg";
@@ -153,9 +151,30 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener {
 			ImageView statusView;
 			statusView = (ImageView) view.findViewById(R.id.member_status_casual);
 			statusView.setVisibility(View.VISIBLE);
-			statusView.setColorFilter(Services.ColorFilterGenerator.setColourBlue());
+			statusView.setColorFilter(Services.ColorFilterGenerator.setColourRed());
 		}
 		
+		cur.close();
+		
+		TextView memberBalance = (TextView) view.findViewById(R.id.member_status_balance);
+		cur = contentResolver.query(ContentDescriptor.MemberBalance.CONTENT_URI, null, 
+				ContentDescriptor.MemberBalance.Cols.MID+" = ?", new String[] {memberID}, null);
+		
+		if (!cur.moveToNext()) {
+			memberBalance.setVisibility(View.GONE);
+		} else {
+			String amount = cur.getString(cur.getColumnIndex(ContentDescriptor.MemberBalance.Cols.BALANCE));
+			if (amount.compareTo("$0.00") == 0) {
+				memberBalance.setText("Balance: "+amount);
+			} else if (amount.substring(0, 1).compareTo("-") == 0) { //member in Credit
+				memberBalance.setText("Credit: "+amount.substring(1));
+				memberBalance.setTextColor(getActivity().getResources().getColor(R.color.blue));
+			} else {
+				memberBalance.setText("Owing: "+amount);
+				memberBalance.setTextColor(getActivity().getResources().getColor(R.color.red));
+			}
+		}
+		cur.close();
 		
 	    //onclick listeners
 	    LinearLayout memberships = (LinearLayout) view.findViewById(R.id.button_member_navigation_memberships);

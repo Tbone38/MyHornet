@@ -62,7 +62,7 @@ public class MemberMembershipFragment extends MemberActionsFragment{
 			String enddate = Services.dateFormat(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.EXPIRERY))
 					, "yyyy-MM-dd", "dd MMM yyyy");
 			if (enddate == null) {
-				end.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.EXPIRERY)));
+				enddate = cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.EXPIRERY));
 			}
 			end.setText(enddate);
 			

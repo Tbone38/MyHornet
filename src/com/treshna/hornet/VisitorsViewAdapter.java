@@ -150,6 +150,8 @@ public class VisitorsViewAdapter extends SimpleCursorAdapter implements OnClickL
 		    }
 		
 		    imageView.setImageBitmap(bm);
+		} else {
+			imageView.setImageBitmap(null);
 		}
 		    
 	    String displayText = "";

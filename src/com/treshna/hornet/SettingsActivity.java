@@ -296,13 +296,14 @@ public class SettingsActivity extends PreferenceActivity {
 		toast.setSummary("Checking displays sync results in a toast on screen");
 		toast.setChecked(true);
 		debug.addPreference(toast);
-		// Image errors.
-		CheckBoxPreference image = new CheckBoxPreference(this);
+
+		// DEPRECATED?!
+		/*CheckBoxPreference image = new CheckBoxPreference(this);
 		image.setKey("image");
 		image.setTitle("Fix Image error");
 		image.setSummary("Checking this will fix any \"Error: Column description... Position:77\" type toasts, check it if you do not see any member photos after sync.");
 		image.setChecked(false);
-		debug.addPreference(image);
+		debug.addPreference(image);*/
 	}
 	
 	private static void clearData(){

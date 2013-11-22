@@ -163,17 +163,14 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
 				cur = contentResolver.query(ContentDescriptor.BookingTime.CONTENT_URI, null, "bt."+ContentDescriptor.BookingTime.Cols.RID+" = ? AND bt."
 						+ContentDescriptor.BookingTime.Cols.ARRIVAL+" = ?", new String[] {resource.get(i)[0],
 						selectedDate}, null);
-				ArrayList<Integer> bookingtimes = new ArrayList<Integer>();
+				ArrayList<int[]> bookingtimes = new ArrayList<int[]>();
 				
 				while (cur.moveToNext()){
-					/*for (int column = 0; column < cur.getColumnCount(); column++) {
-						try {
-							Log.e(TAG, "Column:"+column+" Name:"+cur.getColumnName(column)+" Value:"+cur.getString(column));
-						} catch (NullPointerException e) {
-							Log.e(TAG, "error at column:"+column);
-						}
-					}*/
-					bookingtimes.add(Integer.parseInt(cur.getString(cur.getColumnIndex(ContentDescriptor.Time.Cols.TIME)).replace(":", "")));
+					
+					int[] bookingdetails = new int[2];
+					bookingdetails[0] = Integer.parseInt(cur.getString(cur.getColumnIndex(ContentDescriptor.Time.Cols.TIME)).replace(":", ""));
+					bookingdetails[1] = cur.getInt(cur.getColumnIndex(ContentDescriptor.Booking.Cols.RESULT)); 
+					bookingtimes.add(bookingdetails);
 				}
 				cur.close();
 								
@@ -247,326 +244,326 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
 				 * 			//highlight colour
 				 */
 				for (int j = 0; j < bookingtimes.size(); j +=1) {
-					
-					switch (bookingtimes.get(j)){
+					int[] booking = bookingtimes.get(j); 
+					switch (booking[0]){
 					case (50000):{
 						View time = timeslot1.findViewById(R.id.overview_timeslot_mid1);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (51500):{
 						View time = timeslot1.findViewById(R.id.overview_timeslot_mid2);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (53000):{
 						View time = timeslot1.findViewById(R.id.overview_timeslot_mid3);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (54500):{
 						View time = timeslot1.findViewById(R.id.overview_timeslot_mid4);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (60000):{
 						View time = timeslot2.findViewById(R.id.overview_timeslot_mid1);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (61500):{
 						View time = timeslot2.findViewById(R.id.overview_timeslot_mid2);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (63000):{
 						View time = timeslot2.findViewById(R.id.overview_timeslot_mid3);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (64500):{
 						View time = timeslot2.findViewById(R.id.overview_timeslot_mid4);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (70000):{
 						View time = timeslot3.findViewById(R.id.overview_timeslot_mid1);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (71500):{
 						View time = timeslot3.findViewById(R.id.overview_timeslot_mid2);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (73000):{
 						View time = timeslot3.findViewById(R.id.overview_timeslot_mid3);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (74500):{
 						View time = timeslot3.findViewById(R.id.overview_timeslot_mid4);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (80000):{
 						View time = timeslot4.findViewById(R.id.overview_timeslot_mid1);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (81500):{
 						View time = timeslot4.findViewById(R.id.overview_timeslot_mid2);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (83000):{
 						View time = timeslot4.findViewById(R.id.overview_timeslot_mid3);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (84500):{
 						View time = timeslot4.findViewById(R.id.overview_timeslot_mid4);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (90000):{
 						View time = timeslot5.findViewById(R.id.overview_timeslot_mid1);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (91500):{
 						View time = timeslot5.findViewById(R.id.overview_timeslot_mid2);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (93000):{
 						View time = timeslot5.findViewById(R.id.overview_timeslot_mid3);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (94500):{
 						View time = timeslot5.findViewById(R.id.overview_timeslot_mid4);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (100000):{
 						View time = timeslot6.findViewById(R.id.overview_timeslot_mid1);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (101500):{
 						View time = timeslot6.findViewById(R.id.overview_timeslot_mid2);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (103000):{
 						View time = timeslot6.findViewById(R.id.overview_timeslot_mid3);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (104500):{
 						View time = timeslot6.findViewById(R.id.overview_timeslot_mid4);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (110000):{
 						View time = timeslot7.findViewById(R.id.overview_timeslot_mid1);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (111500):{
 						View time = timeslot7.findViewById(R.id.overview_timeslot_mid2);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (113000):{
 						View time = timeslot7.findViewById(R.id.overview_timeslot_mid3);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (114500):{
 						View time = timeslot7.findViewById(R.id.overview_timeslot_mid4);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (120000):{
 						View time = timeslot8.findViewById(R.id.overview_timeslot_mid1);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (121500):{
 						View time = timeslot8.findViewById(R.id.overview_timeslot_mid2);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (123000):{
 						View time = timeslot8.findViewById(R.id.overview_timeslot_mid3);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (124500):{
 						View time = timeslot8.findViewById(R.id.overview_timeslot_mid4);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (130000):{
 						View time = timeslot9.findViewById(R.id.overview_timeslot_mid1);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (131500):{
 						View time = timeslot9.findViewById(R.id.overview_timeslot_mid2);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (133000):{
 						View time = timeslot9.findViewById(R.id.overview_timeslot_mid3);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (134500):{
 						View time = timeslot9.findViewById(R.id.overview_timeslot_mid4);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (140000):{
 						View time = timeslot10.findViewById(R.id.overview_timeslot_mid1);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (141500):{
 						View time = timeslot10.findViewById(R.id.overview_timeslot_mid2);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (143000):{
 						View time = timeslot10.findViewById(R.id.overview_timeslot_mid3);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (144500):{
 						View time = timeslot10.findViewById(R.id.overview_timeslot_mid4);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (150000):{
 						View time = timeslot11.findViewById(R.id.overview_timeslot_mid1);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (151500):{
 						View time = timeslot11.findViewById(R.id.overview_timeslot_mid2);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (153000):{
 						View time = timeslot11.findViewById(R.id.overview_timeslot_mid3);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (154500):{
 						View time = timeslot11.findViewById(R.id.overview_timeslot_mid4);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (160000):{
 						View time = timeslot12.findViewById(R.id.overview_timeslot_mid1);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (161500):{
 						View time = timeslot12.findViewById(R.id.overview_timeslot_mid2);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (163000):{
 						View time = timeslot12.findViewById(R.id.overview_timeslot_mid3);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (164500):{
 						View time = timeslot12.findViewById(R.id.overview_timeslot_mid4);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (170000):{
 						View time = timeslot13.findViewById(R.id.overview_timeslot_mid1);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (171500):{
 						View time = timeslot13.findViewById(R.id.overview_timeslot_mid2);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (173000):{
 						View time = timeslot13.findViewById(R.id.overview_timeslot_mid3);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (174500):{
 						View time = timeslot13.findViewById(R.id.overview_timeslot_mid4);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (180000):{
 						View time = timeslot14.findViewById(R.id.overview_timeslot_mid1);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (181500):{
 						View time = timeslot14.findViewById(R.id.overview_timeslot_mid2);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (183000):{
 						View time = timeslot14.findViewById(R.id.overview_timeslot_mid3);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (184500):{
 						View time = timeslot14.findViewById(R.id.overview_timeslot_mid4);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (190000):{
 						View time = timeslot15.findViewById(R.id.overview_timeslot_mid1);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (191500):{
 						View time = timeslot15.findViewById(R.id.overview_timeslot_mid2);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (193000):{
 						View time = timeslot15.findViewById(R.id.overview_timeslot_mid3);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (194500):{
 						View time = timeslot15.findViewById(R.id.overview_timeslot_mid4);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (200000):{
 						View time = timeslot16.findViewById(R.id.overview_timeslot_mid1);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (201500):{
 						View time = timeslot16.findViewById(R.id.overview_timeslot_mid2);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (203000):{
 						View time = timeslot16.findViewById(R.id.overview_timeslot_mid3);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					case (204500):{
 						View time = timeslot16.findViewById(R.id.overview_timeslot_mid4);
-						time.setBackgroundColor(this.getResources().getColor(R.color.gym));
+						setColour(booking[1], time);
 						break;
 					}
 					default:
@@ -577,6 +574,35 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
 				list.addView(row);
 		 }
 	 }
+	
+	private void setColour(int result, View time) {
+		switch (result){
+		case (7):
+		case (8):
+			time.setBackgroundColor(getActivity().getResources().getColor(R.color.lightgrey));
+			break;
+		case (10):
+		case (11):
+		case (12):
+			time.setBackgroundColor(getActivity().getResources().getColor(R.color.wheat));
+			break;
+		case (20):
+		case (21):
+		case (30):
+			time.setBackgroundColor(getActivity().getResources().getColor(R.color.palegreen));
+			break;
+		case (4):
+		case (5):
+			time.setBackgroundColor(getActivity().getResources().getColor(R.color.navy));
+			break;
+		case (15):
+			time.setBackgroundColor(getActivity().getResources().getColor(R.color.orangered));
+			break;
+		case (9):
+			time.setBackgroundColor(getActivity().getResources().getColor(R.color.slategrey));
+			break;
+		}
+	}
 
 	@Override
 	public void onClick(View v) {

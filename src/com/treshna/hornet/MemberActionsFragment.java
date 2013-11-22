@@ -52,11 +52,6 @@ public class MemberActionsFragment extends Fragment implements OnClickListener {
 		addMembership.setTag(memberID);
 		addMembership.setOnClickListener(this);
 		
-		LinearLayout addPhoto = (LinearLayout) view.findViewById(R.id.button_add_image);
-		addPhoto.setTag(memberID);
-		addPhoto.setOnClickListener(this);
-		
-		
 		LinearLayout email = (LinearLayout) view.findViewById(R.id.button_email);
 		if (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMAIL)) != null) {
 			if (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMAIL)).compareTo("null") != 0) {
@@ -110,6 +105,10 @@ public class MemberActionsFragment extends Fragment implements OnClickListener {
 		
 		LinearLayout manualcheckin = (LinearLayout) view.findViewById(R.id.button_manual_checkin);
 		manualcheckin.setOnClickListener(this);
+		
+		LinearLayout gallery = (LinearLayout) view.findViewById(R.id.button_gallery);
+		gallery.setOnClickListener(this);;
+		gallery.setTag(memberID);
 
 		
 		cur.close();
@@ -130,13 +129,6 @@ public class MemberActionsFragment extends Fragment implements OnClickListener {
 			i.putExtra(Services.Statics.KEY, Services.Statics.FragmentType.MembershipAdd.getKey());
 			i.putExtra(Services.Statics.MID, memberid);
 			startActivity(i);
-			break;
-		}
-		case (R.id.button_add_image):{
-			String memberid = (String) v.getTag();
-			Intent camera = new Intent(getActivity(), CameraWrapper.class);
-			camera.putExtra(VisitorsViewAdapter.EXTRA_ID,memberid);
-			getActivity().startActivity(camera);
 			break;
 		}
 		case (R.id.button_email):{
@@ -186,6 +178,13 @@ public class MemberActionsFragment extends Fragment implements OnClickListener {
 			//						lets the user select a door to check in at.
 			//						(shows the user the member name?)
 			showCheckinWindow();
+			break;
+		}
+		case (R.id.button_gallery):{
+			Intent i = new Intent(getActivity(), EmptyActivity.class);
+			i.putExtra(Services.Statics.KEY, Services.Statics.FragmentType.MemberGallery.getKey());
+			i.putExtra(Services.Statics.MID, mId);
+			startActivity(i);
 			break;
 		}
 		}
@@ -319,6 +318,11 @@ public class MemberActionsFragment extends Fragment implements OnClickListener {
 					updateInt.putExtras(extras);
 					updateInt.putExtra(Services.Statics.KEY, Services.Statics.MANUALSWIPE);
 				 	getActivity().startService(updateInt);
+				 	PollingHandler p = Services.getPollingHandler();
+				 	if (p != null && !p.getConStatus()) {
+				 		Toast.makeText(getActivity(), "Could not check member in, Check that this device is connected"
+				 				+ " to the internet.", Toast.LENGTH_LONG).show();
+				 	}
 				}
 	        });
 	        builder.show();

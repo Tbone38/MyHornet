@@ -15,36 +15,106 @@
         android:padding="5dp"
         android:paddingBottom="1dp"
         android:layout_marginLeft="2dp"/>
-	
-    <LinearLayout 
-        android:id="@+id/button_add_image"
+ <LinearLayout
+        android:id="@+id/button_add_membership"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/memberActionsH"
         android:orientation="horizontal"
         android:clickable="true"
-        android:background="@drawable/button">
+        android:background="@drawable/button" >
         <ImageView
-            android:id="@+id/button_add_image_drawable"
+            android:id="@+id/button_add_membership_drawable"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:background="@drawable/ic_action_camera"
+            android:background="@drawable/ic_action_add_to_queue"
             android:padding="3dp" />
         <TextView
-            android:id="@+id/button_add_image_text"
+            android:id="@+id/button_add_membership_text"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
             android:textSize="18sp"
-            android:text="@string/action_add_image"
+            android:text="@string/action_add_membership"
             android:padding="3dp" />
     </LinearLayout>
+    <LinearLayout 
+        android:id="@+id/button_hold"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/button_add_membership"
+        android:orientation="horizontal"
+        android:clickable="true"
+        android:background="@drawable/button">
+        <ImageView
+            android:id="@+id/button_hold_drawable"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/ic_action_error"
+            android:padding="3dp" />
+        <TextView
+            android:id="@+id/button_hold_text"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:text="@string/action_hold"
+            android:padding="3dp" />
+    </LinearLayout>
+ 
+    <LinearLayout 
+        android:id="@+id/button_manual_checkin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/button_hold"
+        android:orientation="horizontal"
+        android:clickable="true"
+        android:background="@drawable/button">
+        <ImageView
+            android:id="@+id/button_manual_checkin_drawable"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/ic_action_import_export"
+            android:padding="3dp" />
+        <TextView
+            android:id="@+id/button_manual_checkin_text"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:text="@string/action_manual_checkin"
+            android:padding="3dp" />
+    </LinearLayout>
+    <LinearLayout 
+        android:id="@+id/button_gallery"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/button_manual_checkin"
+        android:orientation="horizontal"
+        android:clickable="true"
+        android:background="@drawable/button">
+        <ImageView
+            android:id="@+id/button_gallery_drawable"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/ic_action_picture"
+            android:padding="3dp" />
+        <TextView
+            android:id="@+id/button_gallery_text"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:text="@string/action_gallery"
+            android:padding="3dp" />
+    </LinearLayout>    
+    	
     
     <LinearLayout
         android:id="@+id/button_call"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/button_add_image"
+        android:layout_below="@id/button_gallery"
         android:orientation="horizontal"
         android:clickable="true"
         android:background="@drawable/button" >
@@ -112,74 +182,5 @@
             android:padding="3dp" />        
     </LinearLayout>
     
-    <LinearLayout 
-        android:id="@+id/button_hold"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/button_email"
-        android:orientation="horizontal"
-        android:clickable="true"
-        android:background="@drawable/button">
-        <ImageView
-            android:id="@+id/button_hold_drawable"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@drawable/ic_action_error"
-            android:padding="3dp" />
-        <TextView
-            android:id="@+id/button_hold_text"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:textSize="18sp"
-            android:text="@string/action_hold"
-            android:padding="3dp" />
-    </LinearLayout>
-    
-    <LinearLayout
-        android:id="@+id/button_add_membership"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/button_hold"
-        android:orientation="horizontal"
-        android:clickable="true"
-        android:background="@drawable/button" >
-        <ImageView
-            android:id="@+id/button_add_membership_drawable"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@drawable/ic_action_add_to_queue"
-            android:padding="3dp" />
-        <TextView
-            android:id="@+id/button_add_membership_text"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:textSize="18sp"
-            android:text="@string/action_add_membership"
-            android:padding="3dp" />
-    </LinearLayout>
-    <LinearLayout 
-        android:id="@+id/button_manual_checkin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/button_add_membership"
-        android:orientation="horizontal"
-        android:clickable="true"
-        android:background="@drawable/button">
-        <ImageView
-            android:id="@+id/button_manual_checkin_drawable"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@drawable/ic_action_import_export"
-            android:padding="3dp" />
-        <TextView
-            android:id="@+id/button_manual_checkin_text"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:textSize="18sp"
-            android:text="@string/action_manual_checkin"
-            android:padding="3dp" />
-    </LinearLayout>    
-</RelativeLayout>
+        
+   </RelativeLayout>

@@ -14,160 +14,14 @@
         android:textIsSelectable="false"
         android:padding="5dp"
         android:paddingBottom="1dp"
-        android:layout_marginLeft="2dp"/>
-	<View 
-	    android:id="@+id/memberActionsHline"
-	    android:layout_width="wrap_content"
-	    android:layout_height="1dp"
-	    android:layout_below="@id/memberActionsH"
-	    android:layout_alignLeft="@id/memberActionsH"
-	    android:layout_alignRight="@id/memberActionsH"
-	    android:background="@color/block_header_blue"
-	    android:paddingLeft="7dp"
-	    android:layout_marginLeft="2dp" />	
-    
+        android:layout_marginLeft="2dp"/>    
 	<LinearLayout
 	    android:id="@+id/button_row_1"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    android:layout_below="@id/memberActionsHline"
+	    android:layout_below="@id/memberActionsH"
 	    android:orientation="horizontal"
 	    android:baselineAligned="false" >
-	    <LinearLayout
-	        android:id="@+id/button_add_image"
-	        android:layout_width="0dp"
-	        android:layout_height="wrap_content"
-	        android:layout_weight=".5"
-	        android:orientation="horizontal"
-	        android:clickable="true"
-	        android:background="@drawable/button">
-	        <ImageView
-	            android:id="@+id/button_add_image_drawable"
-	            android:layout_width="50dp"
-	            android:layout_height="50dp"
-	            android:background="@drawable/ic_action_camera"
-	            android:padding="3dp" />
-	        <TextView
-	            android:id="@+id/button_add_image_text"
-	            android:layout_width="wrap_content"
-	            android:layout_height="match_parent"
-	            android:gravity="center"
-	            android:textSize="18sp"
-	            android:text="@string/action_add_image"
-	            android:padding="3dp" />
-	    </LinearLayout>
-	    
-	    <LinearLayout
-	        android:id="@+id/button_call"
-	        android:layout_width="0dp"
-	        android:layout_height="wrap_content"
-	        android:layout_weight=".5"
-	        android:orientation="horizontal"
-	        android:clickable="true"
-	        android:background="@drawable/button" >
-	        <ImageView
-	            android:id="@+id/button_call_drawable"
-	            android:layout_width="50dp"
-	            android:layout_height="50dp"
-	            android:background="@drawable/ic_action_call"
-	            android:padding="3dp" />
-	        <TextView
-	            android:id="@+id/button_call_text"
-	            android:layout_width="wrap_content"
-	            android:layout_height="match_parent"
-	            android:gravity="center"
-	            android:textSize="18sp"
-	            android:text="@string/action_call"
-	            android:padding="3dp" />
-	    </LinearLayout>
-    </LinearLayout>
-    <LinearLayout
-	    android:id="@+id/button_row_2"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:layout_below="@id/button_row_1"
-	    android:orientation="horizontal"
-	    android:baselineAligned="false" >
-	    <LinearLayout
-	        android:id="@+id/button_sms"
-	        android:layout_width="0dp"
-	        android:layout_height="wrap_content"
-	        android:layout_weight=".5"
-	        android:orientation="horizontal"
-	        android:clickable="true"
-	        android:background="@drawable/button" >
-	        <ImageView
-	            android:id="@+id/button_sms_drawable"
-	            android:layout_width="50dp"
-	            android:layout_height="50dp"
-	            android:background="@drawable/ic_action_chat"
-	            android:padding="3dp" />
-	        <TextView 
-	            android:id="@+id/button_sms_text"
-	            android:layout_width="wrap_content"
-	            android:layout_height="match_parent"
-	            android:gravity="center"
-	            android:textSize="18sp"
-	            android:text="@string/action_sms"
-	            android:padding="3dp" />
-	    </LinearLayout>
-	    
-	    <LinearLayout
-	        android:id="@+id/button_email"
-	        android:layout_width="0dp"
-	        android:layout_height="wrap_content"
-	        android:layout_weight=".5"
-	        android:orientation="horizontal"
-	        android:clickable="true"
-	        android:background="@drawable/button">
-	        <ImageView
-	            android:id="@+id/button_email_drawable"
-	            android:layout_width="50dp"
-	            android:layout_height="50dp"
-	            android:background="@drawable/ic_action_email"
-	            android:padding="3dp" />
-	        <TextView
-	            android:id="@+id/button_email_text"
-	            android:layout_width="wrap_content"
-	            android:layout_height="match_parent"
-	            android:gravity="center"
-	            android:textSize="18sp"
-	            android:text="@string/action_email"
-	            android:padding="3dp" />        
-	    </LinearLayout>
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/button_row_3"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:layout_below="@id/button_row_2"
-	    android:orientation="horizontal"
-	    android:baselineAligned="false" >
-        
-	    <LinearLayout 
-	        android:id="@+id/button_hold"
-	        android:layout_width="0dp"
-		    android:layout_height="wrap_content"
-		    android:layout_weight=".5"
-	        android:orientation="horizontal"
-	        android:clickable="true"
-	        android:background="@drawable/button">
-	        <ImageView
-	            android:id="@+id/button_hold_drawable"
-	            android:layout_width="50dp"
-	            android:layout_height="50dp"
-	            android:background="@drawable/ic_action_error"
-	            android:padding="3dp" />
-	        <TextView
-	            android:id="@+id/button_hold_text"
-	            android:layout_width="wrap_content"
-	            android:layout_height="match_parent"
-	            android:gravity="center"
-	            android:textSize="18sp"
-	            android:text="@string/action_hold"
-	            android:padding="3dp" />
-	    </LinearLayout>
-	    
 	    <LinearLayout
 	        android:id="@+id/button_add_membership"
 	        android:layout_width="0dp"
@@ -191,12 +45,35 @@
 	            android:text="@string/action_add_membership"
 	            android:padding="3dp" />
 	    </LinearLayout>
-	</LinearLayout>
-	<LinearLayout
-        android:id="@+id/button_row_4"
+	    <LinearLayout 
+	        android:id="@+id/button_hold"
+	        android:layout_width="0dp"
+		    android:layout_height="wrap_content"
+		    android:layout_weight=".5"
+	        android:orientation="horizontal"
+	        android:clickable="true"
+	        android:background="@drawable/button">
+	        <ImageView
+	            android:id="@+id/button_hold_drawable"
+	            android:layout_width="50dp"
+	            android:layout_height="50dp"
+	            android:background="@drawable/ic_action_error"
+	            android:padding="3dp" />
+	        <TextView
+	            android:id="@+id/button_hold_text"
+	            android:layout_width="wrap_content"
+	            android:layout_height="match_parent"
+	            android:gravity="center"
+	            android:textSize="18sp"
+	            android:text="@string/action_hold"
+	            android:padding="3dp" />
+	    </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+	    android:id="@+id/button_row_2"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    android:layout_below="@id/button_row_3"
+	    android:layout_below="@id/button_row_1"
 	    android:orientation="horizontal"
 	    android:baselineAligned="false" >
 	    <LinearLayout 
@@ -221,6 +98,115 @@
 	            android:textSize="18sp"
 	            android:text="@string/action_manual_checkin"
 	            android:padding="3dp" />
+	    </LinearLayout>
+	    <LinearLayout 
+	        android:id="@+id/button_gallery"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight=".5"
+	        android:orientation="horizontal"
+	        android:clickable="true"
+	        android:background="@drawable/button">
+	        <ImageView
+	            android:id="@+id/button_gallery_drawable"
+	            android:layout_width="50dp"
+	            android:layout_height="50dp"
+	            android:background="@drawable/ic_action_picture"
+	            android:padding="3dp" />
+	        <TextView
+	            android:id="@+id/button_gallery_text"
+	            android:layout_width="wrap_content"
+	            android:layout_height="match_parent"
+	            android:gravity="center"
+	            android:textSize="18sp"
+	            android:text="@string/action_gallery"
+	            android:padding="3dp" />
+	    
+    	</LinearLayout>
+   </LinearLayout>
+   <LinearLayout
+        android:id="@+id/button_row_3"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@id/button_row_2"
+	    android:orientation="horizontal"
+	    android:baselineAligned="false" >
+	    <LinearLayout
+	        android:id="@+id/button_call"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight=".5"
+	        android:orientation="horizontal"
+	        android:clickable="true"
+	        android:background="@drawable/button" >
+	        <ImageView
+	            android:id="@+id/button_call_drawable"
+	            android:layout_width="50dp"
+	            android:layout_height="50dp"
+	            android:background="@drawable/ic_action_call"
+	            android:padding="3dp" />
+	        <TextView
+	            android:id="@+id/button_call_text"
+	            android:layout_width="wrap_content"
+	            android:layout_height="match_parent"
+	            android:gravity="center"
+	            android:textSize="18sp"
+	            android:text="@string/action_call"
+	            android:padding="3dp" />
+	    </LinearLayout>
+        <LinearLayout
+	        android:id="@+id/button_sms"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight=".5"
+	        android:orientation="horizontal"
+	        android:clickable="true"
+	        android:background="@drawable/button" >
+	        <ImageView
+	            android:id="@+id/button_sms_drawable"
+	            android:layout_width="50dp"
+	            android:layout_height="50dp"
+	            android:background="@drawable/ic_action_chat"
+	            android:padding="3dp" />
+	        <TextView 
+	            android:id="@+id/button_sms_text"
+	            android:layout_width="wrap_content"
+	            android:layout_height="match_parent"
+	            android:gravity="center"
+	            android:textSize="18sp"
+	            android:text="@string/action_sms"
+	            android:padding="3dp" />
+	    </LinearLayout>
+	</LinearLayout>
+	<LinearLayout
+        android:id="@+id/button_row_4"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@id/button_row_3"
+	    android:orientation="horizontal"
+	    android:baselineAligned="false" >
+	    <LinearLayout
+	        android:id="@+id/button_email"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight=".5"
+	        android:orientation="horizontal"
+	        android:clickable="true"
+	        android:background="@drawable/button">
+	        <ImageView
+	            android:id="@+id/button_email_drawable"
+	            android:layout_width="50dp"
+	            android:layout_height="50dp"
+	            android:background="@drawable/ic_action_email"
+	            android:padding="3dp" />
+	        <TextView
+	            android:id="@+id/button_email_text"
+	            android:layout_width="wrap_content"
+	            android:layout_height="match_parent"
+	            android:gravity="center"
+	            android:textSize="18sp"
+	            android:text="@string/action_email"
+	            android:padding="3dp" />        
 	    </LinearLayout>
 	</LinearLayout>    
 </RelativeLayout>

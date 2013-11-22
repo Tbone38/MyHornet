@@ -20,7 +20,7 @@
     <View
         android:id="@+id/booking_resource_colour_block"
         android:layout_width="40dp"
-        android:layout_height="75dp"
+        android:layout_height="50dp"
         android:layout_toRightOf="@id/booking_resource_time"
         android:background="@color/booking_resource_blue"
         android:padding="2dp"

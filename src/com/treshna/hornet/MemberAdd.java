@@ -156,7 +156,7 @@ public class MemberAdd extends NFCActivity implements OnClickListener{
 					memberid = input.get(13);
 				}
 				Intent intent = new Intent(this, HornetDBService.class);
-				//intent.putExtra(Services.Statics.KEY,Services.Statics.UPLOAD);
+				
 				intent.putExtra(Services.Statics.KEY, Services.Statics.LASTVISITORS);
 				new InsertMember(this, intent, input.get(0), input.get(1), input.get(2), input.get(3), input.get(4),
 						input.get(5), input.get(6), input.get(7), input.get(8), input.get(9), input.get(10), input.get(11), input.get(12), memberid);
@@ -180,11 +180,11 @@ public class MemberAdd extends NFCActivity implements OnClickListener{
 	private void displayID(){
 		Cursor cur = null;
 		ContentResolver contentResolver = this.getContentResolver();
-		String[] projection = {ContentDescriptor.Pending.Cols.MID};
-		cur = contentResolver.query(ContentDescriptor.Pending.CONTENT_URI, projection, ContentDescriptor.Pending.Cols.ISUSED
-				+" = 0", null, null);
-		cur.moveToFirst();
-		if (!cur.isBeforeFirst()) {
+		String[] projection = {ContentDescriptor.Member.Cols.MID};
+		
+		cur = contentResolver.query(ContentDescriptor.Member.URI_FREE_IDS, projection, 
+				ContentDescriptor.Member.Cols.STATUS+" = -1", null, null);
+		if (cur.moveToFirst()) {
 			TextView memberid = (TextView) this.findViewById(R.id.memberNo);
 			memberid.setText(cur.getString(0));
 		}
@@ -243,37 +243,7 @@ public class MemberAdd extends NFCActivity implements OnClickListener{
 			TextView label = (TextView) this.findViewById(R.id.labelGender);
 			label.setTextColor(Color.BLACK);
 		}
-		/******************* probably don't need street, city, postal************************/
-		/*EditText memberStreet = (EditText) this.findViewById(R.id.memberStreet);
-		if (memberStreet.getText().toString().compareTo("") == 0) {
-			result = false;
-			emptyFields.add("memberStreet");
-			emptyFields.add(String.valueOf(R.id.labelStreet));
-		} else {
-			TextView label = (TextView) this.findViewById(R.id.labelStreet);
-			label.setTextColor(Color.BLACK);
-		}
 		
-		EditText memberCity = (EditText) this.findViewById(R.id.memberCity);
-		if (memberCity.getText().toString().compareTo("") == 0) {
-			result = false;
-			emptyFields.add("memberCity");
-			emptyFields.add(String.valueOf(R.id.labelCity));
-		} else {
-			TextView label = (TextView) this.findViewById(R.id.labelCity);
-			label.setTextColor(Color.BLACK);
-		}
-		
-		EditText memberPostal = (EditText) this.findViewById(R.id.memberPostal);
-		if (memberPostal.getText().toString().compareTo("") == 0) {
-			result = false;
-			emptyFields.add("memberPostal");
-			emptyFields.add(String.valueOf(R.id.labelPostal));
-		} else {
-			TextView label = (TextView) this.findViewById(R.id.labelPostal);
-			label.setTextColor(Color.BLACK);
-		}*/
-		/**** REPLACE above with phone (need either home or cell) ****/
 		
 		EditText memberHome = (EditText) this.findViewById(R.id.memberHomePhone);
 		if (memberHome.getText().toString().compareTo("") == 0) {
@@ -443,55 +413,43 @@ public class MemberAdd extends NFCActivity implements OnClickListener{
 			
 			// add prospect/member to local database, attempt to upload to server.
 			ContentValues val = new ContentValues();
-			val.put(ContentDescriptor.Pending.Cols.FNAME, firstName);
-			val.put(ContentDescriptor.Pending.Cols.SNAME, surname);
-			val.put(ContentDescriptor.Pending.Cols.DOB, dob);
-			val.put(ContentDescriptor.Pending.Cols.GENDER, gender);
-			val.put(ContentDescriptor.Pending.Cols.MEDICAL, medical);
-			val.put(ContentDescriptor.Pending.Cols.STREET, street);
-			val.put(ContentDescriptor.Pending.Cols.SUBURB, suburb);
-			val.put(ContentDescriptor.Pending.Cols.CITY, city);
-			val.put(ContentDescriptor.Pending.Cols.POSTAL, postal);
-			val.put(ContentDescriptor.Pending.Cols.EMAIL, email);
-			val.put(ContentDescriptor.Pending.Cols.HPHONE, homePh);
-			val.put(ContentDescriptor.Pending.Cols.CPHONE, cellPh);
-			val.put(ContentDescriptor.Pending.Cols.SIGNUP, signup);
-			//is this safe from SQL injection?
+			
+			val.put(ContentDescriptor.Member.Cols.FNAME, firstName);
+			val.put(ContentDescriptor.Member.Cols.SNAME, surname);
+			val.put(ContentDescriptor.Member.Cols.DOB, dob);
+			val.put(ContentDescriptor.Member.Cols.GENDER, gender);
+			val.put(ContentDescriptor.Member.Cols.MEDICAL, medical);
+			val.put(ContentDescriptor.Member.Cols.STREET, street);
+			val.put(ContentDescriptor.Member.Cols.SUBURB, suburb);
+			val.put(ContentDescriptor.Member.Cols.CITY, city);
+			val.put(ContentDescriptor.Member.Cols.POSTAL, postal);
+			val.put(ContentDescriptor.Member.Cols.EMAIL, email);
+			val.put(ContentDescriptor.Member.Cols.PHHOME, homePh);
+			val.put(ContentDescriptor.Member.Cols.PHCELL, cellPh);
 
 			if (memberid == null){
 				
-				val.put(ContentDescriptor.Pending.Cols.ISUSED, 2);
-				contentResolver.insert(ContentDescriptor.Pending.CONTENT_URI, val);
+				val.put(ContentDescriptor.Member.Cols.MID, -1);
+				contentResolver.insert(ContentDescriptor.Member.CONTENT_URI, val);
 				
 			} else {
-				if (signup.compareTo(getString(R.string.radioProspect)) == 0){
-					val.put(ContentDescriptor.Pending.Cols.ISUSED, 1);
-					contentResolver.insert(ContentDescriptor.Pending.CONTENT_URI, val);
-				}
-				else {
-					val.put(ContentDescriptor.Pending.Cols.ISUSED, 1);
-					String[] selection = {memberid};
-					contentResolver.update(ContentDescriptor.Pending.CONTENT_URI, val, ContentDescriptor.Pending.Cols.MID+" = ?", selection); 
-				}
+				String[] selection = {memberid};
+				Cursor cur = contentResolver.query(ContentDescriptor.Member.URI_FREE_IDS, null,
+						ContentDescriptor.Member.Cols.MID+" = ?", selection, null);
+				
+				cur.moveToFirst();
+				int rowid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Member.Cols._ID));
+				cur.close();
+				
+				contentResolver.update(ContentDescriptor.Member.CONTENT_URI, val, 
+						ContentDescriptor.Member.Cols.MID+" = ?", selection);
+				val = new ContentValues();
+				val.put(ContentDescriptor.PendingUploads.Cols.TABLEID, ContentDescriptor.TableIndex.Values.Member.getKey());
+				val.put(ContentDescriptor.PendingUploads.Cols.ROWID, rowid);
+				contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, val);
 			}			
-			// notify user of pending uploads.
-			Cursor cur = contentResolver.query(ContentDescriptor.Pending.CONTENT_URI, null, ContentDescriptor.Pending.Cols.ISUSED+" = 1", null, null);
-			if (cur.getCount() > 0){
-				Toast.makeText(getApplicationContext(),cur.getCount()+" Sign-Ups pending, please sync to resolve.", Toast.LENGTH_LONG).show();
-			}
-			cur.close();
 			
 			startService(intent);
-		  // TESTING
-		  	cur = contentResolver.query(ContentDescriptor.Pending.CONTENT_URI, null, null, null, null);
-			cur.moveToFirst();
-			for (int i=0;i<cur.getCount();i+=1){
-				for (int j=0;j<cur.getColumnCount();j+=1){
-					System.out.print("\n Row:"+i+"  column:"+j+" title: "+cur.getColumnName(j)+" Value:"+cur.getString(j));
-				}
-				cur.moveToNext();
-			}
-			cur.close();
-		}
+ 		}
 	}
 }

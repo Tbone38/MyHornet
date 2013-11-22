@@ -7,4 +7,8 @@
  <string name="button_member_navigation_information">Information</string>
  <string name="button_member_navigation_booking">Bookings</string>
  <string name="button_member_navigation_actions">Actions</string>
+ <string name="button_member_navigation_gallery">Gallery</string>
+ <string name="member_gallery_title">Member\'s Photos</string>
+ <string name="button_gallery_add_photo">Add Photo</string>
+ <string name="button_gallery_return">Return</string>
 </resources>

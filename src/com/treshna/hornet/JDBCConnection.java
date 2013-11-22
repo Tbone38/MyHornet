@@ -187,7 +187,7 @@ public class JDBCConnection {
 		pStatement.setString(2, firstname);
 		pStatement.setString(3, gender);
 		pStatement.setString(4, email);
-		SimpleDateFormat input = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+		SimpleDateFormat input = new SimpleDateFormat("dd MMM yyyy", Locale.US);
 		Date date = null;
 		try {
 			date = input.parse(dob);
@@ -717,6 +717,22 @@ public class JDBCConnection {
     	pStatement.setInt(2, memberid);
     	
     	return pStatement.executeUpdate();
+    }
+    
+    public ResultSet getBalance(String memberid) throws SQLException {
+    	pStatement = con.prepareStatement("SELECT member_owe(?) AS owing;");
+    	pStatement.setInt(1, Integer.parseInt(memberid));
+    	
+    	return pStatement.executeQuery();
+    }
+    
+    public ResultSet getDeletedRecords(Long last_sync) throws SQLException {
+    	pStatement = con.prepareStatement("SELECT * FROM deleted_record WHERE deletedat >= ?::TIMESTAMP WITHOUT TIME ZONE");
+    	
+    	pStatement.setTimestamp(1, new Timestamp(last_sync));
+    	
+    	return pStatement.executeQuery();
+    	
     }
     
     

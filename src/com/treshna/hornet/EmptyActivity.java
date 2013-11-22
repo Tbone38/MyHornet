@@ -58,6 +58,10 @@ public class EmptyActivity extends NFCActivity{
 			bdl = new Bundle(2);
 			bdl.putString(Services.Statics.MID, tag.get(0));
 		    bdl.putString(Services.Statics.KEY, tag.get(1));
+		} else if (view == Services.Statics.FragmentType.MemberGallery.getKey()) {
+			String memberid = intent.getStringExtra(Services.Statics.MID);
+			bdl = new Bundle(1);
+			bdl.putString(Services.Statics.MID, memberid);
 		}
 		
 		setFragment(view, bdl);
@@ -65,19 +69,17 @@ public class EmptyActivity extends NFCActivity{
 	
 	public void setFragment(int theView, Bundle bdl) {
 		this.view = theView;
-		
+		Fragment f;
 		tagFoundListener = null;
 		FragmentTransaction ft = frm.beginTransaction();
 		if (view == Services.Statics.FragmentType.MembershipAdd.getKey()) {
-			Fragment f = new MembershipAdd();
+			f = new MembershipAdd();
 			f.setArguments(bdl);
-			ft.replace(R.id.empty_layout, f);
 			
 		} else if (view == Services.Statics.FragmentType.MembershipComplete.getKey()) {
-			Fragment f = new MembershipComplete();
+			f = new MembershipComplete();
 			f.setArguments(bdl);
 			tagFoundListener = (TagFoundListener) f;
-			ft.replace(R.id.empty_layout, f);
 			if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1){
 				
 				pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
@@ -92,14 +94,19 @@ public class EmptyActivity extends NFCActivity{
 			}
 		
 		} else if (view == Services.Statics.FragmentType.MemberDetails.getKey()) {
-			Fragment f = new MemberDetailsFragment();
+			f = new MemberDetailsFragment();
 			f.setArguments(bdl);
-			ft.replace(R.id.empty_layout, f);
+			
+			
+		} else if (view == Services.Statics.FragmentType.MemberGallery.getKey()) {
+			f = new MemberGalleryFragment();
+			f.setArguments(bdl);
 		}
 		
 		else { //default!
-
+			f = null;
 		}
+		ft.replace(R.id.empty_layout, f);
 		ft.commit();
 		
 	}

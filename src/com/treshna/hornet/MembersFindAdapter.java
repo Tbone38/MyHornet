@@ -57,8 +57,9 @@ public class MembersFindAdapter extends SimpleCursorAdapter implements OnClickLi
 		if (cursor.getInt(cursor.getColumnIndex(ContentDescriptor.Member.Cols.STATUS)) == 2) {
 			//expired!
 			rowLayout.setClickable(true);
+			rowLayout.setOnClickListener(this);
 			ArrayList<String> tagInfo = new ArrayList<String>();
-			tagInfo.add(cursor.getString(0));
+			tagInfo.add(cursor.getString(1));  //cursor.getColumnIndex(ContentDescriptor.Member.Cols.MID)
 			tagInfo.add(null);
 			tagInfo.add(String.valueOf(cursor.getPosition()));
 			rowLayout.setTag(tagInfo);
@@ -77,7 +78,7 @@ public class MembersFindAdapter extends SimpleCursorAdapter implements OnClickLi
 			ArrayList<String> tagInfo = new ArrayList<String>();
 			
 			rowLayout.setBackgroundColor(Color.WHITE);
-			tagInfo.add(cursor.getString(0)); //cursor.getColumnIndex(ContentDescriptor.Member.Cols.MID)
+			tagInfo.add(cursor.getString(1)); //cursor.getColumnIndex(ContentDescriptor.Member.Cols.MID)
 			tagInfo.add(null);
 			tagInfo.add(String.valueOf(cursor.getPosition()));
 			rowLayout.setTag(tagInfo);
@@ -95,7 +96,7 @@ public class MembersFindAdapter extends SimpleCursorAdapter implements OnClickLi
 			ArrayList<String> tagInfo = new ArrayList<String>();
 			
 			rowLayout.setBackgroundColor(Color.WHITE);
-			tagInfo.add(cursor.getString(0)); //cursor.getColumnIndex(ContentDescriptor.Member.Cols.MID)
+			tagInfo.add(cursor.getString(1)); //cursor.getColumnIndex(ContentDescriptor.Member.Cols.MID) 
 			tagInfo.add(null);
 			tagInfo.add(String.valueOf(cursor.getPosition()));
 			rowLayout.setTag(tagInfo);
@@ -123,11 +124,10 @@ public class MembersFindAdapter extends SimpleCursorAdapter implements OnClickLi
 				memberName.setTextColor(Color.BLACK);
 			}
 		} else {
-			//WHAT ARE WE DOING HERE INSTEAD? TODO
-			//memberName.setTextColor(Color.parseColor(cursor.getString(cursor.getColumnIndex(ContentDescriptor.Member.Cols.COLOUR))));
+			memberName.setTextColor(Color.BLACK);
 		}
 		
-		String imgDir = context.getExternalFilesDir(null)+"/0_"+cursor.getString(0)+".jpg"; //cursor.getColumnIndex(ContentDescriptor.Member.Cols.MID)
+		String imgDir = context.getExternalFilesDir(null)+"/0_"+cursor.getString(1)+".jpg"; //cursor.getColumnIndex(ContentDescriptor.Member.Cols.MID)
 		File imgFile = new File(imgDir);
 		ImageView imageView = (ImageView) rowLayout.findViewById(R.id.rowimage);
 		if (imgFile.exists() == true){

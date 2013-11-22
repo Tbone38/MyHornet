@@ -32,10 +32,31 @@
 	        android:padding="7dp"/>
 	    
 	    <TextView
-	        android:id="@+id/classDateL"
+	        android:id="@+id/classResourceL"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_below="@id/className"
+	        android:textSize="16sp"
+	        android:text="@string/createclassresource"
+	        android:layout_margin="5dp"
+	        android:padding="7dp" />
+	    <TextView
+	        android:id="@+id/classResource"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@id/classResourceL"
+	        android:textSize="18sp"
+	        android:textColor="@color/member_blue"
+	        android:text="@string/classresourcedefault"
+	        android:gravity="center"
+	        android:layout_margin="5dp"
+	        android:padding="7dp" />
+	    
+	    <TextView
+	        android:id="@+id/classDateL"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@id/classResource"
 	        android:textSize="16sp"
 	        android:text="@string/createclassdate"
 	        android:layout_margin="5dp"
@@ -46,6 +67,7 @@
 	        android:layout_height="wrap_content"
 	        android:layout_below="@id/classDateL"
 	    	android:textSize="18sp"
+	    	android:textColor="@color/member_blue"
 	    	android:text="@string/classdatedefault"
 	    	android:gravity="center"
 	    	android:layout_margin="5dp"
@@ -72,6 +94,7 @@
 		        android:layout_height="wrap_content"
 		        android:layout_weight=".45"
 		        android:textSize="18sp"
+		        android:textColor="@color/member_blue"
 		        android:text="@string/classstarttimedefault"
 		        android:gravity="center"
 		        android:layout_margin="5dp"
@@ -90,6 +113,7 @@
 		        android:layout_height="wrap_content"
 		        android:layout_weight=".45"
 		        android:textSize="18sp"
+		        android:textColor="@color/member_blue"
 		        android:text="@string/classendtimedefault"
 		        android:gravity="center"
 		        android:layout_margin="5dp"
@@ -136,31 +160,13 @@
 	        android:layout_margin="5dp"
 	        android:padding="7dp" />
 	    
-	    <TextView
-	        android:id="@+id/classResourceL"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_below="@id/classMemberLimit"
-	        android:textSize="16sp"
-	        android:text="@string/createclassresource"
-	        android:layout_margin="5dp"
-	        android:padding="7dp" />
-	    <TextView
-	        android:id="@+id/classResource"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_below="@id/classResourceL"
-	        android:textSize="18sp"
-	        android:text="@string/classresourcedefault"
-	        android:gravity="center"
-	        android:layout_margin="5dp"
-	        android:padding="7dp" />
+	    
 	    
 	    <LinearLayout
 	        android:id="@+id/buttonRow"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
-	        android:layout_below="@id/classResource"
+	        android:layout_below="@id/classMemberLimit"
 	        android:gravity="center"
 	        android:orientation="horizontal"
 	        android:layout_marginTop="15dp"
@@ -174,7 +180,6 @@
 	            android:gravity="center"
 	            android:textSize="20sp"
 	            android:text="@string/buttonAccept"
-	            android:textColor="@color/gym"
 	            android:padding="5dp"
 	            android:background="@drawable/button" />
 	        <TextView
@@ -185,7 +190,6 @@
 	            android:gravity="center"
 	            android:textSize="20sp"
 	            android:text="@string/buttonCancel"
-	            android:textColor="@color/gym"
 	            android:padding="5dp"
 	            android:background="@drawable/button" />
 	        
