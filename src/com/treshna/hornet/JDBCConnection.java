@@ -373,9 +373,10 @@ public class JDBCConnection {
     	String query = "SELECT id, name, max_students,  description, price, onlinebook FROM class "
     	+" WHERE lastupdate > ?::TIMESTAMP WITHOUT TIME ZONE";
    
-    	
+    	Date lastupdate = new Date(Long.valueOf(lastsync));
+    	Log.d(TAG, "Classes Last-Update:"+lastupdate);
     	pStatement = con.prepareStatement(query);
-    	pStatement.setString(1, Services.dateFormat(new Date(Long.valueOf(lastsync)).toString(),
+    	pStatement.setString(1, Services.dateFormat(lastupdate.toString(),
     				"EEE MMM dd HH:mm:ss zzz yyyy", "dd-MM-yyyy HH:mm:ss"));
     	
     	rs = pStatement.executeQuery();

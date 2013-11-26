@@ -82,12 +82,12 @@ public class MainActivity extends NFCActivity {
             Services.setFreqPollingHandler(this, pintent);
 		}
 		
-		{
+		/*{
 			Intent updateInt = new Intent(this, HornetDBService.class);
             updateInt.putExtra(Services.Statics.KEY, Services.Statics.INFREQUENT_SYNC);
             PendingIntent pintent = PendingIntent.getService(this, 0, updateInt, PendingIntent.FLAG_UPDATE_CURRENT);
             Services.setInfreqPollingHandler(this, pintent);
-		}
+		}*/
             startReciever();
                 /************************************/
 		Log.v("MainActivity", "Finished onCreate");

@@ -164,6 +164,7 @@ public class HornetDBService extends Service {
 			getProgrammes(last_sync);
 			getMembership(last_sync);
 			getMembershipSuspends(last_sync);
+			getClasses(last_sync);
 			getMemberNotes(last_sync);
 			
 			//do bookings!
@@ -334,6 +335,7 @@ public class HornetDBService extends Service {
  		   this.manualCheckin(doorid, memberid, membershipid);
  		   
  		   thread.is_networking = false;
+ 		   break;
  	   }
  	   }
     }
@@ -2080,9 +2082,9 @@ public class HornetDBService extends Service {
     				//we're on time!
     				values.put(ContentDescriptor.Booking.Cols.RESULT, 20);
     			}
-    			//values.put(ContentDescriptor.Booking.Cols.IS_UPLOADED, 0);
-    
     			values.put(ContentDescriptor.Booking.Cols.LASTUPDATE, new Date().getTime());
+    			
+    			
     			if (bookingid > 0) {
     				contentResolver.update(ContentDescriptor.Booking.CONTENT_URI, values, ContentDescriptor.Booking.Cols.BID+" = ?",
     						new String[] {String.valueOf(bookingid)});

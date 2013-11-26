@@ -22,7 +22,7 @@ import android.widget.Toast;
 public class PollingHandler extends BroadcastReceiver {
 	public static final String POLLING_START = "polling_start";
 	private Context context = null;
-	private static PendingIntent pintent = null;
+	private PendingIntent pintent = null;
 	private AlarmManager alarm = null;
 	private Calendar cal = Calendar.getInstance();
 	private String message;
@@ -33,7 +33,7 @@ public class PollingHandler extends BroadcastReceiver {
 	
 	private boolean isPolling = true;
 	
-	private static long start_time;
+	private long start_time;
 	private static final String TAG = "com.treshna.hornet.pollingHandler";
 	
 	public PollingHandler(Context context, PendingIntent pIntent) {

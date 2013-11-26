@@ -104,8 +104,8 @@ public class Services {
 	
 	 
 	 public static String getAppSettings(Context context, String key){
-		 //System.out.println("Getting App Settings");
-		 Log.v(TAG, "Getting App Setting: "+key);
+		 //Exception e = new Exception();
+		 Log.d(TAG, "Getting App Setting: "+key);
 		 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 		 return (preferences.getString(key, "-1"));
 	}
@@ -140,13 +140,13 @@ public class Services {
 		return pollingFreqHandler;
 	}
 	
-	public static void setInfreqPollingHandler(Context ctx, PendingIntent pintent){
+	/*public static void setInfreqPollingHandler(Context ctx, PendingIntent pintent){
 		pollingInfreqHandler = new PollingHandler(ctx, pintent);
 	}
 	
 	public static PollingHandler getInfreqPollingHandler(){
 		return pollingInfreqHandler;
-	}
+	}*/
 	
 	public static void setContext(Context ctx){
 		theCtx = ctx;

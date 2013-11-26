@@ -184,7 +184,7 @@ public class SettingsActivity extends PreferenceActivity {
 		clearData.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-            	clearData();             	
+            	clearData();       	
             		Intent i = getPackageManager().getLaunchIntentForPackage( getApplicationContext().getPackageName() );
                 	i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 	startActivity(i);	
@@ -314,6 +314,7 @@ public class SettingsActivity extends PreferenceActivity {
 		editor.commit();
 		//does this break things?
 		ContentResolver contentResolver =  MainActivity.getContext().getContentResolver();
+		ContentResolver.cancelSync(null, ContentDescriptor.AUTHORITY);
 		contentResolver.delete(ContentDescriptor.DROPTABLE_URI, null, null);
 		Toast.makeText(MainActivity.getContext(), "Data Cleared, restarting Application.", Toast.LENGTH_LONG).show();
 		//return result;
