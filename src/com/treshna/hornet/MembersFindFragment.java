@@ -84,6 +84,7 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 	 public void onResume(){
 		 super.onResume();
 		 Log.v(TAG, "Resuming MemberFindFragment");
+		 loadermanager.restartLoader(0, null, this);
 		 setupView();
 	 }
 	 

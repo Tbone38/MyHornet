@@ -3,6 +3,7 @@ package com.treshna.hornet;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Hashtable;
 import java.util.Locale;
 
 import android.annotation.SuppressLint;
@@ -16,6 +17,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.ColorFilter;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Typeface;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -24,7 +26,8 @@ import android.widget.Toast;
 
 public class Services {
 	
-	private static PollingHandler pollingHandler;
+	private static PollingHandler pollingFreqHandler;
+	private static PollingHandler pollingInfreqHandler;
 	private static boolean DEBUG;
 	private static ProgressDialog progress;
 	private static Context theCtx;
@@ -129,12 +132,20 @@ public class Services {
 		return (boolValue == 1)? true : false;
 	}
 	
-	public static void setPollingHandler(Context ctx, PendingIntent pintent){
-		pollingHandler = new PollingHandler(ctx, pintent);;
+	public static void setFreqPollingHandler(Context ctx, PendingIntent pintent){
+		pollingFreqHandler = new PollingHandler(ctx, pintent);
 	}
 	
-	public static PollingHandler getPollingHandler(){
-		return pollingHandler;
+	public static PollingHandler getFreqPollingHandler(){
+		return pollingFreqHandler;
+	}
+	
+	public static void setInfreqPollingHandler(Context ctx, PendingIntent pintent){
+		pollingInfreqHandler = new PollingHandler(ctx, pintent);
+	}
+	
+	public static PollingHandler getInfreqPollingHandler(){
+		return pollingInfreqHandler;
 	}
 	
 	public static void setContext(Context ctx){
@@ -153,7 +164,9 @@ public class Services {
 			handler.post(new Runnable() {  
 					@Override  
 					public void run() {  
-						Toast.makeText(ctx, message, Toast.LENGTH_LONG).show();
+						if (message != null && !message.isEmpty() && message.length() >= 5) {
+							Toast.makeText(ctx, message, Toast.LENGTH_LONG).show();
+						}
 					}});
 		}
 	}
@@ -313,9 +326,33 @@ public class Services {
 		}
 	}
 	
+	public static class Typefaces {
+		private static final String TAG = "Typefaces";
+
+		private static final Hashtable<String, Typeface> cache = new Hashtable<String, Typeface>();
+
+		public static Typeface get(Context c, String assetPath) {
+			synchronized (cache) {
+				if (!cache.containsKey(assetPath)) {
+					try {
+						Typeface t = Typeface.createFromAsset(c.getAssets(),
+								assetPath);
+						cache.put(assetPath, t);
+					} catch (Exception e) {
+						Log.e(TAG, "Could not get typeface '" + assetPath
+								+ "' because " + e.getMessage());
+						return null;
+					}
+				}
+				return cache.get(assetPath);
+			}
+		}
+	}
+	
 	
 	public static class Statics {
-		public static final int LASTVISITORS = 1;
+		public static final int FREQUENT_SYNC = -1;
+		public static final int INFREQUENT_SYNC = -2;
 		public static final int SWIPE = 3;
 		public static final int FIRSTRUN = 10;
 		public static final int NEWDATABASE = 12;

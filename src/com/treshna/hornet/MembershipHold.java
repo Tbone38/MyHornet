@@ -168,12 +168,12 @@ public class MembershipHold extends ActionBarActivity implements OnClickListener
 		 	if (Integer.parseInt(preferences.getString("sync_frequency", "-1")) == -1) {
 		 		Services.setPreference(this, "sync_frequency", "5");
 		 	}
-		 	PollingHandler polling = Services.getPollingHandler();
+		 	PollingHandler polling = Services.getFreqPollingHandler();
 	    	polling.startService();
 	    	return true;
 	    }
 	    case (R.id.action_halt): {
-	    	PollingHandler polling = Services.getPollingHandler();
+	    	PollingHandler polling = Services.getFreqPollingHandler();
 	    	polling.stopPolling(false);
 	    	Services.setPreference(this, "sync_frequency", "-1");
 	    	return true;
@@ -276,7 +276,7 @@ public class MembershipHold extends ActionBarActivity implements OnClickListener
 		}
 		//success! we should que an upload then leave the page.
 		Intent suspend = new Intent(this, HornetDBService.class);
-		suspend.putExtra(Services.Statics.KEY, Services.Statics.LASTVISITORS);
+		suspend.putExtra(Services.Statics.KEY, Services.Statics.FREQUENT_SYNC);
 	 	this.startService(suspend);
 	 	Log.v(TAG, "Started Membership Suspend Update");
 	 	//toast ?

@@ -130,8 +130,9 @@ public class MembersFindAdapter extends SimpleCursorAdapter implements OnClickLi
 		String imgDir = context.getExternalFilesDir(null)+"/0_"+cursor.getString(1)+".jpg"; //cursor.getColumnIndex(ContentDescriptor.Member.Cols.MID)
 		File imgFile = new File(imgDir);
 		ImageView imageView = (ImageView) rowLayout.findViewById(R.id.rowimage);
+		imageView.setVisibility(View.VISIBLE);
 		if (imgFile.exists() == true){
-			imageView.setVisibility(View.VISIBLE);
+			
 			final BitmapFactory.Options options = new BitmapFactory.Options();
 		    options.inJustDecodeBounds = true;
 		    BitmapFactory.decodeFile(imgFile.getAbsolutePath(), options);

@@ -69,7 +69,7 @@ public class TimePickerFragment extends DialogFragment
             mCallback = (TimePickerSelectListener) activity;
         } catch (ClassCastException e) {
             //mCallback not set
-    		Log.e(TAG, "ERROR, CLASS STILL USING BROADCASTER", e);
+    		Log.e(TAG, "ERROR, CLASS STILL USING BROADCASTER");
     	}
     }
  

@@ -186,6 +186,9 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 		curStudents = cur.getCount();
 		
 		if (curStudents >= maxStudents || online == 0) {
+			Log.e(TAG, "Current Students:"+curStudents);
+			Log.e(TAG, "MAX STUDENTS: "+maxStudents);
+			Log.e(TAG, "Online:"+online);
 			//can't add members, we're already full (or online booking's are set to false for this class).
 			Toast.makeText(getActivity(), "The class has already reached it's student limit!", Toast.LENGTH_LONG).show();
 			return;
@@ -298,10 +301,10 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 			cur.moveToFirst();
 			firstname = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.FNAME));
 			lastname = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.SNAME));
-			memberid = cur.getString(0); //changing this will break things!
-			for (int i = 0; i<cur.getColumnCount(); i +=1) {
+			memberid = cur.getString(1); //changing this will break things!
+			/*for (int i = 0; i<cur.getColumnCount(); i +=1) {
 				Log.v(TAG, cur.getColumnName(i)+": "+cur.getString(i));
-			}
+			}*/
 			Log.v(TAG, "MEMBERID: "+memberid);
 			cur.close();
 			// show pop-up to select membership ?
@@ -446,18 +449,18 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 		values.put(ContentDescriptor.Booking.Cols.SNAME, surname);
 		
 		if (bookingid <= 0) {
-			Uri row = contentResolver.insert(ContentDescriptor.Booking.CONTENT_URI, values);
-			rowid = Integer.parseInt(row.getLastPathSegment());
+			contentResolver.insert(ContentDescriptor.Booking.CONTENT_URI, values);
+			//rowid = Integer.parseInt(row.getLastPathSegment());
 		} else { //has real bookingid, update that booking.
 			contentResolver.update(ContentDescriptor.Booking.CONTENT_URI, values, ContentDescriptor.Booking.Cols.BID+" = ?",
 					new String[] {String.valueOf(bookingid)});
+			values = new ContentValues();
+			values.put(ContentDescriptor.PendingUploads.Cols.TABLEID, ContentDescriptor.TableIndex.Values.Booking.getKey());
+			values.put(ContentDescriptor.PendingUploads.Cols.ROWID, rowid);
+			
+			contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, values);
 		}
 		
-		values = new ContentValues();
-		values.put(ContentDescriptor.PendingUploads.Cols.TABLEID, ContentDescriptor.TableIndex.Values.Booking.getKey());
-		values.put(ContentDescriptor.PendingUploads.Cols.ROWID, rowid);
-		
-		contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, values);
 		//refresh the view.
 		mLoaderManager.restartLoader(0, null, this);
 	}

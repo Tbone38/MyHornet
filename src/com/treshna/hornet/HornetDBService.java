@@ -110,7 +110,7 @@ public class HornetDBService extends Service {
      */
     public void startNetworking(int currentcall, Bundle bundle){
     	switch (currentCall){
- 	   	case (Services.Statics.LASTVISITORS): { //this should be run frequently
+ 	   	case (Services.Statics.FREQUENT_SYNC): { //this should be run frequently
  	   		
  	   		thread.is_networking = true;
  	   		long polling_start = PreferenceManager.getDefaultSharedPreferences(ctx).getLong(PollingHandler.POLLING_START, -1);
@@ -121,21 +121,20 @@ public class HornetDBService extends Service {
  	   			//polling has been running for over three hours, turn it off.
  	   			//I should probably let myself know that the Polling has been turned off.
  	   			Log.w(TAG, "Polling has been going for 3 hours, turning it off.");
- 	   			Services.getPollingHandler().stopPolling(false);
+ 	   			Services.getFreqPollingHandler().stopPolling(false);
  	   			Services.setPreference(ctx, "sync_frequency", "-1");
  	   			return;
  	   		}
  	   		
  	   		this_sync = System.currentTimeMillis();
- 	   		last_sync = Long.parseLong(Services.getAppSettings(ctx, "lastsync")); //use this for checking lastupdate
+ 	   		last_sync = Long.parseLong(Services.getAppSettings(ctx, "last_freq_sync")); //use this for checking lastupdate
  	   		
  	   		//get Visitors
  	   		boolean result = getLastVisitors();
 			if (result == true) { //If database query was successful, then look for images; else show toast.
 				visitorImages();
 			}
-			//TODO: check for error messages when running these commands.
-			//get ID's
+			
 			getMemberNoteID();
 			getMemberID();
 			getBookingID();
@@ -160,12 +159,12 @@ public class HornetDBService extends Service {
 			getPendingDownloads();
 			
 			//downloads!
-			getMemberNotes(last_sync);
 			getMember(last_sync);
 			getMemberBalance(last_sync);
 			getProgrammes(last_sync);
 			getMembership(last_sync);
 			getMembershipSuspends(last_sync);
+			getMemberNotes(last_sync);
 			
 			//do bookings!
 			updateBookings(); 
@@ -176,7 +175,7 @@ public class HornetDBService extends Service {
 			getDeletedRecords(last_sync);
 			
 
-			Services.setPreference(ctx, "lastsync", String.valueOf(this_sync));
+			Services.setPreference(ctx, "last_freq_sync", String.valueOf(this_sync));
 			Services.showToast(getApplicationContext(), statusMessage, handler);
 			/*Broadcast an intent to let the app know that the sync has finished
 			 * communicating with the server/updating the cache.
@@ -191,7 +190,32 @@ public class HornetDBService extends Service {
  		   	break;
  	   } 
  	   /****/
- 	    	   
+ 	   	case (Services.Statics.INFREQUENT_SYNC):{
+ 	   		thread.is_networking = true;
+ 	   		
+ 	   		this_sync = System.currentTimeMillis();
+	   		last_sync = Long.parseLong(Services.getAppSettings(ctx, "last_infreq_sync")); 
+ 	   		
+ 	   		getMemberNoteID();
+			getMemberID();
+			getBookingID();
+			getMembershipID();
+			int sid_count = getSuspendID();
+			if (sid_count < 0) {
+				Services.showToast(getApplicationContext(), statusMessage, handler);
+			}
+ 	   		
+ 	   		uploadMemberNotes();
+ 	   		
+ 	   		getMemberNotes(last_sync);
+ 	   		
+ 	   		Services.setPreference(ctx, "last_infreq_sync", String.valueOf(this_sync));
+ 	   		thread.is_networking = false;
+ 	   		
+ 	   		break;
+ 	   	}
+ 	   	
+ 	   	
  	   case (Services.Statics.SWIPE):{
  		   statusMessage = null;
  		   thread.is_networking = true;
@@ -206,7 +230,7 @@ public class HornetDBService extends Service {
  						wait(1500);
  					} catch (Exception e ) {};
  					Intent updateInt = new Intent(ctx, HornetDBService.class);
- 					updateInt.putExtra(Services.Statics.KEY, Services.Statics.LASTVISITORS);
+ 					updateInt.putExtra(Services.Statics.KEY, Services.Statics.FREQUENT_SYNC);
  					ctx.startService(updateInt);
  				}}).start();
  		  
@@ -217,6 +241,7 @@ public class HornetDBService extends Service {
  	   case (Services.Statics.FIRSTRUN):{ //this should be run nightly/weekly
  		   thread.is_networking = true;
  		 	//it needs more update handling.
+ 		  this_sync = System.currentTimeMillis();
 		   Services.showProgress(Services.getContext(), "Syncing Local Database setting from Server", handler, currentCall, true);
 		   //the above box should probably always show.
 		   
@@ -244,6 +269,8 @@ public class HornetDBService extends Service {
 		   getMemberBalance(-1);
 		   getBookings();
 		   memberImages();
+		   getClasses(-1);
+		   getLastVisitors();
 		   
 		   //do Memberships!
 		   getIdCards();
@@ -252,7 +279,7 @@ public class HornetDBService extends Service {
 		   
 		   
 		   Services.stopProgress(handler, currentCall);
-		   
+		   Services.setPreference(ctx, "last_freq_sync", String.valueOf(this_sync));
 		   Services.showProgress(Services.getContext(), "Setting up resource", handler, currentCall, false);
 
 	   	  	//rebuild times, then update the reference in date.
@@ -293,12 +320,14 @@ public class HornetDBService extends Service {
  			   Log.e(TAG, "Class Swipe returned Error-Code:"+result);
  		   }
  		   thread.is_networking = false;
+ 		   break;
  	   }
  	   case (Services.Statics.MANUALSWIPE):{
  		   thread.is_networking = true;
  		   
  		   int doorid, memberid, membershipid;
  		   doorid = bundle.getInt("doorid");
+ 		   doorid =(doorid < 0)? 1: doorid;
  		   memberid = bundle.getInt("memberid");
  		   membershipid = bundle.getInt("membershipid");
  		   
@@ -328,7 +357,9 @@ public class HornetDBService extends Service {
     		FileHandler fileHandler = new FileHandler(this);
     		String query = fileHandler.readFile(fileSize, "callumLastVisitors130416.sql");
     		ResultSet rs = null;
-    		try {
+    		try { //is this working?
+    			//Log.d(TAG, query);
+    			//Log.d(TAG, "Connected: "+connection.isConnected());
     			rs = connection.startStatementQuery(query);
     		}catch (Exception e) {
     			statusMessage = e.getLocalizedMessage();
@@ -498,14 +529,21 @@ public class HornetDBService extends Service {
     
     public void memberImages() {
     	cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, null, null, null);
-    	queryServerForImage(cur, 0);
+    	queryServerForImage(cur, 1);
     }
     
     /*
      * Image ID's are set such that id 0 for membership is always the profile picture.
      * this means that getting the profile picture from the sdcard should be 0_<memberid>.jpg
      */
-  //TODO: rewrite this with consideration to last_sync. 
+  //TODO: rewrite this with consideration to last_sync.
+    
+    /**
+     * cursor = a cursor with which to look up the memberid for image download.
+     * index = the position in the cursor at which the memberid can be found.
+     * @param cursor
+     * @param index
+     */
     public void queryServerForImage(Cursor cursor, int index) {
     	boolean oldQuery;
     	ResultSet rs;
@@ -940,6 +978,12 @@ public class HornetDBService extends Service {
 	    			val.put(ContentDescriptor.Booking.Cols.LASTUPDATE, new Date().getTime());
 	    			contentResolver.update(ContentDescriptor.Booking.CONTENT_URI, val, ContentDescriptor.Booking.Cols.ID+" = ?",
 	    					new String[] {String.valueOf(rowid)});
+	    			val = new ContentValues();
+	    			val.put(ContentDescriptor.PendingUploads.Cols.TABLEID, ContentDescriptor.TableIndex.Values.Booking.getKey());
+	    			val.put(ContentDescriptor.PendingUploads.Cols.ROWID, rowid);
+	    			
+	    			contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, val);
+	    			
 	    		} else {
 	    			val.put(ContentDescriptor.Booking.Cols.LASTUPDATE, 0);
 	    			contentResolver.insert(ContentDescriptor.Booking.CONTENT_URI, val);
@@ -1572,11 +1616,14 @@ public class HornetDBService extends Service {
     		
     		if (door < 0 ) {
     			//it's a booking swipe, ignore it.
+    			Log.v("NFCActivity", "DOOR < 0");
     			continue;
     		}
-    		Log.v(TAG, "id:"+id);
-    		Log.v(TAG, "door:"+door);
+    		Log.v("NFCActivity", "id:"+id);
+    		Log.v("NFCActivity", "door:"+door);
     		if (!openConnection()) {
+    			contentResolver.delete(ContentDescriptor.Swipe.CONTENT_URI, null, null);
+    			statusMessage = "Connection to database failed, Member not swiped in.";
         		return -1; //connection failed;
         	}
     		try {
@@ -1589,7 +1636,7 @@ public class HornetDBService extends Service {
 	    		
 	    		rs = connection.getTagUpdate(door);
 	    		tempmess = null;
-	    		while (rs.next()){
+	    		if (rs.next()) {
 	    			tempmess = rs.getString("message")+" "+rs.getString("message2");
 	    			statusMessage = tempmess;
 	    			Log.v(TAG, tempmess);
@@ -1715,6 +1762,7 @@ public class HornetDBService extends Service {
     
     
     private int uploadClass(){
+    	Log.d(TAG, "STARTING CLASS UPLOAD");
     	int result = 0;
     	ArrayList<String> idlist;
     	
@@ -1722,12 +1770,14 @@ public class HornetDBService extends Service {
     	
     	cur = contentResolver.query(ContentDescriptor.PendingUploads.CONTENT_URI, null, ContentDescriptor.PendingUploads.Cols.TABLEID+" = ?",
     			new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Class.getKey())}, null);
-    	
+    	int count = 0;
     	while (cur.moveToNext())
     	{
     		idlist.add(cur.getString(cur.getColumnIndex(ContentDescriptor.PendingUploads.Cols.ROWID)));
+    		count +=1;
     	}
     	cur.close();
+    	Log.d(TAG, "ATTEMPTING TO UPLOAD "+count+" CLASSES");
     	
     	if (!openConnection()) {
     		return -1; //connection failed;
@@ -1785,6 +1835,7 @@ public class HornetDBService extends Service {
     			return -3;
     		}
     		
+    		Log.d(TAG, "CLASS INSERTION SUCCESSFULL, DELETING.");
     		//if we got here the inserts must've been successful. so remove the pending upload.
     		contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, ContentDescriptor.PendingUploads.Cols.TABLEID+" = ? AND "
     				+ContentDescriptor.PendingUploads.Cols.ROWID+" = ?", new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Class.getKey()),
@@ -1863,20 +1914,24 @@ public class HornetDBService extends Service {
     	if (!openConnection()) {
     		return -1; //connection failed;
     	}
+    	Log.e(TAG, "Class Swipe Count:"+bookingswipecount);
     	while (bookingswipecount > 0) {
     		
     		String serial, memberid, classid, membershipid;
     		int cardno;
     		ResultSet rs;
-    		
+    		cur.close();
     		if (cur == null || cur.isClosed()) {
     			cur = contentResolver.query(ContentDescriptor.Swipe.CONTENT_URI, null, ContentDescriptor.Swipe.Cols.DOOR+" < 0",
     	    			null, null);
     		}
     		
     		cur.moveToFirst();
-    		if (cur.getCount() <= 0) return 0;
-    		
+    		if (cur.getCount() <= 0) {
+    			Log.e(TAG, "Lost the Cursor.");
+    			return 0;
+    		}
+    		classid = cur.getString(cur.getColumnIndex(ContentDescriptor.Swipe.Cols.DOOR)).substring(1);
     		serial = cur.getString(cur.getColumnIndex(ContentDescriptor.Swipe.Cols.ID)); 
     		cur.close();
     		//rs = connection.findMemberBySerial(serial);
@@ -1903,20 +1958,19 @@ public class HornetDBService extends Service {
     			cur.close();
     			
     			rs = connection.findMemberByCard(cardno);
-    			if (rs.getFetchSize() <= 0) {
-    				
+    			if (! rs.next()) {
+    				Log.e(TAG, "Count not find member for card no:"+cardno);
     				contentResolver.delete(ContentDescriptor.Swipe.CONTENT_URI, ContentDescriptor.Swipe.Cols.ID+" = ? ",
     						new String[] {serial});
     				//return -4; //only 1 row. ??
     				continue;
     			}
-    			rs.next();
     			
     			memberid = rs.getString("memberid");
     			membershipid = rs.getString("membershipid");
     			Log.v(TAG,"Class-Swipe Member-ID:"+memberid);
     			if (rs.wasNull()) {
-    				//tag empty.
+    				Log.e(TAG, "Tag not assigned to a member");
     				statusMessage = "tag not assigned to a member";
     				contentResolver.delete(ContentDescriptor.Swipe.CONTENT_URI, ContentDescriptor.Swipe.Cols.ID+" = ?",
     						new String[] {serial});
@@ -1929,9 +1983,6 @@ public class HornetDBService extends Service {
     			return -1;
     		}
     		connection.closePreparedStatement();
-    		
-    		classid = cur.getString(cur.getColumnIndex(ContentDescriptor.Swipe.Cols.DOOR)).substring(1);
-    		cur.close();
 			
 			cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.PARENTID+" = ? AND "
 					+ContentDescriptor.Booking.Cols.MID+" = ?",
@@ -2035,14 +2086,13 @@ public class HornetDBService extends Service {
     			if (bookingid > 0) {
     				contentResolver.update(ContentDescriptor.Booking.CONTENT_URI, values, ContentDescriptor.Booking.Cols.BID+" = ?",
     						new String[] {String.valueOf(bookingid)});
+    				values = new ContentValues();
+        			values.put(ContentDescriptor.PendingUploads.Cols.TABLEID, ContentDescriptor.TableIndex.Values.Booking.getKey());
+        			values.put(ContentDescriptor.PendingUploads.Cols.ROWID, rowid);
     			} else { //insert;
-    				Uri row = contentResolver.insert(ContentDescriptor.Booking.CONTENT_URI, values);
-    				rowid = Integer.parseInt(row.getLastPathSegment());
+    				contentResolver.insert(ContentDescriptor.Booking.CONTENT_URI, values);
     			}
     			
-    			values = new ContentValues();
-    			values.put(ContentDescriptor.PendingUploads.Cols.TABLEID, ContentDescriptor.TableIndex.Values.Booking.getKey());
-    			values.put(ContentDescriptor.PendingUploads.Cols.ROWID, rowid);
     			
     		} else {
     			Log.v(TAG, "Checking in Existing Member");
@@ -2076,6 +2126,7 @@ public class HornetDBService extends Service {
     				values.put(ContentDescriptor.Booking.Cols.RESULT, 20);
     			}
     			values.put(ContentDescriptor.Booking.Cols.CHECKIN, new Date().getTime());
+    			values.put(ContentDescriptor.Booking.Cols.LASTUPDATE, new Date().getTime());
     		
     			contentResolver.update(ContentDescriptor.Booking.CONTENT_URI, values, ContentDescriptor.Booking.Cols.BID+" = ?", 
     					new String[] {bookingid});
@@ -2092,6 +2143,7 @@ public class HornetDBService extends Service {
 					+ContentDescriptor.Swipe.Cols.DOOR+" = ?", new String[] {serial, "-"+classid});
 			
     		result +=1;
+    		cur.close();
     		if (cur == null || cur.isClosed()) {
     			cur = contentResolver.query(ContentDescriptor.Swipe.CONTENT_URI, null, ContentDescriptor.Swipe.Cols.DOOR+" < 0",
     	    			null, null);

@@ -109,12 +109,12 @@ public class MemberAdd extends NFCActivity implements OnClickListener{
 		 	if (Integer.parseInt(preferences.getString("sync_frequency", "-1")) == -1) {
 		 		Services.setPreference(this, "sync_frequency", "5");
 		 	}
-		 	PollingHandler polling = Services.getPollingHandler();
+		 	PollingHandler polling = Services.getFreqPollingHandler();
 	    	polling.startService();
 	    	return true;
 	    }
 	    case (R.id.action_halt): {
-	    	PollingHandler polling = Services.getPollingHandler();
+	    	PollingHandler polling = Services.getFreqPollingHandler();
 	    	polling.stopPolling(false);
 	    	Services.setPreference(this, "sync_frequency", "-1");
 	    	return true;
@@ -157,7 +157,7 @@ public class MemberAdd extends NFCActivity implements OnClickListener{
 				}
 				Intent intent = new Intent(this, HornetDBService.class);
 				
-				intent.putExtra(Services.Statics.KEY, Services.Statics.LASTVISITORS);
+				intent.putExtra(Services.Statics.KEY, Services.Statics.FREQUENT_SYNC);
 				new InsertMember(this, intent, input.get(0), input.get(1), input.get(2), input.get(3), input.get(4),
 						input.get(5), input.get(6), input.get(7), input.get(8), input.get(9), input.get(10), input.get(11), input.get(12), memberid);
 				//InsertMember member = above line

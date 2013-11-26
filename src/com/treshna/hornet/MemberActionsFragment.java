@@ -318,7 +318,7 @@ public class MemberActionsFragment extends Fragment implements OnClickListener {
 					updateInt.putExtras(extras);
 					updateInt.putExtra(Services.Statics.KEY, Services.Statics.MANUALSWIPE);
 				 	getActivity().startService(updateInt);
-				 	PollingHandler p = Services.getPollingHandler();
+				 	PollingHandler p = Services.getFreqPollingHandler();
 				 	if (p != null && !p.getConStatus()) {
 				 		Toast.makeText(getActivity(), "Could not check member in, Check that this device is connected"
 				 				+ " to the internet.", Toast.LENGTH_LONG).show();

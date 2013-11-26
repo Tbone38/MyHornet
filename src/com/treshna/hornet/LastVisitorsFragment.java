@@ -39,7 +39,7 @@ public class LastVisitorsFragment extends ListFragment implements OnClickListene
     private Cursor cur = null;
     private SimpleCursorAdapter mAdapter;
     private LoaderManager mLoader;
-	private static int currentDisplay = -1; //make this private.
+	private static int currentDisplay = -1; //make this private.}
     
 	public static final int LASTVISITORS = 1;
 	static public String PREF_NAME = "addMember";
@@ -62,15 +62,15 @@ public class LastVisitorsFragment extends ListFragment implements OnClickListene
         
         /**the below code needs to run on app start.
          */
-        Intent updateInt = new Intent(getActivity(), HornetDBService.class);
-		updateInt.putExtra(Services.Statics.KEY, Services.Statics.LASTVISITORS);
+        /*Intent updateInt = new Intent(getActivity(), HornetDBService.class);
+		updateInt.putExtra(Services.Statics.KEY, Services.Statics.FREQUENT_SYNC);
 		PendingIntent pintent = PendingIntent.getService(getActivity(), 0, updateInt, PendingIntent.FLAG_UPDATE_CURRENT);
 		//polling = new PollingHandler(this, pintent);
-		Services.setPollingHandler(getActivity(), pintent);
-		startReciever();
+		Services.setFreqPollingHandler(getActivity(), pintent);
+		startReciever();*/
 		/************************************/
         //different views look different, build the views differently?
-        //getList();
+        getList();
     }
 	
 	@Override
@@ -96,21 +96,6 @@ public class LastVisitorsFragment extends ListFragment implements OnClickListene
 		return context;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see android.app.Activity#onStop()
-	 * This is closing the cursor, it means when the application is returned to:
-	 * no results will be displayed until a new cursor is opened.
-	 */
-	 public void onStop() {
-		 super.onStop();
-	     if(cur != null) cur.close();
-	     try {
-		    	getActivity().unregisterReceiver(Services.getPollingHandler()); //?
-		     } catch (Exception e) {
-		    	 //doesn't matter.
-		     }
-	 }
 	 
 	 @Override
 	 public void onStart() {
@@ -149,7 +134,7 @@ public class LastVisitorsFragment extends ListFragment implements OnClickListene
 	public void startReciever(){
 		IntentFilter intentFilter = new IntentFilter();
 		intentFilter.addAction(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION);
-		getActivity().registerReceiver(Services.getPollingHandler(), intentFilter);
+		getActivity().registerReceiver(Services.getFreqPollingHandler(), intentFilter);
 	}
 
 	@Override

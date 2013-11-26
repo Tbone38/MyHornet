@@ -1,12 +1,11 @@
 package com.treshna.hornet;
 
-import java.util.Date;
-
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,7 +19,6 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.WindowManager;
 
 import com.treshna.hornet.R.color;
 
@@ -77,12 +75,20 @@ public class MainActivity extends NFCActivity {
 		
 		/**the below code needs to run on app start.
          */
-        Intent updateInt = new Intent(this, HornetDBService.class);
-                updateInt.putExtra(Services.Statics.KEY, Services.Statics.LASTVISITORS);
-                PendingIntent pintent = PendingIntent.getService(this, 0, updateInt, PendingIntent.FLAG_UPDATE_CURRENT);
-                //polling = new PollingHandler(this, pintent);
-                Services.setPollingHandler(this, pintent);
-                startReciever();
+		{
+			Intent updateInt = new Intent(this, HornetDBService.class);
+            updateInt.putExtra(Services.Statics.KEY, Services.Statics.FREQUENT_SYNC);
+            PendingIntent pintent = PendingIntent.getService(this, 0, updateInt, PendingIntent.FLAG_UPDATE_CURRENT);
+            Services.setFreqPollingHandler(this, pintent);
+		}
+		
+		{
+			Intent updateInt = new Intent(this, HornetDBService.class);
+            updateInt.putExtra(Services.Statics.KEY, Services.Statics.INFREQUENT_SYNC);
+            PendingIntent pintent = PendingIntent.getService(this, 0, updateInt, PendingIntent.FLAG_UPDATE_CURRENT);
+            Services.setInfreqPollingHandler(this, pintent);
+		}
+            startReciever();
                 /************************************/
 		Log.v("MainActivity", "Finished onCreate");
 	}
@@ -128,14 +134,14 @@ public class MainActivity extends NFCActivity {
 	public void startReciever(){
 		IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION);
-        registerReceiver(Services.getPollingHandler(), intentFilter);
+        registerReceiver(Services.getFreqPollingHandler(), intentFilter);
 	}
 	
 	@Override
 	public void onStop() {
 		super.onStop();
 		try {
-        	unregisterReceiver(Services.getPollingHandler()); //?
+        	unregisterReceiver(Services.getFreqPollingHandler()); //?
         } catch (Exception e) {
         	//doesn't matter.
         }
@@ -183,12 +189,12 @@ public class MainActivity extends NFCActivity {
 		 	if (Integer.parseInt(preferences.getString("sync_frequency", "-1")) == -1) {
 		 		Services.setPreference(this, "sync_frequency", "5");
 		 	}
-		 	PollingHandler polling = Services.getPollingHandler();
+		 	PollingHandler polling = Services.getFreqPollingHandler();
 	    	polling.startService();
 	    	return true;
 	    }
 	    case (R.id.action_halt): {
-	    	PollingHandler polling = Services.getPollingHandler();
+	    	PollingHandler polling = Services.getFreqPollingHandler();
 	    	polling.stopPolling(false);
 	    	Services.setPreference(this, "sync_frequency", "-1");
 	    	return true;
@@ -251,14 +257,13 @@ public class MainActivity extends NFCActivity {
 	            mFragment = Fragment.instantiate(mActivity, mClass.getName());
 	            cFragment = mFragment;
 	            ft.replace(getContentViewCompat(), mFragment, mTag);
-	            //ft.addToBackStack(null);
 	            selectedTab = tab.getPosition();
 	        } else {
 	            // If it exists, simply attach it in order to show it
 	        	//ft.replace(getContentViewCompat(), mFragment, mTag);
 	        	ft.attach(mFragment);
-	        	//ft.addToBackStack(null);
 	        	cFragment = mFragment;
+	        	selectedTab = tab.getPosition();
 	        }
 	    }
 

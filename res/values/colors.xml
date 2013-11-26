@@ -27,6 +27,7 @@
     <color name="booking_resource_grey">#FF626262</color>
     <color name="booking_resource_blue">#FF00AEF0</color>
     <color name="booking_resource_green">#FF8EAD00</color>
+    <color name="booking_resource_background">#FFE5F0D1</color>
     <color name="block_header_blue">#FF0072BC</color>
     
     <color name="overview_timeslot_top_grey">#FFADADAD</color>

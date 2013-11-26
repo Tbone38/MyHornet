@@ -1,17 +1,12 @@
 package com.treshna.hornet;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
@@ -26,14 +21,11 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
-import android.widget.CalendarView;
-import android.widget.TextView;
-import android.widget.CalendarView.OnDateChangeListener;
-import android.widget.DatePicker;
-import android.widget.DatePicker.OnDateChangedListener;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 
 public class BookingsResourceFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor>,
@@ -235,14 +227,20 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
 		 	mAdapter.updateDate(selectedDate);
     }
 	
+	@Override
+	public void onResume() {
+		super.onResume();
+		mLoader.restartLoader(0, null, this);
+	}
+	
 	private void setupList() {
 		Log.d(TAG, "SETTING UP LIST");
-		String[] from = {ContentDescriptor.Time.Cols.TIME};
-       	int[] to = {R.id.booking_resource_time};
-  
-		//mLoader.restartLoader(0, null, this);
+		String[] from = {};
+       	int[] to = {};
+       	ListView list = (ListView) view.findViewById(android.R.id.list);
+		
        	mLoader.initLoader(0, null, this);
-		mAdapter = new BookingsListAdapter(getActivity(), R.layout.booking_resource_row, null, from, to, selectedDate);
+		mAdapter = new BookingsListAdapter(getActivity(), R.layout.booking_resource_row, null, from, to, selectedDate, list);
 		setListAdapter(mAdapter);
 		
 		

@@ -88,6 +88,10 @@ public class JDBCConnection {
             con = DriverManager.getConnection(getConnectionUrl(), properties);
     }
     
+    public boolean isConnected() throws SQLException {
+    	return con.isValid(4);
+    }
+    
     public void closeConnection(){
     	 if (con != null) {
     		 try {
@@ -147,12 +151,12 @@ public class JDBCConnection {
     	return result;
     }
     
-    public ResultSet tagInsert(int door, String cardid) throws SQLException{
+    public ResultSet tagInsert(int door, String serial) throws SQLException{
     	ResultSet result = null;
     	
 	    	pStatement = con.prepareStatement("select * from swipe(?, ?, true);");
 	    	pStatement.setInt(1, door);
-	    	pStatement.setString(2, cardid);
+	    	pStatement.setString(2, serial);
 	    	result = pStatement.executeQuery();
     	
     	return result;
@@ -160,7 +164,7 @@ public class JDBCConnection {
     
     public ResultSet getTagUpdate(int door) throws SQLException{
     	ResultSet result = null;
-    		pStatement = con.prepareStatement("select * from doormsg where doorid = ?;");
+    		pStatement = con.prepareStatement("select * from doormsg where doorid = ? ORDER BY id DESC;");
     		pStatement.setInt(1,  door);
     		result = pStatement.executeQuery();
     	
@@ -366,17 +370,13 @@ public class JDBCConnection {
     
     public ResultSet getClasses(String lastsync) throws SQLException {
     	ResultSet rs = null;
-    	String query = "SELECT id, name, max_students,  description, price, onlinebook FROM class ";
-    	
-    	if (lastsync != null) {
-    		query = query+" WHERE lastupdate > ?::TIMESTAMP WITHOUT TIME ZONE";
-    	}
+    	String query = "SELECT id, name, max_students,  description, price, onlinebook FROM class "
+    	+" WHERE lastupdate > ?::TIMESTAMP WITHOUT TIME ZONE";
+   
     	
     	pStatement = con.prepareStatement(query);
-    	if (lastsync != null) {
-    		pStatement.setString(1, Services.dateFormat(new Date(Long.valueOf(lastsync)).toString(),
+    	pStatement.setString(1, Services.dateFormat(new Date(Long.valueOf(lastsync)).toString(),
     				"EEE MMM dd HH:mm:ss zzz yyyy", "dd-MM-yyyy HH:mm:ss"));
-    	}
     	
     	rs = pStatement.executeQuery();
     	return rs;

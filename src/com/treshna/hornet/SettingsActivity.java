@@ -204,6 +204,8 @@ public class SettingsActivity extends PreferenceActivity {
 				Editor e = preferences.edit();
 				e.putString("b_lastsync", String.valueOf(3)); //3 ms after epoch.
 				e.putString("lastsync", String.valueOf(3)); //3 ms after epoch.
+				e.putString("last_freq_sync", String.valueOf(3)); //3 ms after epoch.
+				e.putString("last_infreq_sync", String.valueOf(3)); //3 ms after epoch.
 				e.commit();
 				//this should make the app redownload all data.
 				return true;

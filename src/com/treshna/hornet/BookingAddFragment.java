@@ -401,6 +401,8 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 					}
 					
 				} else {
+					contentResolver.notifyChange(ContentDescriptor.Booking.CONTENT_URI, null);
+					contentResolver.notifyChange(ContentDescriptor.BookingTime.CONTENT_URI, null);
 					getActivity().finish();
 				}
 			} else {
@@ -513,7 +515,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 			return -2;
 		}
 		cur.moveToFirst();
-		values.put(ContentDescriptor.Booking.Cols.MID, cur.getString(0));//cur.getColumnIndex(ContentDescriptor.Member.Cols.MID))
+		values.put(ContentDescriptor.Booking.Cols.MID, cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.MID)));
 		cur.close();
 		values.put(ContentDescriptor.Booking.Cols.FNAME, input.get(0));
 		values.put(ContentDescriptor.Booking.Cols.SNAME, input.get(7));

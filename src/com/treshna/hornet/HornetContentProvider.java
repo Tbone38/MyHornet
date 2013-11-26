@@ -448,14 +448,14 @@ public class HornetContentProvider extends ContentProvider {
             			+" = b."+ContentDescriptor.Booking.Cols.BID+")"
             			+" AND "+selectionArgs[1]//+selectionArgs[2]
             			);
-            			selection = "t."+ContentDescriptor.Time.Cols.ID+" > (" 
+            			selection = "t."+ContentDescriptor.Time.Cols.ID+" >= (" 
             					+"SELECT ot."+ContentDescriptor.OpenTime.Cols.OPENID+" FROM "
             					+ContentDescriptor.OpenTime.NAME+" ot LEFT JOIN "
             					+ContentDescriptor.Date.NAME+" d ON (d."+ContentDescriptor.Date.Cols.DAYOFWEEK
             					+" = ot."+ContentDescriptor.OpenTime.Cols.DAYOFWEEK+" ) WHERE "
             					+" d."+ContentDescriptor.Date.Cols.DATE+" = "+selectionArgs[0]+")"
             					+" AND "
-            					+"t."+ContentDescriptor.Time.Cols.ID+" < (" 
+            					+"t."+ContentDescriptor.Time.Cols.ID+" <= (" 
             					+"SELECT ot."+ContentDescriptor.OpenTime.Cols.CLOSEID+" FROM "
             					+ContentDescriptor.OpenTime.NAME+" ot LEFT JOIN "
             					+ContentDescriptor.Date.NAME+" d ON (d."+ContentDescriptor.Date.Cols.DAYOFWEEK

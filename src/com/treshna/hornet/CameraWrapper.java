@@ -132,10 +132,10 @@ public class CameraWrapper extends Activity {
          val.put(ContentDescriptor.PendingUploads.Cols.ROWID, rowid);
          contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, val);
          //System.out.println("Updating Image Table");
-  
+         contentResolver.notifyChange(ContentDescriptor.Image.CONTENT_URI, null);
          Intent intent = new Intent(this, HornetDBService.class);
          //intent.putExtra(Services.Statics.KEY,Services.Statics.UPLOAD);
-         intent.putExtra(Services.Statics.KEY, Services.Statics.LASTVISITORS);
+         intent.putExtra(Services.Statics.KEY, Services.Statics.FREQUENT_SYNC);
          startService(intent);
          finish();
 	}
@@ -181,12 +181,12 @@ public class CameraWrapper extends Activity {
 		 	if (Integer.parseInt(preferences.getString("sync_frequency", "-1")) == -1) {
 		 		Services.setPreference(this, "sync_frequency", "5");
 		 	}
-		 	PollingHandler polling = Services.getPollingHandler();
+		 	PollingHandler polling = Services.getFreqPollingHandler();
 	    	polling.startService();
 	    	return true;
 	    }
 	    case (R.id.action_halt): {
-	    	PollingHandler polling = Services.getPollingHandler();
+	    	PollingHandler polling = Services.getFreqPollingHandler();
 	    	polling.stopPolling(false);
 	    	Services.setPreference(this, "sync_frequency", "-1");
 	    	return true;

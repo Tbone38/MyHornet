@@ -14,6 +14,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NavUtils;
@@ -64,7 +65,7 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 	private void setText() {
 		TextView date, resource, starttime, endtime, buttonaccept, buttoncancel;		
 		
-		date = (TextView) this.findViewById(R.id.classDate);
+		date = (TextView) this.findViewById(R.id.classDate);	
 		date.setTag(Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd"));
 		date.setClickable(true);
 		date.setOnClickListener(this);
@@ -77,7 +78,7 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 		starttime.setOnClickListener(this);
 		if (starttimevalue != null) {
 			starttime.setText(starttimevalue);
-			if (endtimevalue == null && period != null) {
+			if ( period != null) {
 				int year = 2013, month = 10, day = 2;
 				Date tempdate = new Date(year, month, day, 0, 0);
 				Date enddate = new Date(year, month, day, Integer.parseInt(period.substring(0, 2)), 
@@ -155,12 +156,12 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 		 	if (Integer.parseInt(preferences.getString("sync_frequency", "-1")) == -1) {
 		 		Services.setPreference(this, "sync_frequency", "5");
 		 	}
-		 	PollingHandler polling = Services.getPollingHandler();
+		 	PollingHandler polling = Services.getFreqPollingHandler();
 	    	polling.startService();
 	    	return true;
 	    }
 	    case (R.id.action_halt): {
-	    	PollingHandler polling = Services.getPollingHandler();
+	    	PollingHandler polling = Services.getFreqPollingHandler();
 	    	polling.stopPolling(false);
 	    	Services.setPreference(this, "sync_frequency", "-1");
 	    	return true;
@@ -325,7 +326,11 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 		
 		contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, values);
 		System.out.print("\n\nClass inserted\n\n");
-		Toast.makeText(this, "Class Created!", Toast.LENGTH_LONG).show();;
+		Toast.makeText(this, "Class Created!", Toast.LENGTH_LONG).show();
+		Intent updateInt = new Intent(this, HornetDBService.class);
+		updateInt.putExtra(Services.Statics.KEY, Services.Statics.FREQUENT_SYNC);
+	 	this.startService(updateInt);
+		
 		this.finish();
 	}
 	

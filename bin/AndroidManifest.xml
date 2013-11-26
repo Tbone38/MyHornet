@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.treshna.hornet"
-    android:versionCode="108"
-    android:versionName="0.08" >
+    android:versionCode="109"
+    android:versionName="0.09" >
 
     <uses-sdk
         android:minSdkVersion="10"
@@ -93,7 +93,7 @@
         <activity
             android:name="com.treshna.hornet.BookingPage"
             android:label="@string/title_activity_add_booking"
-            android:parentActivityName="com.treshna.hornet.BookingsSlidePager"
+           	android:parentActivityName="com.treshna.hornet.MainActivity"
             android:theme="@style/Theme.AppCompat.Light"
             android:windowSoftInputMode="stateHidden" >
             <meta-data
