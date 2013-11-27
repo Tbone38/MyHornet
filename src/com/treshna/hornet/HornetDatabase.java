@@ -36,7 +36,7 @@ import com.treshna.hornet.ContentDescriptor.Visitor;
 public class HornetDatabase extends SQLiteOpenHelper {
 	
 	 public static final String DATABASE_NAME="hornet.db";
-	 private static final int DATABASE_VERSION = 89;
+	 private static final int DATABASE_VERSION = 90;
 	 
 	 public HornetDatabase (Context context) {
 		 super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -277,7 +277,11 @@ public class HornetDatabase extends SQLiteOpenHelper {
 				+MemberBalance.Cols.LASTUPDATE+" NUMERIC "
 				+");");
 		
+		//todo remove this:
 		repopulateTable(db);
+		
+		//SQL patches.
+		db.execSQL(UpdateDatabase.Ninety.SQL);
 	}
 
 	
@@ -292,11 +296,17 @@ public class HornetDatabase extends SQLiteOpenHelper {
 				//baseline everything to version 89, after wards use ALTERS etc to make modifications.
 				dropTables(db);
 				onCreate(db);
+				return;
 			}
 			switch (version){
 			case (89):{
 				dropTables(db);
 				onCreate(db);
+				return;
+			}
+			case (90):{
+				Log.w(HornetDatabase.class.getName(),"SQL-Patch:90 \n"+ UpdateDatabase.Ninety.SQL);
+				db.execSQL(UpdateDatabase.Ninety.SQL);
 				break;
 			}
 			}

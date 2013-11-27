@@ -67,7 +67,7 @@ public class BookingsListAdapter extends SimpleCursorAdapter implements OnClickL
 			block.setBackgroundColor(context.getResources().getColor(R.color.navy));
 			break;
 		case (15):
-			rowLayout.setBackgroundColor(context.getResources().getColor(R.color.orangered));
+			block.setBackgroundColor(context.getResources().getColor(R.color.orangered));
 			break;
 		case (9):
 			block.setBackgroundColor(context.getResources().getColor(R.color.slategrey));

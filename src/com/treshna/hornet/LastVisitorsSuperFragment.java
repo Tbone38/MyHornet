@@ -51,6 +51,7 @@ public class LastVisitorsSuperFragment extends Fragment {
         LastVisitorsFragment f = new LastVisitorsFragment();
         ft.replace(R.id.frame_right, f);
         ft.commit();
+        ((MainActivity) getActivity()).setSelectedTab(1);
 	}
 	
 	@Override

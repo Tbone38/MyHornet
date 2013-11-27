@@ -49,9 +49,12 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
         Services.setContext(getActivity());
         mLoader = getLoaderManager();
         mResolver = this.getActivity().getContentResolver();
-        
-        selectedDate = Services.dateFormat(new Date(this.getArguments().getLong("date")).toString(), 
-        		"EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");
+        selectedDate = Services.getAppSettings(getActivity(), "bookings_date");
+    	if (Integer.parseInt(selectedDate) == -1) {
+    		selectedDate = Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");
+    	}
+        /*selectedDate = Services.dateFormat(new Date(this.getArguments().getLong("date")).toString(), 
+        		"EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");*/
         hasOverview = this.getArguments().getBoolean("hasOverview");
     }
 	
@@ -285,6 +288,7 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
 	public void onDateSelect(String date, DatePickerFragment theDatePicker) {
 		selectedDate = date;
 		selectedDate = Services.dateFormat(selectedDate, "yyyy MM dd", "yyyyMMdd");
+		Services.setPreference(getActivity(), "bookings_date", selectedDate);
 		updateSelection(-1);
 	}
 

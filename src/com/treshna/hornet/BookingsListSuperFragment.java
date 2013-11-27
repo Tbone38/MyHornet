@@ -44,6 +44,12 @@ public class BookingsListSuperFragment extends Fragment {
         cFragment = fragmentManager.findFragmentByTag("OverviewFragment");
 	}
 	
+	@Override
+	public void onResume() {
+		super.onResume();
+		((MainActivity) getActivity()).setSelectedTab(2);
+	}
+	
 	
 	public Fragment getCurrentFragment(){
 		return cFragment;

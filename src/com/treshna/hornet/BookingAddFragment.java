@@ -199,25 +199,11 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		buttonRow.setLayoutParams(rlparams);
 		buttonRow.setOrientation(LinearLayout.HORIZONTAL);
 		
-		TextView accept = new TextView(ctx);
-		accept.setId(45);
-		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT, (float) .5);
-		accept.setLayoutParams(params);
-		accept.setPadding(5, 5, 5, 5);
-		accept.setTextSize(22);
-		accept.setText(R.string.bookingaccept);
-		accept.setGravity(Gravity.CENTER);
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-			accept.setBackground(getResources().getDrawable(R.drawable.button));
-		} else {
-			accept.setBackgroundDrawable(getResources().getDrawable(R.drawable.button));
-		}
-		accept.setClickable(true);
-		accept.setOnClickListener(this);
+		
 		
 		TextView cancel = new TextView(ctx);
 		cancel.setId(46);
-		params = new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT, (float) .5);
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT, (float) .5);
 		cancel.setLayoutParams(params);
 		cancel.setPadding(5, 5, 5, 5);
 		cancel.setTextSize(22);
@@ -231,8 +217,24 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		cancel.setClickable(true);
 		cancel.setOnClickListener(this);
 		
-		buttonRow.addView(accept);
+		TextView accept = new TextView(ctx);
+		accept.setId(45);
+		params = new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT, (float) .5);
+		accept.setLayoutParams(params);
+		accept.setPadding(5, 5, 5, 5);
+		accept.setTextSize(22);
+		accept.setText(R.string.bookingaccept);
+		accept.setGravity(Gravity.CENTER);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+			accept.setBackground(getResources().getDrawable(R.drawable.button));
+		} else {
+			accept.setBackgroundDrawable(getResources().getDrawable(R.drawable.button));
+		}
+		accept.setClickable(true);
+		accept.setOnClickListener(this);
+		
 		buttonRow.addView(cancel);
+		buttonRow.addView(accept);
 		layout.addView(buttonRow);
 		
 		Spinner resourcespinner = (Spinner) page.findViewById(R.id.bookingResourceS);

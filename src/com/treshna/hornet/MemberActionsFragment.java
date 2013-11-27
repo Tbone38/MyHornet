@@ -11,6 +11,7 @@ import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.CursorIndexOutOfBoundsException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -290,15 +291,15 @@ public class MemberActionsFragment extends Fragment implements OnClickListener {
 					cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, new String[] 
 							{ContentDescriptor.Membership.Cols.MSID}, ContentDescriptor.Membership.Cols.MID+" = ?",
 							new String[] {mId}, null);
-					cur.moveToPosition(membershipSpinner.getSelectedItemPosition());
-					for (int column = 0; column < cur.getColumnCount(); column +=1) {
-						try {
-							Log.e(TAG, cur.getString(column));
-						} catch (Exception e) {
-							Log.e(TAG, "ERROR AT COLUMN:"+column, e);
-						}
+					int membershipid = -1;
+					try {
+						cur.moveToPosition(membershipSpinner.getSelectedItemPosition());
+						membershipid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MSID));
+					} catch (CursorIndexOutOfBoundsException e) {
+						Toast.makeText(getActivity(), "No Membership Available for Member.", Toast.LENGTH_LONG).show();
+						dialog.cancel();
+						return;
 					}
-					int membershipid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MSID));
 					cur.close();
 					
 					Spinner doorSpinner = (Spinner) checkinWindow.findViewById(R.id.manual_checkin_door);

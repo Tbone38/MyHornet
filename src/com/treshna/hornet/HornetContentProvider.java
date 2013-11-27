@@ -773,7 +773,11 @@ public class HornetContentProvider extends ContentProvider {
             	} else if (tablename.compareTo(ContentDescriptor.Membership.NAME) == 0) {
             		return db.delete(ContentDescriptor.Membership.NAME, ContentDescriptor.Membership.Cols.MSID+" = ?", 
             				new String[] {rowid});
-            	} else {
+            	} else if (tablename.compareTo(ContentDescriptor.Image.NAME) == 0) {
+            		return db.delete(ContentDescriptor.Image.NAME, ContentDescriptor.Image.Cols.IID+" = ?",
+            				new String[] {rowid});
+            	}
+            	else {
             		throw new UnsupportedOperationException("DELETE FROM TABLE: "+tablename+" NOT SUPPORTED.");
             	}
             		

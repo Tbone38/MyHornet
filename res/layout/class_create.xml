@@ -190,7 +190,16 @@
 	        android:orientation="horizontal"
 	        android:layout_marginTop="15dp"
 	        android:layout_marginBottom="15dp" >
-		    
+		    <TextView
+	            android:id="@+id/buttonCancel"
+	            android:layout_width="0dp"
+	            android:layout_height="wrap_content"
+	            android:layout_weight=".45"
+	            android:gravity="center"
+	            android:textSize="20sp"
+	            android:text="@string/buttonCancel"
+	            android:padding="5dp"
+	            android:background="@drawable/button" />
 	        <TextView
 	            android:id="@+id/buttonSubmit"
 	            android:layout_width="0dp"
@@ -201,17 +210,6 @@
 	            android:text="@string/buttonAccept"
 	            android:padding="5dp"
 	            android:background="@drawable/button" />
-	        <TextView
-	            android:id="@+id/buttonCancel"
-	            android:layout_width="0dp"
-	            android:layout_height="wrap_content"
-	            android:layout_weight=".45"
-	            android:gravity="center"
-	            android:textSize="20sp"
-	            android:text="@string/buttonCancel"
-	            android:padding="5dp"
-	            android:background="@drawable/button" />
-	        
 	    </LinearLayout>
 	
 	</RelativeLayout>

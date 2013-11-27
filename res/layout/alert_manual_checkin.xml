@@ -18,6 +18,8 @@
         android:layout_below="@id/manual_checkin_nameL"
         android:textSize="18sp"
         android:enabled="false"
+        android:editable="false"
+        android:inputType="none"
         android:padding="3dp" />
     
     <TextView

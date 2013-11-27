@@ -279,6 +279,7 @@ public class ContentDescriptor {
 	        public static class Cols {
 	        	public static final String ID = BaseColumns._ID;
 	        	public static final String DISPLAYVALUE = "displayvalue";
+	        	public static final String IID = "imageid";
 	        	public static final String MID = "memberID";
 	        	public static final String DATE = "date";
 	        	public static final String DESCRIPTION = "description";

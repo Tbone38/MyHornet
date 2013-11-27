@@ -131,6 +131,10 @@ public class MainActivity extends NFCActivity {
 		savedInstanceState.putInt("selectedTab", selectedTab);
 	}
 	
+	public void setSelectedTab(int tab) {
+		selectedTab = tab;
+	}
+	
 	public void startReciever(){
 		IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION);
@@ -257,13 +261,13 @@ public class MainActivity extends NFCActivity {
 	            mFragment = Fragment.instantiate(mActivity, mClass.getName());
 	            cFragment = mFragment;
 	            ft.replace(getContentViewCompat(), mFragment, mTag);
-	            selectedTab = tab.getPosition();
+	            //selectedTab = tab.getPosition();
 	        } else {
 	            // If it exists, simply attach it in order to show it
 	        	//ft.replace(getContentViewCompat(), mFragment, mTag);
 	        	ft.attach(mFragment);
 	        	cFragment = mFragment;
-	        	selectedTab = tab.getPosition();
+	        	
 	        }
 	    }
 

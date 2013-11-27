@@ -43,6 +43,7 @@ public class MembersFindSuperFragment extends Fragment implements OnMemberSelect
         f.setMemberSelectListener(this);
         ft.replace(R.id.frame_right, f);
         ft.commit();
+        ((MainActivity) getActivity()).setSelectedTab(0);
 	}
 	
 	@Override

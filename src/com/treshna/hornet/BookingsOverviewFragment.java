@@ -102,7 +102,10 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
     	mYear.setLayoutParams(params);
     	mYear.setId(30);
     	mYear.setGravity(Gravity.CENTER_HORIZONTAL);
-    	selectedDate = Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");
+    	selectedDate = Services.getAppSettings(getActivity(), "bookings_date");
+    	if (Integer.parseInt(selectedDate) == -1) {
+    		selectedDate = Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");
+    	}
         updateDate();
        
         calendarwrapper.addView(mMonth);
@@ -642,6 +645,7 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
 	public void onDateSelect(String date, DatePickerFragment theDatePicker) {
 		selectedDate = date;
 		selectedDate = Services.dateFormat(selectedDate, "yyyy MM dd", "yyyyMMdd");
+		Services.setPreference(getActivity(), "bookings_date", selectedDate);
 		updateDate();
 		getList(mInflater);
 	}

@@ -567,12 +567,12 @@ public class HornetDBService extends Service {
 		query ="";
     	if (oldQuery != true){ 
         	query = "SELECT decode(substring(imagedata from 3),'base64'), memberid, lastupdate, description, is_profile, "
-					+"created FROM IMAGE where substring(imagedata,1,2) = '1|' and length(imagedata)>200"
+					+"created, id FROM IMAGE where substring(imagedata,1,2) = '1|' and length(imagedata)>200"
 					+" AND memberid = '";
         
 		} else if (oldQuery == true) { //the table doesn't have description or is_profile
 			query = "SELECT decode(substring(imagedata from 3),'base64'), memberid, lastupdate, "
-					+"created FROM IMAGE where substring(imagedata,1,2) = '1|' and length(imagedata)>200"
+					+"created, id FROM IMAGE where substring(imagedata,1,2) = '1|' and length(imagedata)>200"
 					+" AND memberid = '";
 		}
     	
@@ -600,8 +600,8 @@ public class HornetDBService extends Service {
 	        	while (rs.next()) {
 	        		List<String> dates;
 	        		Date cacheDate, sDate;
-	        		boolean imgExists;
-	        		
+	        		boolean imgExists = false, hasid = true;
+	        		int rowid = -1;
 	        		
 	        		cur = contentResolver.query(ContentDescriptor.Image.CONTENT_URI, null, ContentDescriptor.Image.Cols.MID
 	                		+" = "+rs.getString("memberid"), null, null); //imagelist.get(i)
@@ -610,16 +610,24 @@ public class HornetDBService extends Service {
 	            	//do some date checking. rather than rewriting images every time.
 	            	dates = new ArrayList<String>();
 	            	cacheDate = null;
+	            	sDate = dateFormat.parse(rs.getString("lastupdate"));
 	        		while(!cur.isAfterLast()){
 	        			if ( cur.getCount() > 0 && cur.isNull(cur.getColumnIndex(ContentDescriptor.Image.Cols.DATE)) == false) {
 	        				String cDate = Services.dateFormat(cur.getString(cur.getColumnIndex(ContentDescriptor.Image.Cols.DATE)),
 	        						"dd MMM yy hh:mm:ss aa", "yyyy-MM-dd");
-	            			dates.add(cDate);
+	        				cacheDate = dateFormat.parse(cDate);
+		            		if (cacheDate.compareTo(sDate) == 0) {
+		            			rowid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Image.Cols.ID));
+		            			imgExists = true;
+		            			int iid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Image.Cols.IID)); 
+		            			if ( iid <= 0 || cur.isNull(cur.getColumnIndex(ContentDescriptor.Image.Cols.IID))) {
+		            				hasid = false;
+		            			}
+		            		}
 	            		}
 	        			cur.moveToNext();
 	            	}
-	            	imgExists = false;
-	            	sDate = dateFormat.parse(rs.getString("lastupdate"));
+	            	
 	            	for (String date : dates){
 	            		cacheDate = dateFormat.parse(date);
 	            		if (cacheDate.compareTo(sDate) == 0) imgExists = true;
@@ -659,6 +667,7 @@ public class HornetDBService extends Service {
 		            	
 		        		fileHandler.writeFile(is, imgCount+"_"+rs.getString("memberid"));
 		        		is = null;
+		        		val.put(ContentDescriptor.Image.Cols.IID, rs.getString("id"));
 		        		val.put(ContentDescriptor.Image.Cols.DISPLAYVALUE, imgCount);
 		        		val.put(ContentDescriptor.Image.Cols.MID, rs.getString("memberid"));
 		        		ssDate = Services.dateFormat(rs.getString("lastupdate"), "yyyy-MM-dd", "dd MMM yy hh:mm:ss aa");
@@ -679,6 +688,15 @@ public class HornetDBService extends Service {
 		        		}
 		        		val.put(ContentDescriptor.Image.Cols.IS_PROFILE, isProfile);
 		        		contentResolver.insert(ContentDescriptor.Image.CONTENT_URI, val);
+	            	} 
+	            	else if (!hasid) { 
+	            		val.put(ContentDescriptor.Image.Cols.IID, rs.getString("id"));
+		        		val.put(ContentDescriptor.Image.Cols.MID, rs.getString("memberid"));
+		        		String ssDate = Services.dateFormat(rs.getString("lastupdate"), "yyyy-MM-dd", "dd MMM yy hh:mm:ss aa");
+		        		val.put(ContentDescriptor.Image.Cols.DATE, ssDate);
+		        		
+		        		contentResolver.update(ContentDescriptor.Image.CONTENT_URI, val, ContentDescriptor.Image.Cols.ID+" = ?",
+		        				new String[] {String.valueOf(rowid)});
 	            	}
 	            	cur.close();
 	        	}
@@ -861,7 +879,7 @@ public class HornetDBService extends Service {
     }
     	
     	
-    /* Retrieves and stores free memberID's from the database,
+    /** Retrieves and stores free memberID's from the database,
      * the memberID's are assigned to members upon signup through the app.
      */
     private int getMemberID() {
