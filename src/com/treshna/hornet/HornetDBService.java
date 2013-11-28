@@ -121,7 +121,10 @@ public class HornetDBService extends Service {
  	   			//polling has been running for over three hours, turn it off.
  	   			//I should probably let myself know that the Polling has been turned off.
  	   			Log.w(TAG, "Polling has been going for 3 hours, turning it off.");
- 	   			Services.getFreqPollingHandler().stopPolling(false);
+ 	   			PollingHandler poller = Services.getFreqPollingHandler();
+ 	   			if (poller != null) {
+ 	   				poller.stopPolling(false);
+ 	   			}
  	   			Services.setPreference(ctx, "sync_frequency", "-1");
  	   			return;
  	   		}
