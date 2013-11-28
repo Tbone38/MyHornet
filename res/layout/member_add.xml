@@ -327,7 +327,7 @@
 		        android:layout_width="wrap_content"
 		    	android:layout_height="wrap_content"
 		    	android:gravity="center"
-		    	android:background="@drawable/button_large"
+		    	android:background="@drawable/button_large_cancel"
 		    	android:text="@string/buttonCancel"
 		    	android:textSize="20sp"
 		    	android:paddingLeft="20dp"
@@ -339,7 +339,7 @@
 			    android:layout_height="2dp"
 			    android:paddingLeft="20dp"
 		    	android:paddingRight="20dp"
-			    android:background="@color/member_number_grey2" />
+			    android:background="@color/button_underline_red" />
 		</LinearLayout>
 		<LinearLayout
 		    android:id="@+id/buttonClearH"
@@ -376,7 +376,7 @@
 		        android:id="@+id/buttonAccept"
 		        android:layout_width="wrap_content"
 		    	android:layout_height="wrap_content"
-		    	android:background="@drawable/button_large"
+		    	android:background="@drawable/button_large_accept"
 		    	android:gravity="center"
 		    	android:text="@string/buttonAccept"
 		    	android:textSize="20sp"
@@ -390,7 +390,7 @@
 			    android:layout_height="2dp"
 			    android:paddingLeft="20dp"
 		    	android:paddingRight="20dp"
-			    android:background="@color/member_number_grey2" />
+			    android:background="@color/button_underline_green" />
 		</LinearLayout>
 	</LinearLayout>
 	

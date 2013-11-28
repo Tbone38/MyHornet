@@ -710,6 +710,7 @@ public class JDBCConnection {
     
     public boolean manualCheckIn(int doorid, int membershipid, int memberid) throws SQLException {
     	pStatement = con.prepareStatement("SELECT swipe_manual(?, ?, ?, NULL);");
+    	doorid = (doorid <= 0)? 1 : doorid; //if we got here with a broken doorid, then default it to 1.
     	pStatement.setInt(1, doorid);
     	pStatement.setInt(2, membershipid);
     	pStatement.setInt(3, memberid);

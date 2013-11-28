@@ -111,166 +111,238 @@
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	    android:layout_below="@id/bookingactions"
-	    android:orientation="horizontal">
+	    android:orientation="horizontal"
+	    android:baselineAligned="false">
 	    <LinearLayout
-	        android:id="@+id/button_booking_checkin"
 	        android:layout_width="0dp"
 	        android:layout_height="wrap_content"
 	        android:layout_weight=".5"
-	        android:gravity="center"
-	        android:orientation="horizontal"
-	        android:padding="3dp"
-	        android:layout_margin="5dp"
-	        android:clickable="true"
-	        android:background="@drawable/button" >
-	        <ImageView
-	            android:id="@+id/button_booking_checkin_drawable"
-	            android:layout_width="30dp"
-	            android:layout_height="30dp"
-	            android:background="@drawable/ic_action_import_export"
-	            android:padding="3dp" />
-			<TextView android:id="@+id/button_booking_checkin_text"
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content"
-			    android:textSize="22sp"
-			    android:text="@string/bookingcheckin"
-			    android:padding="3dp"
-			     />
-		</LinearLayout>
+		    android:layout_marginRight="10dp"
+	    	android:orientation="vertical">
+		    <LinearLayout
+		        android:id="@+id/button_booking_checkin"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:gravity="center"
+		        android:orientation="horizontal"
+		        android:padding="3dp"
+		        android:clickable="true"
+		        android:background="@drawable/button_large_accept" >
+		        <ImageView
+		            android:id="@+id/button_booking_checkin_drawable"
+		            android:layout_width="30dp"
+		            android:layout_height="30dp"
+		            android:background="@drawable/ic_action_import_export"
+		            android:padding="3dp" />
+				<TextView android:id="@+id/button_booking_checkin_text"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:textSize="22sp"
+				    android:text="@string/bookingcheckin"
+				    android:padding="3dp"
+				     />
+			</LinearLayout>
+			<View
+		        android:layout_width="match_parent"
+			    android:layout_height="2dp"
+			    android:paddingLeft="5dp"
+		    	android:paddingRight="5dp"
+			    android:background="@color/button_underline_green" />
+		</LinearLayout>	
 		<LinearLayout
-		    android:id="@+id/button_booking_cancel"
-		    android:layout_width="0dp"
-		    android:layout_height="wrap_content"
-		    android:layout_weight=".5"
-		    android:gravity="center"
-		    android:orientation="horizontal"
-		    android:padding="3dp"
-		    android:layout_margin="5dp"
-		    android:clickable="true"
-		    android:background="@drawable/button">
-			<ImageView
-			    android:id="@+id/button_booking_cancel_drawable"
-			    android:layout_width="30dp"
-			    android:layout_height="30dp"
-			    android:background="@drawable/ic_action_cancel"
-			    android:padding="3dp" />
-			<TextView android:id="@+id/button_booking_cancel_text"
-			    android:layout_width="wrap_content"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight=".5"
+		    android:layout_marginRight="10dp"
+	    	android:orientation="vertical">
+			<LinearLayout
+			    android:id="@+id/button_booking_cancel"
+			    android:layout_width="match_parent"
 			    android:layout_height="wrap_content"
-			    android:textSize="22sp"
-			    android:text="@string/bookingcancel"
+			    android:gravity="center"
+			    android:orientation="horizontal"
 			    android:padding="3dp"
-			    android:gravity="center" />
+			    android:clickable="true"
+			    android:background="@drawable/button_large_cancel">
+				<ImageView
+				    android:id="@+id/button_booking_cancel_drawable"
+				    android:layout_width="30dp"
+				    android:layout_height="30dp"
+				    android:background="@drawable/ic_action_cancel"
+				    android:padding="3dp" />
+				<TextView android:id="@+id/button_booking_cancel_text"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:textSize="22sp"
+				    android:text="@string/bookingcancel"
+				    android:padding="3dp"
+				    android:gravity="center" />
+			</LinearLayout>
+			<View
+		        android:layout_width="match_parent"
+			    android:layout_height="2dp"
+			    android:paddingLeft="5dp"
+		    	android:paddingRight="5dp"
+			    android:background="@color/button_underline_red" />
 		</LinearLayout>
 	</LinearLayout>
 	<LinearLayout android:id="@+id/buttonrow2"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	    android:layout_below="@id/buttonrow1"
-	    android:orientation="horizontal">
+	    android:orientation="horizontal"
+	    android:layout_marginTop="5dp"
+	    android:baselineAligned="false">
 		<LinearLayout
-		    android:id="@+id/button_booking_noshow"
-		    android:layout_width="0dp"
-		    android:layout_height="wrap_content"
-		    android:layout_weight=".5"
-		    android:gravity="center"
-		    android:orientation="horizontal"
-		    android:padding="3dp"
-		    android:layout_margin="5dp"
-		    android:clickable="true"
-		    android:background="@drawable/button">
-			<ImageView
-			    android:id="@+id/button_booking_noshow_drawable"
-			    android:layout_width="30dp"
-			    android:layout_height="30dp"
-			    android:background="@drawable/ic_action_error"
-			    android:padding="3dp" />
-			<TextView 
-			    android:id="@+id/button_booking_noshow_text"
-			    android:layout_width="wrap_content"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight=".5"
+		    android:layout_marginRight="10dp"
+	    	android:orientation="vertical">
+			<LinearLayout
+			    android:id="@+id/button_booking_noshow"
+			    android:layout_width="match_parent"
 			    android:layout_height="wrap_content"
-			    android:textSize="22sp"
-			    android:text="@string/bookingnoshow"
-			    android:padding="3dp" />
+			    android:gravity="center"
+			    android:orientation="horizontal"
+			    android:padding="3dp"
+			    android:clickable="true"
+			    android:background="@drawable/button_large">
+				<ImageView
+				    android:id="@+id/button_booking_noshow_drawable"
+				    android:layout_width="30dp"
+				    android:layout_height="30dp"
+				    android:background="@drawable/ic_action_error"
+				    android:padding="3dp" />
+				<TextView 
+				    android:id="@+id/button_booking_noshow_text"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:textSize="22sp"
+				    android:text="@string/bookingnoshow"
+				    android:padding="3dp" />
+			</LinearLayout>
+			<View
+		        android:layout_width="match_parent"
+			    android:layout_height="2dp"
+			    android:paddingLeft="5dp"
+		    	android:paddingRight="5dp"
+			    android:background="@color/button_underline_grey" />
 		</LinearLayout>
 		<LinearLayout
-		    android:id="@+id/button_booking_reschedule"
-		    android:layout_width="0dp"
-		    android:layout_height="wrap_content"
-		    android:layout_weight=".5"
-		    android:gravity="center"
-		    android:orientation="horizontal"
-		    android:padding="3dp"
-		    android:layout_margin="5dp">
-		    <ImageView
-		        android:id="@+id/button_booking_reschedule_drawable"
-		        android:layout_width="30dp"
-		        android:layout_height="30dp"
-		        android:padding="3dp" />
-			<TextView 
-			    android:id="@+id/button_booking_reschedule_text"
-			    android:layout_width="wrap_content"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight=".5"
+		    android:layout_marginRight="10dp"
+	    	android:orientation="vertical">
+			<LinearLayout
+			    android:id="@+id/button_booking_reschedule"
+			    android:layout_width="match_parent"
 			    android:layout_height="wrap_content"
-			    android:textSize="19sp"
-			    android:text="@string/bookingreschedule"
-			    android:padding="3dp" />
+			    android:gravity="center"
+			    android:orientation="horizontal"
+			    android:padding="3dp"
+			    >
+			    <ImageView
+			        android:id="@+id/button_booking_reschedule_drawable"
+			        android:layout_width="30dp"
+			        android:layout_height="30dp"
+			        android:padding="3dp" />
+				<TextView 
+				    android:id="@+id/button_booking_reschedule_text"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:textSize="22sp"
+				    android:text="@string/bookingreschedule"
+				    android:padding="3dp" />
+			</LinearLayout>
+			<View
+		        android:layout_width="match_parent"
+			    android:layout_height="2dp"
+			    android:paddingLeft="5dp"
+		    	android:paddingRight="5dp"
+			    android:background="@color/button_underline_grey" />
 		</LinearLayout>
 	</LinearLayout>
 	<LinearLayout
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	    android:layout_below="@id/buttonrow2"
-	    android:orientation="horizontal">
+	    android:orientation="horizontal"
+	    android:baselineAligned="false"
+	    android:layout_marginTop="5dp">
 		<LinearLayout
-		    android:id="@+id/button_booking_sms"
-		    android:layout_width="0dp"
-		    android:layout_height="wrap_content"
-		    android:layout_weight=".5"
-		    android:gravity="center"
-		    android:orientation="horizontal"
-		    android:padding="3dp"
-		    android:layout_margin="5dp"
-		    android:clickable="true"
-		    android:background="@drawable/button">
-			<ImageView
-			    android:id="@+id/button_booking_sms_drawable"
-			    android:layout_width="30dp"
-			    android:layout_height="30dp"
-			    android:background="@drawable/ic_action_chat"
-			    android:padding="3dp" />
-			<TextView 
-			    android:id="@+id/button_booking_sms_text"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight=".5"
+		    android:layout_marginRight="10dp"
+	    	android:orientation="vertical">
+			<LinearLayout
+			    android:id="@+id/button_booking_sms"
+			    android:layout_width="match_parent"
 			    android:layout_height="wrap_content"
-			    android:layout_width="wrap_content" 
-			    android:textSize="24sp"
-			    android:text="@string/bookingsms"
-			    android:padding="3dp" />
+			    android:gravity="center"
+			    android:orientation="horizontal"
+			    android:padding="3dp"
+			    android:clickable="true"
+			    android:background="@drawable/button_large">
+				<ImageView
+				    android:id="@+id/button_booking_sms_drawable"
+				    android:layout_width="30dp"
+				    android:layout_height="30dp"
+				    android:background="@drawable/ic_action_chat"
+				    android:padding="3dp" />
+				<TextView 
+				    android:id="@+id/button_booking_sms_text"
+				    android:layout_height="wrap_content"
+				    android:layout_width="wrap_content" 
+				    android:textSize="22sp"
+				    android:text="@string/bookingsms"
+				    android:padding="3dp" />
+			</LinearLayout>
+			<View
+		        android:layout_width="match_parent"
+			    android:layout_height="2dp"
+			    android:paddingLeft="5dp"
+		    	android:paddingRight="5dp"
+			    android:background="@color/button_underline_grey" />
 		</LinearLayout>
 		<LinearLayout
-		    android:id="@+id/button_booking_call"
-		    android:layout_width="0dp"
-		    android:layout_height="wrap_content"
-		    android:layout_weight=".5"
-		    android:gravity="center"
-		    android:orientation="horizontal"
-		    android:padding="3dp"
-		    android:layout_margin="5dp"
-		    android:clickable="true"
-		    android:background="@drawable/button" >
-			<ImageView
-			    android:id="@+id/button_booking_call_drawable"
-			    android:layout_width="30dp"
-			    android:layout_height="30dp"
-			    android:background="@drawable/ic_action_call"
-			    android:padding="3dp" />
-		    
-			<TextView android:id="@+id/button_booking_call_text"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight=".5"
+		    android:layout_marginRight="10dp"
+	    	android:orientation="vertical">
+			<LinearLayout
+			    android:id="@+id/button_booking_call"
+			    android:layout_width="match_parent"
 			    android:layout_height="wrap_content"
-			    android:layout_width="wrap_content"
-			    android:textSize="24sp"
-			    android:text="@string/bookingcall"
-			    android:padding="3dp" />
+			    android:gravity="center"
+			    android:orientation="horizontal"
+			    android:padding="3dp"
+			    android:clickable="true"
+			    android:background="@drawable/button_large" >
+				<ImageView
+				    android:id="@+id/button_booking_call_drawable"
+				    android:layout_width="30dp"
+				    android:layout_height="30dp"
+				    android:background="@drawable/ic_action_call"
+				    android:padding="3dp" />
+			    
+				<TextView android:id="@+id/button_booking_call_text"
+				    android:layout_height="wrap_content"
+				    android:layout_width="wrap_content"
+				    android:textSize="22sp"
+				    android:text="@string/bookingcall"
+				    android:padding="3dp" />
 			</LinearLayout>
+			<View
+		        android:layout_width="match_parent"
+			    android:layout_height="2dp"
+			    android:paddingLeft="5dp"
+		    	android:paddingRight="5dp"
+			    android:background="@color/button_underline_grey" />
+		</LinearLayout>
 	</LinearLayout>
 </RelativeLayout>
 </ScrollView>

@@ -215,16 +215,16 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		cancel.setText(R.string.bookingcancel);
 		cancel.setGravity(Gravity.CENTER);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-			cancel.setBackground(getResources().getDrawable(R.drawable.button_large));
+			cancel.setBackground(getResources().getDrawable(R.drawable.button_large_cancel));
 		} else {
-			cancel.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_large));
+			cancel.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_large_cancel));
 		}
 		cancel.setClickable(true);
 		cancel.setOnClickListener(this);
 		
 		View cancelline = new View(ctx);
 		cancelline.setPadding(5, 0, 5, 0);
-		cancelline.setBackgroundColor(getResources().getColor(R.color.member_number_grey2));
+		cancelline.setBackgroundColor(getResources().getColor(R.color.button_underline_red));
 		params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 2);
 		cancelline.setLayoutParams(params);
 		
@@ -247,16 +247,16 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		accept.setText(R.string.bookingaccept);
 		accept.setGravity(Gravity.CENTER);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-			accept.setBackground(getResources().getDrawable(R.drawable.button_large));
+			accept.setBackground(getResources().getDrawable(R.drawable.button_large_accept));
 		} else {
-			accept.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_large));
+			accept.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_large_accept));
 		}
 		accept.setClickable(true);
 		accept.setOnClickListener(this);
 		
 		View acceptline = new View(ctx);
 		acceptline.setPadding(5, 0, 5, 0);
-		acceptline.setBackgroundColor(getResources().getColor(R.color.member_number_grey2));
+		acceptline.setBackgroundColor(getResources().getColor(R.color.button_underline_green));
 		params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 2);
 		acceptline.setLayoutParams(params);
 		

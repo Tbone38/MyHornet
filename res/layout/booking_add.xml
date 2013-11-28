@@ -202,6 +202,7 @@
 	        	android:textSize="16sp"
 	        	android:padding="5dp" />
 	    </LinearLayout>
-			   
+	<!-- Programmatically add the other spinner & buttons.
+		Because having both the spinners in the XML was making weird behaviour. -->		   
     </RelativeLayout>
 </ScrollView>

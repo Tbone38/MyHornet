@@ -4,6 +4,7 @@ package com.treshna.hornet;
 import java.util.ArrayList;
 
 import com.treshna.hornet.ContentDescriptor.Member;
+import com.treshna.hornet.R.color;
 
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
@@ -25,6 +26,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -59,10 +61,16 @@ public class MemberActionsFragment extends Fragment implements OnClickListener {
 				email.setOnClickListener(this);
 				email.setTag(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMAIL)));
 			} else {
-				email.setVisibility(View.GONE);
+				email.setBackgroundColor(getActivity().getResources().getColor(R.color.white));
+				email.setClickable(false);
+				TextView text = (TextView) email.findViewById(R.id.button_email_text);
+				text.setTextColor(getActivity().getResources().getColor(R.color.grey));
 			}
 		} else {
-			email.setVisibility(View.GONE);
+			email.setBackgroundColor(getActivity().getResources().getColor(R.color.white));
+			email.setClickable(false);
+			TextView text = (TextView) email.findViewById(R.id.button_email_text);
+			text.setTextColor(getActivity().getResources().getColor(R.color.grey));
 		}
 		
 		LinearLayout call = (LinearLayout) view.findViewById(R.id.button_call);
@@ -91,7 +99,10 @@ public class MemberActionsFragment extends Fragment implements OnClickListener {
 			callTag.add("Cell: "+cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHCELL)));
 			has_number = true;
 		} else {
-			sms.setVisibility(View.GONE);
+			sms.setBackgroundColor(getActivity().getResources().getColor(R.color.white));
+			sms.setClickable(false);
+			TextView text = (TextView) sms.findViewById(R.id.button_sms_text);
+			text.setTextColor(getActivity().getResources().getColor(R.color.grey));
 		}
 		
 		if (has_number) {
@@ -99,6 +110,10 @@ public class MemberActionsFragment extends Fragment implements OnClickListener {
 			call.setOnClickListener(this);
 		} else {
 			call.setVisibility(View.GONE);
+			call.setBackgroundColor(getActivity().getResources().getColor(R.color.white));
+			call.setClickable(false);
+			TextView text = (TextView) call.findViewById(R.id.button_call_text);
+			text.setTextColor(getActivity().getResources().getColor(R.color.grey));
 		}
 		
 		LinearLayout hold = (LinearLayout) view.findViewById(R.id.button_hold);
@@ -108,7 +123,7 @@ public class MemberActionsFragment extends Fragment implements OnClickListener {
 		manualcheckin.setOnClickListener(this);
 		
 		LinearLayout gallery = (LinearLayout) view.findViewById(R.id.button_gallery);
-		gallery.setOnClickListener(this);;
+		gallery.setOnClickListener(this);
 		gallery.setTag(memberID);
 
 		

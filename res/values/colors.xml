@@ -30,8 +30,15 @@
     <color name="booking_resource_green">#FF8EAD00</color>
     <color name="booking_resource_background">#FFE5F0D1</color>
     <color name="block_header_blue">#FF0072BC</color>
+    
     <color name="button_background_grey">#FFE2E2E2</color>
+    <color name="button_underline_grey">#FFB5B5B5</color>
     <color name="button_background_blue">#FF33B5E5</color>
+    <color name="button_background_green">#FFC1D87D</color>
+    <color name="button_underline_green">#FF8A9B55</color>
+    <color name="button_background_red">#FFEBA6A6</color>
+    <color name="button_underline_red">#FFAB7777</color>
+        
     <color name="overview_timeslot_top_grey">#FFADADAD</color>
     <color name="overview_timeslot_mid_grey">#FFF3F3F3</color>
 </resources>
