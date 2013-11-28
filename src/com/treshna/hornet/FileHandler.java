@@ -9,10 +9,13 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.channels.FileChannel;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * @author callum
@@ -145,4 +148,32 @@ public class FileHandler {
         }
         return result;
     }
+	
+	public boolean copyDatabase() {
+		try {
+            File sd = Environment.getExternalStorageDirectory();
+            File data = Environment.getDataDirectory();
+
+            if (sd.canWrite()) {
+                String currentDBPath = "//data//com.treshna.hornet//databases//"+HornetDatabase.DATABASE_NAME;
+                String backupDBPath = HornetDatabase.DATABASE_NAME;
+                File currentDB = new File(data, currentDBPath);
+                File backupDB = new File(sd, backupDBPath);
+
+                    FileInputStream fileInputStream = new FileInputStream(currentDB);
+					FileChannel src = fileInputStream.getChannel();
+                    FileOutputStream fileOutputStream = new FileOutputStream(backupDB);
+					FileChannel dst = fileOutputStream.getChannel();
+                    dst.transferFrom(src, 0, src.size());
+                    src.close();
+                    dst.close();
+                    fileInputStream.close();
+                    fileOutputStream.close();
+            }
+        } catch (Exception e) {
+        	e.printStackTrace();
+        	return false;
+        }
+		return true;	
+	}
 }

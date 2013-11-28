@@ -27,54 +27,76 @@
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	    android:layout_below="@id/member_gallery"
-	    android:orientation="horizontal"
-	    android:gravity="center">
-	    <LinearLayout 
-	        android:id="@+id/button_add_photo"
-	        android:layout_width="0dp"
-	        android:layout_height="wrap_content"
-	        android:layout_weight=".5"
-	        android:orientation="horizontal"
-	        android:padding="3dp"
-	        android:background="@drawable/button"
-	        android:clickable="true" >
-	        <ImageView
-	            android:id="@+id/add_photo_drawable"
-	            android:layout_width="50dp"
-	            android:layout_height="50dp"
-	            android:background="@drawable/ic_action_camera"
-	            android:padding="2dp" />
-	        <TextView
-	            android:id="@+id/add_photo_text"
-	            android:layout_width="wrap_content"
-	            android:layout_height="match_parent"
-	            android:gravity="center"
-	            android:textSize="18sp"
-	            android:text="@string/button_gallery_add_photo" />
-	    </LinearLayout>
+	    android:orientation="horizontal">
 	    <LinearLayout
-	        android:id="@+id/button_return"
-	        android:layout_width="0dp"
+	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:layout_weight=".5"
-	        android:orientation="horizontal"
-	        android:padding="3dp"
-	        android:background="@drawable/button"
-	        android:clickable="true" >
-	        <ImageView
-	            android:id="@+id/return_drawable"
-	            android:layout_width="50dp"
-	            android:layout_height="50dp"
-	            android:background="@drawable/ic_action_accept"
-	            android:padding="2dp" />
-	        <TextView
-	            android:id="@+id/return_text"
-	            android:layout_width="wrap_content"
-	            android:layout_height="match_parent"
-	            android:gravity="center"
-	            android:textSize="18sp"
-	            android:text="@string/button_gallery_return" />
-	            
-	    </LinearLayout>
+		    android:layout_marginRight="10dp"
+	    	android:orientation="vertical">
+		    <LinearLayout 
+		        android:id="@+id/button_add_photo"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:orientation="horizontal"
+		        android:padding="5dp"
+		        android:background="@drawable/button_large"
+		        android:clickable="true" >
+		        <ImageView
+		            android:id="@+id/add_photo_drawable"
+		            android:layout_width="35dp"
+		            android:layout_height="35dp"
+		            android:background="@drawable/ic_action_camera"
+		            android:padding="2dp" />
+		        <TextView
+		            android:id="@+id/add_photo_text"
+		            android:layout_width="wrap_content"
+		            android:layout_height="match_parent"
+		            android:gravity="center"
+		            android:textSize="18sp"
+		            android:text="@string/button_gallery_add_photo"
+		            android:padding="5dp" />
+		    </LinearLayout>
+		    <View
+		        android:layout_width="match_parent"
+			    android:layout_height="2dp"
+			    android:paddingLeft="5dp"
+		    	android:paddingRight="5dp"
+			    android:background="@color/member_number_grey2" />
+		</LinearLayout>
+		<LinearLayout
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+		    android:layout_marginRight="10dp"
+	    	android:orientation="vertical">
+		    <LinearLayout
+		        android:id="@+id/button_return"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:orientation="horizontal"
+		        android:padding="5dp"
+		        android:background="@drawable/button_large"
+		        android:clickable="true" >
+		        <ImageView
+		            android:id="@+id/return_drawable"
+		            android:layout_width="35dp"
+		            android:layout_height="35dp"
+		            android:background="@drawable/ic_action_accept"
+		            android:padding="2dp" />
+		        <TextView
+		            android:id="@+id/return_text"
+		            android:layout_width="wrap_content"
+		            android:layout_height="match_parent"
+		            android:gravity="center"
+		            android:textSize="18sp"
+		            android:text="@string/button_gallery_return"
+		            android:padding="5dp" />
+		    </LinearLayout>
+		    <View
+		        android:layout_width="match_parent"
+			    android:layout_height="2dp"
+			    android:paddingLeft="5dp"
+		    	android:paddingRight="5dp"
+			    android:background="@color/member_number_grey2" />
+		</LinearLayout>
 	</LinearLayout>
 </RelativeLayout>

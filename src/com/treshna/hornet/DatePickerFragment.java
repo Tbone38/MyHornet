@@ -2,9 +2,8 @@ package com.treshna.hornet;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
-
-import com.treshna.hornet.MembersFindFragment.OnMemberSelectListener;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -27,8 +26,14 @@ public class DatePickerFragment extends DialogFragment
 		int year, month, day;
 		String date;
 		final Calendar c;
-		
-		date = (String) getArguments().get(Services.Statics.KEY);
+		try {
+			date = (String) getArguments().get(Services.Statics.KEY);
+		} catch (NullPointerException e) {
+			date = null;
+		}
+		if (date == null) {
+			date = Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd"); 
+		}
 		
 		//ensure's 0's are in the correct place.
 		if (date.length() <8) date = date.substring(0, 4)+"0"+date.substring(4);

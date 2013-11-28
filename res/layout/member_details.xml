@@ -11,6 +11,7 @@
 	    android:tag="dual_panel"
 	    android:orientation="vertical"
 	    android:baselineAligned="false"
+	    android:background="@color/white"
 	    tools:context=".MainActivity" >
 		
 		<FrameLayout

@@ -50,11 +50,11 @@ public class MemberNotesFragment extends MemberActionsFragment{
 				ContentDescriptor.MemberNotes.Cols.MNID+" DESC");
 		
 		LinearLayout.LayoutParams llparams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-		llparams.setMargins(7, 7, 7, 7);
+		llparams.setMargins(5, 5, 5, 5);
 		LinearLayout notesGroup = (LinearLayout) view.findViewById(R.id.membernotes);
 		while (cur.moveToNext()) {	
 			TextView notesT = new TextView(getActivity());
-			notesT.setPadding(Services.convertdpToPxl(getActivity(), 45), 0, 0, 0);
+			notesT.setPadding(10, 0, 0, 0);
 			notesT.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.MemberNotes.Cols.NOTES)));
 			notesT.setTextSize(18);
 			notesT.setLayoutParams(llparams);
@@ -86,10 +86,10 @@ public class MemberNotesFragment extends MemberActionsFragment{
 		} else {
 			LinearLayout tasksGroup = (LinearLayout) view.findViewById(R.id.membertasks);			
 			int l;
-			for(l=12;l<=14;l+=1){ //cur.getColumnIndex(ContentDescriptor.Member.Cols.TASK1)
+			for(l=13;l<=15;l+=1){ //cur.getColumnIndex(ContentDescriptor.Member.Cols.TASK1)
 				if (cur.getString(l) != null) {
 					TextView tasks = new TextView(getActivity());
-					tasks.setPadding(45, 0, 0, 10);
+					tasks.setPadding(15, 0, 0, 10);
 					tasks.setText(cur.getString(l));
 					tasks.setTextSize(16);
 					llparams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
@@ -103,14 +103,14 @@ public class MemberNotesFragment extends MemberActionsFragment{
 				
 		if (visitDate != null && visitDate.compareTo("") != 0) { //fix this
 			TextView visitTH = new TextView(getActivity());
-			visitTH.setPadding(Services.convertdpToPxl(getActivity(), 35), 0, 0, 0);
+			visitTH.setPadding(5, 0, 0, 0);
 			visitTH.setText("Visit Time");
 			visitTH.setTextSize(13);
 			visitTH.setLayoutParams(llparams);
 			notesGroup.addView(visitTH);
 			
 			TextView visitT = new TextView(getActivity());
-			visitT.setPadding(Services.convertdpToPxl(getActivity(), 45), 0, 0, 0);
+			visitT.setPadding(15, 0, 0, 0);
 			visitDate = Services.dateFormat(visitDate, "yyyy-MM-dd HH:mm", "dd MMM yy 'at' HH:mm aa");
 			visitT.setText(visitDate);
 			visitT.setTextSize(18);
@@ -123,14 +123,14 @@ public class MemberNotesFragment extends MemberActionsFragment{
 			String lastVisit = Services.dateFormat(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.LASTVISIT)), "yyyy-MM-dd HH:mm", "dd MMM yy 'at' HH:mm aa");
 			
 			TextView lastVH = new TextView(getActivity());
-			lastVH.setPadding(Services.convertdpToPxl(getActivity(), 35), 0, 0, 0);
+			lastVH.setPadding(5, 0, 0, 0);
 			lastVH.setText("Previous Visit");
 			lastVH.setTextSize(13);
 			lastVH.setLayoutParams(llparams);
 			notesGroup.addView(lastVH);
 			
 			TextView lastVT = new TextView(getActivity());
-			lastVT.setPadding(Services.convertdpToPxl(getActivity(), 45), 0, 0, 0);
+			lastVT.setPadding( 15, 0, 0, 0);
 			lastVT.setText(lastVisit);
 			lastVT.setTextSize(18);
 			lastVT.setLayoutParams(llparams);

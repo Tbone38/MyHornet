@@ -319,6 +319,20 @@ public class Services {
 			    
 			    cm.postConcat(new ColorMatrix(gMatrix));
 		}
+		
+		public static ColorFilter setColourGrey() { //why doesn't this work?
+		
+			ColorMatrix cm = new ColorMatrix();
+			float[] gMatrix = { 
+					0, 0, 0, 0, 0.380392157f, //red
+		            0, 0, 0, 0, 0.37254902f, //green
+		            0, 0, 0, 0, 0.37254902f, //blue
+		            0, 0, 0, .6f, 0 //alpha
+		        };
+		    
+		    cm.postConcat(new ColorMatrix(gMatrix));
+		    return new ColorMatrixColorFilter(cm);
+		}
 	
 		protected static float cleanValue(float p_val, float p_limit)
 		{
@@ -373,6 +387,10 @@ public class Services {
 		public static final String IS_SUCCESSFUL = "com.treshna.hornet.is_successful";
 		public static final String IS_RESTART = "com.treshna.hornet.is_restart";
 		public static final String IS_CLASSSWIPE = "com.treshna.hornet.class_swipe";
+		
+		public static final String ERROR_MSHOLD1 = "ERROR: Membership hold/free time dates are invalid. "
+				+ "Dates of free time and holds must overlap an existing membership dates.";
+		public static final String ERROR_MSHOLD2 = "ERROR: This member is already suspended from";
 		
 		public static enum FragmentType {
 			MembershipAdd(1), MembershipComplete(2), MemberDetails(3), MemberGallery(4);

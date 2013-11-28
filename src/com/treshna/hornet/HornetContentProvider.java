@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.util.Log;
 
 public class HornetContentProvider extends ContentProvider {
 	private HornetDatabase hornetDb;
@@ -778,7 +779,8 @@ public class HornetContentProvider extends ContentProvider {
             				new String[] {rowid});
             	}
             	else {
-            		throw new UnsupportedOperationException("DELETE FROM TABLE: "+tablename+" NOT SUPPORTED.");
+            		Log.e("Unsupported Operation", "DELETE FROM TABLE: "+tablename, 
+            				new UnsupportedOperationException("DELETE FROM TABLE: "+tablename+" NOT SUPPORTED."));            		
             	}
             		
             }

@@ -49,6 +49,12 @@ public class MemberGalleryFragment extends Fragment implements OnClickListener,
 		view = setupView();
 		return view;
 	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		mLoader.restartLoader(0, null, this);
+	}
 		
 	private View setupView() {
 		

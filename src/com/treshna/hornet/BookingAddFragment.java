@@ -794,15 +794,10 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		 iperiod = Integer.parseInt(period.substring(2, 4));
 		 result = (ietime-istime)%iperiod;
 		 
-		 if ((ismin == 15 || ismin == 45) && (iperiod == 30 || iperiod == 60)) {
+		 /*if ((ismin == 15 || ismin == 45) && (iperiod == 30 || iperiod == 60)) {
 			 return -3;
-		 }		 
+		 }*/		 
 
-		 //Log.v(TAG, "etime:"+etime+" , stime:"+stime+" , Period:"+period); 
-		 //Log.v(TAG, "** MOD RESULT:"+String.valueOf(result));
-		 //Log.v(TAG, "iehour:"+iehour+" iemin:"+iemin+" ishour:"+ishour+" ismin:"+ismin);
-		 //Log.v(TAG, "ietime:"+ietime+" istime:"+istime+" iperiod:"+iperiod);
-		
 		 return result;
 	 }
 }

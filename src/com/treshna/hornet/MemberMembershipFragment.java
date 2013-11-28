@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -36,9 +37,16 @@ public class MemberMembershipFragment extends MemberActionsFragment{
 		view = inflater.inflate(R.layout.member_details_membership, container, false);
 		
 		mInflater = getActivity().getLayoutInflater();
-		//mInflater = inflater;
 		view = setupView();
+		
 		return view;
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		
+		setupView();
 	}
 		
 	private View setupView() {
@@ -46,10 +54,14 @@ public class MemberMembershipFragment extends MemberActionsFragment{
 				ContentDescriptor.Membership.Cols.MID+" = ?", new String[] {memberID}, null);
 		
 		LinearLayout mslist = (LinearLayout) view.findViewById(R.id.member_ms_list);
+		mslist.removeAllViews();
 		
 		while (cur.moveToNext()) {
 			//Log.e(TAG, "Inflater is:"+mInflater.toString());
 			RelativeLayout membershipRow = (RelativeLayout) mInflater.inflate(R.layout.member_membership_row, null);
+			
+			ImageView icon = (ImageView) membershipRow.findViewById(R.id.member_membership_drawable);
+			icon.setColorFilter(Services.ColorFilterGenerator.setColourGrey());
 			
 			TextView name = (TextView) membershipRow.findViewById(R.id.member_membership_title);
 			name.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PNAME)));

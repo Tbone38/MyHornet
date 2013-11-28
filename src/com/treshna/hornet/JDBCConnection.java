@@ -12,6 +12,7 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -345,7 +346,7 @@ public class JDBCConnection {
     			+"CASE WHEN member.happiness = 1 THEN ':)' WHEN member.happiness = 0 THEN ':|'"
     			+" WHEN member.happiness <= -1 THEN ':(' WHEN member.happiness = 2 THEN '||' ELSE '' END AS happiness, "
     			+"member.phonehome AS mphhome, member.phonework AS mphwork, member.phonecell AS mphcell, "
-    			+"member.email AS memail, member.notes AS mnotes, member.status FROM member"
+    			+"member.email AS memail, member.notes AS mnotes, member.status, member.cardno FROM member"
     			+" WHERE status != 3";
     	if (lastupdate != null) {
     		query = query + " AND lastupdate > ?::TIMESTAMP WITHOUT TIME ZONE";
@@ -359,6 +360,39 @@ public class JDBCConnection {
     	
     	rs = pStatement.executeQuery();
     	return rs;
+    }
+    
+    //TODO: unimplemented.
+    /**
+     * updates tablename with the key/value pairs from the 3D array (0 is column name, 1 is value),
+     * for the condition in the WHERE;
+     * 
+     * @param values
+     * @param tablename
+     * @param where should be formatted as a where clause WITH OUT the leading 'WHERE ...'
+     * @return
+     * @throws SQLException
+     */
+    public int updateRow(ArrayList<String[]> values, String tablename, String where) throws SQLException {
+    	if (where == null || where.isEmpty()) {
+    		return 0;
+    	}
+    	String set = "UPDATE "+tablename+" SET (";
+    	String value = "(";
+    	for (int i = 0; i < values.size(); i++) {
+			set = set + values.get(i)[0]; //column name
+			value = value + values.get(i)[1]; //value
+			if (i == (values.size() -1)) {
+				set = set +") = ";
+				value = value+" ) WHERE ";
+			} else {
+				set = set +", ";
+				value = value+", ";
+			}
+		}
+    	String query = set+value+where;
+    	pStatement = con.prepareStatement(query);
+    	return pStatement.executeUpdate();
     }
     
     public ResultSet getOpenHours() throws SQLException {
@@ -556,7 +590,7 @@ public class JDBCConnection {
     		String reason, String freeze) throws SQLException {
     	
     	pStatement = con.prepareStatement("INSERT INTO membership_suspend (id, startdate, howlong, reason, "
-    			+ "memberid, freeze_fees) VALUES (?, ?::DATE, ?::INTERVAL, ?, ?, ?);");
+    			+ "memberid, freeze_fees, enddate) VALUES (?, ?::DATE, ?::INTERVAL, ?, ?, ?, (?::date + ?::interval)::date);");
     	pStatement.setInt(1, Integer.decode(sid));
     	pStatement.setString(2, Services.dateFormat(startdate, "yyyyMMdd", "yyyy-MM-dd"));
     	pStatement.setString(3, duration);
@@ -567,6 +601,8 @@ public class JDBCConnection {
     	} else {
     		pStatement.setBoolean(6, false);
     	}
+    	pStatement.setString(7, Services.dateFormat(startdate, "yyyyMMdd", "yyyy-MM-dd"));
+    	pStatement.setString(8, duration);
     	
     	return pStatement.executeUpdate();
     	

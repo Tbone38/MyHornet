@@ -450,6 +450,7 @@ public class HornetDBService extends Service {
 	        		val.put(ContentDescriptor.Member.Cols.BOOK2, rs.getString("booking2"));
 	        		val.put(ContentDescriptor.Member.Cols.BOOK3, rs.getString("booking3"));
 	        		val.put(ContentDescriptor.Member.Cols.LASTVISIT, rs.getString("lastvisit1"));
+	        		val.put(ContentDescriptor.Member.Cols.CARDNO, rs.getString("membercardno"));
 	        		
         			cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, 
         					"m."+ContentDescriptor.Member.Cols.MID+" = "+memberid, null, null);
@@ -2344,11 +2345,13 @@ public class HornetDBService extends Service {
     		cur = contentResolver.query(ContentDescriptor.MembershipSuspend.CONTENT_URI, null, 
     				ContentDescriptor.MembershipSuspend.Cols._ID+" = ?", new String[] {String.valueOf(rows.get(i))}, null);
     		if (!cur.moveToFirst()) {
-    			//an error occured, the cursor was empty?
     			statusMessage = "an Error Occured: MembershipSuspend could not find row";
-    			//rather than returning we should delete the issue, and then continue.
-    			//TODO:
-    			return -2;
+    			contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, 
+	    				ContentDescriptor.PendingUploads.Cols.TABLEID+" = ? AND "
+	    				+ContentDescriptor.PendingUploads.Cols.ROWID+" = ?", 
+	    				new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.MembershipSuspend.getKey()),
+	    				String.valueOf(rows.get(i))});
+    			continue;
     		}
     		String mid, msid, sid, reason, start, duration, freeze;
   
@@ -2365,7 +2368,26 @@ public class HornetDBService extends Service {
     		} catch (SQLException e) {
     			statusMessage = e.getLocalizedMessage();
     			e.printStackTrace();
-    			return -3;
+    			
+    			if (statusMessage.compareTo(Services.Statics.ERROR_MSHOLD1) ==0) {
+    				contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, 
+    	    				ContentDescriptor.PendingUploads.Cols.TABLEID+" = ? AND "
+    	    				+ContentDescriptor.PendingUploads.Cols.ROWID+" = ?", 
+    	    				new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.MembershipSuspend.getKey()),
+    	    				String.valueOf(rows.get(i))});
+    				Services.showToast(ctx, "Hold time set beyond membership start/end.", handler);
+    				continue;
+    			} else if (statusMessage.contains(Services.Statics.ERROR_MSHOLD2)) {
+    				contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, 
+    	    				ContentDescriptor.PendingUploads.Cols.TABLEID+" = ? AND "
+    	    				+ContentDescriptor.PendingUploads.Cols.ROWID+" = ?", 
+    	    				new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.MembershipSuspend.getKey()),
+    	    				String.valueOf(rows.get(i))});
+    				Services.showToast(ctx, "Member already on Hold.", handler);
+    				continue;
+    			} else {
+    				return -3;
+    			}
     		}
     		//remove it from the pendingUploads table.
     		contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, 
@@ -2892,6 +2914,7 @@ public class HornetDBService extends Service {
 		values.put(ContentDescriptor.Member.Cols.EMAIL, rs.getString("memail"));
 		values.put(ContentDescriptor.Member.Cols.NOTES, rs.getString("mnotes")); 
 		values.put(ContentDescriptor.Member.Cols.STATUS, rs.getString("status"));
+		values.put(ContentDescriptor.Member.Cols.CARDNO, rs.getString("cardno"));
 		
 		return values;
     }
@@ -2917,7 +2940,7 @@ public class HornetDBService extends Service {
     	}
     	
     	for (int i = 0; i < member.size(); i++) {
-    		String query = "SELECT id, member.firstname, member.surname, " //get_name
+    		String query = "SELECT id, member.firstname, member.surname, member.cardno, " //get_name
         			+"CASE WHEN member.happiness = 1 THEN ':)' WHEN member.happiness = 0 THEN ':|'"
         			+" WHEN member.happiness <= -1 THEN ':(' WHEN member.happiness = 2 THEN '||' ELSE '' END AS happiness, "
         			+"member.phonehome AS mphhome, member.phonework AS mphwork, member.phonecell AS mphcell, "

@@ -20,13 +20,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MemberAdd extends NFCActivity implements OnClickListener{
+public class MemberAdd extends NFCActivity implements OnClickListener, DatePickerFragment.DatePickerSelectListener{
 
+	DatePickerFragment mDatePicker;
+	
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -37,19 +40,11 @@ public class MemberAdd extends NFCActivity implements OnClickListener{
 	    actionBar.setDisplayHomeAsUpEnabled(true);
 		
 		/*
-		 * This is the private-hidden setting used for determining if the last
+		 * This was the private-hidden setting used for determining if the last
 		 * insert was a member or a prospect.
-		 */
-		SharedPreferences preferences = this.getSharedPreferences(Services.Statics.PREF_NAME, MODE_PRIVATE);
-		int id = preferences.getInt(Services.Statics.PREF_KEY, -1);
-		if (id != -1){
-			RadioButton radio = (RadioButton) this.findViewById(id);
-			radio.setChecked(true);
-		}
-		else {
-			RadioButton radio = (RadioButton) this.findViewById(R.id.radioMember);
-			radio.setChecked(true);
-		}
+		 */	
+	    RadioButton radio = (RadioButton) this.findViewById(R.id.radioMember);
+		radio.setChecked(true);
 
 		TextView accept = (TextView) this.findViewById(R.id.buttonAccept);
 		TextView cancel = (TextView) this.findViewById(R.id.buttonCancel);
@@ -61,6 +56,11 @@ public class MemberAdd extends NFCActivity implements OnClickListener{
 		cancel.setOnClickListener(this);
 		clear.setClickable(true);
 		clear.setOnClickListener(this);
+		
+		LinearLayout buttondob = (LinearLayout) this.findViewById(R.id.button_member_dob);
+		buttondob.setOnClickListener(this);
+		mDatePicker = new DatePickerFragment();
+		mDatePicker.setDatePickerSelectListener(this);
 		
 		displayID();
 		
@@ -162,7 +162,16 @@ public class MemberAdd extends NFCActivity implements OnClickListener{
 						input.get(5), input.get(6), input.get(7), input.get(8), input.get(9), input.get(10), input.get(11), input.get(12), memberid);
 				//InsertMember member = above line
 				clearForm();
-				displayID();
+				
+				ArrayList<String> tag = new ArrayList<String>();
+				tag.add(memberid);
+				tag.add(null);
+				Intent i = new Intent(this, EmptyActivity.class);
+				i.putExtra(Services.Statics.KEY, Services.Statics.FragmentType.MemberDetails.getKey());
+				i.putStringArrayListExtra(VisitorsViewAdapter.EXTRA_ID, tag);
+				this.startActivity(i);
+				this.finish();
+				
 			}else {
 				updateView(emptyFields);
 				Toast.makeText(this, "please fill out the high-lighted fields", Toast.LENGTH_LONG).show();
@@ -174,7 +183,14 @@ public class MemberAdd extends NFCActivity implements OnClickListener{
 		case (R.id.buttonClear):
 			clearForm();
 			break;
+		case (R.id.button_member_dob):{
+			//Bundle bdl = new Bundle(1);
+			//mDatePicker.setArguments(bdl);
+		    mDatePicker.show(this.getSupportFragmentManager(), "datePicker");
+			break;
 		}
+		}
+		
 	}
 	
 	private void displayID(){
@@ -222,9 +238,9 @@ public class MemberAdd extends NFCActivity implements OnClickListener{
 			label.setTextColor(Color.BLACK);
 		}
 		
-		EditText memberDoB = (EditText) this.findViewById(R.id.memberDoB);
+		TextView memberDoB = (TextView) this.findViewById(R.id.member_dob_text);
 		String dob = memberDoB.getText().toString();
-		if (dob.compareTo("") == 0 || !Services.validDate(dob, "\\d{2}/\\d{2}/\\d{4}", "dd/MM/yyyy")) {
+		if (dob.compareTo("") == 0 || dob.compareTo(getString(R.string.defaultDoB)) ==0) {
 			result = false;
 			emptyFields.add("memberDoB");
 			emptyFields.add(String.valueOf(R.id.labelDoB));
@@ -313,7 +329,6 @@ public class MemberAdd extends NFCActivity implements OnClickListener{
 		ArrayList<Integer> viewlist = new ArrayList<Integer>();
 		viewlist.add(R.id.memberFirstName);
 		viewlist.add(R.id.memberSurname);
-		viewlist.add(R.id.memberDoB);
 		viewlist.add(R.id.memberMedical);
 		viewlist.add(R.id.memberStreet);
 		viewlist.add(R.id.memberSuburb);
@@ -341,6 +356,7 @@ public class MemberAdd extends NFCActivity implements OnClickListener{
 		viewlist.add(R.id.labelEmail);
 		viewlist.add(R.id.labelSignupType);
 		viewlist.add(R.id.labelCellPhone);
+		viewlist.add(R.id.member_dob_text);
 		for (int i = 0; i<viewlist.size(); i+=1){
 			TextView label = (TextView) this.findViewById(viewlist.get(i));
 			label.setTextColor(Color.BLACK);
@@ -352,7 +368,7 @@ public class MemberAdd extends NFCActivity implements OnClickListener{
 		ArrayList<Integer> fields = new ArrayList<Integer>();
 		fields.add(R.id.memberFirstName);
 		fields.add(R.id.memberSurname);
-		fields.add(R.id.memberDoB);
+		//dob
 		//gender
 		fields.add(R.id.memberMedical);
 		fields.add(R.id.memberStreet);
@@ -365,7 +381,7 @@ public class MemberAdd extends NFCActivity implements OnClickListener{
 		//signup type
 		// member id
 		int i = 0;
-		for (i = 0; i <= fields.indexOf(R.id.memberDoB); i +=1){
+		for (i = 0; i < fields.indexOf(R.id.memberMedical); i +=1){
 			EditText view = (EditText) this.findViewById(fields.get(i));
 			String input = view.getText().toString();
 			if (input.compareTo("") !=0) {
@@ -373,12 +389,16 @@ public class MemberAdd extends NFCActivity implements OnClickListener{
 			} else {
 				inputData.add(null);
 		}	}
+		//get date of birth
+		TextView dob = (TextView) this.findViewById(R.id.member_dob_text);
+		inputData.add(Services.dateFormat(dob.getText().toString(), "dd MMM yyyy", "dd/MM/yyyy"));
+		
 		RadioGroup rgroup = (RadioGroup) this.findViewById(R.id.memberGender);
 		int id = rgroup.getCheckedRadioButtonId();
 		RadioButton gender = (RadioButton) this.findViewById(id);
 		inputData.add(gender.getText().toString());
 		
-		for (i = fields.indexOf(R.id.memberDoB)+1; i < fields.size(); i +=1) {
+		for (i = fields.indexOf(R.id.memberMedical); i < fields.size(); i +=1) {
 			EditText view = (EditText) this.findViewById(fields.get(i));
 			String input = view.getText().toString();
 			if (input.compareTo("") !=0) {
@@ -451,5 +471,18 @@ public class MemberAdd extends NFCActivity implements OnClickListener{
 			
 			startService(intent);
  		}
+	}
+	
+	private void setText(String date) {
+		TextView dob = (TextView) this.findViewById(R.id.member_dob_text);
+		dob.setText(Services.dateFormat(date, "yyyy MM dd", "dd MMM yyyy"));
+	}
+
+	@Override
+	public void onDateSelect(String date, DatePickerFragment theDatePicker) {
+		if (theDatePicker == mDatePicker) {
+			setText(date);
+		}
+		
 	}
 }

@@ -36,7 +36,7 @@ import com.treshna.hornet.ContentDescriptor.Visitor;
 public class HornetDatabase extends SQLiteOpenHelper {
 	
 	 public static final String DATABASE_NAME="hornet.db";
-	 private static final int DATABASE_VERSION = 90;
+	 private static final int DATABASE_VERSION = 91;
 	 
 	 public HornetDatabase (Context context) {
 		 super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -282,7 +282,10 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		
 		//SQL patches.
 		db.execSQL(UpdateDatabase.Ninety.SQL);
+		db.execSQL(UpdateDatabase.NinetyOne.SQL);
+
 	}
+	
 
 	
 	@Override
@@ -307,6 +310,11 @@ public class HornetDatabase extends SQLiteOpenHelper {
 			case (90):{
 				Log.w(HornetDatabase.class.getName(),"SQL-Patch:90 \n"+ UpdateDatabase.Ninety.SQL);
 				db.execSQL(UpdateDatabase.Ninety.SQL);
+				break;
+			}
+			case (91):{
+				Log.w(HornetDatabase.class.getName(), "SQL-Patch:91 \n"+UpdateDatabase.NinetyOne.SQL);
+				db.execSQL(UpdateDatabase.NinetyOne.SQL);
 				break;
 			}
 			}

@@ -21,6 +21,7 @@
     <color name="visitors_green">#FF8EAD00</color>
     <color name="visitors_red">#FFB74C4C</color>
     <color name="member_grey">#FFECECEC</color>
+    <color name="member_statusbar_background">#FFEFEFEF</color>
     <color name="member_number_grey">#FF949494</color>
     <color name="member_number_grey2">#FF5F5F5F</color>
     <color name="member_blue">#FF00AEF0</color>
@@ -29,7 +30,8 @@
     <color name="booking_resource_green">#FF8EAD00</color>
     <color name="booking_resource_background">#FFE5F0D1</color>
     <color name="block_header_blue">#FF0072BC</color>
-    
+    <color name="button_background_grey">#FFE2E2E2</color>
+    <color name="button_background_blue">#FF33B5E5</color>
     <color name="overview_timeslot_top_grey">#FFADADAD</color>
     <color name="overview_timeslot_mid_grey">#FFF3F3F3</color>
 </resources>

@@ -75,11 +75,12 @@ public class VisitorsViewAdapter extends SimpleCursorAdapter implements OnClickL
 			timeView.setTextColor(Color.parseColor("#C4C4C4"));
 			//imageText.setTextColor(Color.parseColor("#C4C4C4"));
 		} else {
-			try {
+			/*try {
 				nameView.setTextColor(Color.parseColor(cursor.getString(cursor.getColumnIndex(ContentDescriptor.Member.Cols.COLOUR))));
 			} catch(Exception e){
 				nameView.setTextColor(Color.BLACK);
-			}
+			}*/
+			nameView.setTextColor(Color.BLACK);
 		}
 		AssetManager am = context.getResources().getAssets();
 		String face = null;
@@ -106,17 +107,22 @@ public class VisitorsViewAdapter extends SimpleCursorAdapter implements OnClickL
 		//if a task (or booking?) is pending, show the task-pending picture.
 		if (cursor.isNull(cursor.getColumnIndex(ContentDescriptor.Member.Cols.TASKP)) == false){
 			if (cursor.getInt(cursor.getColumnIndex(ContentDescriptor.Member.Cols.TASKP)) != 0) {
-			InputStream is = null;
-			try {
-				is = am.open("task-due.png");
-			} catch (IOException e) {
-				// not critical / doesn't matter.
+				InputStream is = null;
+				try {
+					is = am.open("task-due.png");
+				} catch (IOException e) {
+					// not critical / doesn't matter.
+				}
+				taskView.setVisibility(View.VISIBLE);
+				Bitmap sm = BitmapFactory.decodeStream(is);
+				taskView.setImageBitmap(sm);
+			} else {
+				taskView.setVisibility(View.INVISIBLE);
 			}
-			Bitmap sm = BitmapFactory.decodeStream(is);
-			taskView.setImageBitmap(sm);
-		} }
-		
-		//TODO: move this to a asynchronus task. (it's causing memory issues on large db's).
+		}else {
+			taskView.setVisibility(View.INVISIBLE);
+		}
+		//TODO: move this to a asynchronous task. (it's causing memory issues on large db's).
 		//0 is default/first image.
 		String imgDir = context.getExternalFilesDir(null)+"/0_"+cursor.getString(cursor.getColumnIndex(ContentDescriptor.Visitor.Cols.MID))+".jpg"; //or column 6
 		File imgFile = new File(imgDir);
@@ -124,11 +130,6 @@ public class VisitorsViewAdapter extends SimpleCursorAdapter implements OnClickL
 		if (imgFile.exists() == true){
 			imageView.bringToFront();
 			//imageText.setVisibility(View.GONE);
-		} else if ((imgFile.exists() == false) && (cursor.getInt(cursor.getColumnIndex(ContentDescriptor.Visitor.Cols.MID)) > 0)){
-			//imageText.bringToFront();
-			imageView.setClickable(true);
-			imageView.setTag(cursor.getString(cursor.getColumnIndex(ContentDescriptor.Visitor.Cols.MID)));
-			imageView.setOnClickListener(this);
 		} else {
 			//imageText.bringToFront();
 			imageView.setClickable(false);

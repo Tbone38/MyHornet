@@ -26,4 +26,5 @@
 	<string name="buttonAccept">Accept</string>
 	<string name="buttonCancel">Cancel</string>
 	<string name="buttonClear">Clear</string>
+	<string name="defaultDoB">Set Birth-Date</string>
 </resources>

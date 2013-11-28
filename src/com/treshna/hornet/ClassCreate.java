@@ -4,17 +4,13 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NavUtils;
@@ -26,6 +22,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -63,20 +60,23 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 	
 	@SuppressWarnings("deprecation")
 	private void setText() {
-		TextView date, resource, starttime, endtime, buttonaccept, buttoncancel;		
+		TextView date, resource, starttime, endtime, buttonaccept, buttoncancel;
+		LinearLayout setdate, setresource, setstarttime;
 		
-		date = (TextView) this.findViewById(R.id.classDate);	
-		date.setTag(Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd"));
-		date.setClickable(true);
-		date.setOnClickListener(this);
+		setdate = (LinearLayout) this.findViewById(R.id.button_class_date);	
+		setdate.setTag(Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd"));
+		setdate.setClickable(true);
+		setdate.setOnClickListener(this);
 		if (datevalue != null) {
+			date = (TextView) this.findViewById(R.id.classDate);
 			date.setText(Services.dateFormat(datevalue, "yyyy MM dd", "dd MMM yyyy"));
 		}
 		
-		starttime = (TextView) this.findViewById(R.id.classStartTime);
-		starttime.setClickable(true);
-		starttime.setOnClickListener(this);
+		setstarttime = (LinearLayout) this.findViewById(R.id.button_start_time);
+		setstarttime.setClickable(true);
+		setstarttime.setOnClickListener(this);
 		if (starttimevalue != null) {
+			starttime = (TextView) this.findViewById(R.id.classStartTime);
 			starttime.setText(starttimevalue);
 			if ( period != null) {
 				int year = 2013, month = 10, day = 2;
@@ -98,10 +98,11 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 			endtime.setText(endtimevalue);
 		}
 		
-		resource = (TextView) this.findViewById(R.id.classResource);
-		resource.setClickable(true);
-		resource.setOnClickListener(this);
+		setresource = (LinearLayout) this.findViewById(R.id.button_class_resource);
+		setresource.setClickable(true);
+		setresource.setOnClickListener(this);
 		if (resourcevalue != null) {
+			resource = (TextView) this.findViewById(R.id.classResource);
 			resource.setText(resourcevalue);
 		}
 		
@@ -249,7 +250,7 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 	@Override
 	public void onClick(View view) {
 		switch (view.getId()) {
-			case R.id.classDate:{
+			case R.id.button_class_date:{
 				//date-picker
 				Bundle bdl;
 				
@@ -260,7 +261,7 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 			    datePicker.show(this.getSupportFragmentManager(), "datePicker");
 				break;
 			}
-			case R.id.classStartTime:{
+			case R.id.button_start_time:{
 			    stimePicker.show(this.getSupportFragmentManager(), "timePicker");
 				break;
 			}
@@ -268,7 +269,7 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 			    etimePicker.show(this.getSupportFragmentManager(), "timePicker");
 				break;
 			}
-			case R.id.classResource:{
+			case R.id.button_class_resource:{
 				buildResourceAlert();
 				break;
 			}

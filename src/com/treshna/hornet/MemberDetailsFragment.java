@@ -79,6 +79,12 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener {
 		  return view;
 	}
 	
+	@Override
+	public void onResume() {
+		super.onResume();
+		setupLayout();
+	}
+	
 	private View setupLayout() {
 		Uri uri = Uri.withAppendedPath(ContentDescriptor.Image.IMAGE_JOIN_MEMBER_URI,
 				memberID);
@@ -117,41 +123,60 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener {
 		}
 	    
 		String happiness = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.HAPPINESS));
-		if (happiness.compareTo(":(") == 0) {
-			ImageView sad;
-			sad = (ImageView) view.findViewById(R.id.member_status_sad);
-			sad.setVisibility(View.VISIBLE);
-		} else if (happiness.compareTo(":|") == 0) {
-			ImageView plain;
-			plain = (ImageView) view.findViewById(R.id.member_status_plain);
-			plain.setVisibility(View.VISIBLE);
-		} else if (happiness.compareTo(":)") == 0) {
+		if (happiness != null) {
+			if (happiness.compareTo(":(") == 0) {
+				ImageView sad;
+				sad = (ImageView) view.findViewById(R.id.member_status_sad);
+				sad.setVisibility(View.VISIBLE);
+			} else if (happiness.compareTo(":|") == 0) {
+				ImageView plain;
+				plain = (ImageView) view.findViewById(R.id.member_status_plain);
+				plain.setVisibility(View.VISIBLE);
+			} else if (happiness.compareTo(":)") == 0) {
+				ImageView happy;
+				happy = (ImageView) view.findViewById(R.id.member_status_happy);
+				happy.setVisibility(View.VISIBLE);
+			}
+		} else {
 			ImageView happy;
 			happy = (ImageView) view.findViewById(R.id.member_status_happy);
 			happy.setVisibility(View.VISIBLE);
 		}
 
 		int status = cur.getInt(cur.getColumnIndex(ContentDescriptor.Member.Cols.STATUS));
-		if (status == 0) { //Current
+		if (status >= 0) {
+			if (status == 0) { //Current
+				ImageView statusView;
+				statusView = (ImageView) view.findViewById(R.id.member_status_ok);
+				statusView.setVisibility(View.VISIBLE);
+				statusView.setColorFilter(Services.ColorFilterGenerator.setColourGreen());
+			} else if (status == 1) { //on hold
+				ImageView statusView;
+				statusView = (ImageView) view.findViewById(R.id.member_status_hold);
+				statusView.setVisibility(View.VISIBLE);
+				statusView.setColorFilter(Services.ColorFilterGenerator.setColourBlue());
+			} else if (status == 2|| status == 3) { //expired
+				ImageView statusView;
+				statusView = (ImageView) view.findViewById(R.id.member_status_expired);
+				statusView.setVisibility(View.VISIBLE);
+				statusView.setColorFilter(Services.ColorFilterGenerator.setColourRed());
+			} else if (status == 4 ) { //promotion
+				ImageView statusView;
+				statusView = (ImageView) view.findViewById(R.id.member_status_casual);
+				statusView.setVisibility(View.VISIBLE);
+				statusView.setColorFilter(Services.ColorFilterGenerator.setColourRed());
+			} else if (status == 5) { //casual ?
+				//what should be shown?
+				ImageView statusView;
+				statusView = (ImageView) view.findViewById(R.id.member_status_ok);
+				statusView.setVisibility(View.VISIBLE);
+				statusView.setColorFilter(Services.ColorFilterGenerator.setColourBlue());
+			}
+		} else {
 			ImageView statusView;
 			statusView = (ImageView) view.findViewById(R.id.member_status_ok);
 			statusView.setVisibility(View.VISIBLE);
 			statusView.setColorFilter(Services.ColorFilterGenerator.setColourGreen());
-		} else if (status == 1) { //on hold
-			ImageView statusView;
-			statusView = (ImageView) view.findViewById(R.id.member_status_hold);
-			statusView.setVisibility(View.VISIBLE);
-			statusView.setColorFilter(Services.ColorFilterGenerator.setColourBlue());
-		} else if (status == 2|| status == 3) { //expired
-			ImageView statusView;
-			statusView = (ImageView) view.findViewById(R.id.member_status_expired);
-			statusView.setVisibility(View.VISIBLE);
-			statusView.setColorFilter(Services.ColorFilterGenerator.setColourRed());
-		} else if (status == 4 || status == 5) { //promotion/casual
-			ImageView statusView;
-			statusView = (ImageView) view.findViewById(R.id.member_status_casual);
-			statusView.setVisibility(View.VISIBLE);
-			statusView.setColorFilter(Services.ColorFilterGenerator.setColourRed());
 		}
 		
 		cur.close();

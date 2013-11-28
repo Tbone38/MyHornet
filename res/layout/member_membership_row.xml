@@ -3,79 +3,98 @@
     xmlns:tools="http://schemas.android.com/tools" 
     android:id="@+id/member_membership_row"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="7dp"
-    tools:context=".MemberDetails" >  
-	
-	<TextView 
-	    android:id="@+id/member_membership_title"
-	    android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+    tools:context=".MemberDetails" >
+    <RelativeLayout
+        android:id="@+id/member_membership_content"
+        android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    android:textSize="25sp"
-	    android:textStyle="bold"
-	    android:text="Membership Name"
-	    android:padding="5dp"
-	    android:paddingBottom="1dp"/>
-	<View
-	    android:id="@+id/member_membership_title_line"
-	    android:layout_width="match_parent"
-	    android:layout_height="5dp"
-	    android:layout_below="@id/member_membership_title"
-	    android:background="@color/block_header_blue"
-	    />
-	<TextView 
-	    android:id="@+id/member_ms_startedL"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_below="@id/member_membership_title_line"
-	    android:textSize="15sp"
-	    android:textColor="@color/member_number_grey2"
-	    android:text="Started"
-	    android:padding="3dp" />
-	<TextView 
-	    android:id="@+id/member_ms_expiredL"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_below="@id/member_membership_title_line"
-	    android:layout_toRightOf="@id/member_ms_startedL"
-	    android:textSize="15sp"
-	    android:textColor="@color/member_number_grey2"
-	    android:text="Expires"
-	    android:padding="3dp"
-	    android:layout_marginLeft="60dp" />
-	<TextView 
-	    android:id="@+id/member_ms_visitsL"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_below="@id/member_membership_title_line"
-	    android:layout_toRightOf="@id/member_ms_expiredL"
-	    android:textSize="15sp"
-	    android:textColor="@color/member_number_grey2"
-	    android:text="Visits"
-	    android:padding="3dp"
-	    android:layout_marginLeft="60dp" />
-	
-	<TextView
-	    android:id="@+id/member_ms_started"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_below="@id/member_ms_startedL"
-	    android:layout_alignLeft="@id/member_ms_startedL"
-		android:textSize="18sp" />
-	<TextView
-	    android:id="@+id/member_ms_expired"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_below="@id/member_ms_expiredL"
-	    android:layout_toRightOf="@id/member_ms_started"
-	    android:layout_alignLeft="@id/member_ms_expiredL"
-	    android:textSize="18sp" />
-	<TextView
-	    android:id="@+id/member_ms_visits"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_below="@id/member_ms_visitsL"
-	    android:layout_toRightOf="@id/member_ms_expired"
-	    android:layout_alignLeft="@id/member_ms_visitsL"
-	    android:textSize="18sp" />
+	    android:background="@color/booking_resource_background"
+	    android:layout_margin="7dp"
+	    android:padding="5dp" >
+		<ImageView
+		    android:id="@+id/member_membership_drawable"
+		    android:layout_width="25dp"
+		    android:layout_height="25dp"
+		    android:padding="2dp"
+		    android:src="@drawable/glyphicons_nameplate" />
+		<TextView 
+		    android:id="@+id/member_membership_title"
+		    android:layout_width="wrap_content"
+		    android:layout_height="30dp"
+		    android:layout_toRightOf="@id/member_membership_drawable"
+		    android:textSize="18sp"
+		    android:text="Membership Name"
+		    android:padding="2dp"
+		    android:paddingBottom="1dp"/>
+		<View
+		    android:id="@+id/membership_title_line"
+		    android:layout_width="match_parent"
+		    android:layout_height="1dp"
+		    android:layout_below="@id/member_membership_title"
+		    android:paddingLeft="5dp"
+		    android:paddingRight="5dp"
+		    android:background="@color/white" />
+		<TextView 
+		    android:id="@+id/member_ms_startedL"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_below="@id/member_membership_title"
+		    android:textSize="15sp"
+		    android:textColor="@color/member_number_grey2"
+		    android:text="Started"
+		    android:padding="3dp" />
+		<TextView 
+		    android:id="@+id/member_ms_expiredL"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_below="@id/member_membership_title"
+		    android:layout_toRightOf="@id/member_ms_startedL"
+		    android:textSize="15sp"
+		    android:textColor="@color/member_number_grey2"
+		    android:text="Expires"
+		    android:padding="3dp"
+		    android:layout_marginLeft="60dp" />
+		<TextView 
+		    android:id="@+id/member_ms_visitsL"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_below="@id/member_membership_title"
+		    android:layout_toRightOf="@id/member_ms_expiredL"
+		    android:textSize="15sp"
+		    android:textColor="@color/member_number_grey2"
+		    android:text="Visits"
+		    android:padding="3dp"
+		    android:layout_marginLeft="60dp" />
+		
+		<TextView
+		    android:id="@+id/member_ms_started"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_below="@id/member_ms_startedL"
+		    android:layout_alignLeft="@id/member_ms_startedL"
+			android:textSize="15sp"
+			android:paddingLeft="3dp"
+			android:textStyle="bold" />
+		<TextView
+		    android:id="@+id/member_ms_expired"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_below="@id/member_ms_expiredL"
+		    android:layout_toRightOf="@id/member_ms_started"
+		    android:layout_alignLeft="@id/member_ms_expiredL"
+		    android:textSize="15sp"
+		    android:paddingLeft="3dp"
+		    android:textStyle="bold" />
+		<TextView
+		    android:id="@+id/member_ms_visits"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_below="@id/member_ms_visitsL"
+		    android:layout_toRightOf="@id/member_ms_expired"
+		    android:layout_alignLeft="@id/member_ms_visitsL"
+		    android:textSize="15sp"
+		    android:paddingLeft="3dp"
+		    android:textStyle="bold" />
+	</RelativeLayout>
 </RelativeLayout>

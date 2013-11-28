@@ -40,30 +40,32 @@
 	        android:text="@string/createclassresource"
 	        android:layout_margin="5dp"
 	        android:padding="7dp" />
-	    <RelativeLayout
+	    <LinearLayout
 	        android:id="@+id/button_class_resource"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:layout_below="@id/classResourceL"
 	        android:padding="3dp"
-	        android:gravity="center"
+	        android:gravity="center_vertical"
 	        android:background="@drawable/button"
-	        android:clickable="true" >
+	        android:clickable="true"
+	        android:orientation="horizontal" >
 		    <ImageView
 		        android:id="@+id/classResourceDrawable"
 		        android:layout_width="35dp"
 		        android:layout_height="35dp"
 		        android:src="@drawable/ic_action_view_as_list"
-		        android:padding="3dp" />
+		       	/>
+
 		    <TextView
 		        android:id="@+id/classResource"
-		        android:layout_width="match_parent"
+		        android:layout_width="wrap_content"
 		        android:layout_height="match_parent"
-		        android:layout_toRightOf="@id/classResourceDrawable"
-		        android:padding="3dp"
-		        android:textSize="18sp"
-		        android:text="@string/classresourcedefault" />
-	    </RelativeLayout>
+		        android:gravity="center_vertical"
+		        android:text="@string/classresourcedefault"
+		        android:textSize="18sp" />
+
+	    </LinearLayout>
 	    <TextView
 	        android:id="@+id/classDateL"
 	        android:layout_width="wrap_content"
@@ -73,28 +75,34 @@
 	        android:text="@string/createclassdate"
 	        android:layout_margin="5dp"
 	        android:padding="7dp" />
-	    <ImageView
-	        android:id="@+id/classDateDrawable"
-	        android:layout_width="35dp"
-	        android:layout_height="35dp"
-	        android:layout_below="@id/classDateL"
-	        android:src="@drawable/ic_action_event" />
-	    <TextView
-	        android:id="@+id/classDate"
+	    <LinearLayout 
+	        android:id="@+id/button_class_date"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:layout_below="@id/classDateL"
-	        android:layout_toRightOf="@id/classDateDrawable"
-	    	android:textSize="18sp"
-	    	android:text="@string/classdatedefault"
-	    	android:layout_margin="5dp"
-	        android:padding="7dp" />
+	        android:padding="3dp"
+	        android:background="@drawable/button"
+	        android:clickable="true"
+	        android:orientation="horizontal">
+		    <ImageView
+		        android:id="@+id/classDateDrawable"
+		        android:layout_width="35dp"
+		        android:layout_height="35dp"
+		        android:src="@drawable/ic_action_event" />
+		    <TextView
+		        android:id="@+id/classDate"
+		        android:layout_width="wrap_content"
+		        android:layout_height="match_parent"
+		        android:gravity="center_vertical"
+		    	android:textSize="18sp"
+		    	android:text="@string/classdatedefault" />
+	    </LinearLayout>
 	    
 	    <TextView
 	        android:id="@+id/classTimeL"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:layout_below="@id/classDate"
+	        android:layout_below="@id/button_class_date"
 	        android:textSize="16sp"
 	        android:text="@string/createclasstime"
 	        android:layout_margin="5dp"
@@ -105,37 +113,48 @@
 	        android:layout_height="wrap_content"
 	        android:layout_below="@id/classTimeL"
 	        android:orientation="horizontal">
-	        <ImageView
-	            android:id="@+id/classTimeDrawable"
-	            android:layout_width="35dp"
-	            android:layout_height="35dp"
-	            android:src="@drawable/ic_action_time"
-	            android:padding="2dp" />
-		    <TextView
-		        android:id="@+id/classStartTime"
+		    <LinearLayout
+		        android:id="@+id/button_start_time"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		        android:textSize="18sp"
-		        android:text="@string/classstarttimedefault"
-		        android:gravity="center"
-		        android:layout_margin="5dp"
-		        android:padding="7dp" />
+		        android:layout_weight="1"
+		        android:orientation="horizontal"
+		        android:background="@drawable/button"
+		        android:clickable="true" >
+		        <ImageView
+		            android:id="@+id/classTimeDrawable"
+		            android:layout_width="35dp"
+		            android:layout_height="35dp"
+		            android:src="@drawable/ic_action_time"
+		            android:padding="2dp" />
+			    <TextView
+			        android:id="@+id/classStartTime"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:textSize="18sp"
+			        android:text="@string/classstarttimedefault"
+			        android:gravity="center"
+			        android:padding="2dp"
+			        android:layout_marginTop="2dp" />
+		    </LinearLayout>
 		    <TextView 
 		        android:id="@+id/classMidTime"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:textSize="18sp"
 		        android:text="@string/classmidtime"
-		        android:gravity="center"/>
+		        android:gravity="center"
+		        android:layout_marginTop="2dp"
+		        android:padding="5dp"/>
 		    <TextView
 		        android:id="@+id/classEndTime"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
+		        android:layout_weight="1"
 		        android:textSize="18sp"
 		        android:text="@string/classendtimedefault"
 		        android:gravity="center"
-		        android:layout_margin="5dp"
-		        android:padding="7dp"
+		        android:padding="1dp"
 		        android:clickable="true" />
 	    </LinearLayout>
 	    
@@ -152,7 +171,7 @@
 	        android:id="@+id/classRepeatingL"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:layout_below="@id/classDate"
+	        android:layout_below="@id/classTimeRow"
 	        android:layout_alignTop="@id/classRepeating"
 	        android:layout_alignBottom="@id/classRepeating"
 	        android:gravity="center"
@@ -178,10 +197,7 @@
 	        android:inputType="number"
 	        android:layout_margin="5dp"
 	        android:padding="7dp" />
-	    
-	    
-	    
-	    <LinearLayout
+	   <LinearLayout
 	        android:id="@+id/buttonRow"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
@@ -189,27 +205,50 @@
 	        android:gravity="center"
 	        android:orientation="horizontal"
 	        android:layout_marginTop="15dp"
-	        android:layout_marginBottom="15dp" >
-		    <TextView
-	            android:id="@+id/buttonCancel"
-	            android:layout_width="0dp"
-	            android:layout_height="wrap_content"
-	            android:layout_weight=".45"
-	            android:gravity="center"
-	            android:textSize="20sp"
-	            android:text="@string/buttonCancel"
-	            android:padding="5dp"
-	            android:background="@drawable/button" />
-	        <TextView
-	            android:id="@+id/buttonSubmit"
-	            android:layout_width="0dp"
-	            android:layout_height="wrap_content"
-	            android:layout_weight=".45"
-	            android:gravity="center"
-	            android:textSize="20sp"
-	            android:text="@string/buttonAccept"
-	            android:padding="5dp"
-	            android:background="@drawable/button" />
+	        android:layout_marginBottom="15dp"> 
+	        <LinearLayout
+			    android:layout_width="0dp"
+			    android:layout_weight=".45"
+		    	android:layout_height="wrap_content"
+		    	android:layout_marginRight="10dp"
+		    	android:orientation="vertical">
+			    <TextView
+		            android:id="@+id/buttonCancel"
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:gravity="center"
+		            android:textSize="20sp"
+		            android:text="@string/buttonCancel"
+		            android:padding="5dp"
+		            android:background="@drawable/button_large" />
+			    <View
+				    android:layout_width="match_parent"
+				    android:layout_height="2dp"
+				    android:paddingLeft="5dp"
+			    	android:paddingRight="5dp"
+				    android:background="@color/member_number_grey2" />
+			</LinearLayout>
+	        <LinearLayout
+			    android:layout_width="0dp"
+			    android:layout_weight=".45"
+		    	android:layout_height="wrap_content"
+		    	android:orientation="vertical">
+		        <TextView
+		            android:id="@+id/buttonSubmit"
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:gravity="center"
+		            android:textSize="20sp"
+		            android:text="@string/buttonAccept"
+		            android:padding="5dp"
+		            android:background="@drawable/button_large" />
+		        <View
+				    android:layout_width="match_parent"
+				    android:layout_height="2dp"
+				    android:paddingLeft="5dp"
+			    	android:paddingRight="5dp"
+				    android:background="@color/member_number_grey2" />
+			</LinearLayout>
 	    </LinearLayout>
 	
 	</RelativeLayout>

@@ -44,6 +44,7 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 		 ctx = getActivity();
 		 contentResolver = getActivity().getContentResolver();
 		 results = this.getArguments().getStringArrayList(Services.Statics.KEY);
+		 cardid = results.get(8);
 		 page = inflater.inflate(R.layout.membership_complete, container, false);
 		 page = setupView();
 		 
@@ -64,9 +65,10 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 		cur.close();
 		
 		EditText memberCard = (EditText) page.findViewById(R.id.membership_tag);
-		if (results.get(8) != null) {
-			memberCard.setText(results.get(8));
-			cardid = results.get(8);
+		if (cardid != null && Integer.parseInt(cardid) > 0) {
+			memberCard.setText(cardid);
+			memberCard.setTextColor(Color.BLACK);
+			
 		} else {
 			//no unique card no, or cardno from other membership found.
 			memberCard.setText("Warning - No Membership Card");
@@ -181,12 +183,13 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 					alertDialog.dismiss();
 					alertDialog = null;
 				}
+				setupView();
 			}
 		}
 		cur.close();
 		//TOAST!
 		Toast.makeText(ctx, message, Toast.LENGTH_LONG).show();
-		setupView();
+		
 	}
 	
 	private int insertMembership(ArrayList<String> input) {
@@ -242,6 +245,19 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 		}
 		Log.v(TAG, "insert rowid: "+rowid);
 		
+		/*cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, new String[] {ContentDescriptor.Member.Cols.CARDNO},
+				ContentDescriptor.Member.Cols.MID+" = ?", new String[] {input.get(0)}, null);
+		if (cur.moveToNext()) {
+			int cardno = cur.getInt(cur.getColumnIndex(ContentDescriptor.Member.Cols.CARDNO));
+			if (cardno >= 0) {
+				values = new ContentValues();
+				values.put(ContentDescriptor.Member.Cols.CARDNO, cardid);
+				contentResolver.update(ContentDescriptor.Member.CONTENT_URI, values, 
+						ContentDescriptor.Member.Cols.MID+" = ?", new String[] {String.valueOf(cardno)});
+				//update the member on the server?
+			}
+		}
+		cur.close();*/
 		return Integer.parseInt(rowid);
 	}
 	

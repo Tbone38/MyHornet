@@ -299,13 +299,18 @@ public class SettingsActivity extends PreferenceActivity {
 		toast.setChecked(true);
 		debug.addPreference(toast);
 
-		// DEPRECATED?!
-		/*CheckBoxPreference image = new CheckBoxPreference(this);
-		image.setKey("image");
-		image.setTitle("Fix Image error");
-		image.setSummary("Checking this will fix any \"Error: Column description... Position:77\" type toasts, check it if you do not see any member photos after sync.");
-		image.setChecked(false);
-		debug.addPreference(image);*/
+		Preference copydb = new Preference(this);
+		copydb.setKey("copydb");
+		copydb.setTitle("Copy Database");
+		copydb.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+			
+			@Override
+			public boolean onPreferenceClick(Preference preference) {
+				FileHandler fh = new FileHandler(Services.getContext());
+				fh.copyDatabase();
+				return true;
+		}});
+		debug.addPreference(copydb);
 	}
 	
 	private static void clearData(){

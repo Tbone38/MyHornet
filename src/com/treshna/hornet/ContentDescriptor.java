@@ -195,6 +195,7 @@ public class ContentDescriptor {
 	       	 	public static final String BOOK2 = "booking2";
 	       	 	public static final String BOOK3 = "booking3";
 	       	 	public static final String LASTVISIT = "lastvisit1";
+	       	 	public static final String CARDNO = "cardno";
 	       	 	/**
 	       	 	 * Member Status's:
 	       	 	 * 		   -1 = FREE MEMBERID

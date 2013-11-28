@@ -10,8 +10,7 @@
 	        android:id="@+id/member_navigation_name"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:textSize="26sp"
-	        android:textStyle="bold"
+	        android:textSize="28sp"
 	        android:text="Name Space"
 	        android:padding="3dp" />
     <LinearLayout
@@ -20,55 +19,56 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/member_navigation_name"
         android:gravity="center_vertical"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        android:background="@color/member_statusbar_background" >
         <ImageView
             android:id="@+id/member_status_happy"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:background="@drawable/face_smile"
-            android:padding="2dp"
+            android:padding="1dp"
             android:visibility="gone" />
 	   <ImageView
             android:id="@+id/member_status_plain"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:background="@drawable/face_plain"
-            android:padding="2dp"
+            android:padding="1dp"
             android:visibility="gone" />
 	   <ImageView
             android:id="@+id/member_status_sad"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:background="@drawable/face_sad"
-            android:padding="2dp"
+            android:padding="1dp"
             android:layout_marginRight="3dp"
             android:visibility="gone" />
 	   <ImageView
 	       android:id="@+id/member_status_hold"
-	       android:layout_width="50dp"
-	       android:layout_height="50dp"
-	       android:padding="2dp"
+	       android:layout_width="25dp"
+	       android:layout_height="25dp"
+	       android:padding="1dp"
 	       android:visibility="gone"
 	       android:src="@drawable/ic_action_pause"/>
 	   <ImageView
 	       android:id="@+id/member_status_ok"
-	       android:layout_width="50dp"
-	       android:layout_height="50dp"
-	       android:padding="2dp"
+	       android:layout_width="25dp"
+	       android:layout_height="25dp"
+	       android:padding="1dp"
 	       android:visibility="gone" 
 	       android:src="@drawable/ic_action_accept"/>
 	   <ImageView
 	       android:id="@+id/member_status_expired"
-	       android:layout_width="50dp"
-	       android:layout_height="50dp"
-	       android:padding="2dp"
+	       android:layout_width="25dp"
+	       android:layout_height="25dp"
+	       android:padding="1dp"
 	       android:visibility="gone"
 	       android:src="@drawable/ic_action_cancel" />
 	   <ImageView 
 	       android:id="@+id/member_status_casual"
-	       android:layout_width="50dp"
-	       android:layout_height="50dp"
-	       android:padding="2dp"
+	       android:layout_width="25dp"
+	       android:layout_height="25dp"
+	       android:padding="1dp"
 	       android:visibility="gone"
 	       android:src="@drawable/glyphicons_heart"/>
 	    <TextView
@@ -77,7 +77,7 @@
 	        android:layout_height="match_parent"
 	        android:layout_weight=".75"
 	        android:gravity="center|right"
-	        android:textSize="18sp"
+	        android:textSize="15sp"
 	        android:text="$6543.21" />
 	    <TextView
 	        android:id="@+id/member_navigation_number"
@@ -85,9 +85,10 @@
 	        android:layout_height="match_parent"
 	        android:layout_weight=".25"
 	        android:gravity="center|right"
-	        android:textSize="18sp"
+	        android:textSize="15sp"
 	        android:text="#12345"
-	        android:textColor="@color/member_number_grey2" />
+	        android:textColor="@color/member_number_grey2"
+	        android:paddingRight="4dp" />
 	</LinearLayout>	    
     <LinearLayout
         android:id="@+id/member_navigation_row"
@@ -100,8 +101,8 @@
     	    android:layout_width="0dp"
     	    android:layout_height="240dp"
     	    android:layout_weight=".42"
-    	    android:padding="3dp"
-    	    android:layout_gravity="center"/>
+    	    android:layout_gravity="center"
+    	    android:scaleType="centerCrop"/>
     	
     	<LinearLayout
     	    android:id="@+id/member_navigation_column"
@@ -109,7 +110,7 @@
     	    android:layout_height="wrap_content"
     	    android:layout_weight=".5"
     	    android:orientation="vertical"
-    	    android:padding="3dp" >
+    	    android:paddingLeft="2dp" >
     	    <LinearLayout 
     	        android:id="@+id/button_member_navigation_memberships"
     	        android:layout_width="match_parent"
