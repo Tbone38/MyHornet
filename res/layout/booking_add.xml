@@ -202,7 +202,6 @@
 	        	android:textSize="16sp"
 	        	android:padding="5dp" />
 	    </LinearLayout>
-	   
-	   
+			   
     </RelativeLayout>
 </ScrollView>

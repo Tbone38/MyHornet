@@ -78,18 +78,18 @@ public class MembershipHold extends ActionBarActivity implements OnClickListener
 		accept.setOnClickListener(this);
 		
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-			accept.setBackground(getResources().getDrawable(R.drawable.button));
+			accept.setBackground(getResources().getDrawable(R.drawable.button_large));
 		} else {
-			accept.setBackgroundDrawable(getResources().getDrawable(R.drawable.button));
+			accept.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_large));
 		}
 		
 		cancel = (TextView) this.findViewById(R.id.buttoncancel);
 		cancel.setClickable(true);
 		cancel.setOnClickListener(this);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-			cancel.setBackground(getResources().getDrawable(R.drawable.button));
+			cancel.setBackground(getResources().getDrawable(R.drawable.button_large));
 		} else {
-			cancel.setBackgroundDrawable(getResources().getDrawable(R.drawable.button));
+			cancel.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_large));
 		}
 	}
 	

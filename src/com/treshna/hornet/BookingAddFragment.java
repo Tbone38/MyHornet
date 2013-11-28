@@ -200,41 +200,71 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		buttonRow.setOrientation(LinearLayout.HORIZONTAL);
 		
 		
+		LinearLayout cancelLayout = new LinearLayout(ctx);
+		cancelLayout.setOrientation(LinearLayout.VERTICAL);
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT, (float) .5);
+		params.setMargins(0, 0, 10, 0);
+		cancelLayout.setLayoutParams(params);
 		
 		TextView cancel = new TextView(ctx);
 		cancel.setId(46);
-		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT, (float) .5);
+		params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		cancel.setLayoutParams(params);
 		cancel.setPadding(5, 5, 5, 5);
 		cancel.setTextSize(22);
 		cancel.setText(R.string.bookingcancel);
 		cancel.setGravity(Gravity.CENTER);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-			cancel.setBackground(getResources().getDrawable(R.drawable.button));
+			cancel.setBackground(getResources().getDrawable(R.drawable.button_large));
 		} else {
-			cancel.setBackgroundDrawable(getResources().getDrawable(R.drawable.button));
+			cancel.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_large));
 		}
 		cancel.setClickable(true);
 		cancel.setOnClickListener(this);
 		
+		View cancelline = new View(ctx);
+		cancelline.setPadding(5, 0, 5, 0);
+		cancelline.setBackgroundColor(getResources().getColor(R.color.member_number_grey2));
+		params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 2);
+		cancelline.setLayoutParams(params);
+		
+		cancelLayout.addView(cancel);
+		cancelLayout.addView(cancelline);
+		
+		
+		LinearLayout acceptLayout = new LinearLayout(ctx);
+		acceptLayout.setOrientation(LinearLayout.VERTICAL);
+		params = new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT, (float) .5);
+		params.setMargins(0, 0, 10, 0);
+		acceptLayout.setLayoutParams(params);
+		
 		TextView accept = new TextView(ctx);
 		accept.setId(45);
-		params = new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT, (float) .5);
+		params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		accept.setLayoutParams(params);
 		accept.setPadding(5, 5, 5, 5);
 		accept.setTextSize(22);
 		accept.setText(R.string.bookingaccept);
 		accept.setGravity(Gravity.CENTER);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-			accept.setBackground(getResources().getDrawable(R.drawable.button));
+			accept.setBackground(getResources().getDrawable(R.drawable.button_large));
 		} else {
-			accept.setBackgroundDrawable(getResources().getDrawable(R.drawable.button));
+			accept.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_large));
 		}
 		accept.setClickable(true);
 		accept.setOnClickListener(this);
 		
-		buttonRow.addView(cancel);
-		buttonRow.addView(accept);
+		View acceptline = new View(ctx);
+		acceptline.setPadding(5, 0, 5, 0);
+		acceptline.setBackgroundColor(getResources().getColor(R.color.member_number_grey2));
+		params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 2);
+		acceptline.setLayoutParams(params);
+		
+		acceptLayout.addView(accept);
+		acceptLayout.addView(acceptline);
+		
+		buttonRow.addView(cancelLayout);
+		buttonRow.addView(acceptLayout);
 		layout.addView(buttonRow);
 		
 		Spinner resourcespinner = (Spinner) page.findViewById(R.id.bookingResourceS);

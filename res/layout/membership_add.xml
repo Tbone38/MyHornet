@@ -138,49 +138,72 @@
 		    android:layout_below="@id/membershipsignupfee"
 		    android:orientation="horizontal"
 		    android:baselineAligned="false">
-			  	
 			<LinearLayout
-			    android:id="@+id/cancelbutton"
-			    android:layout_width="0dp"
-			    android:layout_height="wrap_content"
-			    android:layout_weight=".4"
-			    android:orientation="horizontal"
-			    android:background="@drawable/button"
-			    android:clickable="true">
-			    <ImageView
-			        android:id="@+id/cancelbuttoncross"
-			        android:layout_width="35dp"
-			        android:layout_height="35dp"
-			        android:background="@drawable/ic_action_cancel" />
-			    <TextView
-			        android:id="@+id/cancel"
-			        android:layout_width="wrap_content"
-			        android:layout_height="match_parent"
-			        android:gravity="center"
-			        android:textSize="18sp"
-			        android:text="@string/cancel" />
+		        android:layout_width="0dp"
+		        android:layout_height="wrap_content"
+		        android:layout_weight=".4"
+			    android:layout_marginRight="10dp"
+		    	android:orientation="vertical">
+				<LinearLayout
+				    android:id="@+id/cancelbutton"
+				    android:layout_width="match_parent"
+				    android:layout_height="wrap_content"
+				    android:orientation="horizontal"
+				    android:background="@drawable/button_large"
+				    android:clickable="true">
+				    <ImageView
+				        android:id="@+id/cancelbuttoncross"
+				        android:layout_width="40dp"
+				        android:layout_height="40dp"
+				        android:background="@drawable/ic_action_cancel" />
+				    <TextView
+				        android:id="@+id/cancel"
+				        android:layout_width="wrap_content"
+				        android:layout_height="match_parent"
+				        android:gravity="center"
+				        android:textSize="18sp"
+				        android:text="@string/cancel" />
+				</LinearLayout>
+				<View
+			        android:layout_width="match_parent"
+				    android:layout_height="2dp"
+				    android:paddingLeft="5dp"
+			    	android:paddingRight="5dp"
+				    android:background="@color/member_number_grey2" />
 			</LinearLayout>
 			
-			<LinearLayout 
-			    android:id="@+id/acceptbutton"
-			    android:layout_width="0dp"
-			    android:layout_height="wrap_content"
-			    android:layout_weight=".5"
-			    android:orientation="horizontal"
-			    android:background="@drawable/button"
-			    android:clickable="true">
-			    <ImageView 
-			        android:id="@+id/acceptbuttontick"
-			        android:layout_width="35dp"
-			        android:layout_height="35dp"
-			        android:background="@drawable/ic_action_accept"/>
-			    <TextView
-			        android:id="@+id/accept"
-			        android:layout_width="wrap_content"
-			        android:layout_height="match_parent"
-			        android:gravity="center"
-			        android:textSize="18sp"
-			        android:text="@string/membership_add_complete" />
+			<LinearLayout
+		        android:layout_width="0dp"
+		        android:layout_height="wrap_content"
+		        android:layout_weight=".4"
+			    android:layout_marginRight="10dp"
+		    	android:orientation="vertical">
+				<LinearLayout 
+				    android:id="@+id/acceptbutton"
+				    android:layout_width="match_parent"
+				    android:layout_height="wrap_content"
+				    android:orientation="horizontal"
+				    android:background="@drawable/button_large"
+				    android:clickable="true">
+				    <ImageView 
+				        android:id="@+id/acceptbuttontick"
+				        android:layout_width="40dp"
+				        android:layout_height="40dp"
+				        android:background="@drawable/ic_action_accept"/>
+				    <TextView
+				        android:id="@+id/accept"
+				        android:layout_width="wrap_content"
+				        android:layout_height="match_parent"
+				        android:gravity="center"
+				        android:textSize="18sp"
+				        android:text="@string/membership_add_complete" />
+				</LinearLayout>
+				<View
+			        android:layout_width="match_parent"
+				    android:layout_height="2dp"
+				    android:paddingLeft="5dp"
+			    	android:paddingRight="5dp"
+				    android:background="@color/member_number_grey2" />
 			</LinearLayout>
 		</LinearLayout>		
 	</RelativeLayout>
