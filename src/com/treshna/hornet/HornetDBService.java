@@ -180,7 +180,7 @@ public class HornetDBService extends Service {
 			
 
 			Services.setPreference(ctx, "last_freq_sync", String.valueOf(this_sync));
-			Services.showToast(getApplicationContext(), statusMessage, handler);
+			//Services.showToast(getApplicationContext(), statusMessage, handler);
 			/*Broadcast an intent to let the app know that the sync has finished
 			 * communicating with the server/updating the cache.
 			 * App can now refresh the list. */
@@ -1445,7 +1445,7 @@ public class HornetDBService extends Service {
 	    		values.put(ContentDescriptor.ResultStatus.Cols.COLOUR, rs.getString("bgcolour"));
 	    		
 	    		contentResolver.insert(ContentDescriptor.ResultStatus.CONTENT_URI, values);
-	    		//System.out.print("\n\n"+rs.getString(1)+"  "+rs.getString(2)+"  "+rs.getString(3));
+	    		
 	    		result +=1;
 	    	}
     	} catch (SQLException e) {
@@ -1467,19 +1467,20 @@ public class HornetDBService extends Service {
     	
     	current = Calendar.getInstance();
     	maximum = Calendar.getInstance();
-    	maximum.set(Calendar.MONTH, (current.get(Calendar.MONTH)+1));
-    	current.set(Calendar.MONTH, (current.get(Calendar.MONTH)-1));
-		while (current.get(Calendar.DAY_OF_YEAR) <= maximum.get(Calendar.DAY_OF_YEAR)) { //TODO: how many dates to store?
+    	maximum.add(Calendar.MONTH, 1);
+    	//Log.e(TAG, "MAXIMUM DATE:"+maximum.getTime().toString());
+    	current.add(Calendar.MONTH, -1);
+    	//Log.e(TAG, "CURRENT DATE:"+current.getTime().toString());
+		while (current.getTimeInMillis() <= maximum.getTimeInMillis()) { //TODO: how many dates to store?
 			date = current.getTime();
 			currentDay = current.get(Calendar.DAY_OF_WEEK);
 			values = new ContentValues();
 			values.put(ContentDescriptor.Date.Cols.DATE, Services.dateFormat(date.toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd"));
 			values.put(ContentDescriptor.Date.Cols.DAYOFWEEK, currentDay);
 			contentResolver.insert(ContentDescriptor.Date.CONTENT_URI, values);
-			//System.out.print("\n\nDate:"+Services.dateFormat(date.toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd"));
-			//System.out.print("\n\ndayofweek:"+currentDay);
 			current.add(Calendar.DATE, 1);
 		}
+		//Log.e(TAG, "FINISHED DATE:"+current.getTime().toString());
 		Log.v(TAG, "Finished Setting Date");
     }
     

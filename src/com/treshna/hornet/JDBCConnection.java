@@ -8,6 +8,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLWarning;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -773,6 +774,14 @@ public class JDBCConnection {
     	
     }
     
+    
+    public SQLWarning getWarnings() throws SQLException {
+    	return con.getWarnings();
+    }
+    
+    public void clearAllWarnings() throws SQLException {
+    	con.clearWarnings();
+    }
     
     public ResultSet startStatementQuery(String query) throws SQLException {
     	ResultSet rs = null;

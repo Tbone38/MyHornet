@@ -102,6 +102,7 @@ public class BookingsListAdapter extends SimpleCursorAdapter implements OnClickL
 			background.setBackgroundColor(context.getResources().getColor(R.color.booking_resource_background));
 			
 			ImageView drawable = (ImageView) rowLayout.findViewById(R.id.booking_resource_drawable);
+			drawable.setColorFilter(null);
 			drawable.setVisibility(View.VISIBLE);
 			if (cursor.getInt(cursor.getColumnIndex(ContentDescriptor.BookingTime.Cols.TIMEID)) ==
 					cursor.getInt(cursor.getColumnIndex(ContentDescriptor.Booking.Cols.STIMEID))) {
@@ -113,6 +114,7 @@ public class BookingsListAdapter extends SimpleCursorAdapter implements OnClickL
 				}
 				case (21):{ //checked in late
 					drawable.setImageDrawable(context.getResources().getDrawable(R.drawable.glyphicons_clock));
+					drawable.setColorFilter(Services.ColorFilterGenerator.setColourGrey());
 					break;
 				}
 				case (15):{ //noshow

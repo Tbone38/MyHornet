@@ -324,10 +324,10 @@ public class Services {
 		
 			ColorMatrix cm = new ColorMatrix();
 			float[] gMatrix = { 
-					0, 0, 0, 0, 0.380392157f, //red
-		            0, 0, 0, 0, 0.37254902f, //green
-		            0, 0, 0, 0, 0.37254902f, //blue
-		            0, 0, 0, .6f, 0 //alpha
+					0, 0, 0, 0, 97, //red
+		            0, 0, 0, 0, 95, //green
+		            0, 0, 0, 0, 95, //blue
+		            1, 1, 1, 1, 0 //alpha
 		        };
 		    
 		    cm.postConcat(new ColorMatrix(gMatrix));
