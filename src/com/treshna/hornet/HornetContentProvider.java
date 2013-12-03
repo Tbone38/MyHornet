@@ -175,7 +175,11 @@ public class HornetContentProvider extends ContentProvider {
         	getContext().getContentResolver().notifyChange(uri, null);
         	return rows;
         }
-        
+        case ContentDescriptor.PendingUpdates.PATH_TOKEN:{
+        	int rows = db.delete(ContentDescriptor.PendingUpdates.NAME, selection, selectionArgs);
+        	getContext().getContentResolver().notifyChange(uri, null);
+        	return rows;
+        }
         
         
         case ContentDescriptor.TOKEN_DROPTABLE:{ //special case, drops tables/deletes database.
@@ -327,6 +331,11 @@ public class HornetContentProvider extends ContentProvider {
             	long id = db.insert(ContentDescriptor.MemberBalance.NAME, null, values);
             	getContext().getContentResolver().notifyChange(uri, null);
             	return ContentDescriptor.MemberBalance.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
+            }
+            case ContentDescriptor.PendingUpdates.PATH_TOKEN:{
+            	long id = db.insert(ContentDescriptor.PendingUpdates.NAME, null, values);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return ContentDescriptor.PendingUpdates.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
             }
             
             default: {
@@ -635,6 +644,11 @@ public class HornetContentProvider extends ContentProvider {
             	} else {
             		selection = selection + " AND "+ContentDescriptor.Member.Cols.STATUS+" = -1";
             	}
+            	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+            }
+            case ContentDescriptor.PendingUpdates.PATH_TOKEN:{
+            	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+            	builder.setTables(ContentDescriptor.PendingUpdates.NAME);
             	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
             }
             

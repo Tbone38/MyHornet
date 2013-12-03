@@ -3,12 +3,10 @@ package com.treshna.hornet;
 
 import java.util.ArrayList;
 
-import com.treshna.hornet.ContentDescriptor.Member;
-import com.treshna.hornet.R.color;
-
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -29,20 +27,25 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.treshna.hornet.BookingPage.TagFoundListener;
+import com.treshna.hornet.ContentDescriptor.Member;
 
-public class MemberActionsFragment extends Fragment implements OnClickListener {
+
+public class MemberActionsFragment extends Fragment implements OnClickListener, TagFoundListener {
 	Cursor cur;
 	ContentResolver contentResolver;
 	LayoutInflater mInflater;
 	RadioGroup rg;
 	View checkinWindow;
-	private String mId; 
+	private String mid;
+	private AlertDialog alertDialog = null;
+	private String cardid = null;
 	
 	private static final String TAG = "MemberActions";
 	
 			
 	public void setupActions(View view, String memberID) {
-		this.mId = memberID;
+		this.mid = memberID;
 		Uri uri = Uri.withAppendedPath(ContentDescriptor.Image.IMAGE_JOIN_MEMBER_URI,
 				memberID);
 		contentResolver = this.getActivity().getContentResolver();
@@ -126,6 +129,8 @@ public class MemberActionsFragment extends Fragment implements OnClickListener {
 		gallery.setOnClickListener(this);
 		gallery.setTag(memberID);
 
+		LinearLayout addtag = (LinearLayout) view.findViewById(R.id.button_tag);
+		addtag.setOnClickListener(this);
 		
 		cur.close();
 		
@@ -185,7 +190,7 @@ public class MemberActionsFragment extends Fragment implements OnClickListener {
 		}
 		case (R.id.button_hold):{
 			Intent i = new Intent(getActivity(), MembershipHold.class);
-			i.putExtra(Services.Statics.KEY, mId);
+			i.putExtra(Services.Statics.KEY, mid);
 			startActivity(i);
 			break;
 		}
@@ -199,11 +204,82 @@ public class MemberActionsFragment extends Fragment implements OnClickListener {
 		case (R.id.button_gallery):{
 			Intent i = new Intent(getActivity(), EmptyActivity.class);
 			i.putExtra(Services.Statics.KEY, Services.Statics.FragmentType.MemberGallery.getKey());
-			i.putExtra(Services.Statics.MID, mId);
+			i.putExtra(Services.Statics.MID, mid);
 			startActivity(i);
 			break;
 		}
+		case (R.id.button_tag):{
+			swipeBox();
 		}
+		}
+	}
+	
+	private void swipeBox(){
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		
+		builder.setTitle("Swipe Tag")
+		.setMessage("Please Swipe a tag against the device");
+		alertDialog = builder.create();
+		alertDialog.show();
+	}
+	
+	/** look up the serial in the idcard table,
+	 * check that the cardno is not in use by anyone else.
+	 * assign the cardno to the membership.
+	 */
+	@Override
+	public void onNewTag(String serial) {
+		ContentResolver contentResolver = getActivity().getContentResolver();
+		Cursor cur;
+		String message;
+		
+		cur = contentResolver.query(ContentDescriptor.IdCard.CONTENT_URI, null, ContentDescriptor.IdCard.Cols.SERIAL+" = ?",
+				new String[] {serial}, null);
+		if (!cur.moveToFirst()) {
+			//tag not found in db. Tell them to swipe card at reception, then re-sync
+			//the phone.
+			//TODO:
+			message = "Tag not found in db, please swipe tag at reception, then re-sync device";
+			Log.v(TAG, message);
+		} else {
+			cardid = cur.getString(cur.getColumnIndex(ContentDescriptor.IdCard.Cols.CARDID));
+			cur.close();
+			
+			cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols.CARDNO+" = ?",
+					new String[] {cardid}, null);
+			if (cur.getCount() > 0) {
+				//id is in use, what should I do?
+				message = "Tag already in use";
+				Log.v(TAG, message);
+				cardid = null;
+			} else {
+				message = "Assigning card No. "+cardid+" to member.";
+				Log.v(TAG, message);
+				if (alertDialog != null){
+					alertDialog.dismiss();
+					alertDialog = null;
+				}
+				updateMember();
+			}
+		}
+		cur.close();
+		//TOAST!
+		Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+		
+	}
+	
+	private void updateMember(){
+		ContentValues values = new ContentValues();
+		
+		values.put(ContentDescriptor.Member.Cols.CARDNO, cardid);
+		contentResolver.update(ContentDescriptor.Member.CONTENT_URI, values, ContentDescriptor.Member.Cols.MID+" = ?",
+				new String[] {mid});
+		Log.v(TAG, "Updated Member id:"+mid+" with cardno: "+cardid);
+		values = new ContentValues();
+		values.put(ContentDescriptor.PendingUpdates.Cols.TABLEID, ContentDescriptor.TableIndex.Values.Member.getKey());
+		values.put(ContentDescriptor.PendingUpdates.Cols.ROWID, mid);
+		
+		contentResolver.insert(ContentDescriptor.PendingUpdates.CONTENT_URI, values);
 	}
 	
 	private void showPhoneWindow(ArrayList<String> phones) {
@@ -260,7 +336,7 @@ public class MemberActionsFragment extends Fragment implements OnClickListener {
 		checkinWindow = inflater.inflate(R.layout.alert_manual_checkin, null);
 		String name = null;
 		cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, new String[] {Member.Cols.FNAME, Member.Cols.SNAME},
-				"m."+ContentDescriptor.Member.Cols.MID+" = ?", new String[] {String.valueOf(mId)}, null);
+				"m."+ContentDescriptor.Member.Cols.MID+" = ?", new String[] {String.valueOf(mid)}, null);
 		if (!cur.moveToFirst()) {
 			return;
 		}
@@ -284,7 +360,7 @@ public class MemberActionsFragment extends Fragment implements OnClickListener {
 		
 		ArrayList<String> membershiplist = new ArrayList<String>();
 		cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols.MID+" = ?",
-				new String[] {mId}, null);
+				new String[] {mid}, null);
 		while (cur.moveToNext()) {
 			//Log.v(TAG, "membership:"+cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PNAME)));
 			membershiplist.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PNAME)));
@@ -305,7 +381,7 @@ public class MemberActionsFragment extends Fragment implements OnClickListener {
 					Spinner membershipSpinner = (Spinner) checkinWindow.findViewById(R.id.manual_checkin_membership);
 					cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, new String[] 
 							{ContentDescriptor.Membership.Cols.MSID}, ContentDescriptor.Membership.Cols.MID+" = ?",
-							new String[] {mId}, null);
+							new String[] {mid}, null);
 					int membershipid = -1;
 					try {
 						cur.moveToPosition(membershipSpinner.getSelectedItemPosition());
@@ -328,7 +404,7 @@ public class MemberActionsFragment extends Fragment implements OnClickListener {
 					Intent updateInt = new Intent(getActivity(), HornetDBService.class);
 					Bundle extras = new Bundle(3);
 					extras.putInt("doorid", doorid);
-					extras.putInt("memberid", Integer.parseInt(mId));
+					extras.putInt("memberid", Integer.parseInt(mid));
 					extras.putInt("membershipid", membershipid);
 					
 					updateInt.putExtras(extras);

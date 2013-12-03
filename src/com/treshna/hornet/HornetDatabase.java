@@ -24,6 +24,7 @@ import com.treshna.hornet.ContentDescriptor.MembershipSuspend;
 import com.treshna.hornet.ContentDescriptor.OpenTime;
 import com.treshna.hornet.ContentDescriptor.PaymentMethod;
 import com.treshna.hornet.ContentDescriptor.PendingDownloads;
+import com.treshna.hornet.ContentDescriptor.PendingUpdates;
 import com.treshna.hornet.ContentDescriptor.PendingUploads;
 import com.treshna.hornet.ContentDescriptor.Programme;
 import com.treshna.hornet.ContentDescriptor.Resource;
@@ -36,7 +37,7 @@ import com.treshna.hornet.ContentDescriptor.Visitor;
 public class HornetDatabase extends SQLiteOpenHelper {
 	
 	 public static final String DATABASE_NAME="hornet.db";
-	 private static final int DATABASE_VERSION = 91;
+	 private static final int DATABASE_VERSION = 92;
 	 
 	 public HornetDatabase (Context context) {
 		 super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -241,7 +242,7 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		//it will use the Postgresql ID's in the rowid column (MemberID, membershipID, etc), 
 		//not the local id's.
 		// (over-write all previous data for row).
-		db.execSQL("CREATE TABLE "+PendingDownloads.NAME+" ("+PendingUploads.Cols._ID+" INTEGER PRIMARY KEY, "
+		db.execSQL("CREATE TABLE "+PendingDownloads.NAME+" ("+PendingDownloads.Cols._ID+" INTEGER PRIMARY KEY, "
 				+PendingDownloads.Cols.TABLEID+" INTEGER, "+PendingDownloads.Cols.ROWID+" INTEGER "
 				+");");
 		
@@ -283,7 +284,9 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		//SQL patches.
 		db.execSQL(UpdateDatabase.Ninety.SQL);
 		db.execSQL(UpdateDatabase.NinetyOne.SQL);
-
+		db.execSQL(UpdateDatabase.NinetyTwo.SQL);
+		db.execSQL(UpdateDatabase.NinetyThree.SQL);
+		db.execSQL("pragma full_column_names=ON;"); //TODO: will this break stuff?
 	}
 	
 
@@ -294,19 +297,16 @@ public class HornetDatabase extends SQLiteOpenHelper {
 				"Upgrading database from version " + oldVersion + " to "
 						+ newVersion );
 		
-		for (int version = (oldVersion+1); version <= newVersion; version++) {
-			if (version < 89) {
-				//baseline everything to version 89, after wards use ALTERS etc to make modifications.
+		for (int version = (oldVersion+1); version <= newVersion; version++) { //old+1 because we're already at the old version.
+			if (version <= 89) {
+				/*Drop db and create db include the alters already, if we're baselining we can
+				 * skip the rest of this switch case.
+				 */
 				dropTables(db);
 				onCreate(db);
 				return;
 			}
 			switch (version){
-			case (89):{
-				dropTables(db);
-				onCreate(db);
-				return;
-			}
 			case (90):{
 				Log.w(HornetDatabase.class.getName(),"SQL-Patch:90 \n"+ UpdateDatabase.Ninety.SQL);
 				db.execSQL(UpdateDatabase.Ninety.SQL);
@@ -315,6 +315,17 @@ public class HornetDatabase extends SQLiteOpenHelper {
 			case (91):{
 				Log.w(HornetDatabase.class.getName(), "SQL-Patch:91 \n"+UpdateDatabase.NinetyOne.SQL);
 				db.execSQL(UpdateDatabase.NinetyOne.SQL);
+				break;
+			}
+			case (92):{
+				Log.w(HornetDatabase.class.getName(), "SQL-Patch:92 \n"+UpdateDatabase.NinetyTwo.SQL);
+				db.execSQL(UpdateDatabase.NinetyTwo.SQL);
+				break;
+			}
+			case (93):{
+				Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL);
+				db.execSQL("pragma full_column_names=ON;"); //TODO: will this break stuff?
 				break;
 			}
 			}
@@ -327,11 +338,10 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS "+Member.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+Image.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+Visitor.NAME);
-		db.execSQL("DROP TABLE IF EXISTS "+Membership.NAME); //save this
+		db.execSQL("DROP TABLE IF EXISTS "+Membership.NAME);
 		
 		db.execSQL("DROP TABLE IF EXISTS "+BookingTime.NAME);
 		
-		//below code is to move unused bookingID's into the rebuilt database. (save getting them again).
 		Cursor cur = db.query(Booking.NAME, null, Booking.Cols.LASTUPDATE+" = 0", 
 				null, null, null, null);
 		db.execSQL("CREATE TABLE old_"+Booking.NAME+" ("+Booking.Cols.ID+" INTEGER PRIMARY KEY, "
@@ -347,23 +357,24 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS "+Booking.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+Resource.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+Company.NAME);
-		db.execSQL("DROP TABLE IF EXISTS "+Swipe.NAME);   //likewise, this should be saved rather than drop.
+		db.execSQL("DROP TABLE IF EXISTS "+Swipe.NAME);   
 		db.execSQL("DROP TABLE IF EXISTS "+Programme.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+Time.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+Bookingtype.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+ResultStatus.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+OpenTime.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+Date.NAME);
-		db.execSQL("DROP TABLE IF EXISTS "+Class.NAME); //and some of this
+		db.execSQL("DROP TABLE IF EXISTS "+Class.NAME); 
 		db.execSQL("DROP TABLE IF EXISTS "+TableIndex.NAME);
-		db.execSQL("DROP TABLE IF EXISTS "+PendingUploads.NAME); //TODO: save this
-		db.execSQL("DROP TABLE IF EXISTS "+MembershipSuspend.NAME); //and this
+		db.execSQL("DROP TABLE IF EXISTS "+PendingUploads.NAME); 
+		db.execSQL("DROP TABLE IF EXISTS "+MembershipSuspend.NAME); 
 		db.execSQL("DROP TABLE IF EXISTS "+IdCard.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+PaymentMethod.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+PendingDownloads.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+Door.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+MemberNotes.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+MemberBalance.NAME);
+		db.execSQL("DROP TABLE IF EXISTS "+PendingUpdates.NAME);
 	}
 	
 	private void repopulateTable(SQLiteDatabase db) {

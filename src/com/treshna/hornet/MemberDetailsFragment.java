@@ -42,18 +42,19 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.treshna.hornet.BookingPage.TagFoundListener;
 import com.treshna.hornet.ContentDescriptor.Member;
 import com.treshna.hornet.R.color;
 import com.treshna.hornet.R.id;
 	//TODO: more null handling
-public class MemberDetailsFragment extends Fragment implements OnClickListener {
+public class MemberDetailsFragment extends Fragment implements OnClickListener, TagFoundListener {
 	Cursor cur;
 	ContentResolver contentResolver;
 	String memberID;
 	private View view;
 	private String visitDate;
 	private int selectedFragment;
-	
+	private TagFoundListener tagFoundListener;
 	private static final String TAG = "MemberDetails";
 	 
 	@Override
@@ -233,6 +234,7 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener {
 	        f.setArguments(bdl);
 	        selectedFragment = R.id.button_member_navigation_memberships;
 		}
+		tagFoundListener = (TagFoundListener) f;
 		FragmentManager fm = this.getChildFragmentManager();		
 		FragmentTransaction ft = fm.beginTransaction();
 
@@ -298,5 +300,10 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener {
 			break;
 		}
 		}
+	}
+
+	@Override
+	public void onNewTag(String serial) {
+		tagFoundListener.onNewTag(serial);
 	}	
 }

@@ -16,7 +16,9 @@ import android.provider.BaseColumns;
  *   10:								127 = MembershipSuspend
  *   11 = TableIndex					130:
  *   12:								135:
- *   13 = PendingUploads				140 = Visitor
+ *   13 = PendingUploads				16:
+ *   14:								17 = PendingUpdates
+ *   15 = PendingDownloads				140 = Visitor
  *   50:								111:
  *   55 = Company (unused)				112 = MemberNotes
  *   60:								113:
@@ -116,6 +118,7 @@ public class ContentDescriptor {
 	     matcher.addURI(authority, PendingUploads.PATH, PendingUploads.PATH_TOKEN);
 	     matcher.addURI(authority, PendingUploads.PATH_FOR_ID, PendingUploads.PATH_FOR_ID_TOKEN);
 	     matcher.addURI(authority, PendingDownloads.PATH, PendingDownloads.PATH_TOKEN);
+	     matcher.addURI(authority, PendingUpdates.PATH, PendingUpdates.PATH_TOKEN);
 	     matcher.addURI(authority, DeletedRecords.PATH, DeletedRecords.PATH_TOKEN);
 	     
 	     matcher.addURI(authority, MembershipSuspend.PATH, MembershipSuspend.PATH_TOKEN);
@@ -211,13 +214,14 @@ public class ContentDescriptor {
 	       	 	//added for merge with Pending.
 	       	 	public static final String DOB = "dob";
 	 			public static final String GENDER = "gender";
-	 			public static final String MEDICAL = "medical";
+	 			public static final String MEDICAL = "medical"; //rename this medicalconditions
 	 			public static final String STREET = "street";
 	 			public static final String SUBURB = "suburb";
 	 			public static final String CITY = "city";
 	 			public static final String POSTAL = "postal";
 	 			
 	        }
+	        
 	    }
 
 	 	public static class Visitor {
@@ -782,7 +786,7 @@ public class ContentDescriptor {
 	 		}
 	 	}
 	 	
-	 	//currently unused.
+	 	//used to redownload a members info after it's been uploaded.
 	 	public static class PendingDownloads {
 	 		public static final String NAME = "PendingDownloads";
 	 		public static final String PATH = "PendingDownloads";
@@ -793,6 +797,23 @@ public class ContentDescriptor {
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
 	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.pendingdownloads";
 	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.pendingdownloads";
+	 		
+	 		public static class Cols implements BaseColumns {
+	 			public static final String ROWID = "rowid";
+	 			public static final String TABLEID = "tableid";
+	 		}
+	 	}
+	 	
+	 	public static class PendingUpdates {
+	 		public static final String NAME = "PendingUpdates";
+	 		public static final String PATH = "PendingUpdates";
+	 		public static final int PATH_TOKEN = 16;
+	 		public static final String PATH_FOR_ID = "PendingUpdates/*";
+	 		public static final int PATH_FOR_ID_TOKEN = 17;
+	 		
+	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
+	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.pendingupdates";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.pendingupdates";
 	 		
 	 		public static class Cols implements BaseColumns {
 	 			public static final String ROWID = "rowid";

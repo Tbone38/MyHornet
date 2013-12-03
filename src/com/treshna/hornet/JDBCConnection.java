@@ -90,8 +90,17 @@ public class JDBCConnection {
             con = DriverManager.getConnection(getConnectionUrl(), properties);
     }
     
-    public boolean isConnected() throws SQLException {
-    	return con.isValid(4);
+    public boolean isConnected() {
+    	boolean result = false;
+    	try {
+    		result = !con.isClosed();
+    	} catch (SQLException e) {
+    		result = false;
+    	} catch (NullPointerException e) {
+    		result = false;
+    	}
+    	return result;
+    	
     }
     
     public void closeConnection(){
@@ -378,6 +387,7 @@ public class JDBCConnection {
     	if (where == null || where.isEmpty()) {
     		return 0;
     	}
+    	//find a way to make this easier to read.
     	String set = "UPDATE "+tablename+" SET (";
     	String value = "(";
     	for (int i = 0; i < values.size(); i++) {

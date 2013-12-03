@@ -131,7 +131,7 @@ public class HornetDBService extends Service {
  	   		
  	   		this_sync = System.currentTimeMillis();
  	   		last_sync = Long.parseLong(Services.getAppSettings(ctx, "last_freq_sync")); //use this for checking lastupdate
- 	   		
+ 	   		getPendingUpdates();
  	   		//get Visitors
  	   		boolean result = getLastVisitors();
 			if (result == true) { //If database query was successful, then look for images; else show toast.
@@ -159,6 +159,7 @@ public class HornetDBService extends Service {
 				Services.showToast(getApplicationContext(), statusMessage, handler);
 			}
 			
+			getPendingUpdates();
 			getPendingDownloads();
 			
 			//downloads!
@@ -879,6 +880,38 @@ public class HornetDBService extends Service {
     	}
     	
     	closeConnection();
+    	return result;
+    }
+    
+    private int updateMember(String memberid) {
+    	Log.v(TAG, "Updating Member for ID:"+memberid);
+    	int result = 0;
+    	String where = "id = "+memberid;
+    	cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, new String[] {ContentDescriptor.Member.Cols.NOTES,
+    			"m."+ContentDescriptor.Member.Cols.CARDNO}, ContentDescriptor.Member.Cols.MID+" = ?",
+    			new String[] {memberid}, null);
+    	
+    	if (!cur.moveToNext()) {
+    		cur.close();
+    		return 0;
+    	}
+    	ArrayList<String[]> values = new ArrayList<String[]>();
+    	/*for (int col =0; col < cur.getColumnCount(); col++){
+    		Log.d(TAG, "Column:"+cur.getColumnName(col)+"  Value:"+cur.getString(col));
+    	}*/
+    		values.add(new String[] {ContentDescriptor.Member.Cols.NOTES,"'"+
+    				cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.NOTES))+"'"});
+    		values.add(new String[] {ContentDescriptor.Member.Cols.CARDNO, 
+    				cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.CARDNO))});
+    		Log.d(TAG, "GOT CARDNO:"+cur.getInt(cur.getColumnIndex(ContentDescriptor.Member.Cols.CARDNO)));
+    	try {
+    		connection.updateRow(values, ContentDescriptor.Member.NAME, where);
+    	} catch (SQLException e) {
+    		statusMessage = e.getLocalizedMessage();
+    		e.printStackTrace();
+    		return -2;
+    	}
+    	cur.close();
     	return result;
     }
     	
@@ -2185,17 +2218,24 @@ public class HornetDBService extends Service {
     }
     
     private boolean openConnection(){
-    	try {
-    		connection.openConnection();
-    	} catch (SQLException e) {
-    		statusMessage = e.getLocalizedMessage();
-    		return false;
-    	} catch (ClassNotFoundException e) {
-    		//Postgresql JDBC driver missing!!
-    		//if we got here there was an issue with the installation.
-    		throw new RuntimeException(e);
+    	boolean connected = false;
+    	if (connection != null) {
+			connected = connection.isConnected();
     	}
-    	return true;
+    	if (!connected) {
+	    	try {
+	    		connection.openConnection();
+	    		connected = true;
+	    	} catch (SQLException e) {
+	    		statusMessage = e.getLocalizedMessage();
+	    		connected = false;
+	    	} catch (ClassNotFoundException e) {
+	    		//Postgresql JDBC driver missing!!
+	    		//if we got here there was an issue with the installation.
+	    		throw new RuntimeException(e);
+	    	}
+    	}
+    	return connected;
     }
     
     private void closeConnection() {
@@ -2966,6 +3006,60 @@ public class HornetDBService extends Service {
     		}
     	}
     	
+    	closeConnection();
+    	
+    	return result;
+    }
+    
+    private int getPendingUpdates() {
+    	int result = 0;
+    	ArrayList<String> memberids = new ArrayList<String>();
+    	cur = contentResolver.query(ContentDescriptor.PendingUpdates.CONTENT_URI, null, null, null, null);
+    	while (cur.moveToNext()) {
+    		if (cur.getInt(cur.getColumnIndex(ContentDescriptor.PendingUpdates.Cols.TABLEID)) 
+    				== ContentDescriptor.TableIndex.Values.Member.getKey()) {
+    			memberids.add(cur.getString(cur.getColumnIndex(ContentDescriptor.PendingUpdates.Cols.ROWID)));
+    		} else {
+    			//another type of update.
+    			//should probably throw an error so I know to write code here.
+    		}
+    	}
+    	
+    	if (!openConnection()) {
+    		return -1;
+    	}
+    	//handle the member updates.
+    	for (int i= 0; i< memberids.size(); i++) {
+    		switch ( updateMember(memberids.get(i)) ){
+    		case (1): {//success
+    			result = result+1;
+    			//delete the row;
+    			contentResolver.delete(ContentDescriptor.PendingUpdates.CONTENT_URI, ContentDescriptor.PendingUpdates.Cols.TABLEID
+    					+" = ? AND "+ContentDescriptor.PendingUpdates.Cols.ROWID+" = ?",
+    					new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Member.getKey()), memberids.get(i)
+    			});
+    			break;
+    		}
+    		case (-2): { //SQL error
+    			//keep trying, we'll come back to it.
+    			contentResolver.delete(ContentDescriptor.PendingUpdates.CONTENT_URI, ContentDescriptor.PendingUpdates.Cols.TABLEID
+    					+" = ? AND "+ContentDescriptor.PendingUpdates.Cols.ROWID+" = ?",
+    					new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Member.getKey()), memberids.get(i)
+    			});
+    			break;
+    		}
+    		case (0):{ //row not found.
+    			contentResolver.delete(ContentDescriptor.PendingUpdates.CONTENT_URI, ContentDescriptor.PendingUpdates.Cols.TABLEID
+    					+" = ? AND "+ContentDescriptor.PendingUpdates.Cols.ROWID+" = ?",
+    					new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Member.getKey()), memberids.get(i)
+    			});
+    			
+    			break;
+    		}
+    		}
+    	}
+    	
+    	closeConnection();
     	return result;
     }
     
