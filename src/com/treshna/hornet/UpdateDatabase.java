@@ -64,6 +64,6 @@ public class UpdateDatabase {
 				
 				+"COMMIT;"
 				
-				+ "";
+				+ ""; //ADD TRIGGERS FOR ON UPDATES (set pending UPLOADS/UPDATES).
 	}
 }

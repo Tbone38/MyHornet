@@ -31,12 +31,16 @@ public class DatePickerFragment extends DialogFragment
 		} catch (NullPointerException e) {
 			date = null;
 		}
-		if (date == null) {
-			date = Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd"); 
-		}
 		
+		if (date == null || !(date instanceof String) || date.isEmpty()) {
+			SimpleDateFormat format = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
+			date = Services.dateFormat(format.format(new Date()), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd"); 
+		}
 		//ensure's 0's are in the correct place.
-		if (date.length() <8) date = date.substring(0, 4)+"0"+date.substring(4);
+		Log.v(TAG, date);
+		if (date.length() <8) {
+			date = date.substring(0, 4)+"0"+date.substring(4);
+		}
 		
 		c = Calendar.getInstance();
 		c.set(Integer.parseInt(date.substring(0, 4)), (Integer.parseInt(date.substring(4, 6))-1), Integer.parseInt(date.substring(6)));
@@ -44,7 +48,6 @@ public class DatePickerFragment extends DialogFragment
 		year = c.get(Calendar.YEAR);
 		month = c.get(Calendar.MONTH);
 		day = c.get(Calendar.DAY_OF_MONTH);
-		//System.out.print("\n\n"+year+" "+month+" "+day);
 		// Create a new instance of DatePickerDialog and return it
 		return new DatePickerDialog(getActivity(), this, year, month, day);
 	

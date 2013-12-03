@@ -59,7 +59,7 @@ public class HornetDBService extends Service {
 	public int onStartCommand(final Intent intent, int flags, int startId) {  //final ?
 	   handler = new Handler();
 	   
-	   
+
 	   SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 	   connection = new JDBCConnection(preferences.getString("address", "-1"),preferences.getString("port", "-1"),
 				 preferences.getString("database", "-1"), preferences.getString("username", "-1"),
@@ -116,7 +116,8 @@ public class HornetDBService extends Service {
  	   		long polling_start = PreferenceManager.getDefaultSharedPreferences(ctx).getLong(PollingHandler.POLLING_START, -1);
  	   		long threehours = (180 * 60 * 1000);
  	   		long currenttime = new Date().getTime();
- 	   		
+
+ 		   //TODO: remove this code.
  	   		if (currenttime > (polling_start+threehours)) {
  	   			//polling has been running for over three hours, turn it off.
  	   			//I should probably let myself know that the Polling has been turned off.
@@ -1494,6 +1495,7 @@ public class HornetDBService extends Service {
     	Date date;
     	int currentDay;
     	ContentValues values;
+    	SimpleDateFormat format = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
     	
     	contentResolver.delete(ContentDescriptor.Date.CONTENT_URI, null, null);
     	Log.v(TAG, "Setting Date!!");
@@ -1501,14 +1503,12 @@ public class HornetDBService extends Service {
     	current = Calendar.getInstance();
     	maximum = Calendar.getInstance();
     	maximum.add(Calendar.MONTH, 1);
-    	//Log.e(TAG, "MAXIMUM DATE:"+maximum.getTime().toString());
     	current.add(Calendar.MONTH, -1);
-    	//Log.e(TAG, "CURRENT DATE:"+current.getTime().toString());
 		while (current.getTimeInMillis() <= maximum.getTimeInMillis()) { //TODO: how many dates to store?
 			date = current.getTime();
 			currentDay = current.get(Calendar.DAY_OF_WEEK);
 			values = new ContentValues();
-			values.put(ContentDescriptor.Date.Cols.DATE, Services.dateFormat(date.toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd"));
+			values.put(ContentDescriptor.Date.Cols.DATE, Services.dateFormat(format.format(date), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd"));
 			values.put(ContentDescriptor.Date.Cols.DAYOFWEEK, currentDay);
 			contentResolver.insert(ContentDescriptor.Date.CONTENT_URI, values);
 			current.add(Calendar.DATE, 1);
@@ -1523,10 +1523,7 @@ public class HornetDBService extends Service {
 		int interval;
 		Calendar day, upperlimit, lowerlimit;
 		
-		/*
-		if (interval != 15 && interval != 30 && interval != 60) interval = 15; //default every 15 minutes.
-		*/
-		interval = 15; //try defaulting to 15 minutes, see if that fixes or creates issues
+		interval = 15; //DEFAULT INTERVER = 15.
 		day = Calendar.getInstance();
 		day.add(Calendar.DATE, -1);
 		
