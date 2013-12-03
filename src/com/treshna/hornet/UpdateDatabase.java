@@ -6,6 +6,14 @@ import com.treshna.hornet.ContentDescriptor.PendingUpdates;
 import com.treshna.hornet.ContentDescriptor.TableIndex;
 import com.treshna.hornet.ContentDescriptor.Visitor;
 
+/**
+ * Ideally these want to be seperate sql files in the assets folder/sub-dir.
+ * However, I need to reference the column/table statics that are in the ContentDescriptor Class.
+ * 
+ * How do I solve?
+ * @author callum
+ *
+ */
 public class UpdateDatabase {
 	
 	public static class Ninety {
@@ -54,6 +62,8 @@ public class UpdateDatabase {
 				+" FROM tmp_"+Visitor.NAME+";"
 				+"DROP TABLE tmp_"+Visitor.NAME+";"
 				
-				+"COMMIT;";
+				+"COMMIT;"
+				
+				+ "";
 	}
 }

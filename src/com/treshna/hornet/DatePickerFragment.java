@@ -24,7 +24,7 @@ public class DatePickerFragment extends DialogFragment
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		// Use the current date as the default date in the picker
 		int year, month, day;
-		String date;
+		String date = null;
 		final Calendar c;
 		try {
 			date = (String) getArguments().get(Services.Statics.KEY);
