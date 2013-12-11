@@ -113,7 +113,7 @@ public class HornetDBService extends Service {
  	   	case (Services.Statics.FREQUENT_SYNC): { //this should be run frequently
  	   		
  	   		thread.is_networking = true;
- 	   		long polling_start = PreferenceManager.getDefaultSharedPreferences(ctx).getLong(PollingHandler.POLLING_START, -1);
+ 	   		/*long polling_start = PreferenceManager.getDefaultSharedPreferences(ctx).getLong(PollingHandler.POLLING_START, -1);
  	   		long threehours = (180 * 60 * 1000);
  	   		long currenttime = new Date().getTime();
 
@@ -128,7 +128,7 @@ public class HornetDBService extends Service {
  	   			}
  	   			Services.setPreference(ctx, "sync_frequency", "-1");
  	   			return;
- 	   		}
+ 	   		}*/
  	   		
  	   		this_sync = System.currentTimeMillis();
  	   		last_sync = Long.parseLong(Services.getAppSettings(ctx, "last_freq_sync")); //use this for checking lastupdate
