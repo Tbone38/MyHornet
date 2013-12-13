@@ -268,7 +268,7 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 			cur.close();
 			//how many students are currently signed up?
 			cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.PARENTID+" = ?",
-					new String[] {bookingID}, null);
+					new String[] {bookingID}, null); //&& STATUS >= 10 || status == NULL ?
 			curStudents = cur.getCount();
 			
 			if (curStudents >= maxStudents || online == 0) {
