@@ -112,7 +112,6 @@ public class MemberActionsFragment extends Fragment implements OnClickListener, 
 			call.setTag(callTag);
 			call.setOnClickListener(this);
 		} else {
-			call.setVisibility(View.GONE);
 			call.setBackgroundColor(getActivity().getResources().getColor(R.color.white));
 			call.setClickable(false);
 			TextView text = (TextView) call.findViewById(R.id.button_call_text);
@@ -216,7 +215,6 @@ public class MemberActionsFragment extends Fragment implements OnClickListener, 
 	
 	private void swipeBox(){
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-		
 		builder.setTitle("Swipe Tag")
 		.setMessage("Please Swipe a tag against the device");
 		alertDialog = builder.create();

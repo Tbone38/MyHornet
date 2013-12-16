@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="filter_member">Filter</string>
+    <string name="button_filter_apply">Apply Filter</string>
+    <string name="button_filter_reset">Reset</string>
+    <string name="button_filter_reset_apply">Reset &amp; Apply</string>
+    <string name="filter_membership">By Membership</string>
+    <string name="filter_gender">By Gender</string>
+    <string name="filter_gender_male">Male</string>
+    <string name="filter_gender_female">Female</string>
+    <string name="filter_owing">Owes Money</string>
+</resources>

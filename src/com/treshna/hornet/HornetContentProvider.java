@@ -370,6 +370,25 @@ public class HornetContentProvider extends ContentProvider {
                 }
                 return builder.query(db, projection, selection, selectionArgs, "m."+ContentDescriptor.Member.Cols.MID, null, sortOrder);
             }
+ 
+            case ContentDescriptor.Member.TOKEN_FIND:{
+            	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+            	builder.setTables(ContentDescriptor.Member.NAME+" m "
+            			+"LEFT JOIN "+ContentDescriptor.MemberBalance.NAME+" mb"
+            			+" ON (m."+ContentDescriptor.Member.Cols.MID+" = mb."+ContentDescriptor.MemberBalance.Cols.MID
+            			+") "
+            			+ "LEFT JOIN "+ContentDescriptor.Membership.NAME+" ms "
+            			+ "ON (ms."+ContentDescriptor.Membership.Cols.MID+" = m."+ContentDescriptor.Member.Cols.MID
+            			+ ")");
+            	if (selection.isEmpty()) {
+            		selection = "("+ContentDescriptor.Member.Cols.STATUS+" >= 0 OR "+ContentDescriptor.Member.Cols.STATUS
+                			+" IS NULL)";
+            	} else {
+            		selection = selection+" AND ("+ContentDescriptor.Member.Cols.STATUS+" >= 0 OR "+ContentDescriptor.Member.Cols.STATUS
+                			+" IS NULL)";
+            	}
+            	return builder.query(db, projection, selection, selectionArgs, "m."+ContentDescriptor.Member.Cols.MID, null, sortOrder);
+            }
             case ContentDescriptor.Member.PATH_FOR_ID_TOKEN:{
                 SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
                 

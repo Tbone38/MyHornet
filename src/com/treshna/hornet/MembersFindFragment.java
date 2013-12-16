@@ -1,13 +1,14 @@
 package com.treshna.hornet;
 
+import java.util.ArrayList;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
@@ -20,11 +21,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
-public class MembersFindFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class MembersFindFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor>, OnClickListener {
 	
 	Cursor cur;
 	ContentResolver contentResolver;
@@ -33,9 +38,13 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 	Context parent;
 	View view;
 	private static String input;
+	private String membership = null;
+	private String gender = null;
+	private String owes = null;
 	private boolean is_booking;
 	private OnMemberSelectListener mCallback;
 	private static final String TAG = "MemberFindFragment";
+	private AlertDialog mFilter;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -88,6 +97,13 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 		 setupView();
 	 }
 	 
+	private void setupFilter() {
+		LinearLayout filterbutton = (LinearLayout) view.findViewById(R.id.member_find_color_block);
+		filterbutton.setOnClickListener(this);
+		
+		ImageView filter_icon = (ImageView) filterbutton.findViewById(R.id.member_find_filter_drawable);
+		filter_icon.setColorFilter(Services.ColorFilterGenerator.setColourGrey());
+	}
 
 	@SuppressLint("NewApi")
 	private void setupView(){
@@ -118,9 +134,9 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 		});
 		getActivity().getWindow().getDecorView().setBackgroundColor(Color.WHITE);
 		
-		// TODO 	- Sort up the member & membership join 		- DONE
-		//			- handle Bookings differently				- DONE
-		//			-
+		//Setup Filter
+		setupFilter();
+		
 		if (is_booking) {
 			mAdapter = new MembersFindAdapter(parent,R.layout.member_find_row, null, from, to, true, mCallback);
 		} else {
@@ -145,10 +161,32 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 	@Override
 	public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle) {
 		
-		if (input != null) {
-			return new CursorLoader( getActivity(), ContentDescriptor.Member.CONTENT_URI,
-					null, ContentDescriptor.Member.Cols.FNAME+"||' '||"+ContentDescriptor.Member.Cols.SNAME+" LIKE ?"
-					, new String[] {"%"+input+"%"}, null); 
+		if (input != null || owes != null || gender != null || membership != null) {
+			String where = "";
+			String[] whereArgs = null;
+			if (input != null) {
+				where = where +ContentDescriptor.Member.Cols.FNAME+"||' '||"+ContentDescriptor.Member.Cols.SNAME+" LIKE ? ";
+				whereArgs = new String[] {"%"+input+"%"}; 
+			}
+			if (owes != null) {
+				if (!where.isEmpty()) where = where + "AND ";
+				where = where + ContentDescriptor.MemberBalance.Cols.BALANCE+" NOT LIKE '-%' AND "
+						+ ContentDescriptor.MemberBalance.Cols.BALANCE+" != '$0.00' ";
+			}
+			if (gender != null) {
+				if (!where.isEmpty()) where = where + "AND ";
+				where = where + ContentDescriptor.Member.Cols.GENDER+" LIKE '"+gender+"%' ";
+			}
+			if (membership != null) {
+				if (!where.isEmpty()) where = where + "AND ";
+				where = where + ContentDescriptor.Member.Cols.MID+" IN (SELECT "+ContentDescriptor.Membership.Cols.MID
+						+" FROM "+ContentDescriptor.Membership.NAME+" WHERE "+ContentDescriptor.Membership.Cols.PNAME
+						+" = '"+membership+"')";
+			}
+			/*return new CursorLoader( getActivity(), ContentDescriptor.Member.CONTENT_URI,
+					null, where, whereArgs, null);*/
+			return new CursorLoader( getActivity(), ContentDescriptor.Member.URI_FIND,
+					null, where, whereArgs, null);
 		} else {
 			return new CursorLoader( getActivity(), ContentDescriptor.Member.CONTENT_URI,
 					null, null, null, null );
@@ -186,11 +224,96 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 	            mCallback = (OnMemberSelectListener) activity;
 	        } catch (ClassCastException e) {
 	            //mCallback not set
+	        	//we can set it manually after.
 	        }
 	    }
 	 
 	 public void setMemberSelectListener(OnMemberSelectListener theListener) {
 		 this.mCallback = theListener;
 	 }
+	 
+	 private void showFilterWindow(){
+		 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		 LayoutInflater inflater = getActivity().getLayoutInflater();
+		 View v = inflater.inflate(R.layout.alert_find_filter, null);
+		
+		 Spinner select_membership = (Spinner) v.findViewById(R.id.membership_spinner);
+		 ArrayList<String> memberships = new ArrayList<String>();
+		 Cursor cur = contentResolver.query(ContentDescriptor.Programme.CONTENT_URI, null, null, null, null);
+		 memberships.add(" ");
+		 while (cur.moveToNext()) {
+			 memberships.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Programme.Cols.NAME)));
+		 }
+		 cur.close();
+		 
+		 ArrayAdapter<String> membershipsAdapter = new ArrayAdapter<String>(getActivity(),
+					android.R.layout.simple_spinner_item, memberships);
+				membershipsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+				select_membership.setAdapter(membershipsAdapter);
+		 
+				
+		TextView applyFilter = (TextView) v.findViewById(R.id.button_apply_text);
+		applyFilter.setOnClickListener(this);
+		
+		TextView resetFilter = (TextView) v.findViewById(R.id.button_reset_text);
+		resetFilter.setOnClickListener(this);
+		
+		TextView cancel = (TextView) v.findViewById(R.id.button_cancel_text);
+		cancel.setOnClickListener(this);
+		
+		 builder.setTitle("Filter Members")
+		 	.setView(v);
+		 mFilter = builder.create();
+		 mFilter.show();
+	 }
+	 
+	private void getFilters(){
+		Spinner selectedMembership = (Spinner) mFilter.findViewById(R.id.membership_spinner);
+		int selectedPos = selectedMembership.getSelectedItemPosition();
+		if (selectedPos > 0) {
+			membership = selectedMembership.getItemAtPosition(selectedPos).toString();
+			Log.v(TAG, membership);
+		}
+		
+		ToggleButton show_owe = (ToggleButton) mFilter.findViewById(R.id.filter_owing);
+		if (show_owe.isChecked()) {
+			owes = "1";
+		} else {
+			owes = null;
+		};
+	}
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()){
+		case (R.id.member_find_color_block):{
+			//show pop-up.
+			showFilterWindow();
+			break;
+		}
+		case (R.id.button_cancel_text):{
+			if (mFilter != null && mFilter.isShowing()) {
+				mFilter.dismiss();
+			}
+			break;
+		}
+		case (R.id.button_reset_text):{
+			//reset the filter, apply.
+			owes = null;
+			membership = null;
+			gender = null;
+			loadermanager.restartLoader(0, null, this);
+			mFilter.dismiss();
+			break;
+		}
+		case (R.id.button_apply_text):{
+			//get current filter setup, apply.
+			getFilters();
+			mFilter.dismiss();
+			loadermanager.restartLoader(0, null, this);
+			break;
+		}
+		}
+	}
 	
 }

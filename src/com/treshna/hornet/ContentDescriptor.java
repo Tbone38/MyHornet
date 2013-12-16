@@ -28,7 +28,7 @@ import android.provider.BaseColumns;
  *   80:								160:
  *   90 = ResultStatus					165 = Images
  *   91:								200 = UnusedMemberIDs
- *   92 = OpenTime						
+ *   92 = OpenTime						201 = MemberFind
  *   93:								220:
  *   94 = Date							230 = Swipe
  *  100:								300:
@@ -132,6 +132,7 @@ public class ContentDescriptor {
 	     matcher.addURI(authority, MemberBalance.PATH, MemberBalance.PATH_TOKEN);
 	     matcher.addURI(authority, Member.PATH_JOIN_BALANCE, Member.TOKEN_JOIN_BALANCE);
 	     matcher.addURI(authority, Member.PATH_FREE_IDS, Member.TOKEN_FREE_IDS);
+	     matcher.addURI(authority, Member.PATH_FIND, Member.TOKEN_FIND);
 	     
 	     matcher.addURI(authority, DROPTABLE, TOKEN_DROPTABLE);
 	     
@@ -148,7 +149,9 @@ public class ContentDescriptor {
 	        public static final String PATH_FOR_ID = "Member/*";
 	        public static final int PATH_FOR_ID_TOKEN = 110;
 	        
-	        
+	        public static final String PATH_FIND = "MemberFind";
+	        public static final int TOKEN_FIND = 201;
+	        public static final Uri URI_FIND = BASE_URI.buildUpon().appendPath(PATH_FIND).build();
 	 
 	        public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
 	        public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.member";
