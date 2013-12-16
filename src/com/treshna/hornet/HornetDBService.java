@@ -2956,6 +2956,7 @@ public class HornetDBService extends Service {
 		values.put(ContentDescriptor.Member.Cols.NOTES, rs.getString("mnotes")); 
 		values.put(ContentDescriptor.Member.Cols.STATUS, rs.getString("status"));
 		values.put(ContentDescriptor.Member.Cols.CARDNO, rs.getString("cardno"));
+		values.put(ContentDescriptor.Member.Cols.GENDER, rs.getString("gender"));
 		
 		return values;
     }
@@ -2985,7 +2986,7 @@ public class HornetDBService extends Service {
         			+"CASE WHEN member.happiness = 1 THEN ':)' WHEN member.happiness = 0 THEN ':|'"
         			+" WHEN member.happiness <= -1 THEN ':(' WHEN member.happiness = 2 THEN '||' ELSE '' END AS happiness, "
         			+"member.phonehome AS mphhome, member.phonework AS mphwork, member.phonecell AS mphcell, "
-        			+"member.email AS memail, member.notes AS mnotes, member.status FROM member"
+        			+"member.email AS memail, member.notes AS mnotes, member.status, member.gender FROM member"
         			+" WHERE id = "+member.get(i)+";";
     		ResultSet rs;
     		try {

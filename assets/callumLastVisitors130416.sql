@@ -1,6 +1,7 @@
 SELECT
     member.id AS memberid,
-    member.cardno AS membercardno, 
+    member.cardno AS membercardno,
+    member.gender AS gender, 
     entryexit.membershipid,
     entryexit.cardno as cardno,
     entryexit.time as datetime,

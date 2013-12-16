@@ -356,7 +356,7 @@ public class JDBCConnection {
     			+"CASE WHEN member.happiness = 1 THEN ':)' WHEN member.happiness = 0 THEN ':|'"
     			+" WHEN member.happiness <= -1 THEN ':(' WHEN member.happiness = 2 THEN '||' ELSE '' END AS happiness, "
     			+"member.phonehome AS mphhome, member.phonework AS mphwork, member.phonecell AS mphcell, "
-    			+"member.email AS memail, member.notes AS mnotes, member.status, member.cardno FROM member"
+    			+"member.email AS memail, member.notes AS mnotes, member.status, member.cardno, member.gender FROM member"
     			+" WHERE status != 3";
     	if (lastupdate != null) {
     		query = query + " AND lastupdate > ?::TIMESTAMP WITHOUT TIME ZONE";
@@ -372,7 +372,6 @@ public class JDBCConnection {
     	return rs;
     }
     
-    //TODO: unimplemented.
     /**
      * updates tablename with the key/value pairs from the 3D array (0 is column name, 1 is value),
      * for the condition in the WHERE;

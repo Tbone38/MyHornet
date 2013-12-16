@@ -12,6 +12,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.net.Uri;
+import android.nfc.NfcAdapter;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -128,8 +130,17 @@ public class MemberActionsFragment extends Fragment implements OnClickListener, 
 		gallery.setOnClickListener(this);
 		gallery.setTag(memberID);
 
+		
 		LinearLayout addtag = (LinearLayout) view.findViewById(R.id.button_tag);
-		addtag.setOnClickListener(this);
+		if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1 &&
+				NfcAdapter.getDefaultAdapter(getActivity()) != null) {
+			addtag.setOnClickListener(this);
+		} else {
+			addtag.setBackgroundColor(getActivity().getResources().getColor(R.color.white));
+			addtag.setClickable(false);
+			TextView text = (TextView) addtag.findViewById(R.id.button_tag_text);
+			text.setTextColor(getActivity().getResources().getColor(R.color.grey));
+		}
 		
 		cur.close();
 		

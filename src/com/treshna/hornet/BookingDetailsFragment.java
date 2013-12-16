@@ -210,11 +210,13 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 						sms.setClickable(true);
 						sms.setOnClickListener(this);
 					} else {
+						sms.setBackgroundColor(getActivity().getResources().getColor(R.color.white));
 						TextView smstext = (TextView)sms.findViewById(R.id.button_booking_sms_text);
 						smstext.setTextColor(color.grey);
 						sms.setClickable(false);
 					}
 				}else {
+					sms.setBackgroundColor(getActivity().getResources().getColor(R.color.white));
 					TextView smstext = (TextView)sms.findViewById(R.id.button_booking_sms_text);
 					smstext.setTextColor(color.grey);
 					sms.setClickable(false);
@@ -248,6 +250,7 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 					}
 				}
 				if (callNo[0].isEmpty() && callNo[1].isEmpty() && callNo[2].isEmpty()) {
+					call.setBackgroundColor(getActivity().getResources().getColor(R.color.white));
 					TextView calltext = (TextView) call.findViewById(R.id.button_booking_call_text);
 					calltext.setTextColor(color.grey);
 					call.setClickable(false);

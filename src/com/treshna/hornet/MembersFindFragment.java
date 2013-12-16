@@ -15,6 +15,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,6 +26,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -162,32 +164,52 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 	public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle) {
 		
 		if (input != null || owes != null || gender != null || membership != null) {
+			//setup the filter window:
+			LinearLayout filter_message_box = (LinearLayout) view.findViewById(R.id.filter_message);
+			filter_message_box.setVisibility(View.VISIBLE);
+
+			TextView reset_filter = (TextView) view.findViewById(R.id.button_reset_filter);
+			reset_filter.setOnClickListener(this);
+			
+			TextView filter_message = (TextView) view.findViewById(R.id.filter_details_text);
+			String message = "Filters applied: ";
+
+			
 			String where = "";
 			String[] whereArgs = null;
 			if (input != null) {
 				where = where +ContentDescriptor.Member.Cols.FNAME+"||' '||"+ContentDescriptor.Member.Cols.SNAME+" LIKE ? ";
-				whereArgs = new String[] {"%"+input+"%"}; 
+				whereArgs = new String[] {"%"+input+"%"};
+				message = message + "Name: <b>"+input+"</b>;  ";
 			}
 			if (owes != null) {
 				if (!where.isEmpty()) where = where + "AND ";
 				where = where + ContentDescriptor.MemberBalance.Cols.BALANCE+" NOT LIKE '-%' AND "
 						+ ContentDescriptor.MemberBalance.Cols.BALANCE+" != '$0.00' ";
+				message = message + "<b>Owes Money</b>;  ";
 			}
 			if (gender != null) {
 				if (!where.isEmpty()) where = where + "AND ";
 				where = where + ContentDescriptor.Member.Cols.GENDER+" LIKE '"+gender+"%' ";
+				message = message + "Gender: <b>"+gender+"</b>;  ";
 			}
 			if (membership != null) {
 				if (!where.isEmpty()) where = where + "AND ";
 				where = where + ContentDescriptor.Member.Cols.MID+" IN (SELECT "+ContentDescriptor.Membership.Cols.MID
 						+" FROM "+ContentDescriptor.Membership.NAME+" WHERE "+ContentDescriptor.Membership.Cols.PNAME
 						+" = '"+membership+"')";
+				message = message + "Membership: <b>"+membership+"</b>";
 			}
+			filter_message.setTextColor(getResources().getColor(R.color.text_green_shade));
+			filter_message.setText(Html.fromHtml(message));
 			/*return new CursorLoader( getActivity(), ContentDescriptor.Member.CONTENT_URI,
 					null, where, whereArgs, null);*/
 			return new CursorLoader( getActivity(), ContentDescriptor.Member.URI_FIND,
 					null, where, whereArgs, null);
 		} else {
+			LinearLayout filter_message_box = (LinearLayout) view.findViewById(R.id.filter_message);
+			filter_message_box.setVisibility(View.GONE);
+
 			return new CursorLoader( getActivity(), ContentDescriptor.Member.CONTENT_URI,
 					null, null, null, null );
 		}
@@ -281,6 +303,17 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 		} else {
 			owes = null;
 		};
+		//gender ?
+		RadioGroup getGender = (RadioGroup) mFilter.findViewById(R.id.gender_group);
+		if (getGender.getCheckedRadioButtonId() > 0) {
+			if (getGender.getCheckedRadioButtonId() == R.id.gender_male) {
+				gender = "M";
+			} else if (getGender.getCheckedRadioButtonId() == R.id.gender_female) {
+				gender = "F";
+			}
+		} else {
+			gender = null;
+		}
 	}
 
 	@Override
@@ -310,6 +343,13 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 			//get current filter setup, apply.
 			getFilters();
 			mFilter.dismiss();
+			loadermanager.restartLoader(0, null, this);
+			break;
+		}
+		case (R.id.button_reset_filter):{
+			owes = null;
+			membership = null;
+			gender = null;
 			loadermanager.restartLoader(0, null, this);
 			break;
 		}

@@ -1,6 +1,7 @@
 	v115:
-		-TODO:
+		-DONE:
 			Add member Find Filters,
+		-TODO:
 			Add Notes to Member,
 			Add Booking Day swipe,
 			Log Sync Errors, and upload them somewhere?
