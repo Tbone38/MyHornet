@@ -1,4 +1,5 @@
 INSTALLATION INSTRUCTION:
+test
 
 Copy the Hornet.apk file onto the device, OR install from the google-play store, it should detect and install automatically.
 
