@@ -1,24 +1,35 @@
 package com.treshna.hornet;
 
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
+import com.treshna.hornet.BookingPage.TagFoundListener;
+
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
-public class MemberNotesFragment extends MemberActionsFragment{
+public class MemberNotesFragment extends Fragment implements OnClickListener, TagFoundListener {
 	Cursor cur;
 	ContentResolver contentResolver;
 	String memberID;
 	private String visitDate;
 	private View view;
 	LayoutInflater mInflater;
+	private MemberActions mActions;
 	
 	private static final String TAG = "MemberNotes";
 	
@@ -29,6 +40,7 @@ public class MemberNotesFragment extends MemberActionsFragment{
 		contentResolver = getActivity().getContentResolver();
 		memberID = this.getArguments().getString(Services.Statics.MID);
 		visitDate = this.getArguments().getString(Services.Statics.KEY);
+		mActions = new MemberActions(getActivity());
 	}
 	
 	@Override
@@ -42,6 +54,10 @@ public class MemberNotesFragment extends MemberActionsFragment{
 		view = setupView();
 		return view;
 	}
+	
+	public MemberActions getMemberActions(){
+		return this.mActions;
+	}
 		
 	private View setupView() {
 		
@@ -52,6 +68,7 @@ public class MemberNotesFragment extends MemberActionsFragment{
 		LinearLayout.LayoutParams llparams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		llparams.setMargins(5, 5, 5, 5);
 		LinearLayout notesGroup = (LinearLayout) view.findViewById(R.id.membernotes);
+		notesGroup.removeAllViews();
 		while (cur.moveToNext()) {	
 			TextView notesT = new TextView(getActivity());
 			notesT.setPadding(10, 0, 0, 0);
@@ -63,12 +80,6 @@ public class MemberNotesFragment extends MemberActionsFragment{
 		cur.close();
 		
 		
-		
-		/*
-		 * The Below If-Statements might(?) hard crash the system if the item (e.g. string(17))
-		 * is Null. Easiest Solution is nested IF's (see above), though best would be 
-		 * to better handle null data on entry to database-cache. (so that it's an empty string)
-		 */
 		cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, 
 				"m."+ContentDescriptor.Member.Cols.MID+" = ?", new String[] {memberID}, null);
 		if (!cur.moveToFirst()){
@@ -84,7 +95,8 @@ public class MemberNotesFragment extends MemberActionsFragment{
 			
 			
 		} else {
-			LinearLayout tasksGroup = (LinearLayout) view.findViewById(R.id.membertasks);			
+			LinearLayout tasksGroup = (LinearLayout) view.findViewById(R.id.membertasks);
+			tasksGroup.removeAllViews();
 			int l;
 			for(l=13;l<=15;l+=1){ //cur.getColumnIndex(ContentDescriptor.Member.Cols.TASK1)
 				if (cur.getString(l) != null) {
@@ -139,8 +151,73 @@ public class MemberNotesFragment extends MemberActionsFragment{
 		
 		cur.close();
 		
-		super.setupActions(view, memberID);
+		TextView add_note = (TextView) view.findViewById(R.id.button_add_note);
+		add_note.setOnClickListener(this);
+		
+		mActions.setupActions(view, memberID);
 		return view;
 	}
 	
+	private String getNewNote() {
+		String note;
+		
+		EditText note_view = (EditText) view.findViewById(R.id.addnote);
+		note = note_view.getText().toString();
+		
+		return note;
+	}
+	
+	private void updateNote(String note) {
+		ContentValues values = new ContentValues();
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+		values.put(ContentDescriptor.MemberNotes.Cols.MID, memberID);
+		values.put(ContentDescriptor.MemberNotes.Cols.NOTES, note);
+		values.put(ContentDescriptor.MemberNotes.Cols.OCCURRED, format.format(new Date()));
+		
+		cur = contentResolver.query(ContentDescriptor.MemberNotes.CONTENT_URI, null, ContentDescriptor.MemberNotes.Cols.MID+" = 0",
+				null, null);
+		if (!cur.moveToFirst()) {
+			values.put(ContentDescriptor.MemberNotes.Cols.MNID, 0);
+			
+			contentResolver.insert(ContentDescriptor.MemberNotes.CONTENT_URI, values);
+		} else {
+			int rowid = cur.getInt(cur.getColumnIndex(ContentDescriptor.MemberNotes.Cols._ID));
+			contentResolver.update(ContentDescriptor.MemberNotes.CONTENT_URI, values, ContentDescriptor.MemberNotes.Cols.MNID+" = ?",
+					new String[] {cur.getString(cur.getColumnIndex(ContentDescriptor.MemberNotes.Cols.MNID))});
+			
+			values = new ContentValues();
+			values.put(ContentDescriptor.PendingUploads.Cols.TABLEID, 
+					ContentDescriptor.TableIndex.Values.MemberNotes.getKey());
+			values.put(ContentDescriptor.PendingUploads.Cols.ROWID, rowid);
+
+			contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, values);
+		}
+		cur.close();
+		
+		EditText note_view = (EditText) view.findViewById(R.id.addnote);
+		note_view.setText("");
+		//why aren't either of these working ?
+		//should we try redrawing the fragment ?
+		setupView();
+	}
+	
+	@Override
+	public void onClick(View v) {
+		switch(v.getId()) {
+		case (R.id.button_add_note):{
+			//get text from edit text, add it to cache/pending uploads.
+			String note = getNewNote();
+			updateNote(note);
+			break;
+		}
+		default:
+			mActions.onClick(v);
+			break;
+		}
+	}
+
+	@Override
+	public void onNewTag(String serial) {
+	mActions.onNewTag(serial);
+	}
 }

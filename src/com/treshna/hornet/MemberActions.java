@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -15,7 +16,7 @@ import android.net.Uri;
 import android.nfc.NfcAdapter;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,7 +34,7 @@ import com.treshna.hornet.BookingPage.TagFoundListener;
 import com.treshna.hornet.ContentDescriptor.Member;
 
 
-public class MemberActionsFragment extends Fragment implements OnClickListener, TagFoundListener {
+public class MemberActions implements OnClickListener, TagFoundListener {
 	Cursor cur;
 	ContentResolver contentResolver;
 	LayoutInflater mInflater;
@@ -42,15 +43,22 @@ public class MemberActionsFragment extends Fragment implements OnClickListener, 
 	private String mid;
 	private AlertDialog alertDialog = null;
 	private String cardid = null;
+	private Context ctx;
+	private FragmentActivity caller;
 	
 	private static final String TAG = "MemberActions";
 	
+	public MemberActions(FragmentActivity a) {
+		this.caller = a;
+		this.ctx = a;
+	}
 			
 	public void setupActions(View view, String memberID) {
 		this.mid = memberID;
 		Uri uri = Uri.withAppendedPath(ContentDescriptor.Image.IMAGE_JOIN_MEMBER_URI,
 				memberID);
-		contentResolver = this.getActivity().getContentResolver();
+		contentResolver = ctx.getContentResolver();
+		
 		cur = contentResolver.query(uri, null, null, null, null);
 		if (!cur.moveToFirst()){
 			return;
@@ -66,16 +74,16 @@ public class MemberActionsFragment extends Fragment implements OnClickListener, 
 				email.setOnClickListener(this);
 				email.setTag(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMAIL)));
 			} else {
-				email.setBackgroundColor(getActivity().getResources().getColor(R.color.white));
+				email.setBackgroundColor(ctx.getResources().getColor(R.color.white));
 				email.setClickable(false);
 				TextView text = (TextView) email.findViewById(R.id.button_email_text);
-				text.setTextColor(getActivity().getResources().getColor(R.color.grey));
+				text.setTextColor(ctx.getResources().getColor(R.color.grey));
 			}
 		} else {
-			email.setBackgroundColor(getActivity().getResources().getColor(R.color.white));
+			email.setBackgroundColor(ctx.getResources().getColor(R.color.white));
 			email.setClickable(false);
 			TextView text = (TextView) email.findViewById(R.id.button_email_text);
-			text.setTextColor(getActivity().getResources().getColor(R.color.grey));
+			text.setTextColor(ctx.getResources().getColor(R.color.grey));
 		}
 		
 		LinearLayout call = (LinearLayout) view.findViewById(R.id.button_call);
@@ -104,20 +112,20 @@ public class MemberActionsFragment extends Fragment implements OnClickListener, 
 			callTag.add("Cell: "+cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHCELL)));
 			has_number = true;
 		} else {
-			sms.setBackgroundColor(getActivity().getResources().getColor(R.color.white));
+			sms.setBackgroundColor(ctx.getResources().getColor(R.color.white));
 			sms.setClickable(false);
 			TextView text = (TextView) sms.findViewById(R.id.button_sms_text);
-			text.setTextColor(getActivity().getResources().getColor(R.color.grey));
+			text.setTextColor(ctx.getResources().getColor(R.color.grey));
 		}
 		
 		if (has_number) {
 			call.setTag(callTag);
 			call.setOnClickListener(this);
 		} else {
-			call.setBackgroundColor(getActivity().getResources().getColor(R.color.white));
+			call.setBackgroundColor(ctx.getResources().getColor(R.color.white));
 			call.setClickable(false);
 			TextView text = (TextView) call.findViewById(R.id.button_call_text);
-			text.setTextColor(getActivity().getResources().getColor(R.color.grey));
+			text.setTextColor(ctx.getResources().getColor(R.color.grey));
 		}
 		
 		LinearLayout hold = (LinearLayout) view.findViewById(R.id.button_hold);
@@ -133,13 +141,13 @@ public class MemberActionsFragment extends Fragment implements OnClickListener, 
 		
 		LinearLayout addtag = (LinearLayout) view.findViewById(R.id.button_tag);
 		if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1 &&
-				NfcAdapter.getDefaultAdapter(getActivity()) != null) {
+				NfcAdapter.getDefaultAdapter(ctx) != null) {
 			addtag.setOnClickListener(this);
 		} else {
-			addtag.setBackgroundColor(getActivity().getResources().getColor(R.color.white));
+			addtag.setBackgroundColor(ctx.getResources().getColor(R.color.white));
 			addtag.setClickable(false);
 			TextView text = (TextView) addtag.findViewById(R.id.button_tag_text);
-			text.setTextColor(getActivity().getResources().getColor(R.color.grey));
+			text.setTextColor(ctx.getResources().getColor(R.color.grey));
 		}
 		
 		cur.close();
@@ -156,17 +164,17 @@ public class MemberActionsFragment extends Fragment implements OnClickListener, 
 			if (v.getTag() instanceof String) {
 				memberid = (String) v.getTag();
 			}
-			Intent i = new Intent(getActivity(), EmptyActivity.class);
+			Intent i = new Intent(ctx, EmptyActivity.class);
 			i.putExtra(Services.Statics.KEY, Services.Statics.FragmentType.MembershipAdd.getKey());
 			i.putExtra(Services.Statics.MID, memberid);
-			startActivity(i);
+			ctx.startActivity(i);
 			break;
 		}
 		case (R.id.button_email):{
 			String email="mailto:"+Uri.encode(v.getTag().toString())+"?subject="+Uri.encode("Gym Details");
 			Intent intent = new Intent(Intent.ACTION_SENDTO);
 			intent.setData(Uri.parse(email));
-			startActivity(intent);
+			ctx.startActivity(intent);
 			break;
 		}
 		case (R.id.button_sms):{
@@ -175,9 +183,9 @@ public class MemberActionsFragment extends Fragment implements OnClickListener, 
 			smsIntent.setType("vnd.android-dir/mms-sms");
 			smsIntent.putExtra("address",smsNo);
 			try {
-				startActivity(smsIntent);
+				ctx.startActivity(smsIntent);
 			} catch (ActivityNotFoundException e) {
-				Toast.makeText(getActivity(), "Cannot send SMS from this device.", Toast.LENGTH_LONG).show();
+				Toast.makeText(ctx, "Cannot send SMS from this device.", Toast.LENGTH_LONG).show();
 			}
 			break;
 		}
@@ -190,7 +198,7 @@ public class MemberActionsFragment extends Fragment implements OnClickListener, 
 				String ph ="tel:"+tag.get(0).substring(tag.get(0).indexOf(":")+1);
 				Intent intent = new Intent(Intent.ACTION_DIAL);
 				intent.setData(Uri.parse(ph));
-				startActivity(intent);
+				ctx.startActivity(intent);
 			} 
 			else {
 				//show popup window, let user select the number to call.
@@ -199,9 +207,9 @@ public class MemberActionsFragment extends Fragment implements OnClickListener, 
 			break;
 		}
 		case (R.id.button_hold):{
-			Intent i = new Intent(getActivity(), MembershipHold.class);
+			Intent i = new Intent(ctx, MembershipHold.class);
 			i.putExtra(Services.Statics.KEY, mid);
-			startActivity(i);
+			ctx.startActivity(i);
 			break;
 		}
 		case (R.id.button_manual_checkin):{
@@ -212,10 +220,10 @@ public class MemberActionsFragment extends Fragment implements OnClickListener, 
 			break;
 		}
 		case (R.id.button_gallery):{
-			Intent i = new Intent(getActivity(), EmptyActivity.class);
+			Intent i = new Intent(ctx, EmptyActivity.class);
 			i.putExtra(Services.Statics.KEY, Services.Statics.FragmentType.MemberGallery.getKey());
 			i.putExtra(Services.Statics.MID, mid);
-			startActivity(i);
+			ctx.startActivity(i);
 			break;
 		}
 		case (R.id.button_tag):{
@@ -225,7 +233,7 @@ public class MemberActionsFragment extends Fragment implements OnClickListener, 
 	}
 	
 	private void swipeBox(){
-		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
 		builder.setTitle("Swipe Tag")
 		.setMessage("Please Swipe a tag against the device");
 		alertDialog = builder.create();
@@ -238,7 +246,7 @@ public class MemberActionsFragment extends Fragment implements OnClickListener, 
 	 */
 	@Override
 	public void onNewTag(String serial) {
-		ContentResolver contentResolver = getActivity().getContentResolver();
+		ContentResolver contentResolver = ctx.getContentResolver();
 		Cursor cur;
 		String message;
 		
@@ -273,7 +281,7 @@ public class MemberActionsFragment extends Fragment implements OnClickListener, 
 		}
 		cur.close();
 		//TOAST!
-		Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+		Toast.makeText(ctx, message, Toast.LENGTH_LONG).show();
 		
 	}
 	
@@ -292,8 +300,8 @@ public class MemberActionsFragment extends Fragment implements OnClickListener, 
 	}
 	
 	private void showPhoneWindow(ArrayList<String> phones) {
-		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-		LayoutInflater inflater = getActivity().getLayoutInflater();
+		AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+		LayoutInflater inflater = caller.getLayoutInflater();
 		View layout = inflater.inflate(R.layout.alert_select_call, null);
 		
 		//do for loop, create and append radio option
@@ -301,7 +309,7 @@ public class MemberActionsFragment extends Fragment implements OnClickListener, 
 		
 		
 		for (int i=0; i< phones.size(); i +=1) {
-			RadioButton rb = new RadioButton(getActivity());
+			RadioButton rb = new RadioButton(ctx);
 			rb.setText(phones.get(i));
 			rb.setTag(phones.get(i).substring(phones.get(i).indexOf(":")+1));
 			rg.addView(rb);
@@ -315,7 +323,7 @@ public class MemberActionsFragment extends Fragment implements OnClickListener, 
             		String selectedNo = null;
 	            	int cid = rg.getCheckedRadioButtonId();  
 	            	if (cid == -1) {
-	            		Toast.makeText(getActivity(), "Select a Phone Number", Toast.LENGTH_LONG).show();
+	            		Toast.makeText(ctx, "Select a Phone Number", Toast.LENGTH_LONG).show();
 	            		
 	            	} else {
 		            	RadioButton rb = (RadioButton) rg.findViewById(cid);
@@ -324,7 +332,7 @@ public class MemberActionsFragment extends Fragment implements OnClickListener, 
 		            	String ph ="tel:"+selectedNo;
 						Intent intent = new Intent(Intent.ACTION_DIAL);
 						intent.setData(Uri.parse(ph));
-						startActivity(intent);
+						ctx.startActivity(intent);
 	            	}
             }
         });
@@ -340,8 +348,8 @@ public class MemberActionsFragment extends Fragment implements OnClickListener, 
 	
 	
 	private void showCheckinWindow(){
-		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-		LayoutInflater inflater = getActivity().getLayoutInflater();
+		AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+		LayoutInflater inflater = caller.getLayoutInflater();
 		checkinWindow = inflater.inflate(R.layout.alert_manual_checkin, null);
 		String name = null;
 		cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, new String[] {Member.Cols.FNAME, Member.Cols.SNAME},
@@ -362,7 +370,7 @@ public class MemberActionsFragment extends Fragment implements OnClickListener, 
 		}
 		cur.close();
 		Spinner doorspinner = (Spinner) checkinWindow.findViewById(R.id.manual_checkin_door);
-		ArrayAdapter<String> doorAdapter = new ArrayAdapter<String>(getActivity(),
+		ArrayAdapter<String> doorAdapter = new ArrayAdapter<String>(ctx,
 				android.R.layout.simple_spinner_item, doorlist);
 		doorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		doorspinner.setAdapter(doorAdapter);
@@ -376,7 +384,7 @@ public class MemberActionsFragment extends Fragment implements OnClickListener, 
 		}
 		cur.close();
 		Spinner membershipSpinner = (Spinner) checkinWindow.findViewById(R.id.manual_checkin_membership);
-		ArrayAdapter<String> membershipAdapter = new ArrayAdapter<String>(getActivity(), 
+		ArrayAdapter<String> membershipAdapter = new ArrayAdapter<String>(ctx, 
 				android.R.layout.simple_spinner_item, membershiplist);
 		//membershipAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		membershipSpinner.setAdapter(membershipAdapter);
@@ -396,7 +404,7 @@ public class MemberActionsFragment extends Fragment implements OnClickListener, 
 						cur.moveToPosition(membershipSpinner.getSelectedItemPosition());
 						membershipid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MSID));
 					} catch (CursorIndexOutOfBoundsException e) {
-						Toast.makeText(getActivity(), "No Membership Available for Member.", Toast.LENGTH_LONG).show();
+						Toast.makeText(ctx, "No Membership Available for Member.", Toast.LENGTH_LONG).show();
 						dialog.cancel();
 						return;
 					}
@@ -410,7 +418,7 @@ public class MemberActionsFragment extends Fragment implements OnClickListener, 
 					cur.close();
 					
 					//parse the details to the Service.
-					Intent updateInt = new Intent(getActivity(), HornetDBService.class);
+					Intent updateInt = new Intent(ctx, HornetDBService.class);
 					Bundle extras = new Bundle(3);
 					extras.putInt("doorid", doorid);
 					extras.putInt("memberid", Integer.parseInt(mid));
@@ -418,10 +426,10 @@ public class MemberActionsFragment extends Fragment implements OnClickListener, 
 					
 					updateInt.putExtras(extras);
 					updateInt.putExtra(Services.Statics.KEY, Services.Statics.MANUALSWIPE);
-				 	getActivity().startService(updateInt);
+				 	ctx.startService(updateInt);
 				 	PollingHandler p = Services.getFreqPollingHandler();
 				 	if (p != null && !p.getConStatus()) {
-				 		Toast.makeText(getActivity(), "Could not check member in, Check that this device is connected"
+				 		Toast.makeText(ctx, "Could not check member in, Check that this device is connected"
 				 				+ " to the internet.", Toast.LENGTH_LONG).show();
 				 	}
 				}

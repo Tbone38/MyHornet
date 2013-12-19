@@ -1,9 +1,12 @@
 package com.treshna.hornet;
 
 
+import com.treshna.hornet.BookingPage.TagFoundListener;
+
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,12 +16,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
-public class MemberMembershipFragment extends MemberActionsFragment{
+public class MemberMembershipFragment extends Fragment implements TagFoundListener{
 	Cursor cur;
 	ContentResolver contentResolver;
 	String memberID;
 	private View view;
 	LayoutInflater mInflater;
+	private MemberActions mActions;
 	
 	private static final String TAG = "MemberDetails";
 	
@@ -28,6 +32,7 @@ public class MemberMembershipFragment extends MemberActionsFragment{
 		Services.setContext(getActivity());
 		contentResolver = getActivity().getContentResolver();
 		memberID = this.getArguments().getString(Services.Statics.MID);
+		mActions = new MemberActions(getActivity());
 	}
 	
 	@Override
@@ -48,7 +53,11 @@ public class MemberMembershipFragment extends MemberActionsFragment{
 		
 		setupView();
 	}
-		
+	
+	public MemberActions getMemberActions(){
+		return this.mActions;
+	}
+	
 	private View setupView() {
 		cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, 
 				ContentDescriptor.Membership.Cols.MID+" = ?", new String[] {memberID}, null);
@@ -84,8 +93,13 @@ public class MemberMembershipFragment extends MemberActionsFragment{
 			mslist.addView(membershipRow);
 		}
 		cur.close();
-		super.setupActions(view, memberID);
+		mActions.setupActions(view, memberID);
 		return view;
+	}
+
+	@Override
+	public void onNewTag(String serial) {
+		mActions.onNewTag(serial);
 	}
 	
 }

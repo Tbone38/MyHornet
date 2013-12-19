@@ -25,13 +25,61 @@
 	    android:layout_below="@id/membernotesH"
 	    android:orientation="vertical" >
 	</LinearLayout>
+	
+	<TextView
+	    android:id="@+id/memberaddnotesH"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@id/membernotes"
+	    android:text="@string/member_note_H"
+	    android:textSize="14sp" />
+	<LinearLayout
+	    android:id="@+id/memberaddnotes"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@id/memberaddnotesH"
+	    android:orientation="horizontal" >
+	    <EditText
+	        android:id="@+id/addnote"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight=".7"
+        	android:lines="2"
+    		android:gravity="top|left"
+    		android:inputType="textMultiLine" />
+	    <LinearLayout
+	    	android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight=".3"
+	    	android:orientation="vertical"
+	    	android:layout_gravity="bottom"
+	    	android:layout_marginLeft="5dp">
+	    	<TextView
+	        	android:id="@+id/button_add_note"
+	            android:layout_width="match_parent"
+	            android:layout_height="match_parent"
+	            android:gravity="center"
+	            android:textSize="18sp"
+	            android:text="@string/button_add_note"
+	            android:padding="3dp"
+	            android:clickable="true"
+	        	android:background="@drawable/button_large" />
+		    <View
+		        android:layout_width="match_parent"
+			    android:layout_height="2dp"
+			    android:paddingLeft="3dp"
+		    	android:paddingRight="3dp"
+			    android:background="@color/button_underline_grey" />
+		</LinearLayout>
+	</LinearLayout>
+	
 	<TextView
     	android:id="@+id/membertasksH"
     	android:textSize="24sp"
         android:text="Tasks"
         android:layout_width="wrap_content"
     	android:layout_height="wrap_content"
-    	android:layout_below="@id/membernotes"
+    	android:layout_below="@id/memberaddnotes"
         android:textIsSelectable="false"
         android:padding="5dp"
 		android:paddingBottom="1dp" />

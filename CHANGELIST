@@ -1,7 +1,11 @@
 	v115:
 		-DONE:
-			Add member Find Filters,
+			Added member Find Filters,
+			Added  'Add Notes' button on Member Details Page,
 		-TODO:
-			Add Notes to Member,
 			Add Booking Day swipe,
 			Log Sync Errors, and upload them somewhere?
+			Add Visit History Page
+		-KNOWN BUGS:
+			-fix Get Card for new cards.
+			-manual checkin might be hard crashing.

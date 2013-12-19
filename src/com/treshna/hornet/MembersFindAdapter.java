@@ -27,7 +27,7 @@ public class MembersFindAdapter extends SimpleCursorAdapter implements OnClickLi
 	private OnMemberSelectListener mCallback;
 	private static final String TAG = "MemberFindAdapter";
 	
-	private int selectedPos = -1;
+	private static int selectedPos = -1;
 	
 	@SuppressWarnings("deprecation")
 	public MembersFindAdapter(Context context, int layout, Cursor c,
@@ -39,15 +39,19 @@ public class MembersFindAdapter extends SimpleCursorAdapter implements OnClickLi
 		mCallback = act;
 		
 	}
+	//selectedPos should probably go off of Member ID.
+	public void setSelectedPos(int pos){
+		selectedPos = pos;
+	}
 	
+	public int getSelectedPos(){
+		return selectedPos;
+	}
 	
 	@Override
 	public void bindView(View rowLayout, Context context, Cursor cursor){
 		super.bindView(rowLayout, context, cursor);
-		//TextView name = (TextView) rowLayout.findViewById(R.id.name);
-		/*for (int i=0; i<cursor.getColumnCount(); i++){
-			System.out.print("\n\nColumn:"+i+" Name:"+cursor.getColumnName(i)+"  Value:"+cursor.getString(i));
-		}*/
+		
 		View colour_block = (View) rowLayout.findViewById(R.id.member_row_colour_block);
 		if (selectedPos == cursor.getPosition()) {
 			colour_block.setBackgroundColor(context.getResources().getColor(R.color.member_blue));

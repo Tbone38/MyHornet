@@ -11,4 +11,7 @@
  <string name="member_gallery_title">Member\'s Photos</string>
  <string name="button_gallery_add_photo">Add Photo</string>
  <string name="button_gallery_return">Return</string>
+ <string name="button_add_note">Add Note</string>
+ <string name="member_note_H">Custom Note</string>
+ <string name="member_visit_history">Visit History Since %1$s</string> <!-- First Sync Date -->
 </resources>

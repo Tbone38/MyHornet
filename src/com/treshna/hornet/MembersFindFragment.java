@@ -204,6 +204,7 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 			filter_message.setText(Html.fromHtml(message));
 			/*return new CursorLoader( getActivity(), ContentDescriptor.Member.CONTENT_URI,
 					null, where, whereArgs, null);*/
+			mAdapter.setSelectedPos(-1);
 			return new CursorLoader( getActivity(), ContentDescriptor.Member.URI_FIND,
 					null, where, whereArgs, null);
 		} else {

@@ -40,7 +40,7 @@ public class JDBCConnection {
     private Connection con = null;
     private Statement statement;
     private PreparedStatement pStatement;
-    private static final String TAG = "com.treshna.hornet.JDBCConnection";
+    private static final String TAG = "JDBCConnection";
     
     private String getConnectionUrl() {
             return new String("jdbc:postgresql://" + Address + ":" + Port + "/" + Database);
@@ -751,7 +751,7 @@ public class JDBCConnection {
     
     public int uploadMemberNotes(int membernoteid, int memberid, String notes, String occured) throws SQLException {
     	pStatement = con.prepareStatement("INSERT INTO membernotes (id, memberid, notes, occurred) VALUES "
-    			+ "(?, ?, ?, ?::date");
+    			+ "(?, ?, ?, ?::date);");
     	pStatement.setInt(1, membernoteid);
     	pStatement.setInt(2, memberid);
     	pStatement.setString(3, notes);

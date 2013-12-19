@@ -211,7 +211,7 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 	    
 	    LinearLayout visits = (LinearLayout) view.findViewById(R.id.button_member_navigation_visits);
 	    visits.setOnClickListener(this);
-	    visits.setVisibility(View.GONE);
+	    //visits.setVisibility(View.GONE);
 			    
 	    LinearLayout finance = (LinearLayout) view.findViewById(R.id.button_member_navigation_finance);
 	    finance.setOnClickListener(this);
@@ -287,6 +287,17 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 	        selectedFragment = R.id.button_member_navigation_memberships;
 	        setupFragment(f);
 	        break;
+		}
+		case (R.id.button_member_navigation_visits):{
+			Fragment f = new MemberVisitHistoryFragment();
+			Bundle bdl = new Bundle(2);
+	        bdl.putString(Services.Statics.MID, memberID);
+	        bdl.putString(Services.Statics.KEY, visitDate);
+	        f.setArguments(bdl);
+	        
+	        selectedFragment = R.id.button_member_navigation_visits;
+	        setupFragment(f);
+			break;
 		}
 		case (R.id.member_navigation_image):{
 			String selection = ContentDescriptor.Image.Cols.DISPLAYVALUE+" = 0"

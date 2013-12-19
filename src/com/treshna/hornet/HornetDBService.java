@@ -130,6 +130,12 @@ public class HornetDBService extends Service {
  	   			return;
  	   		}*/
  	   		
+	 	   	String first_sync = Services.getAppSettings(ctx, "first_sync");
+			if (first_sync.compareTo("-1")==0) {
+				SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy", Locale.US);
+				Services.setPreference(ctx, "first_sync", format.format(new Date()));
+			}
+ 	   		
  	   		this_sync = System.currentTimeMillis();
  	   		last_sync = Long.parseLong(Services.getAppSettings(ctx, "last_freq_sync")); //use this for checking lastupdate
  	   		getPendingUpdates();
@@ -245,8 +251,14 @@ public class HornetDBService extends Service {
  	   }
  	   
  	   case (Services.Statics.FIRSTRUN):{ //this should be run nightly/weekly
- 		   thread.is_networking = true;
- 		 	//it needs more update handling.
+ 		  thread.is_networking = true;
+
+ 		  String first_sync = Services.getAppSettings(ctx, "first_sync");
+ 		  if (first_sync.compareTo("-1")==0) {
+ 			  SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy", Locale.US);
+ 			  Services.setPreference(ctx, "first_sync", format.format(new Date()));
+ 		  }
+ 		  
  		  this_sync = System.currentTimeMillis();
 		   Services.showProgress(Services.getContext(), "Syncing Local Database setting from Server", handler, currentCall, true);
 		   //the above box should probably always show.
