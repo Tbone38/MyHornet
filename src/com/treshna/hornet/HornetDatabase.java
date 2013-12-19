@@ -13,18 +13,11 @@ import com.treshna.hornet.ContentDescriptor.Bookingtype;
 import com.treshna.hornet.ContentDescriptor.Class;
 import com.treshna.hornet.ContentDescriptor.Company;
 import com.treshna.hornet.ContentDescriptor.Date;
-import com.treshna.hornet.ContentDescriptor.Door;
-import com.treshna.hornet.ContentDescriptor.IdCard;
 import com.treshna.hornet.ContentDescriptor.Image;
 import com.treshna.hornet.ContentDescriptor.Member;
-import com.treshna.hornet.ContentDescriptor.MemberBalance;
-import com.treshna.hornet.ContentDescriptor.MemberNotes;
 import com.treshna.hornet.ContentDescriptor.Membership;
-import com.treshna.hornet.ContentDescriptor.MembershipSuspend;
 import com.treshna.hornet.ContentDescriptor.OpenTime;
-import com.treshna.hornet.ContentDescriptor.PaymentMethod;
-import com.treshna.hornet.ContentDescriptor.PendingDownloads;
-import com.treshna.hornet.ContentDescriptor.PendingUpdates;
+import com.treshna.hornet.ContentDescriptor.Pending;
 import com.treshna.hornet.ContentDescriptor.PendingUploads;
 import com.treshna.hornet.ContentDescriptor.Programme;
 import com.treshna.hornet.ContentDescriptor.Resource;
@@ -37,7 +30,7 @@ import com.treshna.hornet.ContentDescriptor.Visitor;
 public class HornetDatabase extends SQLiteOpenHelper {
 	
 	 public static final String DATABASE_NAME="hornet.db";
-	 private static final int DATABASE_VERSION = 92;
+	 private static final int DATABASE_VERSION = 82;
 	 
 	 public HornetDatabase (Context context) {
 		 super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -45,10 +38,8 @@ public class HornetDatabase extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		
-		//Member Table.
-		db.execSQL("CREATE TABLE "+Member.NAME+" ("+Member.Cols._ID+" INTEGER PRIMARY KEY, "
-				+Member.Cols.MID+" INTEGER NOT NULL, "
+		//TODO add foreign Keys.
+		db.execSQL("CREATE TABLE "+Member.NAME+" ("+Member.Cols.MID+" INTEGER PRIMARY KEY, "
 				+Member.Cols.COLOUR+" TEXT, "+Member.Cols.HAPPINESS+" TEXT, "
 				+Member.Cols.LENGTH+" TEXT, "+Member.Cols.BOOKP+" INTEGER, "
 				+Member.Cols.TASKP+" INTEGER, "+Member.Cols.RESULT+" TEXT, "
@@ -59,69 +50,47 @@ public class HornetDatabase extends SQLiteOpenHelper {
 				+Member.Cols.BOOK1+" TEXT, "+Member.Cols.BOOK2+" TEXT, "
 				+Member.Cols.BOOK3+" TEXT, "+Member.Cols.LASTVISIT+" TEXT, "
 				+Member.Cols.STATUS+" INTEGER, "+Member.Cols.FNAME+" TEXT, "
-				+Member.Cols.SNAME+" TEXT, "+Member.Cols.GENDER+" TEXT, "
-				+Member.Cols.DOB+" TEXT, "+Member.Cols.MEDICAL+" TEXT, "
-				+Member.Cols.STREET+" TEXT, "+Member.Cols.SUBURB+" TEXT, "
-				+Member.Cols.CITY+" TEXT, "+Member.Cols.POSTAL+" TEXT "
+				+Member.Cols.SNAME+" TEXT "
 				+");");
-		//Member indexs.
-		db.execSQL("CREATE INDEX "+Member.Indexs.MEMBER_NAME+" ON "+Member.NAME+" ( "
-				+Member.Cols.FNAME+","+Member.Cols.SNAME+");");
 		
-		
-		//LastVisitor Table. (entry exit?)
 		db.execSQL("CREATE TABLE "+Visitor.NAME+" ("+Visitor.Cols.ID+" INTEGER PRIMARY KEY, "
 				+Visitor.Cols.MID+" INTEGER, "+Visitor.Cols.DATETIME+" DATETIME, "
 				+Visitor.Cols.DATE+" TEXT, "+Visitor.Cols.TIME+" TEXT, "
 				+Visitor.Cols.DENY+" TEXT, "+Visitor.Cols.CARDNO+" TEXT, "
 				+Visitor.Cols.DOORNAME+" TEXT, "+Visitor.Cols.MSID+" INTEGER, "
-				+Visitor.Cols.LASTUPDATE+" NUMERIC "
+				+Visitor.Cols.LASTUPDATED+" NUMERIC "
 				+");");
-		//Visitors indexes.
-		db.execSQL("CREATE INDEX "+Visitor.Indexs.MEMBER_ID+" ON "+Visitor.NAME+" ( "
-				+Visitor.Cols.MID+" );");
-		db.execSQL("CREATE INDEX "+Visitor.Indexs.MS_ID+" ON "+Visitor.NAME+" ( "
-				+Visitor.Cols.MSID+" );");
-		db.execSQL("CREATE INDEX "+Visitor.Indexs.DATE_TIME+" ON "+Visitor.NAME+" ( "
-				+Visitor.Cols.DATETIME+" );");
 		
-		
-		//Membership Table
 		db.execSQL("CREATE TABLE "+Membership.NAME+" ("+Membership.Cols._ID+" INTEGER PRIMARY KEY, "
-				+Membership.Cols.MID+" INTEGER NOT NULL, "+Membership.Cols.MSID+" INTEGER, "
+				+Membership.Cols.MID+" INTEGER, "+Membership.Cols.MSID+" INTEGER, "
 				+Membership.Cols.CARDNO+" TEXT, "+Membership.Cols.DENY+" INTEGER, "
 				+Membership.Cols.PNAME+" TEXT, "+Membership.Cols.MSSTART+" TEXT, "
 				+Membership.Cols.EXPIRERY+" TEXT, "+Membership.Cols.VISITS+" TEXT, "
-				+Membership.Cols.LASTUPDATE+" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, "
-				+Membership.Cols.PRIMARYMS+" INTEGER, "+Membership.Cols.PID+" INTEGER, "
-				+Membership.Cols.PGID+" INTEGER, "+Membership.Cols.PRICE+" TEXT, "
-				+Membership.Cols.SIGNUP+" TEXT, "+Membership.Cols.CREATION+" TEXT"
-				+");"); 
-		//Membership Indexes
-		db.execSQL("CREATE INDEX "+Membership.Indexs.MEMBER_ID+" ON "+Membership.NAME+" ( "
-				+Membership.Cols.MID+" );");
-		db.execSQL("CREATE INDEX "+Membership.Indexs.MEMBERSHIP_ID+" ON "+Membership.NAME+" ( "
-				+Membership.Cols.MSID+" );");
+				+Membership.Cols.LASTUPDATED+" TIMESTAMP NOT NULL DEFAULT current_timstamp );"); //ms since epoch;
 		
-		
-		//Image Table
 		//for quick look up of Images:, Uses composite PK
-		db.execSQL("CREATE TABLE "+ContentDescriptor.Image.NAME+" ("+ContentDescriptor.Image.Cols.ID+" INTEGER PRIMARY KEY, "
+		db.execSQL("CREATE TABLE "+ContentDescriptor.Image.NAME+" ("+ContentDescriptor.Image.Cols.ID+" INTEGER, "
 				+ContentDescriptor.Image.Cols.MID+ " INTEGER, "+ContentDescriptor.Image.Cols.DATE+" DATETIME, "
 				+ContentDescriptor.Image.Cols.DESCRIPTION+" TEXT , "+ContentDescriptor.Image.Cols.IS_PROFILE+" INTEGER, "
-				+ContentDescriptor.Image.Cols.DISPLAYVALUE+" INTEGER, "
 				+"FOREIGN KEY("+ContentDescriptor.Image.Cols.MID
-				+") REFERENCES "+ContentDescriptor.Member.NAME+"("+ContentDescriptor.Member.Cols.MID+") "
-				+");");
-		//image Indexs
-		db.execSQL("CREATE INDEX "+Image.Indexs.MEMBER_ID+" ON "+Image.NAME+" ( "
-				+Image.Cols.MID+" );");
+				+") REFERENCES "+ContentDescriptor.Member.NAME+"("+ContentDescriptor.Member.Cols.MID+"), "
+				+"PRIMARY KEY ("+ContentDescriptor.Image.Cols.ID+", "+ContentDescriptor.Image.Cols.MID+"));");
+	
+		// add member/prospect --> pending uploads table?
+		// use this table for holding unused MID's?
+		db.execSQL(" CREATE TABLE "+Pending.NAME+" ("+Pending.Cols.ID+" INTEGER PRIMARY KEY, "
+				+Pending.Cols.FNAME+" TEXT, "+Pending.Cols.SNAME+" TEXT, "
+				+Pending.Cols.DOB+" TEXT, "+Pending.Cols.GENDER+" TEXT, "
+				+Pending.Cols.MEDICAL+" TEXT, "+Pending.Cols.STREET+" TEXT, "
+				+Pending.Cols.SUBURB+" TEXT, "+Pending.Cols.CITY+" TEXT, "
+				+Pending.Cols.POSTAL+" TEXT, "+Pending.Cols.EMAIL+" TEXT, "
+				+Pending.Cols.HPHONE+" TEXT, "+Pending.Cols.CPHONE+" TEXT, "
+				+Pending.Cols.SIGNUP+" TEXT, "+Pending.Cols.MID+" INTEGER, "
+				+Pending.Cols.ISUSED+" INTEGER );");
 		
-		//time slots table.
 		db.execSQL("CREATE TABLE "+ContentDescriptor.Time.NAME+" ("+ContentDescriptor.Time.Cols.ID+" INTEGER PRIMARY KEY, "
 				+ContentDescriptor.Time.Cols.TIME+" TEXT ); ");
 		
-		//OpenHours
 		db.execSQL("CREATE TABLE "+ContentDescriptor.OpenTime.NAME+" ("+ContentDescriptor.OpenTime.Cols._ID+" INTEGER PRIMARY KEY AUTOINCREMENT, "
 				+ContentDescriptor.OpenTime.Cols.DAYOFWEEK+" INTEGER, "+ContentDescriptor.OpenTime.Cols.OPENTIME+" TEXT, "
 				+ContentDescriptor.OpenTime.Cols.OPENID+" INTEGER, "+ContentDescriptor.OpenTime.Cols.CLOSETIME+" TEXT, "
@@ -140,30 +109,16 @@ public class HornetDatabase extends SQLiteOpenHelper {
 				+Booking.Cols.BID+" TEXT, "+Booking.Cols.BOOKINGTYPE+" INTEGER, "
 				+Booking.Cols.ETIME+" TEXT, "+Booking.Cols.NOTES+" TEXT, "
 				+Booking.Cols.RESULT+" INTEGER, "+Booking.Cols.MID+" INTEGER, "
-				+Booking.Cols.LASTUPDATE+" NUMERIC, "+Booking.Cols.STIME+" TEXT, "
+				+Booking.Cols.LASTUPDATED+" NUMERIC, "+Booking.Cols.STIME+" TEXT, "
 				+Booking.Cols.MSID+" INTEGER, "+Booking.Cols.CHECKIN+" NUMERIC, " //timestamp ?
 				+Booking.Cols.RID+" INTEGER, "+Booking.Cols.ARRIVAL+" INTEGER, "
-				+Booking.Cols.OFFSET+" TEXT, "/*+Booking.Cols.IS_UPLOADED+" INTEGER DEFAULT 1, "*/
+				+Booking.Cols.OFFSET+" TEXT, "+Booking.Cols.IS_UPLOADED+" INTEGER DEFAULT 1, "
 				+Booking.Cols.CLASSID+" INTEGER DEFAULT 0, "+Booking.Cols.PARENTID+" INTEGER DEFAULT 0, "
 				+"FOREIGN KEY ("+Booking.Cols.STIMEID
 				+") REFERENCES "+ContentDescriptor.Time.NAME+" ("+ContentDescriptor.Time.Cols.ID+") "
 				//+" FOREIGN KEY ("+Booking.Cols.ARRIVAL+") REFERENCES "+ContentDescriptor.Date.NAME+" ("
 				//+ContentDescriptor.Date.Cols.DATE+"));"); //lastupdated = seconds since epoch.
 				+");");
-		//booking indexs
-		db.execSQL("CREATE INDEX "+Booking.Indexs.BOOKING_ID+" ON "+Booking.NAME+" ( "
-				+Booking.Cols.BID+");");
-		db.execSQL("CREATE INDEX "+Booking.Indexs.BOOKING_NAME+" ON "+Booking.NAME+" ( "
-				+Booking.Cols.FNAME+","+Booking.Cols.SNAME+");");
-		db.execSQL("CREATE INDEX "+Booking.Indexs.CLASS_ID+" ON "+Booking.NAME+" ( "
-				+Booking.Cols.CLASSID+");");
-		db.execSQL("CREATE INDEX "+Booking.Indexs.MEMBER_ID+" ON "+Booking.NAME+" ( "
-				+Booking.Cols.MID+");");
-		db.execSQL("CREATE INDEX "+Booking.Indexs.MEMBERSHIP_ID+" ON "+Booking.NAME+" ( "
-				+Booking.Cols.MSID+");");
-		db.execSQL("CREATE INDEX "+Booking.Indexs.RESOURCE_ID+" ON "+Booking.NAME+" ( "
-				+Booking.Cols.RID+");");
-		
 		
 		db.execSQL("CREATE TABLE "+BookingTime.NAME+" ("+BookingTime.Cols._ID+" INTEGER PRIMARY KEY, "
 				+BookingTime.Cols.TIMEID+" INTEGER, "+BookingTime.Cols.BID+" INTEGER, "
@@ -184,155 +139,63 @@ public class HornetDatabase extends SQLiteOpenHelper {
 				+ContentDescriptor.Resource.Cols.CID+" TEXT, "+ContentDescriptor.Resource.Cols.NAME+" TEXT, "
 				+ContentDescriptor.Resource.Cols.RTNAME+" TEXT, "+Resource.Cols.PERIOD+" TEXT );");
 		
-		//Programmes (and ProgrammeGroups).
-		db.execSQL("CREATE TABLE "+Programme.NAME+" ("+Programme.Cols._ID+" INTEGER PRIMARY KEY, "
+		//classes?
+		db.execSQL("CREATE TABLE "+Programme.NAME+" ("+Programme.Cols.ID+" INTEGER PRIMARY KEY, "
 				+Programme.Cols.GID+" INTEGER, "+Programme.Cols.NAME+" TEXT, "
 				+Programme.Cols.GNAME+" TEXT, "+Programme.Cols.MLENGTH+" TEXT, "
 				+Programme.Cols.SDATE+" TEXT, "+Programme.Cols.EDATE+" TEXT, "
 				+Programme.Cols.PRICE+" TEXT, "+Programme.Cols.SIGNUP+" TEXT, "
-				+Programme.Cols.NOTE+" TEXT, "+Programme.Cols.PID+" INTEGER, "
-				+Programme.Cols.LASTUPDATE+" TEXT, "+Programme.Cols.PRICE_DESC+" TEXT "
-				+");");
-		//Programme Indexs;
-		db.execSQL("CREATE INDEX "+Programme.Indexs.GROUP_ID+" ON "+Programme.NAME+" ( "
-				+Programme.Cols.GID+");");
-		db.execSQL("CREATE INDEX "+Programme.Indexs.PROGRAMME_ID+" ON "+Programme.NAME+" ( "
-				+Programme.Cols.PID+");");
+				+Programme.Cols.ONLINE+" TEXT"+Programme.Cols.NOTE+" TEXT );"); //add memberships, lookup priority
 		
-		
-		//door swipes, to do: complete this.
 		db.execSQL("CREATE TABLE "+ContentDescriptor.Swipe.NAME+" ("+ContentDescriptor.Swipe.Cols.ID+" TEXT, "
 				+ContentDescriptor.Swipe.Cols.DOOR+" INTEGER, "+ContentDescriptor.Swipe.Cols.DATETIME+" DATETIME, "
 				+"PRIMARY KEY ("+ContentDescriptor.Swipe.Cols.ID+", "+ContentDescriptor.Swipe.Cols.DATETIME+"));");
 		
-		//ResultStatus, used for bookings.
 		db.execSQL("CREATE TABLE "+ContentDescriptor.ResultStatus.NAME+" ("+ContentDescriptor.ResultStatus.Cols.ID+" INTEGER PRIMARY KEY, "
 				+ContentDescriptor.ResultStatus.Cols.NAME+" TEXT, "+ContentDescriptor.ResultStatus.Cols.COLOUR+" TEXT );");
 		
-		//Class Table
 		db.execSQL("CREATE TABLE "+ContentDescriptor.Class.NAME+" ("+ContentDescriptor.Class.Cols._ID+" INTEGER PRIMARY KEY, "
 				+ContentDescriptor.Class.Cols.CID+" INTEGER, "+ContentDescriptor.Class.Cols.NAME+" TEXT, "
 				+ContentDescriptor.Class.Cols.SDATE+" INTEGER, "+ContentDescriptor.Class.Cols.FREQ+" TEXT, "
 				+ContentDescriptor.Class.Cols.STIME+" TEXT, "+ContentDescriptor.Class.Cols.ETIME+" TEXT, "
 				+ContentDescriptor.Class.Cols.MAX_ST+" INTEGER, "+ContentDescriptor.Class.Cols.RID+" INTEGER, "
-				+ContentDescriptor.Class.Cols.LASTUPDATE+" NUMERIC, "+ContentDescriptor.Class.Cols.ONLINE+" INTEGER DEFAULT 1,"
+				+ContentDescriptor.Class.Cols.LASTUPDATED+" NUMERIC, "+ContentDescriptor.Class.Cols.ONLINE+" INTEGER DEFAULT 1,"
 				+ContentDescriptor.Class.Cols.DESC+" TEXT "
 				+");");
-		//class Indexs;
-		db.execSQL("CREATE INDEX "+Class.Indexs.CLASS_ID+" ON "+Class.NAME+" ( "
-				+Class.Cols.CID+");");
-		db.execSQL("CREATE INDEX "+Class.Indexs.RESOURCE_ID+" ON "+Class.NAME+" ( "
-				+Class.Cols.RID+");");
 		
-		
-		/*
-		 * used for referencing other tables in the database.
+		/* TODO:
+		 * 	Consider adding a pending-uploads table that takes:
+		 * 		- an id (representing the table the pending upload is in),
+		 * 		- a row id (for the row in the table)
+		 * 		- a timestamp (?)
+		 * 
+		 * something like 	tableid 1 = booking (upload booking)
+		 * 					tableid 2 = class
+		 * 					tableid 3 = swipe
+		 * 					tableid 4 = member
+		 * 					tableid 5 = image
 		 */
 		db.execSQL("CREATE TABLE "+ContentDescriptor.TableIndex.NAME+" ("+ContentDescriptor.TableIndex.Cols._ID+" INTEGER PRIMARY KEY, "
 				+ContentDescriptor.TableIndex.Cols.NAME+" TEXT "
 				+");");
 		
-		//pending uploads table.
 		db.execSQL("CREATE TABLE "+PendingUploads.NAME+" ("+PendingUploads.Cols._ID+" INTEGER PRIMARY KEY, "
 				+PendingUploads.Cols.TABLEID+" INTEGER, "+PendingUploads.Cols.ROWID+" INTEGER, "
 				+"FOREIGN KEY ("+PendingUploads.Cols.TABLEID+") REFERENCES "+TableIndex.NAME+" ("+TableIndex.Cols._ID+") "
 				+");");
 		
-		//add a table that forces a row to redownload all it's data?
-		//it will use the Postgresql ID's in the rowid column (MemberID, membershipID, etc), 
-		//not the local id's.
-		// (over-write all previous data for row).
-		db.execSQL("CREATE TABLE "+PendingDownloads.NAME+" ("+PendingDownloads.Cols._ID+" INTEGER PRIMARY KEY, "
-				+PendingDownloads.Cols.TABLEID+" INTEGER, "+PendingDownloads.Cols.ROWID+" INTEGER "
-				+");");
-		
-		//membership suspend table.
-		db.execSQL("CREATE TABLE "+MembershipSuspend.NAME+" ("+MembershipSuspend.Cols._ID+" INTEGER PRIMARY KEY, "
-				+MembershipSuspend.Cols.SID+" INTEGER, "+MembershipSuspend.Cols.MID+" INTEGER DEFAULT 0, "
-				+MembershipSuspend.Cols.STARTDATE+" INTEGER, "+MembershipSuspend.Cols.REASON+" TEXT, "
-				+MembershipSuspend.Cols.LENGTH+" INTEGER, "+MembershipSuspend.Cols.ENDDATE+" TEXT, "
-				+MembershipSuspend.Cols.FREEZE+" INTEGER "
-				+");");
-		
-		//idCard table
-		db.execSQL("CREATE TABLE "+IdCard.NAME+" ("+IdCard.Cols._ID+" INTEGER PRIMARY KEY, "
-				+IdCard.Cols.CARDID+" INTEGER, "+IdCard.Cols.SERIAL+" TEXT "
-				+");");
-		
-		//paymentMethod table.
-		db.execSQL("CREATE TABLE "+PaymentMethod.NAME+" ("+PaymentMethod.Cols._ID+" INTEGER PRIMARY KEY, "
-				+PaymentMethod.Cols.PAYMENTID+" INTEGER, "+PaymentMethod.Cols.NAME+" TEXT "
-				+");");
-		
-		db.execSQL("CREATE TABLE "+Door.NAME+" ("+Door.Cols._ID+" INTEGER PRIMARY KEY, "
-				+Door.Cols.DOORID+" INTEGER, "+Door.Cols.DOORNAME+" TEXT "
-				+");");
-		
-		db.execSQL("CREATE TABLE "+MemberNotes.NAME+" ("+MemberNotes.Cols._ID+" INTEGER PRIMARY KEY, "
-				+MemberNotes.Cols.MNID+" INTEGER NOT NULL DEFAULT 0, "+MemberNotes.Cols.MID+" INTEGER NOT NULL DEFAULT 0, "
-				+MemberNotes.Cols.NOTES+" TEXT, "+MemberNotes.Cols.OCCURRED+" TEXT "
-				+" );");
-		
-		db.execSQL("CREATE TABLE "+MemberBalance.NAME+" ("+MemberBalance.Cols._ID+" INTEGER PRIMARY KEY, "
-				+MemberBalance.Cols.MID+" INTEGER NOT NULL, "+MemberBalance.Cols.BALANCE+" TEXT, "
-				+MemberBalance.Cols.LASTUPDATE+" NUMERIC "
-				+");");
-		
-		//todo remove this:
 		repopulateTable(db);
-		
-		//SQL patches.
-		db.execSQL(UpdateDatabase.Ninety.SQL);
-		db.execSQL(UpdateDatabase.NinetyOne.SQL);
-		db.execSQL(UpdateDatabase.NinetyTwo.SQL);
-		/*db.execSQL(UpdateDatabase.NinetyThree.SQL);
-		db.execSQL("pragma full_column_names=ON;"); //TODO: will this break stuff?*/
 	}
-	
 
-	
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		Log.w(HornetDatabase.class.getName(),
 				"Upgrading database from version " + oldVersion + " to "
-						+ newVersion );
-		
-		for (int version = (oldVersion+1); version <= newVersion; version++) { //old+1 because we're already at the old version.
-			if (version <= 89) {
-				/*Drop db and create db include the alters already, if we're baselining we can
-				 * skip the rest of this switch case.
-				 */
-				dropTables(db);
-				onCreate(db);
-				return;
-			}
-			switch (version){
-			case (90):{
-				Log.w(HornetDatabase.class.getName(),"SQL-Patch:90 \n"+ UpdateDatabase.Ninety.SQL);
-				db.execSQL(UpdateDatabase.Ninety.SQL);
-				break;
-			}
-			case (91):{
-				Log.w(HornetDatabase.class.getName(), "SQL-Patch:91 \n"+UpdateDatabase.NinetyOne.SQL);
-				db.execSQL(UpdateDatabase.NinetyOne.SQL);
-				break;
-			}
-			case (92):{
-				Log.w(HornetDatabase.class.getName(), "SQL-Patch:92 \n"+UpdateDatabase.NinetyTwo.SQL);
-				db.execSQL(UpdateDatabase.NinetyTwo.SQL);
-				break;
-			}
-			case (93):{
-				Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL);
-				db.execSQL(UpdateDatabase.NinetyThree.SQL);
-				db.execSQL("pragma full_column_names=ON;"); //TODO: will this break stuff?
-				break;
-			}
-			}
-		}
+						+ newVersion + ", which will destroy all old data");
+		dropTables(db);
+		onCreate(db);
 		
 	}
-	
 	
 	public void dropTables(SQLiteDatabase db) {
 		db.execSQL("DROP TABLE IF EXISTS "+Member.NAME);
@@ -340,16 +203,18 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS "+Visitor.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+Membership.NAME);
 		
+		db.execSQL("ALTER TABLE "+Pending.NAME+" RENAME TO old_"+Pending.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+BookingTime.NAME);
 		
-		Cursor cur = db.query(Booking.NAME, null, Booking.Cols.LASTUPDATE+" = 0", 
+		//below code is to move unused bookingID's into the rebuilt database. (save getting them again).
+		Cursor cur = db.query(Booking.NAME, null, Booking.Cols.LASTUPDATED+" = 0", 
 				null, null, null, null);
 		db.execSQL("CREATE TABLE old_"+Booking.NAME+" ("+Booking.Cols.ID+" INTEGER PRIMARY KEY, "
-				+Booking.Cols.BID+" INTEGER, "+Booking.Cols.LASTUPDATE+" NUMERIC );");
+				+Booking.Cols.BID+" INTEGER, "+Booking.Cols.LASTUPDATED+" NUMERIC );");
 		while (cur.moveToNext()) {
 			ContentValues values = new ContentValues();
 			values.put(Booking.Cols.BID, cur.getString(cur.getColumnIndex(Booking.Cols.BID)));
-			values.put(Booking.Cols.LASTUPDATE, cur.getString(cur.getColumnIndex(Booking.Cols.LASTUPDATE)));
+			values.put(Booking.Cols.LASTUPDATED, cur.getString(cur.getColumnIndex(Booking.Cols.LASTUPDATED)));
 			db.insert("old_"+Booking.NAME, null, values);
 		}
 		cur.close();
@@ -357,39 +222,36 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS "+Booking.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+Resource.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+Company.NAME);
-		db.execSQL("DROP TABLE IF EXISTS "+Swipe.NAME);   
+		db.execSQL("DROP TABLE IF EXISTS "+Swipe.NAME);   //likewise, this should be saved rather than drop.
 		db.execSQL("DROP TABLE IF EXISTS "+Programme.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+Time.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+Bookingtype.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+ResultStatus.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+OpenTime.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+Date.NAME);
-		db.execSQL("DROP TABLE IF EXISTS "+Class.NAME); 
+		db.execSQL("DROP TABLE IF EXISTS "+Class.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+TableIndex.NAME);
-		db.execSQL("DROP TABLE IF EXISTS "+PendingUploads.NAME); 
-		db.execSQL("DROP TABLE IF EXISTS "+MembershipSuspend.NAME); 
-		db.execSQL("DROP TABLE IF EXISTS "+IdCard.NAME);
-		db.execSQL("DROP TABLE IF EXISTS "+PaymentMethod.NAME);
-		db.execSQL("DROP TABLE IF EXISTS "+PendingDownloads.NAME);
-		db.execSQL("DROP TABLE IF EXISTS "+Door.NAME);
-		db.execSQL("DROP TABLE IF EXISTS "+MemberNotes.NAME);
-		db.execSQL("DROP TABLE IF EXISTS "+MemberBalance.NAME);
-		db.execSQL("DROP TABLE IF EXISTS "+PendingUpdates.NAME);
+		db.execSQL("DROP TABLE IF EXISTS "+PendingUploads.NAME);
 	}
 	
 	private void repopulateTable(SQLiteDatabase db) {
 		
-		
+		Cursor cur = db.query("sqlite_master", new String[] {"name"}, "type='table' AND name='old_Pending'", null, null, null, null);
+		if (cur.getCount() != 0) {
+			db.execSQL("INSERT INTO "+Pending.NAME+" SELECT * FROM old_"+Pending.NAME+";");
+			db.execSQL("DROP TABLE old_"+Pending.NAME);
+		}
+		cur.close();
 		
 		//restore saved bookingID's
-		Cursor cur = db.query("sqlite_master", new String[] {"name"}, "type='table' AND name='old_"+Booking.NAME+"'", null, null, null, null);
+		cur = db.query("sqlite_master", new String[] {"name"}, "type='table' AND name='old_"+Booking.NAME+"'", null, null, null, null);
 		if (cur.getCount() != 0) {
 			cur.close();
 			cur = db.query("old_"+Booking.NAME, null, null, null, null, null, null);
 			while (cur.moveToNext()) {
 				ContentValues values = new ContentValues();
 				values.put(Booking.Cols.BID, cur.getString(cur.getColumnIndex(Booking.Cols.BID)));
-				values.put(Booking.Cols.LASTUPDATE, cur.getString(cur.getColumnIndex(Booking.Cols.LASTUPDATE)));
+				values.put(Booking.Cols.LASTUPDATED, cur.getString(cur.getColumnIndex(Booking.Cols.LASTUPDATED)));
 				db.insert(Booking.NAME, null, values);
 			}
 			cur.close();
@@ -410,6 +272,14 @@ public class HornetDatabase extends SQLiteOpenHelper {
 			
 		}
 				
-					
+		/*cur = db.query(ContentDescriptor.Pending.NAME, null, null, null, null, null, null);
+		cur.moveToFirst();
+		for (int i=0;i<cur.getCount();i+=1){
+			for (int j=0;j<cur.getColumnCount();j+=1){
+				System.out.print("\n Row:"+i+"  column:"+j+" title: "+cur.getColumnName(j)+" Value:"+cur.getString(j));
+			}
+			cur.moveToNext();
+		}
+		cur.close();*/				
 	}
 }

@@ -3,22 +3,19 @@ package com.treshna.hornet;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
-import android.app.Activity;
+
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.widget.TimePicker;
 
 public class TimePickerFragment extends DialogFragment
 	implements TimePickerDialog.OnTimeSetListener {
 	
 	String returnValue = null;
-	TimePickerSelectListener mCallback;
-	private static final String TAG = "TimePickerFragment";
 	
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -52,28 +49,12 @@ public class TimePickerFragment extends DialogFragment
 		SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss", Locale.US);
 		returnValue = format.format(cal.getTime());
 		
-		mCallback.onTimeSelect(returnValue, this);
+		bcIntent = new Intent();
+		bcIntent.setAction(ClassCreate.CLASSBROADCAST);
+		getActivity().sendBroadcast(bcIntent);
 	}
-	
-	public interface TimePickerSelectListener {
-        public void onTimeSelect(String time, TimePickerFragment theTimePicker);
- 	}
- 
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-        
-        // This makes sure that the container activity has implemented
-        // the callback interface. If not, it throws an exception
-        try {
-            mCallback = (TimePickerSelectListener) activity;
-        } catch (ClassCastException e) {
-            //mCallback not set
-    		Log.e(TAG, "ERROR, CLASS STILL USING BROADCASTER");
-    	}
-    }
- 
- public void setTimePickerSelectListener(TimePickerSelectListener theListener) {
-	 this.mCallback = theListener;
- }
+		
+	public String getReturnValue() {
+		return this.returnValue;
+	}
 }

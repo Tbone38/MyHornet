@@ -20,31 +20,36 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MemberAdd extends NFCActivity implements OnClickListener, DatePickerFragment.DatePickerSelectListener{
+public class MemberAdd extends NFCActivity implements OnClickListener{
 
-	DatePickerFragment mDatePicker;
-	
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.member_add);
+		setContentView(R.layout.activity_add_member);
 		Services.setContext(this);
 		ActionBar actionBar = getSupportActionBar();
 	    actionBar.setDisplayHomeAsUpEnabled(true);
 		
 		/*
-		 * This was the private-hidden setting used for determining if the last
+		 * This is the private-hidden setting used for determining if the last
 		 * insert was a member or a prospect.
-		 */	
-	    RadioButton radio = (RadioButton) this.findViewById(R.id.radioMember);
-		radio.setChecked(true);
+		 */
+		SharedPreferences preferences = this.getSharedPreferences(Services.Statics.PREF_NAME, MODE_PRIVATE);
+		int id = preferences.getInt(Services.Statics.PREF_KEY, -1);
+		if (id != -1){
+			RadioButton radio = (RadioButton) this.findViewById(id);
+			radio.setChecked(true);
+		}
+		else {
+			RadioButton radio = (RadioButton) this.findViewById(R.id.radioMember);
+			radio.setChecked(true);
+		}
 
 		TextView accept = (TextView) this.findViewById(R.id.buttonAccept);
 		TextView cancel = (TextView) this.findViewById(R.id.buttonCancel);
@@ -56,11 +61,6 @@ public class MemberAdd extends NFCActivity implements OnClickListener, DatePicke
 		cancel.setOnClickListener(this);
 		clear.setClickable(true);
 		clear.setOnClickListener(this);
-		
-		LinearLayout buttondob = (LinearLayout) this.findViewById(R.id.button_member_dob);
-		buttondob.setOnClickListener(this);
-		mDatePicker = new DatePickerFragment();
-		mDatePicker.setDatePickerSelectListener(this);
 		
 		displayID();
 		
@@ -109,17 +109,17 @@ public class MemberAdd extends NFCActivity implements OnClickListener, DatePicke
 		 	if (Integer.parseInt(preferences.getString("sync_frequency", "-1")) == -1) {
 		 		Services.setPreference(this, "sync_frequency", "5");
 		 	}
-		 	PollingHandler polling = Services.getFreqPollingHandler();
+		 	PollingHandler polling = Services.getPollingHandler();
 	    	polling.startService();
 	    	return true;
 	    }
 	    case (R.id.action_halt): {
-	    	PollingHandler polling = Services.getFreqPollingHandler();
+	    	PollingHandler polling = Services.getPollingHandler();
 	    	polling.stopPolling(false);
 	    	Services.setPreference(this, "sync_frequency", "-1");
 	    	return true;
 	    }
-	    /*case (R.id.action_bookings):{
+	    case (R.id.action_bookings):{
 	    	Intent bookings = new Intent(this, HornetDBService.class);
 			bookings.putExtra(Services.Statics.KEY, Services.Statics.BOOKING);
 		 	this.startService(bookings);
@@ -127,7 +127,7 @@ public class MemberAdd extends NFCActivity implements OnClickListener, DatePicke
 		 	Intent intent = new Intent(this, BookingsSlidePager.class);
 	       	startActivity(intent);
 	       	return true;
-	    }*/
+	    }
 	    case (R.id.action_addMember):{
 	    	Intent intent = new Intent(this, MemberAdd.class);
 	    	startActivity(intent);
@@ -156,22 +156,12 @@ public class MemberAdd extends NFCActivity implements OnClickListener, DatePicke
 					memberid = input.get(13);
 				}
 				Intent intent = new Intent(this, HornetDBService.class);
-				
-				intent.putExtra(Services.Statics.KEY, Services.Statics.FREQUENT_SYNC);
+				intent.putExtra(Services.Statics.KEY,Services.Statics.UPLOAD); 
 				new InsertMember(this, intent, input.get(0), input.get(1), input.get(2), input.get(3), input.get(4),
 						input.get(5), input.get(6), input.get(7), input.get(8), input.get(9), input.get(10), input.get(11), input.get(12), memberid);
 				//InsertMember member = above line
 				clearForm();
-				
-				ArrayList<String> tag = new ArrayList<String>();
-				tag.add(memberid);
-				tag.add(null);
-				Intent i = new Intent(this, EmptyActivity.class);
-				i.putExtra(Services.Statics.KEY, Services.Statics.FragmentType.MemberDetails.getKey());
-				i.putStringArrayListExtra(VisitorsViewAdapter.EXTRA_ID, tag);
-				this.startActivity(i);
-				this.finish();
-				
+				displayID();
 			}else {
 				updateView(emptyFields);
 				Toast.makeText(this, "please fill out the high-lighted fields", Toast.LENGTH_LONG).show();
@@ -183,24 +173,17 @@ public class MemberAdd extends NFCActivity implements OnClickListener, DatePicke
 		case (R.id.buttonClear):
 			clearForm();
 			break;
-		case (R.id.button_member_dob):{
-			//Bundle bdl = new Bundle(1);
-			//mDatePicker.setArguments(bdl);
-		    mDatePicker.show(this.getSupportFragmentManager(), "datePicker");
-			break;
 		}
-		}
-		
 	}
 	
 	private void displayID(){
 		Cursor cur = null;
 		ContentResolver contentResolver = this.getContentResolver();
-		String[] projection = {ContentDescriptor.Member.Cols.MID};
-		
-		cur = contentResolver.query(ContentDescriptor.Member.URI_FREE_IDS, projection, 
-				ContentDescriptor.Member.Cols.STATUS+" = -1", null, null);
-		if (cur.moveToFirst()) {
+		String[] projection = {ContentDescriptor.Pending.Cols.MID};
+		cur = contentResolver.query(ContentDescriptor.Pending.CONTENT_URI, projection, ContentDescriptor.Pending.Cols.ISUSED
+				+" = 0", null, null);
+		cur.moveToFirst();
+		if (!cur.isBeforeFirst()) {
 			TextView memberid = (TextView) this.findViewById(R.id.memberNo);
 			memberid.setText(cur.getString(0));
 		}
@@ -238,9 +221,9 @@ public class MemberAdd extends NFCActivity implements OnClickListener, DatePicke
 			label.setTextColor(Color.BLACK);
 		}
 		
-		TextView memberDoB = (TextView) this.findViewById(R.id.member_dob_text);
+		EditText memberDoB = (EditText) this.findViewById(R.id.memberDoB);
 		String dob = memberDoB.getText().toString();
-		if (dob.compareTo("") == 0 || dob.compareTo(getString(R.string.defaultDoB)) ==0) {
+		if (dob.compareTo("") == 0 || !Services.validDate(dob, "\\d{2}/\\d{2}/\\d{4}", "dd/MM/yyyy")) {
 			result = false;
 			emptyFields.add("memberDoB");
 			emptyFields.add(String.valueOf(R.id.labelDoB));
@@ -259,7 +242,37 @@ public class MemberAdd extends NFCActivity implements OnClickListener, DatePicke
 			TextView label = (TextView) this.findViewById(R.id.labelGender);
 			label.setTextColor(Color.BLACK);
 		}
+		/******************* probably don't need street, city, postal************************/
+		/*EditText memberStreet = (EditText) this.findViewById(R.id.memberStreet);
+		if (memberStreet.getText().toString().compareTo("") == 0) {
+			result = false;
+			emptyFields.add("memberStreet");
+			emptyFields.add(String.valueOf(R.id.labelStreet));
+		} else {
+			TextView label = (TextView) this.findViewById(R.id.labelStreet);
+			label.setTextColor(Color.BLACK);
+		}
 		
+		EditText memberCity = (EditText) this.findViewById(R.id.memberCity);
+		if (memberCity.getText().toString().compareTo("") == 0) {
+			result = false;
+			emptyFields.add("memberCity");
+			emptyFields.add(String.valueOf(R.id.labelCity));
+		} else {
+			TextView label = (TextView) this.findViewById(R.id.labelCity);
+			label.setTextColor(Color.BLACK);
+		}
+		
+		EditText memberPostal = (EditText) this.findViewById(R.id.memberPostal);
+		if (memberPostal.getText().toString().compareTo("") == 0) {
+			result = false;
+			emptyFields.add("memberPostal");
+			emptyFields.add(String.valueOf(R.id.labelPostal));
+		} else {
+			TextView label = (TextView) this.findViewById(R.id.labelPostal);
+			label.setTextColor(Color.BLACK);
+		}*/
+		/**** REPLACE above with phone (need either home or cell) ****/
 		
 		EditText memberHome = (EditText) this.findViewById(R.id.memberHomePhone);
 		if (memberHome.getText().toString().compareTo("") == 0) {
@@ -329,6 +342,7 @@ public class MemberAdd extends NFCActivity implements OnClickListener, DatePicke
 		ArrayList<Integer> viewlist = new ArrayList<Integer>();
 		viewlist.add(R.id.memberFirstName);
 		viewlist.add(R.id.memberSurname);
+		viewlist.add(R.id.memberDoB);
 		viewlist.add(R.id.memberMedical);
 		viewlist.add(R.id.memberStreet);
 		viewlist.add(R.id.memberSuburb);
@@ -356,7 +370,6 @@ public class MemberAdd extends NFCActivity implements OnClickListener, DatePicke
 		viewlist.add(R.id.labelEmail);
 		viewlist.add(R.id.labelSignupType);
 		viewlist.add(R.id.labelCellPhone);
-		viewlist.add(R.id.member_dob_text);
 		for (int i = 0; i<viewlist.size(); i+=1){
 			TextView label = (TextView) this.findViewById(viewlist.get(i));
 			label.setTextColor(Color.BLACK);
@@ -368,7 +381,7 @@ public class MemberAdd extends NFCActivity implements OnClickListener, DatePicke
 		ArrayList<Integer> fields = new ArrayList<Integer>();
 		fields.add(R.id.memberFirstName);
 		fields.add(R.id.memberSurname);
-		//dob
+		fields.add(R.id.memberDoB);
 		//gender
 		fields.add(R.id.memberMedical);
 		fields.add(R.id.memberStreet);
@@ -381,7 +394,7 @@ public class MemberAdd extends NFCActivity implements OnClickListener, DatePicke
 		//signup type
 		// member id
 		int i = 0;
-		for (i = 0; i < fields.indexOf(R.id.memberMedical); i +=1){
+		for (i = 0; i <= fields.indexOf(R.id.memberDoB); i +=1){
 			EditText view = (EditText) this.findViewById(fields.get(i));
 			String input = view.getText().toString();
 			if (input.compareTo("") !=0) {
@@ -389,16 +402,12 @@ public class MemberAdd extends NFCActivity implements OnClickListener, DatePicke
 			} else {
 				inputData.add(null);
 		}	}
-		//get date of birth
-		TextView dob = (TextView) this.findViewById(R.id.member_dob_text);
-		inputData.add(Services.dateFormat(dob.getText().toString(), "dd MMM yyyy", "dd/MM/yyyy"));
-		
 		RadioGroup rgroup = (RadioGroup) this.findViewById(R.id.memberGender);
 		int id = rgroup.getCheckedRadioButtonId();
 		RadioButton gender = (RadioButton) this.findViewById(id);
 		inputData.add(gender.getText().toString());
 		
-		for (i = fields.indexOf(R.id.memberMedical); i < fields.size(); i +=1) {
+		for (i = fields.indexOf(R.id.memberDoB)+1; i < fields.size(); i +=1) {
 			EditText view = (EditText) this.findViewById(fields.get(i));
 			String input = view.getText().toString();
 			if (input.compareTo("") !=0) {
@@ -433,56 +442,55 @@ public class MemberAdd extends NFCActivity implements OnClickListener, DatePicke
 			
 			// add prospect/member to local database, attempt to upload to server.
 			ContentValues val = new ContentValues();
-			
-			val.put(ContentDescriptor.Member.Cols.FNAME, firstName);
-			val.put(ContentDescriptor.Member.Cols.SNAME, surname);
-			val.put(ContentDescriptor.Member.Cols.DOB, dob);
-			val.put(ContentDescriptor.Member.Cols.GENDER, gender);
-			val.put(ContentDescriptor.Member.Cols.MEDICAL, medical);
-			val.put(ContentDescriptor.Member.Cols.STREET, street);
-			val.put(ContentDescriptor.Member.Cols.SUBURB, suburb);
-			val.put(ContentDescriptor.Member.Cols.CITY, city);
-			val.put(ContentDescriptor.Member.Cols.POSTAL, postal);
-			val.put(ContentDescriptor.Member.Cols.EMAIL, email);
-			val.put(ContentDescriptor.Member.Cols.PHHOME, homePh);
-			val.put(ContentDescriptor.Member.Cols.PHCELL, cellPh);
+			val.put(ContentDescriptor.Pending.Cols.FNAME, firstName);
+			val.put(ContentDescriptor.Pending.Cols.SNAME, surname);
+			val.put(ContentDescriptor.Pending.Cols.DOB, dob);
+			val.put(ContentDescriptor.Pending.Cols.GENDER, gender);
+			val.put(ContentDescriptor.Pending.Cols.MEDICAL, medical);
+			val.put(ContentDescriptor.Pending.Cols.STREET, street);
+			val.put(ContentDescriptor.Pending.Cols.SUBURB, suburb);
+			val.put(ContentDescriptor.Pending.Cols.CITY, city);
+			val.put(ContentDescriptor.Pending.Cols.POSTAL, postal);
+			val.put(ContentDescriptor.Pending.Cols.EMAIL, email);
+			val.put(ContentDescriptor.Pending.Cols.HPHONE, homePh);
+			val.put(ContentDescriptor.Pending.Cols.CPHONE, cellPh);
+			val.put(ContentDescriptor.Pending.Cols.SIGNUP, signup);
+			//is this safe from SQL injection?
 
 			if (memberid == null){
 				
-				val.put(ContentDescriptor.Member.Cols.MID, -1);
-				contentResolver.insert(ContentDescriptor.Member.CONTENT_URI, val);
+				val.put(ContentDescriptor.Pending.Cols.ISUSED, 2);
+				contentResolver.insert(ContentDescriptor.Pending.CONTENT_URI, val);
 				
 			} else {
-				String[] selection = {memberid};
-				Cursor cur = contentResolver.query(ContentDescriptor.Member.URI_FREE_IDS, null,
-						ContentDescriptor.Member.Cols.MID+" = ?", selection, null);
-				
-				cur.moveToFirst();
-				int rowid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Member.Cols._ID));
-				cur.close();
-				
-				contentResolver.update(ContentDescriptor.Member.CONTENT_URI, val, 
-						ContentDescriptor.Member.Cols.MID+" = ?", selection);
-				val = new ContentValues();
-				val.put(ContentDescriptor.PendingUploads.Cols.TABLEID, ContentDescriptor.TableIndex.Values.Member.getKey());
-				val.put(ContentDescriptor.PendingUploads.Cols.ROWID, rowid);
-				contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, val);
+				if (signup.compareTo(getString(R.string.radioProspect)) == 0){
+					val.put(ContentDescriptor.Pending.Cols.ISUSED, 1);
+					contentResolver.insert(ContentDescriptor.Pending.CONTENT_URI, val);
+				}
+				else {
+					val.put(ContentDescriptor.Pending.Cols.ISUSED, 1);
+					String[] selection = {memberid};
+					contentResolver.update(ContentDescriptor.Pending.CONTENT_URI, val, ContentDescriptor.Pending.Cols.MID+" = ?", selection); 
+				}
 			}			
+			// notify user of pending uploads.
+			Cursor cur = contentResolver.query(ContentDescriptor.Pending.CONTENT_URI, null, ContentDescriptor.Pending.Cols.ISUSED+" = 1", null, null);
+			if (cur.getCount() > 0){
+				Toast.makeText(getApplicationContext(),cur.getCount()+" Sign-Ups pending, please sync to resolve.", Toast.LENGTH_LONG).show();
+			}
+			cur.close();
 			
 			startService(intent);
- 		}
-	}
-	
-	private void setText(String date) {
-		TextView dob = (TextView) this.findViewById(R.id.member_dob_text);
-		dob.setText(Services.dateFormat(date, "yyyy MM dd", "dd MMM yyyy"));
-	}
-
-	@Override
-	public void onDateSelect(String date, DatePickerFragment theDatePicker) {
-		if (theDatePicker == mDatePicker) {
-			setText(date);
+		  // TESTING
+		  	cur = contentResolver.query(ContentDescriptor.Pending.CONTENT_URI, null, null, null, null);
+			cur.moveToFirst();
+			for (int i=0;i<cur.getCount();i+=1){
+				for (int j=0;j<cur.getColumnCount();j+=1){
+					System.out.print("\n Row:"+i+"  column:"+j+" title: "+cur.getColumnName(j)+" Value:"+cur.getString(j));
+				}
+				cur.moveToNext();
+			}
+			cur.close();
 		}
-		
 	}
 }

@@ -3,7 +3,6 @@ package com.treshna.hornet;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Hashtable;
 import java.util.Locale;
 
 import android.annotation.SuppressLint;
@@ -14,10 +13,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
-import android.graphics.ColorFilter;
-import android.graphics.ColorMatrix;
-import android.graphics.ColorMatrixColorFilter;
-import android.graphics.Typeface;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -26,8 +21,7 @@ import android.widget.Toast;
 
 public class Services {
 	
-	private static PollingHandler pollingFreqHandler;
-	private static PollingHandler pollingInfreqHandler;
+	private static PollingHandler pollingHandler;
 	private static boolean DEBUG;
 	private static ProgressDialog progress;
 	private static Context theCtx;
@@ -37,18 +31,17 @@ public class Services {
 	 *  This function changes the format of a dateString. It requires the dateString, 
 	 *  the Layout of the string (e.g "yyyy-MM-dd"), and the requested output layout. 
 	 */
-
+	@SuppressLint("SimpleDateFormat")
 	public static String dateFormat(String dateString, String inputLayout, String outputLayout){
 		if (dateString == null || inputLayout == null || outputLayout == null ) return null;
-		SimpleDateFormat input = new SimpleDateFormat(inputLayout, Locale.US);
+		SimpleDateFormat input = new SimpleDateFormat(inputLayout);
 		Date date = null;
 		try {
 			date = input.parse(dateString);
 		} catch (ParseException e) {
-			Log.e(TAG, "Error Parsing Date:", e);
-			return null;
+			return ""; //or null?
 		}
-		SimpleDateFormat output = new SimpleDateFormat(outputLayout, Locale.US);
+		SimpleDateFormat output = new SimpleDateFormat(outputLayout);
 		String dateText = output.format(date);
 		
 		return dateText;
@@ -104,8 +97,8 @@ public class Services {
 	
 	 
 	 public static String getAppSettings(Context context, String key){
-		 //Exception e = new Exception();
-		 Log.d(TAG, "Getting App Setting: "+key);
+		 //System.out.println("Getting App Settings");
+		 Log.v(TAG, "Getting App Setting: "+key);
 		 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 		 return (preferences.getString(key, "-1"));
 	}
@@ -132,21 +125,13 @@ public class Services {
 		return (boolValue == 1)? true : false;
 	}
 	
-	public static void setFreqPollingHandler(Context ctx, PendingIntent pintent){
-		pollingFreqHandler = new PollingHandler(ctx, pintent);
+	public static void setPollingHandler(Context ctx, PendingIntent pintent){
+		pollingHandler = new PollingHandler(ctx, pintent);;
 	}
 	
-	public static PollingHandler getFreqPollingHandler(){
-		return pollingFreqHandler;
+	public static PollingHandler getPollingHandler(){
+		return pollingHandler;
 	}
-	
-	/*public static void setInfreqPollingHandler(Context ctx, PendingIntent pintent){
-		pollingInfreqHandler = new PollingHandler(ctx, pintent);
-	}
-	
-	public static PollingHandler getInfreqPollingHandler(){
-		return pollingInfreqHandler;
-	}*/
 	
 	public static void setContext(Context ctx){
 		theCtx = ctx;
@@ -164,19 +149,14 @@ public class Services {
 			handler.post(new Runnable() {  
 					@Override  
 					public void run() {  
-						if (message != null && !message.isEmpty() && message.length() >= 5) {
-							Toast.makeText(ctx, message, Toast.LENGTH_LONG).show();
-						}
+						Toast.makeText(ctx, message, Toast.LENGTH_LONG).show();
 					}});
 		}
 	}
 	
-	public static void showProgress(final Context ctx, final String message, Handler handler, int call, boolean force) {
+	public static void showProgress(final Context ctx, final String message, Handler handler, int call) {
 		
 		DEBUG = PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean("progress", false);
-		if (force) {
-			DEBUG = true;
-		}
 		if (progress != null) {
 			//Services.stopProgress(handler, call);
 			Services.getProgress().dismiss();
@@ -214,197 +194,27 @@ public class Services {
 		progress = prog;
 	}
 	
-	public static class ColorFilterGenerator {
-		/**
-		 * Creates a HUE ajustment ColorFilter
-		 * @see http://groups.google.com/group/android-developers/browse_thread/thread/9e215c83c3819953
-		 * @see http://gskinner.com/blog/archives/2007/12/colormatrix_cla.html
-		 * @param value degrees to shift the hue.
-		 * @return
-		 */
-		public static ColorFilter adjustHue( float value )
-		{
-		    ColorMatrix cm = new ColorMatrix();
-	
-		    adjustHue(cm, value);
-	
-		    return new ColorMatrixColorFilter(cm);
-		}
-	
-		/**
-		 * @see http://groups.google.com/group/android-developers/browse_thread/thread/9e215c83c3819953
-		 * @see http://gskinner.com/blog/archives/2007/12/colormatrix_cla.html
-		 * @param cm
-		 * @param value
-		 */
-		public static void adjustHue(ColorMatrix cm, float value)
-		{
-		    value = cleanValue(value, 180f) / 180f * (float) Math.PI;
-		    if (value == 0)
-		    {
-		        return;
-		    }
-		    float cosVal = (float) Math.cos(value);
-		    float sinVal = (float) Math.sin(value);
-		    float lumR = 0.213f;
-		    float lumG = 0.715f;
-		    float lumB = 0.072f;
-		    float[] mat = new float[]
-		    { 
-		            lumR + cosVal * (1 - lumR) + sinVal * (-lumR), lumG + cosVal * (-lumG) + sinVal * (-lumG), lumB + cosVal * (-lumB) + sinVal * (1 - lumB), 0, 0, 
-		            lumR + cosVal * (-lumR) + sinVal * (0.143f), lumG + cosVal * (1 - lumG) + sinVal * (0.140f), lumB + cosVal * (-lumB) + sinVal * (-0.283f), 0, 0,
-		            lumR + cosVal * (-lumR) + sinVal * (-(1 - lumR)), lumG + cosVal * (-lumG) + sinVal * (lumG), lumB + cosVal * (1 - lumB) + sinVal * (lumB), 0, 0, 
-		            0f, 0f, 0f, 1f, 0f, 
-		            0f, 0f, 0f, 0f, 1f };
-		    
-		    cm.postConcat(new ColorMatrix(mat));
-		}
-		
-		public static ColorFilter setColourGreen()
-		{
-		    ColorMatrix cm = new ColorMatrix();
-	
-		    setColourGreen(cm);
-	
-		    return new ColorMatrixColorFilter(cm);
-		}
-		
-		public static void setColourGreen(ColorMatrix cm) {
-			 float[] gMatrix = { 
-			            0, 0, 0, 0, 0, //red
-			            1, 1, 1, 1, 1, //green
-			            0, 0, 0, 0, 0, //blue
-			            1, 1, 1, 1, 1 //alpha
-			        };
-			    
-			    cm.postConcat(new ColorMatrix(gMatrix));
-		}
-		
-		public static ColorFilter setColourRed()
-		{
-		    ColorMatrix cm = new ColorMatrix();
-	
-		    setColourRed(cm);
-	
-		    return new ColorMatrixColorFilter(cm);
-		}
-		
-		public static void setColourRed(ColorMatrix cm) {
-			 float[] gMatrix = { 
-			            1, 1, 1, 1, 1, //red
-			            0, 0, 0, 0, 0, //green
-			            0, 0, 0, 0, 0, //blue
-			            1, 1, 1, 1, 1 //alpha
-			        };
-			    
-			    cm.postConcat(new ColorMatrix(gMatrix));
-		}
-		
-		public static ColorFilter setColourBlue()
-		{
-		    ColorMatrix cm = new ColorMatrix();
-	
-		    setColourBlue(cm);
-	
-		    return new ColorMatrixColorFilter(cm);
-		}
-		
-		public static void setColourBlue(ColorMatrix cm) {
-			 float[] gMatrix = { 
-			            0, 0, 0, 0, 0, //red
-			            0, 0, 0, 0, 0, //green
-			            1, 1, 1, 1, 1, //blue
-			            1, 1, 1, 1, 1 //alpha
-			        };
-			    
-			    cm.postConcat(new ColorMatrix(gMatrix));
-		}
-		
-		public static ColorFilter setColourGrey() { //why doesn't this work?
-		
-			ColorMatrix cm = new ColorMatrix();
-			float[] gMatrix = { 
-					0, 0, 0, 0, 97, //red
-		            0, 0, 0, 0, 95, //green
-		            0, 0, 0, 0, 95, //blue
-		            1, 1, 1, 1, 0 //alpha
-		        };
-		    
-		    cm.postConcat(new ColorMatrix(gMatrix));
-		    return new ColorMatrixColorFilter(cm);
-		}
-	
-		protected static float cleanValue(float p_val, float p_limit)
-		{
-		    return Math.min(p_limit, Math.max(-p_limit, p_val));
-		}
-	}
-	
-	public static class Typefaces {
-		private static final String TAG = "Typefaces";
-
-		private static final Hashtable<String, Typeface> cache = new Hashtable<String, Typeface>();
-
-		public static Typeface get(Context c, String assetPath) {
-			synchronized (cache) {
-				if (!cache.containsKey(assetPath)) {
-					try {
-						Typeface t = Typeface.createFromAsset(c.getAssets(),
-								assetPath);
-						cache.put(assetPath, t);
-					} catch (Exception e) {
-						Log.e(TAG, "Could not get typeface '" + assetPath
-								+ "' because " + e.getMessage());
-						return null;
-					}
-				}
-				return cache.get(assetPath);
-			}
-		}
-	}
-	
 	
 	public static class Statics {
-		public static final int FREQUENT_SYNC = -1;
-		public static final int INFREQUENT_SYNC = -2;
+		public static final int LASTVISITORS = 1;
+		public static final int UPLOAD = 2;
 		public static final int SWIPE = 3;
+		public static final int BOOKING = 4;		
 		public static final int FIRSTRUN = 10;
+		public static final int RESOURCESELECTED = 11;
 		public static final int NEWDATABASE = 12;
 		public static final int CLASSSWIPE = 5;
-		public static final int MANUALSWIPE = 13;
 		//used for referencing various bundles and stuff stored in intents;
-		public static final String DATE = "date";
 		public static final String KEY = "key";
 		public static final String IS_BOOKING = "booking";
 		public static final String IS_BOOKING_F = "firstname";
 		public static final String IS_BOOKING_S = "surname";
 		public static final String MSID = "membershipid";
-		public static final String MID = "memberid";
-		public static final String VISIT = "visitdate";
 		public static String PREF_NAME = "addMember";
 		public static String PREF_KEY = "memberType";
 		
 		public static final String IS_SUCCESSFUL = "com.treshna.hornet.is_successful";
 		public static final String IS_RESTART = "com.treshna.hornet.is_restart";
 		public static final String IS_CLASSSWIPE = "com.treshna.hornet.class_swipe";
-		
-		public static final String ERROR_MSHOLD1 = "ERROR: Membership hold/free time dates are invalid. "
-				+ "Dates of free time and holds must overlap an existing membership dates.";
-		public static final String ERROR_MSHOLD2 = "ERROR: This member is already suspended from";
-		
-		public static enum FragmentType {
-			MembershipAdd(1), MembershipComplete(2), MemberDetails(3), MemberGallery(4);
-			
-			private final int key;
-			
-			FragmentType(int thekey) {
-				this.key = thekey;
-			}
-			
-			public int getKey() {
- 				return this.key;
- 			}
-			
-		}
 	}
 }

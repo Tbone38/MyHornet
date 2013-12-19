@@ -22,7 +22,7 @@ import android.widget.Toast;
 public class PollingHandler extends BroadcastReceiver {
 	public static final String POLLING_START = "polling_start";
 	private Context context = null;
-	private PendingIntent pintent = null;
+	private static PendingIntent pintent = null;
 	private AlarmManager alarm = null;
 	private Calendar cal = Calendar.getInstance();
 	private String message;
@@ -33,7 +33,7 @@ public class PollingHandler extends BroadcastReceiver {
 	
 	private boolean isPolling = true;
 	
-	private long start_time;
+	private static long start_time;
 	private static final String TAG = "com.treshna.hornet.pollingHandler";
 	
 	public PollingHandler(Context context, PendingIntent pIntent) {
@@ -68,7 +68,7 @@ public class PollingHandler extends BroadcastReceiver {
 				this.conStatus = false;
 			}
 		}
-		if ( conStatus == true) {
+		if (this.serverExists == true && conStatus == true) {
 			setPolling();
 		} else {
 			makeToast();
@@ -81,7 +81,7 @@ public class PollingHandler extends BroadcastReceiver {
 	public boolean startService() {
 		conStatus = isConnected();
 		serverExists = serverExists();
-		if (conStatus == true) {
+		if (conStatus == true && serverExists == true) {
 			this.isPolling = true;
 			setPolling();
 			return true;
@@ -148,14 +148,11 @@ public class PollingHandler extends BroadcastReceiver {
 	private void makeToast() {
 		if (conStatus == false) message = "no wifi connection found.";
 		else if (serverExists == false) message = "server not found on wifi, please check server ip settings.";
-		if (message != null) {
-			handler.post(new Runnable() {  
-					@Override  
-					public void run() {  
-						Toast.makeText(context.getApplicationContext(), message, Toast.LENGTH_LONG).show();
-						message = null;
-					}});
-		}
+		handler.post(new Runnable() {  
+				@Override  
+				public void run() {  
+					Toast.makeText(context.getApplicationContext(), message, Toast.LENGTH_LONG).show();
+				}});
 	}
 	
 	/*************************************/

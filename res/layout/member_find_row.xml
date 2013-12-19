@@ -3,27 +3,14 @@
     android:id="@+id/listRow"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="3dp"
-    android:paddingBottom="3dp"
-    android:paddingLeft="2dp"
-    android:background="@drawable/button"
     tools:context=".MemberFind" >
-	<View
-	    android:id="@+id/member_row_colour_block"
-	    android:layout_width="10dp"
-	    android:layout_height="80dp"
-	    android:background="@color/member_grey"
-	    android:padding="3dp"
-	    android:layout_margin="1dp" />
 	
 	<ImageView android:id="@+id/rowimage"
         android:contentDescription="@string/image_description"
         android:layout_alignParentTop="true"
         android:paddingLeft="5dp"
      	android:layout_width="80sp"
-     	android:layout_height="80sp"
-     	android:layout_toRightOf="@id/member_row_colour_block"
-     	android:layout_marginRight="5dp" />
+     	android:layout_height="80sp" />
 	
 	<TextView android:id="@+id/name"
         android:padding="3dp"

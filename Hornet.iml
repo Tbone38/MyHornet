@@ -67,6 +67,7 @@
     </content>
     <orderEntry type="jdk" jdkName="Android API 17 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" exported="" name="android-support-v4" level="project" />
     <orderEntry type="library" exported="" name="postgresql-9.2-1002.jdbc4" level="project" />
   </component>
 </module>

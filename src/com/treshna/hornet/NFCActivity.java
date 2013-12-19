@@ -19,7 +19,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 
 public class NFCActivity extends ActionBarActivity {
-	private static final String TAG = "NFCActivity";
+	private static final String TAG = "com.treshna.hornet.NFCActivity";
 	//NfcAdapter mNfcAdapter;
 	private String[][] mTechLists;
 	private PendingIntent pendingIntent;
@@ -113,9 +113,7 @@ public class NFCActivity extends ActionBarActivity {
 	       
 	    	values = new ContentValues();
 	    	values.put(ContentDescriptor.Swipe.Cols.ID, id);
-	    	int door = Integer.parseInt(Services.getAppSettings(this, "door"));
-	    	door =(door < 0)? 1: door; 
-	    	values.put(ContentDescriptor.Swipe.Cols.DOOR, door);
+	    	values.put(ContentDescriptor.Swipe.Cols.DOOR, Services.getAppSettings(this, "door"));
 	    	values.put(ContentDescriptor.Swipe.Cols.DATETIME, format.format(today));
 	    	rowid = Integer.parseInt(contentResolver.insert(ContentDescriptor.Swipe.CONTENT_URI, values).getLastPathSegment());
 

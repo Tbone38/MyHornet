@@ -14,25 +14,19 @@
 	
 	 	<TextView
 	 	    android:id="@+id/membername"
-	 	    android:layout_width="wrap_content"
-	 	    android:layout_height="wrap_content"
-	 	    android:textSize="25sp"
-	 	    android:padding="5dp"
-	 	    android:paddingBottom="2dp"
-	 	    android:layout_margin="3dp" />
-	 	<View
-	 	    android:id="@+id/membernameline"
 	 	    android:layout_width="match_parent"
-	 	    android:layout_height="5dp"
-	 	    android:layout_below="@id/membername"
-	 	    android:background="@color/member_blue"
-	 	    android:padding="3dp" />
+	 	    android:layout_height="wrap_content"
+	 	    android:gravity="center"
+	 	    android:background="@color/gym"
+	 	    android:textSize="18sp"
+	 	    android:padding="5dp"
+	 	    android:layout_margin="3dp" /> 
 	 	    
 	 	<TextView 
 	 	    android:id="@+id/membershipname"
 	 	    android:layout_height="wrap_content"
 	 	    android:layout_width="wrap_content"
-	 	    android:layout_below="@id/membernameline"
+	 	    android:layout_below="@id/membername"
 	 	    android:gravity="center"
 	 	    android:textSize="16sp"
 	 	    android:padding="5dp"
@@ -91,15 +85,14 @@
 	 	
 	 	<TextView 
 	 	    android:id="@+id/startdate"
-	 	    android:layout_width="match_parent"
+	 	    android:layout_width="wrap_content"
 	 	    android:layout_height="wrap_content"
 	 	    android:layout_below="@id/startdateL"
-	 	    android:gravity="center_vertical"
+	 	    android:gravity="center"
 	 	    android:textSize="18sp"
 	 	    android:text="@string/membership_default_startdate"
 	 	    android:padding="5dp"
-	 	    android:layout_margin="3dp"
-	 	    android:background="@drawable/button" />
+	 	    android:layout_margin="3dp" />
 	 	
 	 	<TextView
 	 	    android:id="@+id/hold_durationL"
@@ -137,6 +130,7 @@
 	 	    android:layout_width="match_parent"
 	 	    android:layout_height="wrap_content"
 	 	    android:layout_below="@id/hold_reasonL"
+	 	    android:gravity="center"
 	 	    android:inputType="text"
 	 	    android:padding="5dp"
 	 	    android:layout_margin="3dp" />
@@ -147,50 +141,29 @@
 	 	    android:layout_height="wrap_content"
 	 	    android:layout_below="@id/hold_reason"
 	 	    android:orientation="horizontal" >
-		 	<LinearLayout
-		        android:layout_width="0dp"
-		        android:layout_height="wrap_content"
-		        android:layout_weight=".45"
-			    android:layout_marginRight="10dp"
-		    	android:orientation="vertical">
-		 	    <TextView
-		 	        android:id="@+id/buttoncancel"
-		 	        android:layout_width="match_parent"
-		 	        android:layout_height="wrap_content"
-		 	        android:gravity="center"
-		 	        android:textSize="20sp"
-		 	        android:text="@string/buttonCancel"
-		 	        android:padding="5dp"
-		 	    	android:background="@drawable/button_large_cancel" />
-		 	    <View
-			        android:layout_width="match_parent"
-				    android:layout_height="2dp"
-				    android:paddingLeft="5dp"
-			    	android:paddingRight="5dp"
-				    android:background="@color/button_underline_red" />
-			</LinearLayout>
-			<LinearLayout
-		        android:layout_width="0dp"
-		        android:layout_height="wrap_content"
-		        android:layout_weight=".45"
-			    android:layout_marginRight="10dp"
-		    	android:orientation="vertical">
-		 	    <TextView
-		 	        android:id="@+id/buttonaccept"
-		 	        android:layout_width="match_parent"
-		 	        android:layout_height="wrap_content"
-		 	        android:gravity="center"
-		 	        android:textSize="20sp"
-		 	        android:text="@string/buttonAccept"
-		 	        android:padding="5dp"
-		 	    	android:background="@drawable/button_large_accept" />
-		 	    <View
-			        android:layout_width="match_parent"
-				    android:layout_height="2dp"
-				    android:paddingLeft="5dp"
-			    	android:paddingRight="5dp"
-				    android:background="@color/button_underline_green" />
-			</LinearLayout>
+	 	    
+	 	    <TextView
+	 	        android:id="@+id/buttonaccept"
+	 	        android:layout_width="0dp"
+	 	        android:layout_height="wrap_content"
+	 	        android:layout_weight=".45"
+	 	        android:gravity="center"
+	 	        android:textSize="20sp"
+	 	        android:text="@string/buttonAccept"
+	 	        android:padding="5dp"
+	 	    	android:layout_margin="3dp" />
+	 	    
+	 	    <TextView
+	 	        android:id="@+id/buttoncancel"
+	 	        android:layout_width="0dp"
+	 	        android:layout_height="wrap_content"
+	 	        android:layout_weight=".45"
+	 	        android:gravity="center"
+	 	        android:textSize="20sp"
+	 	        android:text="@string/buttonCancel"
+	 	        android:padding="5dp"
+	 	    	android:layout_margin="3dp" />
+	 	    
 	 	</LinearLayout>    
 	</RelativeLayout>
 </ScrollView>

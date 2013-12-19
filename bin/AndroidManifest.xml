@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.treshna.hornet"
-    android:versionCode="114"
-    android:versionName="0.14" >
+    android:versionCode="107"
+    android:versionName="0.07" >
 
     <uses-sdk
         android:minSdkVersion="10"
-        android:targetSdkVersion="19" />
+        android:targetSdkVersion="18" />
 
     <uses-permission android:name="android.permission.NFC" />
 
@@ -15,7 +15,6 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.treshna.hornet" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
@@ -25,33 +24,32 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+        <service android:name="com.treshna.hornet.GCMIntentService" />
 
         <provider
             android:name="com.treshna.hornet.HornetContentProvider"
             android:authorities="com.treshna.hornet"
             android:exported="true" >
         </provider>
-
-        <activity
+		
+         <activity
             android:name="com.treshna.hornet.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/Theme.AppCompat.Light"
-            android:windowSoftInputMode="stateHidden" >
-            <intent-filter>
-                <action android:name="android.nfc.action.TECH_DISCOVERED" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
+            android:theme="@style/Theme.AppCompat.Light" >
+           	<intent-filter>
+                <action android:name="android.nfc.action.TECH_DISCOVERED"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+           	</intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
+            <!--  -->
             <meta-data
                 android:name="android.nfc.action.TECH_DISCOVERED"
                 android:resource="@xml/nfc_tech_filter" />
         </activity>
+        
         <activity
             android:name="com.treshna.hornet.SettingsActivity"
             android:label="@string/title_activity_settings"
@@ -66,10 +64,20 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.treshna.hornet.MainActivity" />
         </activity>
+        
 
         <service android:name="com.treshna.hornet.HornetDBService" >
         </service>
 
+        <activity
+            android:name="com.treshna.hornet.MemberDetails"
+            android:label="@string/title_activity_member_info"
+            android:parentActivityName="com.treshna.hornet.MainActivity"
+            android:theme="@style/Theme.AppCompat.Light" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.treshna.hornet.MainActivity" />
+        </activity>
         <activity
             android:name="com.treshna.hornet.MemberAdd"
             android:label="@string/title_activity_add_member"
@@ -79,20 +87,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.treshna.hornet.MainActivity" />
         </activity>
-        
         <activity
-            android:name="com.treshna.hornet.BookingPage"
-            android:label="@string/title_activity_add_booking"
-           	android:parentActivityName="com.treshna.hornet.MainActivity"
-            android:theme="@style/Theme.AppCompat.Light"
-            android:windowSoftInputMode="stateHidden" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.treshna.hornet.MainActivity" />
-        </activity>
-        <activity
-            android:name="com.treshna.hornet.ClassCreate"
-            android:label="@string/title_activity_class_create"
+            android:name="com.treshna.hornet.BookingsSlidePager"
+            android:label="@string/title_activity_display_results"
             android:parentActivityName="com.treshna.hornet.MainActivity"
             android:theme="@style/Theme.AppCompat.Light" >
             <meta-data
@@ -100,23 +97,24 @@
                 android:value="com.treshna.hornet.MainActivity" />
         </activity>
         <activity
-            android:name="com.treshna.hornet.MembershipHold"
-            android:label="@string/title_activity_membership_hold"
-            android:parentActivityName="com.treshna.hornet.MemberDetails"
+            android:name="com.treshna.hornet.BookingPage"
+            android:label="@string/title_activity_add_booking"
+            android:parentActivityName="com.treshna.hornet.BookingsSlidePager"
             android:theme="@style/Theme.AppCompat.Light" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.treshna.hornet.MemberDetails" />
+                android:value="com.treshna.hornet.BookingsSlidePager" />
+        </activity>
+       
+        <activity
+            android:name="com.treshna.hornet.ClassCreate"
+            android:label="@string/title_activity_class_create"
+            android:theme="@style/Theme.AppCompat.Light" >
         </activity>
         <activity
-            android:name="com.treshna.hornet.EmptyActivity"
-            android:label="@string/title_activity_membership_add"
-            android:parentActivityName="com.treshna.hornet.MemberDetails"
-            android:theme="@style/Theme.AppCompat.Light"
-            android:windowSoftInputMode="stateHidden" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.treshna.hornet.MemberDetails" />
+            android:name="com.treshna.hornet.MembershipHold"
+            android:label="@string/title_activity_membership_hold"
+            android:theme="@style/Theme.AppCompat.Light" >
         </activity>
     </application>
 

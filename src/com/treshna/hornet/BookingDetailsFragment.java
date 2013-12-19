@@ -27,7 +27,6 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -86,8 +85,13 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 		cur = contentResolver.query(ContentDescriptor.Booking.BOOKING_TIME_URI,null, "b."+ContentDescriptor.Booking.Cols.BID+"= "+bookingID, null, null);
 		
 		cur.moveToFirst();
+		//for (int j=0;j<cur.getCount(); j+=1){
+			for (int i=0; i<cur.getColumnCount(); i+=1){
+				System.out.print("\nColumn: "+i+"  Name:"+cur.getColumnName(i)+"  Value:"+cur.getString(i)+"\n");
+			}
+		//}
 		msID = cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.MSID));
-
+		//System.out.print("\n\n***msID:"+msID+"***\n\n\n\n");
 		if (cur.getCount() <= 0) {
 			return;
 		}
@@ -185,19 +189,19 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 					public void onNothingSelected(AdapterView<?> arg0) {
 						//leave alone (doesn't matter?)
 					}});
-			LinearLayout cancel = (LinearLayout) page.findViewById(R.id.button_booking_cancel);
+			TextView cancel = (TextView) page.findViewById(R.id.bookingcancel);
 			cancel.setClickable(true);
 			cancel.setOnClickListener(this);
-			LinearLayout checkin = (LinearLayout) page.findViewById(R.id.button_booking_checkin);
+			TextView checkin = (TextView) page.findViewById(R.id.bookingcheckin);
 			checkin.setClickable(true);
 			checkin.setOnClickListener(this);
-			LinearLayout noshow = (LinearLayout) page.findViewById(R.id.button_booking_noshow);
+			TextView noshow = (TextView) page.findViewById(R.id.bookingnoshow);
 			noshow.setClickable(true);
 			noshow.setOnClickListener(this);
 			
 			cur.close();
 			cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, "m."+ContentDescriptor.Member.Cols.MID+" = "+memberID, null, null);
-			LinearLayout sms = (LinearLayout) page.findViewById(R.id.button_booking_sms);
+			TextView sms = (TextView) page.findViewById(R.id.bookingsms);
 			String smsno = "";
 			cur.moveToFirst();
 			if (cur.getCount()>0) {
@@ -210,36 +214,30 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 						sms.setClickable(true);
 						sms.setOnClickListener(this);
 					} else {
-						sms.setBackgroundColor(getActivity().getResources().getColor(R.color.white));
-						TextView smstext = (TextView)sms.findViewById(R.id.button_booking_sms_text);
-						smstext.setTextColor(color.grey);
-						sms.setClickable(false);
+						sms.setTextColor(color.grey);
 					}
 				}else {
-					sms.setBackgroundColor(getActivity().getResources().getColor(R.color.white));
-					TextView smstext = (TextView)sms.findViewById(R.id.button_booking_sms_text);
-					smstext.setTextColor(color.grey);
-					sms.setClickable(false);
+					sms.setTextColor(color.grey);
 				}
 				/*for (int l=0; l<cur.getColumnCount(); l+=1){
 					System.out.print("\nColumn: "+l+"  Name:"+cur.getColumnName(l)+"  Value:"+cur.getString(l));
 				}*/
-				LinearLayout call = (LinearLayout) page.findViewById(R.id.button_booking_call);
+				TextView call = (TextView) page.findViewById(R.id.bookingcall);
 				// onclick, alert dialog box, select * number to call ?
 				String[] callNo = new String[3];
 				int l = 0;
-				for (int k=7;k<=9;k +=1) { //give options for number to call
+				for (int k=8;k<=10;k +=1) { //give options for number to call
 					if (!cur.isNull(k)){
 						if (cur.getString(k).compareTo(" ") != 0) {
 							String pht = "";
 							switch (k){
-							case (7):{
+							case (8):{
 								pht = "Home";
 								break;
-							} case (8):{
+							} case (9):{
 								pht = "Cell";
 								break;
-							} case (9):{
+							} case (10):{
 								pht = "Work";
 								break;
 							}
@@ -250,10 +248,7 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 					}
 				}
 				if (callNo[0].isEmpty() && callNo[1].isEmpty() && callNo[2].isEmpty()) {
-					call.setBackgroundColor(getActivity().getResources().getColor(R.color.white));
-					TextView calltext = (TextView) call.findViewById(R.id.button_booking_call_text);
-					calltext.setTextColor(color.grey);
-					call.setClickable(false);
+					call.setTextColor(color.grey);
 				} else {
 					call.setTag(callNo);
 					call.setClickable(true);
@@ -288,7 +283,7 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 			programme.setVisibility(View.GONE);
 		}
 		
-		TextView reschedule = (TextView) page.findViewById(R.id.button_booking_reschedule_text);
+		TextView reschedule = (TextView) page.findViewById(R.id.bookingreschedule);
 		reschedule.setTextColor(color.grey);
 		
 		//SHOW IMAGE;
@@ -320,7 +315,7 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 	@Override
 	public void onClick(View v) {
 		switch(v.getId()){
-		case(R.id.button_booking_cancel):{
+		case(R.id.bookingcancel):{
 			AlertDialog.Builder alert = new AlertDialog.Builder(ctx);
 		      alert.setMessage("Really Cancel Booking for "+bookingName+"?");
 		      alert.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
@@ -329,7 +324,7 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 					//set result-status = 5; and lastupdate = now()
 					ContentValues values = new ContentValues();
 					values.put(ContentDescriptor.Booking.Cols.RESULT, 5);
-					values.put(ContentDescriptor.Booking.Cols.LASTUPDATE, new Date().getTime());
+					values.put(ContentDescriptor.Booking.Cols.LASTUPDATED, new Date().getTime());
 					
 					contentResolver.update(ContentDescriptor.Booking.CONTENT_URI, values, 
 							ContentDescriptor.Booking.Cols.BID+" = ?", new String[] {bookingID});
@@ -345,7 +340,7 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 		      alert.show();
 		      break;
 		}
-		case(R.id.button_booking_checkin):{
+		case(R.id.bookingcheckin):{
 			AlertDialog.Builder alert = new AlertDialog.Builder(ctx);
 		      alert.setMessage("Check-In "+bookingName+"?");
 		      alert.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
@@ -354,7 +349,7 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 					//set result = 20, lastupdate = now()
 					ContentValues values = new ContentValues();
 					values.put(ContentDescriptor.Booking.Cols.RESULT, 20);
-					values.put(ContentDescriptor.Booking.Cols.LASTUPDATE, new Date().getTime());
+					values.put(ContentDescriptor.Booking.Cols.LASTUPDATED, new Date().getTime());
 					values.put(ContentDescriptor.Booking.Cols.CHECKIN, new Date().getTime());
 					
 					contentResolver.update(ContentDescriptor.Booking.CONTENT_URI, values, 
@@ -368,7 +363,7 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 		      alert.show();
 		      break;
 		}
-		case(R.id.button_booking_noshow):{
+		case(R.id.bookingnoshow):{
 			AlertDialog.Builder alert = new AlertDialog.Builder(ctx);
 		      alert.setMessage("Set no-show for "+bookingName+"?");
 		      alert.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
@@ -377,7 +372,7 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 					//set result = 15, lastupdate = now()
 					ContentValues values = new ContentValues();
 					values.put(ContentDescriptor.Booking.Cols.RESULT, 15);
-					values.put(ContentDescriptor.Booking.Cols.LASTUPDATE, new Date().getTime());
+					values.put(ContentDescriptor.Booking.Cols.LASTUPDATED, new Date().getTime());
 					
 					contentResolver.update(ContentDescriptor.Booking.CONTENT_URI, values, 
 							ContentDescriptor.Booking.Cols.BID+" = ?", new String[] {bookingID});
@@ -406,7 +401,7 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 		      alert.show();
 		      break;
 		}*/
-		case (R.id.button_booking_sms):{
+		case (R.id.bookingsms):{
 			//send a text reminder
 			Intent smsIntent = new Intent(Intent.ACTION_VIEW);
 			smsIntent.setType("vnd.android-dir/mms-sms");
@@ -417,7 +412,7 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 			startActivity(smsIntent);
 			break;
 		}
-		case (R.id.button_booking_call):{
+		case (R.id.bookingcall):{
 			//show a pop-up to select the number to call (work, home, cell)
 			String[] numbers = (String[]) v.getTag();
 			selectCall(numbers);

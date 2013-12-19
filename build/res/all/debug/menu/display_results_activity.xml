@@ -1,0 +1,24 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="400"
+        android:title="@string/action_settings"
+        android:showAsAction="never" />
+    
+    <item
+        android:id="@+id/action_scan"
+        android:orderInCategory="100"
+        android:title="@string/action_scan"/>
+    
+    <item
+        android:id="@+id/action_update"
+        android:orderInCategory="200"
+        android:title="@string/action_sync"/>
+    
+     <item
+        android:id="@+id/action_halt"
+        android:orderInCategory="300"
+        android:title="@string/action_halt"/>
+
+</menu><!-- From: file:/home/callum/work/workspace/Hornet/res/menu/display_results_activity.xml -->

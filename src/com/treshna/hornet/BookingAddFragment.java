@@ -6,7 +6,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -18,7 +17,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -26,7 +24,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,13 +45,12 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 	
 	private Cursor cur;
 	private ContentResolver contentResolver;
-	public String bookingFName;
-	public String bookingSName;
+	private String bookingFName;
+	private String bookingSName;
 	private String msID;
 	private String curdate;
 	private Context ctx;
-	private static final String TAG = "BookingAddFragment";
-	private View page;
+	private View screen;
 	
 	String statusMessage;
 	
@@ -64,32 +60,19 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		 // Inflate the layout for this fragment
 		 ctx = getActivity();
 		 String startid = getArguments().getString(Services.Statics.KEY);
-		 if (getArguments().getString(Services.Statics.DATE)!= null) {
-			 curdate = getArguments().getString(Services.Statics.DATE);
-			 curdate = Services.dateFormat(curdate, "yyyyMMdd", "dd MMM yyyy");
-		 }
-		 
+		 bookingFName = getArguments().getString(Services.Statics.IS_BOOKING_F);
+		 bookingSName = getArguments().getString(Services.Statics.IS_BOOKING_S);
+		 msID = getArguments().getString(Services.Statics.MSID);
 		 contentResolver = getActivity().getContentResolver();
-		 page = inflater.inflate(R.layout.booking_add, container, false);
-		 if (curdate == null) {
-			 curdate = Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "dd MMM yyyy");
-		 }
-		 setupView(startid);
+		 View page = inflater.inflate(R.layout.booking_add, container, false);
+		 curdate = Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");
+		 setupView(page, startid);
 		 return page;
 	 }
 	
-	public void setName(String fname, String sname) {
-		bookingFName = fname;
-		bookingSName = sname;
-	}
-	
-	public void setMembership(String msid) {
-		this.msID = msid;
-	}
-	
 	@SuppressWarnings("deprecation")
 	@SuppressLint("NewApi")
-	private void setupView(String startid) {		
+	private void setupView(View page, String startid) {		
 		cur = contentResolver.query(ContentDescriptor.Time.CONTENT_URI, null, ContentDescriptor.Time.Cols.ID+" = "+startid, null, null);
 		cur.moveToFirst();
 		
@@ -100,9 +83,8 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 			date.setBackgroundDrawable(getResources().getDrawable(R.drawable.button));
 		}
 		date.setClickable(true);
-		date.setText(curdate);
-		date.setTag(Services.dateFormat(curdate, "dd MMM yyyy", "yyyyMMdd"));
-		
+		date.setTag(curdate);
+		//date.setTag(cur.getString(2));
 		date.setOnClickListener(this);
 		
 		
@@ -115,9 +97,9 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 			
 			TextView surname = (TextView) page.findViewById(R.id.bookingSName);
 			surname.setText(bookingSName);
-			
+			//member.setText(bookingName); //the selected value ? passed back from the find member list ?
 		} else {
-			
+			//member.setText("");
 		}
 		member.setClickable(true);
 		member.setOnClickListener(this);
@@ -176,7 +158,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		rlparams.addRule(RelativeLayout.BELOW, R.id.bookingResourceRow);
 		rlparams.addRule(RelativeLayout.RIGHT_OF, 10);
 		typespinner.setLayoutParams(rlparams);
-		
+		//Spinner typespinner = (Spinner) findViewById(R.id.bookingType);
 		cur = contentResolver.query(ContentDescriptor.Bookingtype.CONTENT_URI, null, null, null, null);
 		List<String> typelist = new ArrayList<String>();
 		while (cur.moveToNext()) {
@@ -188,126 +170,80 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 				android.R.layout.simple_spinner_item, typelist);
 			dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			typespinner.setAdapter(dataAdapter);
-			cur.close();
+			typespinner.setOnItemSelectedListener(new OnItemSelectedListener(){
+				@Override
+				public void onItemSelected(AdapterView<?> parent, View view,
+						int pos, long id) {
+					// set the booking type, and update table;					
+				}
+
+				@Override
+				public void onNothingSelected(AdapterView<?> arg0) {
+					//leave alone (doesn't matter?)
+				}});
+		cur.close();
 		layout.addView(typespinner);
 		
 		LinearLayout buttonRow = new LinearLayout(ctx);
-		
+		//
 		rlparams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		rlparams.addRule(RelativeLayout.BELOW, 11);
 		rlparams.setMargins(3, 3, 3, 3);
 		buttonRow.setLayoutParams(rlparams);
 		buttonRow.setOrientation(LinearLayout.HORIZONTAL);
 		
-		
-		LinearLayout cancelLayout = new LinearLayout(ctx);
-		cancelLayout.setOrientation(LinearLayout.VERTICAL);
-		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT, (float) .5);
-		params.setMargins(0, 0, 10, 0);
-		cancelLayout.setLayoutParams(params);
-		
-		TextView cancel = new TextView(ctx);
-		cancel.setId(46);
-		params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-		cancel.setLayoutParams(params);
-		cancel.setPadding(5, 5, 5, 5);
-		cancel.setTextSize(22);
-		cancel.setText(R.string.bookingcancel);
-		cancel.setGravity(Gravity.CENTER);
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-			cancel.setBackground(getResources().getDrawable(R.drawable.button_large_cancel));
-		} else {
-			cancel.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_large_cancel));
-		}
-		cancel.setClickable(true);
-		cancel.setOnClickListener(this);
-		
-		View cancelline = new View(ctx);
-		cancelline.setPadding(5, 0, 5, 0);
-		cancelline.setBackgroundColor(getResources().getColor(R.color.button_underline_red));
-		params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 2);
-		cancelline.setLayoutParams(params);
-		
-		cancelLayout.addView(cancel);
-		cancelLayout.addView(cancelline);
-		
-		
-		LinearLayout acceptLayout = new LinearLayout(ctx);
-		acceptLayout.setOrientation(LinearLayout.VERTICAL);
-		params = new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT, (float) .5);
-		params.setMargins(0, 0, 10, 0);
-		acceptLayout.setLayoutParams(params);
-		
 		TextView accept = new TextView(ctx);
 		accept.setId(45);
-		params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT, (float) .5);
 		accept.setLayoutParams(params);
 		accept.setPadding(5, 5, 5, 5);
 		accept.setTextSize(22);
 		accept.setText(R.string.bookingaccept);
 		accept.setGravity(Gravity.CENTER);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-			accept.setBackground(getResources().getDrawable(R.drawable.button_large_accept));
+			accept.setBackground(getResources().getDrawable(R.drawable.button));
 		} else {
-			accept.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_large_accept));
+			accept.setBackgroundDrawable(getResources().getDrawable(R.drawable.button));
 		}
 		accept.setClickable(true);
 		accept.setOnClickListener(this);
 		
-		View acceptline = new View(ctx);
-		acceptline.setPadding(5, 0, 5, 0);
-		acceptline.setBackgroundColor(getResources().getColor(R.color.button_underline_green));
-		params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 2);
-		acceptline.setLayoutParams(params);
+		TextView cancel = new TextView(ctx);
+		cancel.setId(46);
+		params = new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT, (float) .5);
+		cancel.setLayoutParams(params);
+		cancel.setPadding(5, 5, 5, 5);
+		cancel.setTextSize(22);
+		cancel.setText(R.string.bookingcancel);
+		cancel.setGravity(Gravity.CENTER);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+			cancel.setBackground(getResources().getDrawable(R.drawable.button));
+		} else {
+			cancel.setBackgroundDrawable(getResources().getDrawable(R.drawable.button));
+		}
+		cancel.setClickable(true);
+		cancel.setOnClickListener(this);
 		
-		acceptLayout.addView(accept);
-		acceptLayout.addView(acceptline);
-		
-		buttonRow.addView(cancelLayout);
-		buttonRow.addView(acceptLayout);
+		buttonRow.addView(accept);
+		buttonRow.addView(cancel);
 		layout.addView(buttonRow);
 		
 		Spinner resourcespinner = (Spinner) page.findViewById(R.id.bookingResourceS);
 		cur = contentResolver.query(ContentDescriptor.Resource.CONTENT_URI, null, null, null, null);
-		String rid = Services.getAppSettings(getActivity(), "resourcelist");
+		
 		ArrayList<String> resourcelist = new ArrayList<String>();
-		int selectedResource = 0;
 		while (cur.moveToNext()) {
-			resourcelist.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Resource.Cols.NAME)));
-			if (cur.getInt(cur.getColumnIndex(ContentDescriptor.Resource.Cols.ID)) == Integer.parseInt(rid)) {
-				selectedResource = cur.getPosition();
-			}
-			
+			resourcelist.add(cur.getString(2));
 		}
 		ArrayAdapter<String> resourceAdapter = new ArrayAdapter<String>(ctx,
 				android.R.layout.simple_spinner_item, resourcelist);
 			resourceAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			resourcespinner.setAdapter(resourceAdapter);
-			resourcespinner.setSelection(selectedResource);
 			resourcespinner.setOnItemSelectedListener(new OnItemSelectedListener(){
 				@Override
 				public void onItemSelected(AdapterView<?> parent, View view,
 						int pos, long id) {
-					//set end time.
-					cur = contentResolver.query(ContentDescriptor.Resource.CONTENT_URI, null, null, null, null);
-					cur.moveToPosition(pos);
-					
-					String period = cur.getString(cur.getColumnIndex(ContentDescriptor.Resource.Cols.PERIOD));
-					TextView startview = (TextView) page.findViewById(R.id.bookingStartTime);
-					String starttime = startview.getText().toString();
-					
-					int year = 2013, month = 10, day = 2;
-					Date date = new Date(year, month, day, 0, 0);
-					Date enddate = new Date(year, month, day, Integer.parseInt(period.substring(0, 2)), 
-							Integer.parseInt(period.substring(3, 5)));
-					Date startdate = new Date(year, month, day, Integer.parseInt(starttime.substring(0, 2)),
-							Integer.parseInt(starttime.substring(3, 5)));
-					Long difference = enddate.getTime() - date.getTime();
-					difference = difference *2;
-					
-					TextView duration = (TextView) page.findViewById(R.id.bookingEndTime);
-					duration.setText(Services.dateFormat(new Date((startdate.getTime()+difference)).toString(), 
-							"EEE MMM dd HH:mm:ss zzz yyyy", "HH:mm:ss"));
+					// select resource.					
 				}
 
 				@Override
@@ -334,7 +270,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		case (R.id.bookingEndTime):{
 			Bundle bdl = new Bundle(1);
 			bdl.putString(Services.Statics.KEY, (String) v.getTag());
-		
+			//System.out.print("\n\n"+v.getTag());
 			DialogFragment newFragment = new TimePickerFragment();
 			newFragment.setArguments(bdl);
 		    newFragment.show(getActivity().getSupportFragmentManager(), "timePicker");
@@ -346,11 +282,11 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		}
 		case (45):{ //add book
 			ArrayList<String> emptyFields = formCheck();
-
 			if (emptyFields.get(0).compareTo("true") == 0){
-			
+				// get values,
+				// put values in table;
+				// suggest syncing.
 				ArrayList<String> results = getInput();
-			
 				/* Need: 	BookingID,					- DONE
 				 * 			Name,						- DONE 
 				 * 			Booking Type AS (DESC),		- DONE
@@ -416,25 +352,9 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 						updateView(error);
 						break;
 					}
-					case (-6):{ //the booking duration is set incorrectly
-						ArrayList<String> error = new ArrayList<String>();
-						error.add(null); //filler, where the boolean value was
-						error.add(String.valueOf(R.id.bookingEndTimeH));
-						updateView(error);
-						break;
-					}
-					case (-7):{ //what kind of error is this?
-						ArrayList<String> error = new ArrayList<String>();
-						error.add(null); //filler, where the boolean value was
-						error.add(String.valueOf(R.id.bookingStartTimeH));
-						updateView(error);
-						break;
-					}
 					}
 					
 				} else {
-					contentResolver.notifyChange(ContentDescriptor.Booking.CONTENT_URI, null);
-					contentResolver.notifyChange(ContentDescriptor.BookingTime.CONTENT_URI, null);
 					getActivity().finish();
 				}
 			} else {
@@ -447,12 +367,12 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 			//show find member, but set onclick to link back here. destroy find member after passed back here.
 			FragmentManager frm = getActivity().getSupportFragmentManager();
 			FragmentTransaction ft = frm.beginTransaction();
-			MembersFindFragment f = new MembersFindFragment(); // add a bundle argument, so the code knows what to do.
+			MemberFindFragment f = new MemberFindFragment(); // add a bundle argument, so the code knows what to do.
 			Bundle b = new Bundle(1);
 			b.putBoolean(Services.Statics.IS_BOOKING, true);
 			f.setArguments(b);
-			ft.replace(R.id.empty_layout, f);
-			ft.addToBackStack(null);
+			ft.replace(R.id.booking_frame, f);
+			//ft.addToBackStack(null);
 			ft.commit();
 			//this.
 			break;
@@ -464,7 +384,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		int _id, result = 0;
 		String bookingid, arrival, resourceid, offset;
 		
-		cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.LASTUPDATE+" = 0",
+		cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.LASTUPDATED+" = 0",
 				null, null);
 		if (cur.getCount() == 0) {
 			//no free booking id's.
@@ -479,7 +399,6 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		ContentValues values = new ContentValues();
 		values.put(ContentDescriptor.Booking.Cols.STIME, input.get(2));
 		values.put(ContentDescriptor.Booking.Cols.ETIME, input.get(3));
-		
 		int etimeid = getTime(input.get(3), contentResolver);
 		if (etimeid == -1) {
 			statusMessage = "incorrect time selected, try 30 minute increments";
@@ -503,20 +422,10 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		offset = cur.getString(cur.getColumnIndex(ContentDescriptor.Resource.Cols.PERIOD));
 		values.put(ContentDescriptor.Booking.Cols.RID, resourceid);
 		values.put(ContentDescriptor.Booking.Cols.OFFSET, offset);
-		//values.put(ContentDescriptor.Booking.Cols.IS_UPLOADED, 0);
+		values.put(ContentDescriptor.Booking.Cols.IS_UPLOADED, 0);
 		cur.close();
-		int correctspace = get_mod(input.get(3), input.get(2),offset);
-		if (correctspace != 0) {
-			if (correctspace == -3) {
-				statusMessage = "Cannot Create booking at that start time.";
-				Log.e(TAG, "Creating booking at this time will only show on phone.");
-				return -7;
-			}
-			statusMessage = "Booking duration does not match Resource's booking peroids.";
-			Log.e(TAG, "Incorrect time amount selected");
-			return -6;
-		}
-		arrival = Services.dateFormat(input.get(1), "dd MMM yyyy", "yyyyMMdd");
+		
+		arrival = Services.dateFormat(input.get(1), "yyyy MM dd", "yyyyMMdd");
 		
 		//Check if the timeslots are available before attempting to insert bookings.
 		for (int i=stimeid;i<etimeid;i +=1) {
@@ -547,7 +456,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 			return -2;
 		}
 		cur.moveToFirst();
-		values.put(ContentDescriptor.Booking.Cols.MID, cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.MID)));
+		values.put(ContentDescriptor.Booking.Cols.MID, cur.getString(0));//cur.getColumnIndex(ContentDescriptor.Member.Cols.MID))
 		cur.close();
 		values.put(ContentDescriptor.Booking.Cols.FNAME, input.get(0));
 		values.put(ContentDescriptor.Booking.Cols.SNAME, input.get(7));
@@ -577,30 +486,24 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		
 		
 		
-		values.put(ContentDescriptor.Booking.Cols.ARRIVAL, Services.dateFormat(input.get(1), "dd MMM yyyy", "yyyyMMdd"));
+		values.put(ContentDescriptor.Booking.Cols.ARRIVAL, Services.dateFormat(input.get(1), "yyyy MM dd", "yyyyMMdd"));
 		System.out.print("\n\nCreating Booking at:"+System.currentTimeMillis());
-		values.put(ContentDescriptor.Booking.Cols.LASTUPDATE, System.currentTimeMillis()); //new Date().getTime();
+		values.put(ContentDescriptor.Booking.Cols.LASTUPDATED, System.currentTimeMillis()); //new Date().getTime();
 		result = contentResolver.update(ContentDescriptor.Booking.CONTENT_URI, values, ContentDescriptor.Booking.Cols.ID+" = ?", 
 				new String[] {String.valueOf(_id)});
-		
-		values = new ContentValues();
-		values.put(ContentDescriptor.PendingUploads.Cols.TABLEID, ContentDescriptor.TableIndex.Values.Booking.getKey());
-		values.put(ContentDescriptor.PendingUploads.Cols.ROWID, _id);
-		
-		contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, values);
-		
 		if (result == 0){ //no free BID's found.
 			statusMessage = "Insert Failed";
 			return 0;
 		}
 		
+		//TODO: the below code needs the loop around it fixed. consider do-while;
 		int curtimeid = stimeid;
 		
 		while (curtimeid < etimeid) {
 		//add the details to the bookingTime composite table.
 			values = new ContentValues();
 			values.put(ContentDescriptor.BookingTime.Cols.BID, bookingid);
-			values.put(ContentDescriptor.BookingTime.Cols.ARRIVAL, Services.dateFormat(input.get(1), "dd MMM yyyy", "yyyyMMdd"));
+			values.put(ContentDescriptor.BookingTime.Cols.ARRIVAL, Services.dateFormat(input.get(1), "yyyy MM dd", "yyyyMMdd"));
 			cur = contentResolver.query(ContentDescriptor.Resource.CONTENT_URI, null, ContentDescriptor.Resource.Cols.NAME+" = ?", 
 					new String[] {input.get(4)}, null);
 			if (cur.getCount()<=0) {
@@ -616,7 +519,6 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 			
 			values.put(ContentDescriptor.BookingTime.Cols.TIMEID, curtimeid);
 			contentResolver.insert(ContentDescriptor.BookingTime.CONTENT_URI, values);
-			
 			curtimeid +=1;
 		}
 		return result;
@@ -627,77 +529,80 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		for(i=1; i<emptyFields.size(); i+=1){
 			//get label, change colour?
 			//String view = "R.id."+emptyFields.get(i);
-			TextView label = (TextView) page.findViewById(Integer.parseInt(emptyFields.get(i)));
+			TextView label = (TextView) screen.findViewById(Integer.parseInt(emptyFields.get(i)));
 			label.setTextColor(Color.RED);
 		}
 	}
 	
 	private ArrayList<String> getInput(){
-
+		screen = getView();
 		ArrayList<String> input = new ArrayList<String>();
 		
-		TextView fname = (TextView) page.findViewById(R.id.bookingFName);
+		TextView fname = (TextView) screen.findViewById(R.id.bookingFName);
 		input.add(fname.getText().toString()); 																// 0
 		
-		TextView date = (TextView) page.findViewById(R.id.bookingDate);
+		TextView date = (TextView) screen.findViewById(R.id.bookingDate);
 		input.add(date.getText().toString()); 																// 1
 		
-		TextView starttime = (TextView) page.findViewById(R.id.bookingStartTime);
+		TextView starttime = (TextView) screen.findViewById(R.id.bookingStartTime);
 		input.add(starttime.getText().toString()); 															// 2
 		
-		TextView endtime = (TextView) page.findViewById(R.id.bookingEndTime);
+		TextView endtime = (TextView) screen.findViewById(R.id.bookingEndTime);
 		input.add(endtime.getText().toString()); 															// 3
 		
-		Spinner resource = (Spinner) page.findViewById(R.id.bookingResourceS);
+		Spinner resource = (Spinner) screen.findViewById(R.id.bookingResourceS);
 		input.add((String)resource.getItemAtPosition(resource.getSelectedItemPosition())); 					// 4
 		
-		Spinner bookingtype = (Spinner) page.findViewById(11); //hard-coded value, see code in setupView()
+		Spinner bookingtype = (Spinner) screen.findViewById(11); //hard-coded value, see code in setupView()
 		input.add((String) bookingtype.getItemAtPosition(bookingtype.getSelectedItemPosition())); 			// 5
 		
-		EditText notes = (EditText) page.findViewById(R.id.bookingNotes);
+		EditText notes = (EditText) screen.findViewById(R.id.bookingNotes);
 		if (notes.getEditableText().toString().compareTo("") != 0){
 			input.add(notes.getEditableText().toString()); 													// 6
 		} else {
 			input.add(null); 																				// 6
 		}
 		
-		TextView sname = (TextView) page.findViewById(R.id.bookingSName);
+		TextView sname = (TextView) screen.findViewById(R.id.bookingSName);
 		input.add(sname.getText().toString());																// 7
 		
 		return input;
 	}
 	
 	private ArrayList<String> formCheck(){
-		
+		//TODO: this is broken. Why is it broken ?
+		screen = getView();
 		boolean result = true;
 		ArrayList<String> emptyFields = new ArrayList<String>();
 		
-		TextView name = (TextView) page.findViewById(R.id.bookingFName);
-		if (name.getText().toString().compareTo("Select Member")==0){
+		TextView name = (TextView) screen.findViewById(R.id.bookingFName);
+		System.out.print("\n\nNAME:"+name.getText().toString());
+		if (name.getText().toString().compareTo("")==0){
 			result = false;
 			emptyFields.add(String.valueOf(R.id.bookingNameH));
 		} else {
-			TextView label = (TextView) page.findViewById(R.id.bookingNameH);
+			TextView label = (TextView) screen.findViewById(R.id.bookingNameH);
 			label.setTextColor(Color.BLACK);
 		}
 		
-		TextView date = (TextView) page.findViewById(R.id.bookingDate);
+		TextView date = (TextView) screen.findViewById(R.id.bookingDate);
+		System.out.print("\n\nDATE:"+date.getText().toString());
 		if (date.getText().toString().compareTo(getString(R.string.addbookingDate)) ==0){
 			System.out.print("\n\nDATE NOT SET \n");
 			result = false;
 			emptyFields.add(String.valueOf(R.id.bookingDateH));
 		} else {
-			TextView label = (TextView) page.findViewById(R.id.bookingDateH);
+			TextView label = (TextView) screen.findViewById(R.id.bookingDateH);
 			label.setTextColor(Color.BLACK);
 		}
 		
-		TextView endtime = (TextView) page.findViewById(R.id.bookingEndTime);
+		TextView endtime = (TextView) screen.findViewById(R.id.bookingEndTime);
 		System.out.print("\n\nEnd Time::"+endtime.getText().toString());
 		if (endtime.getText().toString().compareTo(getString(R.string.bookingEndTime)) ==0){
 			result = false;
 			emptyFields.add(String.valueOf(R.id.bookingEndTimeH));
 		} else {
-			TextView starttime = (TextView) page.findViewById(R.id.bookingStartTime);
+			TextView starttime = (TextView) screen.findViewById(R.id.bookingStartTime);
 			int start = 0;
 			int end = -1;
 			try {
@@ -710,7 +615,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 				result = false;
 				emptyFields.add(String.valueOf(R.id.bookingEndTimeH));
 			} else {
-				TextView label = (TextView) page.findViewById(R.id.bookingEndTimeH);
+				TextView label = (TextView) screen.findViewById(R.id.bookingEndTimeH);
 				label.setTextColor(Color.BLACK);
 			}
 		}
@@ -745,7 +650,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 			//cal.set(Calendar.YEAR, year);
 			cal.set(year, month, day);
 			//System.out.print("\n\n"+cal.getTime().toString());
-			SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy", Locale.US);
+			SimpleDateFormat format = new SimpleDateFormat("yyyy MM dd", Locale.US);
 			TextView date = (TextView) getActivity().findViewById(R.id.bookingDate);
 			date.setText(format.format(cal.getTime()));
 		}
@@ -757,6 +662,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			String starttime = (String) getArguments().get(Services.Statics.KEY);
+			//System.out.print("\n\n"+starttime);
 			// Use the current time as the default values for the picker
 			final Calendar c = Calendar.getInstance();
 			c.set(Calendar.HOUR_OF_DAY, Integer.parseInt(starttime.substring(0, 2)));
@@ -786,6 +692,9 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 	    	if (cur != null){
 	    		cur.close();
 	    	}
+	    	/*if (contentResolver == null){
+	    		contentResolver = getContentResolver();
+	    	}*/
 	    	cur = contentResolver.query(ContentDescriptor.Time.CONTENT_URI, null, ContentDescriptor.Time.Cols.TIME
 					+" = '"+time+"' ", null, null);
 			if (cur.getCount() == 0) {
@@ -793,41 +702,12 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 				return -1;
 			}
 			cur.moveToFirst();
-			
+			/*for (int i=0;i<cur.getCount();i+=1){
+				//System.out.print("\n\ni:"+cur.getString(i));
+			}*/
 			result = cur.getInt(cur.getColumnIndex(ContentDescriptor.Time.Cols.ID));
 			cur.close();
 			return result;
+			//return cur.getInt(0);
 	    }
-	 
-	 /* get hours and minutes as separate values, check that the minutes match,
-	  * convert hours into minutes. add the hours to the minutes
-	  * subtract start from end, then modular against the minutes period.
-	  */
-	 private int get_mod(String etime, String stime, String period) {
-		 int result = -1;
-		 int iehour, iemin, ishour, ismin;
-		 int iperiod, ietime, istime;
-
-		 etime = etime.replace(":", "");
-		 stime = stime.replace(":", "");
-		 period = period.replace(":", "");
-	
-		 iehour = Integer.parseInt(etime.substring(0, 2));
-		 iehour = (iehour * 60);
-		 iemin = Integer.parseInt(etime.substring(2, 4));
-		 ietime = (iehour + iemin);
-		 ishour = Integer.parseInt(stime.substring(0, 2));
-		 ishour = (ishour *60);
-		 ismin = Integer.parseInt(stime.substring(2, 4));
-		 istime = (ishour + ismin);
-		 
-		 iperiod = Integer.parseInt(period.substring(2, 4));
-		 result = (ietime-istime)%iperiod;
-		 
-		 /*if ((ismin == 15 || ismin == 45) && (iperiod == 30 || iperiod == 60)) {
-			 return -3;
-		 }*/		 
-
-		 return result;
-	 }
 }

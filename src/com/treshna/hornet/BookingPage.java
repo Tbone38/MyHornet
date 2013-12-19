@@ -3,8 +3,7 @@ package com.treshna.hornet;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import com.treshna.hornet.MembersFindFragment.OnMemberSelectListener;
-
+import com.treshna.hornet.MemberFindFragment.OnMemberSelectListener;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.ContentResolver;
@@ -20,7 +19,6 @@ import android.nfc.tech.NfcA;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
@@ -57,7 +55,6 @@ public class BookingPage extends ActionBarActivity implements OnMemberSelectList
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
 		Intent intent = getIntent();
 		Services.setContext(this);
 		ActionBar actionBar = getSupportActionBar();
@@ -69,74 +66,71 @@ public class BookingPage extends ActionBarActivity implements OnMemberSelectList
 		frm = getSupportFragmentManager();
 		FragmentTransaction ft = frm.beginTransaction();
 	
-		setContentView(R.layout.empty_activity);
-		if (savedInstanceState == null) {
-			if (Integer.parseInt(bookingID) > 0) {
-				Cursor cur;
-				
-				bookingID = tagInfo.get(1);
-				
-				cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI,null, 
-						ContentDescriptor.Booking.Cols.BID+" = "+bookingID, null, null);
-				if (cur.moveToFirst()) {
-					classid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Booking.Cols.CLASSID));
-					System.out.print("\n\n** CLASS ID:"+classid+" **\n\n");
-				}
-				
-				if (classid > 0) {
-					//it's a class, show the class-booking page instead.
-					ClassDetailsFragment f;
-					Bundle bdl;
-					
-					if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1){
-						
-						pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-						mTechLists = new String[][] { new String[] {NfcA.class.getName()}};
-						IntentFilter tag = new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
-					    try {
-					        tag.addDataType("*/*");
-					    } catch (MalformedMimeTypeException e) {
-					        throw new RuntimeException("Tag mime type fail", e);
-					    }
-					    intentFiltersArray = new IntentFilter[] {tag};
-					}
-					
-					f = new ClassDetailsFragment();
-					tagFoundListener = (TagFoundListener) f;
-					bdl = new Bundle(1);
-					bdl.putString(Services.Statics.KEY, bookingID);
-					f.setArguments(bdl);
-					ft.add(R.id.empty_layout, f);
-				} else {
-					bookingID = tagInfo.get(1);
-					BookingDetailsFragment f = new BookingDetailsFragment();
-					Bundle bdl = new Bundle(1);
-		            bdl.putString(Services.Statics.KEY, bookingID);
-		            f.setArguments(bdl);
-					ft.add(R.id.empty_layout, f);
-				}
-			} else {
-				//add Booking
-				BookingAddFragment f = new BookingAddFragment();
-				starttime = tagInfo.get(1);
-				Bundle bdl = new Bundle(2);
-	            bdl.putString(Services.Statics.KEY, starttime);
-	            bdl.putString(Services.Statics.DATE, tagInfo.get(2));
-	            f.setArguments(bdl);
-				ft.add(R.id.empty_layout,f, "AddBooking");
-				ft.addToBackStack(null);
+		setContentView(R.layout.booking_page);
+		
+		if (Integer.parseInt(bookingID) > 0) {
+			Cursor cur;
+			
+			bookingID = tagInfo.get(1);
+			
+			cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI,null, 
+					ContentDescriptor.Booking.Cols.BID+" = "+bookingID, null, null);
+			if (cur.moveToFirst()) {
+				classid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Booking.Cols.CLASSID));
+				System.out.print("\n\n** CLASS ID:"+classid+" **\n\n");
 			}
-			ft.commit();
+			
+			if (classid > 0) {
+				//it's a class, show the class-booking page instead.
+				ClassDetailsFragment f;
+				Bundle bdl;
+				
+				if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1){
+					
+					pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+					mTechLists = new String[][] { new String[] {NfcA.class.getName()}};
+					IntentFilter tag = new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
+				    try {
+				        tag.addDataType("*/*");
+				    } catch (MalformedMimeTypeException e) {
+				        throw new RuntimeException("Tag mime type fail", e);
+				    }
+				    intentFiltersArray = new IntentFilter[] {tag};
+				}
+				
+				f = new ClassDetailsFragment();
+				tagFoundListener = (TagFoundListener) f;
+				bdl = new Bundle(1);
+				bdl.putString(Services.Statics.KEY, bookingID);
+				f.setArguments(bdl);
+				ft.add(R.id.booking_frame, f);
+			} else {
+			
+				//setContentView(R.layout.booking_details);
+				bookingID = tagInfo.get(1);
+				BookingDetailsFragment f = new BookingDetailsFragment();
+				Bundle bdl = new Bundle(1);
+				System.out.print("\n\nPage BookingID:"+bookingID);
+	            bdl.putString(Services.Statics.KEY, bookingID);
+	            f.setArguments(bdl);
+				ft.add(R.id.booking_frame, f);
+				//bookingID = tagInfo.get(1);
+				//showBooking();
+			}
+		} else {
+			//add Member!
+			//setContentView(R.layout.booking_add);
+			BookingAddFragment f = new BookingAddFragment();
+			starttime = tagInfo.get(1);
+			Bundle bdl = new Bundle(1);
+			System.out.print("\n\nSTART ID:"+starttime);
+            bdl.putString(Services.Statics.KEY, starttime);
+            f.setArguments(bdl);
+			ft.add(R.id.booking_frame,f);
+			//addBooking(tagInfo.get(1), savedInstanceState);
 		}
-	}
-	
-	@Override
-	public void onBackPressed() {
-		Fragment f = frm.findFragmentByTag("AddBooking");
-		if (f != null && f.isVisible()) { //hack to remove empty fragment on back press (from add Booking).
-			super.onBackPressed();
-		}
-		super.onBackPressed();
+		ft.commit();
+		// Show the Up button in the action bar.
 	}
 
 	@Override
@@ -194,17 +188,17 @@ public class BookingPage extends ActionBarActivity implements OnMemberSelectList
 		 	if (Integer.parseInt(preferences.getString("sync_frequency", "-1")) == -1) {
 		 		Services.setPreference(this, "sync_frequency", "5");
 		 	}
-		 	PollingHandler polling = Services.getFreqPollingHandler();
+		 	PollingHandler polling = Services.getPollingHandler();
 	    	polling.startService();
 	    	return true;
 	    }
 	    case (R.id.action_halt): {
-	    	PollingHandler polling = Services.getFreqPollingHandler();
+	    	PollingHandler polling = Services.getPollingHandler();
 	    	polling.stopPolling(false);
 	    	Services.setPreference(this, "sync_frequency", "-1");
 	    	return true;
 	    }
-	    /*case (R.id.action_bookings):{
+	    case (R.id.action_bookings):{
 	    	Intent bookings = new Intent(this, HornetDBService.class);
 			bookings.putExtra(Services.Statics.KEY, Services.Statics.BOOKING);
 		 	this.startService(bookings);
@@ -212,7 +206,7 @@ public class BookingPage extends ActionBarActivity implements OnMemberSelectList
 		 	Intent intent = new Intent(this, BookingsSlidePager.class);
 	       	startActivity(intent);
 	       	return true;
-	    }*/
+	    }
 	    case (R.id.action_addMember):{
 	    	Intent intent = new Intent(this, MemberAdd.class);
 	    	startActivity(intent);
@@ -261,15 +255,11 @@ public class BookingPage extends ActionBarActivity implements OnMemberSelectList
             		selectedMSID = null;
             	} else if (rg.getChildCount() > 0) {
 	            	
-	            	int cid = rg.getCheckedRadioButtonId();  
-	            	if (cid == -1) {
-	            		selectedMSID = null;
-	            	} else {
-		            	RadioButton rb = (RadioButton) rg.findViewById(cid);
-		            	selectedMS = (String) rb.getText();
-		            	selectedMSID = (String) rb.getTag();
-		            	System.out.print("\n\nSelected Membership:"+selectedMS+" with ID:"+selectedMSID);
-	            	}
+	            	int cid = rg.getCheckedRadioButtonId();     	
+	            	RadioButton rb = (RadioButton) rg.findViewById(cid);
+	            	selectedMS = (String) rb.getText();
+	            	selectedMSID = (String) rb.getTag();
+	            	System.out.print("\n\nSelected Membership:"+selectedMS+" with ID:"+selectedMSID);
             	}
 	            /** Rabbit Hole: fix this by changing the member name handling as well.
 	             * 
@@ -287,10 +277,8 @@ public class BookingPage extends ActionBarActivity implements OnMemberSelectList
         		sname = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.SNAME));
         		
         		frm = getSupportFragmentManager();
-        		BookingAddFragment f = (BookingAddFragment)frm.findFragmentByTag("AddBooking");
-        		f.setName(fname, sname);
-        		f.setMembership(selectedMSID);
-        		/*FragmentTransaction ft = frm.beginTransaction();
+        		FragmentTransaction ft = frm.beginTransaction();
+        		BookingAddFragment f = new BookingAddFragment();
         		Bundle bdl = new Bundle(4);
         		//System.out.print("\n\nSTART ID:"+starttime);
                 bdl.putString(Services.Statics.KEY, starttime);
@@ -299,8 +287,8 @@ public class BookingPage extends ActionBarActivity implements OnMemberSelectList
                 bdl.putString(Services.Statics.MSID, selectedMSID);
                 f.setArguments(bdl);
                 ft.replace(R.id.booking_frame, f);
-        		ft.commit();*/
-        		frm.popBackStackImmediate();
+        		ft.commit();
+        		frm.popBackStack();
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

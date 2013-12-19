@@ -4,68 +4,34 @@
     android:layout_height="match_parent"
     android:padding="5dp"
     tools:context=".MemberFind" >
-    <LinearLayout
+	<LinearLayout
 	    android:id="@+id/findRow"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    android:orientation="horizontal"
-	    android:paddingLeft="2dp" >
-	    <LinearLayout
-        	android:layout_width="90dp"
-			android:layout_height="match_parent"  
-	    	android:layout_margin="1dp"
-    		android:orientation="vertical">
-		    <LinearLayout 
-		        android:id="@+id/member_find_color_block"
-		        android:orientation="horizontal"
-		        android:layout_width="match_parent"
-	        	android:layout_height="match_parent"
-	        	android:clickable="true"
-	        	android:background="@drawable/button_large" >
-		   		<ImageView
-		   		    android:id="@+id/member_find_filter_drawable"
-		   		    android:layout_width="30dp"
-		   		    android:layout_height="30dp"
-		   		    android:src="@drawable/glyphicons_filter"
-		   		    android:padding="3dp" />
-		   		<TextView
-		   		    android:id="@+id/member_find_filter_text"
-		   		    android:layout_width="wrap_content"
-		   		    android:layout_height="match_parent"
-		   		    android:gravity="center"
-		   		    android:textSize="16sp"
-		   		    android:text="@string/filter_member"
-		   		    android:padding="3dp" />
-		    </LinearLayout>
-		    <View
-		        android:layout_width="match_parent"
-			    android:layout_height="2dp"
-			    android:paddingLeft="5dp"
-		    	android:paddingRight="5dp"
-			    android:background="@color/button_underline_grey" />
-	    </LinearLayout>
+	    android:orientation="horizontal" >
 	    <EditText
 	        android:id="@+id/find"
 	        android:layout_width="0dp"
 	        android:layout_height="wrap_content"
-	        android:layout_weight=".7"
+	        android:layout_weight=".8"
 	        android:inputType="text" 
 	        android:padding="3dp"/>
+	    
+	    <TextView
+	        android:id="@+id/add"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight=".15"
+	        android:gravity="center"
+	        android:text="@string/plusmember"
+	        android:textSize="22sp"
+	        android:padding="3dp"
+	        android:background="@drawable/border"/>
     </LinearLayout>
-    <include 
-        layout="@layout/filter_message"
-        android:id="@+id/filter_message"
-    	android:layout_width="match_parent"
-    	android:layout_height="wrap_content"
-    	android:layout_below="@id/findRow"
-    	android:padding="5dp"
-    	android:layout_margin="5dp"
-    	android:visibility="gone" />
-   	
     <ListView 
         android:id="@android:id/list"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:layout_below="@id/filter_message">
+        android:layout_below="@id/findRow">
     </ListView>
 </RelativeLayout>

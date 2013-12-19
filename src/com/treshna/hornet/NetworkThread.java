@@ -3,13 +3,10 @@ package com.treshna.hornet;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import android.os.Bundle;
-
 public class NetworkThread extends Thread {
 	 public  boolean is_networking = false;
 	 private Queue<Integer> queue = new LinkedList<Integer>();
-	 private Queue<Bundle> bundlequeue = new LinkedList<Bundle>();
-	 //private String theResource; 
+	 private String theResource; 
 	 private HornetDBService theService;
 	 
 	@Override
@@ -22,24 +19,22 @@ public class NetworkThread extends Thread {
 				}
 			}
 			if (queue.peek() != null) {
-				int currentCall = queue.poll();
-				Bundle bundle = bundlequeue.poll();
+				int currentCall = queue.poll(); 
 			   //startNetworking(currentCall, intent);
-			   theService.startNetworking(currentCall, bundle);
+			   theService.startNetworking(currentCall, theResource);
 			} else {
 			   //the queue is empty.
 			}
 		}
 	}
 	
-	public void addNetwork(int call, Bundle bundle, HornetDBService parent){
+	public void addNetwork(int call, String resourceid, HornetDBService parent){
 		 if (queue.peek() == null ||queue.peek() != call) {
 			queue.add(call);
-			bundlequeue.add(bundle);
 		 }
-		 /*if (resourceid != null) {
+		 if (resourceid != null) {
 			 theResource = resourceid;
-		 }*/
+		 }
 		 if (parent != null) {
 			 theService = parent;
 		 }

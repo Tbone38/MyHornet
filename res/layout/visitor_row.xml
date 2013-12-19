@@ -5,30 +5,29 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_weight="1"
-    android:paddingTop="3dp"
-    android:paddingBottom="3dp"
-    android:paddingLeft="2dp"
-    android:layout_margin="7dp"
-    android:background="@drawable/button"
     tools:context=".DisplayResultsActivity" >
-    <View 
-        android:id="@+id/visitor_colour_block"
-        android:layout_width="10dp"
-        android:layout_height="120dp"
-        android:padding="5dp"
-        android:background="@color/visitors_green"/>
+    
     <RelativeLayout
         android:id="@+id/imagewrapper"
         android:layout_width="wrap_content"
-        android:layout_height="120dp"
-        android:layout_toRightOf="@id/visitor_colour_block"
-        android:padding="5dp">
+        android:layout_height="120dp">
 		<ImageView android:id="@+id/image"
 		     android:contentDescription="@string/image_description"
 		     android:layout_alignParentTop="true"
-		     android:layout_width="110sp"
-		     android:layout_height="110sp"
-		     android:scaleType="centerCrop" />
+		     android:layout_width="120sp"
+		     android:layout_height="120sp" />
+	
+	     <TextView
+		    android:id="@+id/imageText"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_alignLeft="@+id/image"
+		    android:layout_alignTop="@+id/image"
+		    android:layout_alignRight="@+id/image"
+		    android:layout_alignBottom="@+id/image"
+		    android:layout_margin="1dp"
+		    android:gravity="center"
+		    android:text="@string/button_add_picture" />
 	</RelativeLayout>
      <TextView android:id="@+id/name"
         android:padding="3dp"
@@ -56,21 +55,13 @@
      android:layout_width="wrap_content"
      android:layout_height="wrap_content" />
      
-     <ImageView
-         android:id="@+id/visit_time_ic"
-         android:layout_width="30dp"
-         android:layout_height="30dp"
-         android:layout_below="@id/name"
-         android:layout_toRightOf="@id/imagewrapper"
-         android:background="@drawable/ic_action_time" />
-         
-      <TextView android:id="@+id/time"
+     <TextView android:id="@+id/time"
         android:textSize="16sp"
         android:padding="3dp"
         android:layout_width="wrap_content"
      	android:layout_height="wrap_content"
         android:textIsSelectable="false"
-        android:layout_toRightOf="@id/visit_time_ic"
+        android:layout_toRightOf="@id/imagewrapper"
         android:layout_below="@id/name" />
     
      <TextView android:id="@+id/deny"

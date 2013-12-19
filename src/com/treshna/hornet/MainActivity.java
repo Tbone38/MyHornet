@@ -1,16 +1,17 @@
 package com.treshna.hornet;
 
-import android.app.PendingIntent;
+import java.util.Date;
+
+import com.treshna.hornet.R.color;
+
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.graphics.Typeface;
-import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
@@ -20,29 +21,21 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.treshna.hornet.R.color;
 
-
-public class MainActivity extends NFCActivity {
+public class MainActivity extends NFCActivity implements BookingsListFragment.OnCalChangeListener{
 	
 	private static Tab membertab;
 	private static Tab visitortab;
 	private static Tab bookingtab;
 	private static Context context;
-	private static int selectedTab;
-	private static String TAG = "MainActivity";
-	private static Fragment cFragment;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		if (savedInstanceState != null)
 	    {
 			savedInstanceState.remove ("android:support:fragments");
-			selectedTab = savedInstanceState.getInt("selectedTab");
 	    }
-		
 		super.onCreate(savedInstanceState);
-
 		this.setContentView(R.layout.main_activity);
 		this.setTitle("GymMaster");
 		this.setTitleColor(color.gym);
@@ -55,116 +48,26 @@ public class MainActivity extends NFCActivity {
 		
 		membertab = ab.newTab()
                 .setText("Find Member")
-                .setTabListener(new TabListener<MembersFindSuperFragment>(
-                        this, "findmember", MembersFindSuperFragment.class));
+                .setTabListener(new TabListener<MemberFindFragment>(
+                        this, "findmember", MemberFindFragment.class));
 		ab.addTab(membertab);
 		
 		visitortab = ab.newTab()
 				.setText("Last Visitors")
-				.setTabListener(new TabListener<LastVisitorsSuperFragment>(
-						this, "lastvisitors", LastVisitorsSuperFragment.class));
+				.setTabListener(new TabListener<LastVisitorsFragment>(
+						this, "lastvisitors", LastVisitorsFragment.class));
 		ab.addTab(visitortab);
-		
+		/**
+		 * TODO: refactor bookings so that they work from a tab.
+		 *  (too hard basket atm).
 		bookingtab = ab.newTab()
 				.setText("Bookings")
-				.setTabListener(new TabListener<BookingsListSuperFragment>(
-						this, "bookings", BookingsListSuperFragment.class));
-		ab.addTab(bookingtab);
+				.setTabListener(new TabListener<BookingsSlideFragment>(
+						this, "bookings", BookingsSlideFragment.class));
+		ab.addTab(bookingtab);*/
 		
-		ab.setSelectedNavigationItem(selectedTab);
-		
-		/**the below code needs to run on app start.
-         */
-		{
-			Intent updateInt = new Intent(this, HornetDBService.class);
-            updateInt.putExtra(Services.Statics.KEY, Services.Statics.FREQUENT_SYNC);
-            PendingIntent pintent = PendingIntent.getService(this, 0, updateInt, PendingIntent.FLAG_UPDATE_CURRENT);
-            Services.setFreqPollingHandler(this, pintent);
-		}
-		
-		/*{
-			Intent updateInt = new Intent(this, HornetDBService.class);
-            updateInt.putExtra(Services.Statics.KEY, Services.Statics.INFREQUENT_SYNC);
-            PendingIntent pintent = PendingIntent.getService(this, 0, updateInt, PendingIntent.FLAG_UPDATE_CURRENT);
-            Services.setInfreqPollingHandler(this, pintent);
-		}*/
-            startReciever();
-                /************************************/
 		Log.v("MainActivity", "Finished onCreate");
 	}
-	
-	@Override
-	public void onBackPressed() {
-		//this needs some minor tweaks. consider adding a queue.
-		if (cFragment instanceof BookingsListSuperFragment) {
-			BookingsListSuperFragment f = (BookingsListSuperFragment) cFragment;
-			if (f.getCurrentFragment() instanceof BookingsOverviewFragment) {
-				//do normal back pop
-				Log.v(TAG, "was OverView Fragment");
-				ActionBar ab = this.getSupportActionBar();
-				ab.setSelectedNavigationItem(0); //just go back to the Find Member View?
-			} else if (f.getCurrentFragment() instanceof BookingsResourceFragment){
-				Log.v(TAG, "was Resource Fragment");
-				BookingsResourceFragment resourceFragment = (BookingsResourceFragment) f.getCurrentFragment();
-				if (resourceFragment.hasOverView()) {
-					f.onBackPressed();
-					
-				} else {
-					ActionBar ab = this.getSupportActionBar();
-					ab.setSelectedNavigationItem(0); //just go back to the Find Member View?
-				}
-			} else {
-				Log.v(TAG, "was Neither Fragment");
-			}
-		} else if (cFragment instanceof LastVisitorsSuperFragment){
-			ActionBar ab = this.getSupportActionBar();
-			ab.setSelectedNavigationItem(0); //just go back to the Find Member View?
-		} else {
-			super.onBackPressed();
-		}
-	}
-	
-	@Override
-	public void onSaveInstanceState(Bundle savedInstanceState) {
-		super.onSaveInstanceState(savedInstanceState);
-		
-		savedInstanceState.putInt("selectedTab", selectedTab);
-	}
-	
-	public void setSelectedTab(int tab) {
-		selectedTab = tab;
-	}
-	
-	public void startReciever(){
-		IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION);
-        registerReceiver(Services.getFreqPollingHandler(), intentFilter);
-	}
-	
-	@Override
-	public void onStop() {
-		super.onStop();
-		try {
-        	unregisterReceiver(Services.getFreqPollingHandler()); //?
-        } catch (Exception e) {
-        	//doesn't matter.
-        }
-	}
-	
-	@Override
-	public void onPostResume() {
-		Log.d(TAG, "STARTING ACTIVITY ON POST RESUME");
-		super.onPostResume();
-		Log.d(TAG, "FINISHING ACTIVITY ON POST RESUME");
-	}
-	
-	@Override
-	public void onResume(){
-		Log.d(TAG, "STARTING ACTIVITY ON RESUME");
-		super.onResume();
-		Log.d(TAG, "FINISHING ACTIVITY ON RESUME");
-	}
-
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -193,15 +96,24 @@ public class MainActivity extends NFCActivity {
 		 	if (Integer.parseInt(preferences.getString("sync_frequency", "-1")) == -1) {
 		 		Services.setPreference(this, "sync_frequency", "5");
 		 	}
-		 	PollingHandler polling = Services.getFreqPollingHandler();
+		 	PollingHandler polling = Services.getPollingHandler();
 	    	polling.startService();
 	    	return true;
 	    }
 	    case (R.id.action_halt): {
-	    	PollingHandler polling = Services.getFreqPollingHandler();
+	    	PollingHandler polling = Services.getPollingHandler();
 	    	polling.stopPolling(false);
 	    	Services.setPreference(this, "sync_frequency", "-1");
 	    	return true;
+	    }
+	    case (R.id.action_bookings):{
+	    	Intent bookings = new Intent(this, HornetDBService.class);
+			bookings.putExtra(Services.Statics.KEY, Services.Statics.BOOKING);
+		 	this.startService(bookings);
+	    	
+		 	Intent intent = new Intent(this, BookingsSlidePager.class);
+	       	startActivity(intent);
+	       	return true;
 	    }
 	    case (R.id.action_addMember):{
 	    	Intent intent = new Intent(this, MemberAdd.class);
@@ -215,8 +127,7 @@ public class MainActivity extends NFCActivity {
 	
 	public static int getContentViewCompat() {
 	    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH ?
-	               //android.R.id.content : R.id.action_bar_activity_content;
-	    			android.R.id.content : android.R.id.content;
+	               android.R.id.content : R.id.action_bar_activity_content;
 	}
 	
 	public static Context getContext(){
@@ -243,8 +154,7 @@ public class MainActivity extends NFCActivity {
             if (mFragment != null && !mFragment.isDetached()) {
             	Log.d("TabListener", "Fragment already existsed and was visible.");
                 FragmentTransaction ft = mActivity.getSupportFragmentManager().beginTransaction();
-                //ft.remove(mFragment);
-                ft.detach(mFragment);
+                ft.remove(mFragment);
                 ft.commit();
                 mFragment = null;
             }
@@ -258,23 +168,25 @@ public class MainActivity extends NFCActivity {
 	    	 mFragment = mActivity.getSupportFragmentManager().findFragmentByTag(mTag);
 	         if (mFragment == null) {
 	            // If not, instantiate and add it to the activity
+	        	//mActivity.getSupportFragmentManager().executePendingTransactions();
 	            mFragment = Fragment.instantiate(mActivity, mClass.getName());
-	            cFragment = mFragment;
+	            Log.i("TabListener", "Adding Fragment:"+mTag);
+	          
 	            ft.replace(getContentViewCompat(), mFragment, mTag);
-	            //selectedTab = tab.getPosition();
 	        } else {
 	            // If it exists, simply attach it in order to show it
-	        	//ft.replace(getContentViewCompat(), mFragment, mTag);
-	        	ft.attach(mFragment);
-	        	cFragment = mFragment;
-	        	
+	        	//mActivity.getSupportFragmentManager().executePendingTransactions();
+	        	Log.i("TabListener", "Attaching Fragment:"+mTag);
+	        	ft.replace(getContentViewCompat(), mFragment, mTag);
 	        }
 	    }
 
 	    public void onTabUnselected(Tab tab, FragmentTransaction ft) {
 	    	mFragment = mActivity.getSupportFragmentManager().findFragmentByTag(mTag);
 	    	if (mFragment != null) {
-	            // Detach the fragment, because another one is being attached	    		
+	            // Detach the fragment, because another one is being attached
+	    		//mActivity.getSupportFragmentManager().executePendingTransactions();
+	    		Log.i("TabListener", "Detaching Fragment:"+mTag);
 	    		ft.detach(mFragment);
 	        } else {
 	        	Log.i("TabListener", "Fragment not dettached, for tab:"+tab.getText());
@@ -284,5 +196,11 @@ public class MainActivity extends NFCActivity {
 	    public void onTabReselected(Tab tab, FragmentTransaction ft) {
 	        // User selected the already selected tab. Usually do nothing.
 	    }
-	}	
+	}
+
+	@Override
+	public void onDateChange(Date date) {
+				
+	}
+		
 }

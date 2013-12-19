@@ -89,8 +89,6 @@ public class SettingsActivity extends PreferenceActivity {
 		fakeHeader.setTitle(R.string.pref_header_display);
 		getPreferenceScreen().addPreference(fakeHeader);
 		addPreferencesFromResource(R.xml.pref_display);
-		Preference doorlist = getDoorList();
-		getPreferenceScreen().addPreference(doorlist);
 
 		// Add 'data and sync' preferences, and a corresponding header.
 		fakeHeader = new PreferenceCategory(this);
@@ -147,35 +145,6 @@ public class SettingsActivity extends PreferenceActivity {
     		//Services.setProgress(null);
     	}
 	}
-	
-	private Preference getDoorList() {
-		ListPreference doorlist = new ListPreference(this);
-		ContentResolver contentResolver = this.getContentResolver();
-		Cursor cur = null;
-		
-		doorlist.setTitle(getString(R.string.pref_title_door));
-		doorlist.setKey("door");
-		
-		List<String> entries = new ArrayList<String>();
-		List<String> entryValues = new ArrayList<String>();
-		
-		cur = contentResolver.query(ContentDescriptor.Door.CONTENT_URI, null, null, null, null);
-		while (cur.moveToNext()) {
-			entries.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Door.Cols.DOORNAME)));
-			entryValues.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Door.Cols.DOORID)));
-		}
-		cur.close();
-		String[] entriesA = new String[entries.size()];
-		String[] entryValuesA = new String[entryValues.size()];
-		for (int i=0;i<entries.size();i+=1) {
-			entriesA[i] = entries.get(i);
-			entryValuesA[i] = entryValues.get(i);
-		}
-		doorlist.setEntries(entriesA);
-		doorlist.setEntryValues(entryValuesA);
-		
-		return doorlist;
-	}
 
 	private Preference createClearData() {
 		Preference clearData = new Preference(this);
@@ -184,7 +153,7 @@ public class SettingsActivity extends PreferenceActivity {
 		clearData.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-            	clearData();       	
+            	clearData();             	
             		Intent i = getPackageManager().getLaunchIntentForPackage( getApplicationContext().getPackageName() );
                 	i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 	startActivity(i);	
@@ -202,12 +171,9 @@ public class SettingsActivity extends PreferenceActivity {
 			public boolean onPreferenceClick(Preference preference) {
 				SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ctx);
 				Editor e = preferences.edit();
-				e.putString("b_lastsync", String.valueOf(3)); //3 ms after epoch.
-				e.putString("lastsync", String.valueOf(3)); //3 ms after epoch.
-				e.putString("last_freq_sync", String.valueOf(3)); //3 ms after epoch.
-				e.putString("last_infreq_sync", String.valueOf(3)); //3 ms after epoch.
+				e.putString("b_lastsync", String.valueOf(3));
 				e.commit();
-				//this should make the app redownload all data.
+				
 				return true;
 			}
 		});
@@ -273,13 +239,22 @@ public class SettingsActivity extends PreferenceActivity {
 		}
 		resource.setEntries(entriesA);
 		resource.setEntryValues(entryValuesA);
+		resource.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+
+			@Override
+			public boolean onPreferenceChange(Preference preference, Object newValue) {
+				System.out.print("\n\n"+newValue);
+				buildTimeSlot((String)newValue);
+				return true;
+			}
+			
+		});
 		category.addPreference(resource);
 		
        
 		/*******End Bookings settings*******/
 	}
 	
-	@SuppressWarnings("deprecation")
 	private void createDebugOpt(){
 		PreferenceCategory debug = new PreferenceCategory(this);
 		debug.setTitle("Debug Options");
@@ -298,19 +273,13 @@ public class SettingsActivity extends PreferenceActivity {
 		toast.setSummary("Checking displays sync results in a toast on screen");
 		toast.setChecked(true);
 		debug.addPreference(toast);
-
-		Preference copydb = new Preference(this);
-		copydb.setKey("copydb");
-		copydb.setTitle("Copy Database");
-		copydb.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-			
-			@Override
-			public boolean onPreferenceClick(Preference preference) {
-				FileHandler fh = new FileHandler(Services.getContext());
-				fh.copyDatabase();
-				return true;
-		}});
-		debug.addPreference(copydb);
+		// Image errors.
+		CheckBoxPreference image = new CheckBoxPreference(this);
+		image.setKey("image");
+		image.setTitle("Fix Image error");
+		image.setSummary("Checking this will fix any \"Error: Column description... Position:77\" type toasts, check it if you do not see any member photos after sync.");
+		image.setChecked(false);
+		debug.addPreference(image);
 	}
 	
 	private static void clearData(){
@@ -319,12 +288,18 @@ public class SettingsActivity extends PreferenceActivity {
 		editor.commit();
 		//does this break things?
 		ContentResolver contentResolver =  MainActivity.getContext().getContentResolver();
-		ContentResolver.cancelSync(null, ContentDescriptor.AUTHORITY);
 		contentResolver.delete(ContentDescriptor.DROPTABLE_URI, null, null);
 		Toast.makeText(MainActivity.getContext(), "Data Cleared, restarting Application.", Toast.LENGTH_LONG).show();
 		//return result;
 	}
 	
+	
+	private void buildTimeSlot(String value){
+		Intent updateInt = new Intent(this, HornetDBService.class);
+		updateInt.putExtra(Services.Statics.KEY, Services.Statics.RESOURCESELECTED);
+		updateInt.putExtra("newtime", value);
+	 	this.startService(updateInt);
+	}
 
 	/** {@inheritDoc} */
 	@Override

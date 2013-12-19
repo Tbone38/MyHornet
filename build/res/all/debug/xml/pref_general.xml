@@ -1,0 +1,70 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <EditTextPreference
+        android:capitalize="words"
+        android:defaultValue="@string/pref_default_server_address"
+        android:inputType="textCapWords"
+        android:key="address"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_title_server_address" />
+
+   <EditTextPreference
+        android:capitalize="words"
+        android:defaultValue="@string/pref_default_server_port"
+        android:inputType="textCapWords"
+        android:key="port"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_title_server_port" />
+   
+   <EditTextPreference
+        android:capitalize="words"
+        android:defaultValue="@string/pref_default_server_database"
+        android:inputType="textCapWords"
+        android:key="database"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_title_server_database" />
+   
+   <EditTextPreference
+        android:capitalize="words"
+        android:defaultValue="@string/pref_default_server_username"
+        android:inputType="textCapWords"
+        android:key="username"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_title_server_username" />
+   
+   <EditTextPreference
+        android:capitalize="words"
+        android:defaultValue="@string/pref_default_server_password"
+        android:inputType="textPassword"
+        android:key="password"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_title_server_password" />
+   
+   <EditTextPreference
+        android:capitalize="words"
+        android:defaultValue="@string/pref_default_door"
+        android:inputType="number"
+        android:key="door"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_title_door" />
+   
+   
+ 
+    <!--
+         NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
+         dismiss it.
+    -->
+    <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
+</PreferenceScreen><!-- From: file:/home/callum/work/workspace/Hornet/res/xml/pref_general.xml -->

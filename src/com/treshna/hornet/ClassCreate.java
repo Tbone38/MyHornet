@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -22,23 +25,27 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ClassCreate extends NFCActivity implements OnClickListener, DatePickerFragment.DatePickerSelectListener, 
-	TimePickerFragment.TimePickerSelectListener{
+public class ClassCreate extends NFCActivity implements OnClickListener{
 	
 	public static final String CLASSBROADCAST = "com.treshna.hornet.createclass"; 
 	
-	String datevalue = null, resourcevalue = null, resourceid = null, starttimevalue = null, 
-			endtimevalue = null, period = null;
+	String datevalue = null, resourcevalue = null, resourceid = null, starttimevalue = null, endtimevalue = null;
 	DatePickerFragment datePicker;
 	TimePickerFragment stimePicker, etimePicker;
 	AlertDialog alertDialog;
 	
+	private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        @Override //when the server sync finishes, it sends out a broadcast.
+        public void onReceive(Context context, Intent intent) {
+        	System.out.println("*INTENT RECIEVED*");
+            ClassCreate.this.receivedBroadcast(intent);
+        }
+    };
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -46,63 +53,48 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 		setContentView(R.layout.class_create);
 		ActionBar actionBar = getSupportActionBar();
 	    actionBar.setDisplayHomeAsUpEnabled(true);
-		
+		//TODO:
+		//	- setup date-selector. 				-- DONE
 		datePicker = new DatePickerFragment();
-		datePicker.setDatePickerSelectListener(this);
 		
+		//	- setup time-selector.				-- DONE
 		stimePicker = new TimePickerFragment();
-		stimePicker.setTimePickerSelectListener(this);
 		etimePicker = new TimePickerFragment();
-		etimePicker.setTimePickerSelectListener(this);
-		
+		//										
+		//	- setup dialog for resource selection. (see membership selection for example).
+		//										-- DONE
 		setText();
 	}
 	
-	@SuppressWarnings("deprecation")
 	private void setText() {
-		TextView date, resource, starttime, endtime, buttonaccept, buttoncancel;
-		LinearLayout setdate, setresource, setstarttime;
+		TextView date, resource, starttime, endtime, buttonaccept, buttoncancel;		
 		
-		setdate = (LinearLayout) this.findViewById(R.id.button_class_date);	
-		setdate.setTag(Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd"));
-		setdate.setClickable(true);
-		setdate.setOnClickListener(this);
+		date = (TextView) this.findViewById(R.id.classDate);
+		date.setTag(Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd"));
+		date.setClickable(true);
+		date.setOnClickListener(this);
 		if (datevalue != null) {
-			date = (TextView) this.findViewById(R.id.classDate);
-			date.setText(Services.dateFormat(datevalue, "yyyy MM dd", "dd MMM yyyy"));
+			date.setText(datevalue);
 		}
 		
-		setstarttime = (LinearLayout) this.findViewById(R.id.button_start_time);
-		setstarttime.setClickable(true);
-		setstarttime.setOnClickListener(this);
+		starttime = (TextView) this.findViewById(R.id.classStartTime);
+		starttime.setClickable(true);
+		starttime.setOnClickListener(this);
 		if (starttimevalue != null) {
-			starttime = (TextView) this.findViewById(R.id.classStartTime);
 			starttime.setText(starttimevalue);
-			if ( period != null) {
-				int year = 2013, month = 10, day = 2;
-				Date tempdate = new Date(year, month, day, 0, 0);
-				Date enddate = new Date(year, month, day, Integer.parseInt(period.substring(0, 2)), 
-						Integer.parseInt(period.substring(3, 5)));
-				Date startdate = new Date(year, month, day, Integer.parseInt(starttimevalue.substring(0, 2)),
-						Integer.parseInt(starttimevalue.substring(3, 5)));
-				Long difference = enddate.getTime() - tempdate.getTime();
-				difference = difference *2;
-			
-				endtimevalue = Services.dateFormat(new Date((startdate.getTime()+difference)).toString(), 
-						"EEE MMM dd HH:mm:ss zzz yyyy", "HH:mm:ss");
-			}
 		}
 		
 		endtime = (TextView) this.findViewById(R.id.classEndTime);
+		endtime.setClickable(true);
+		endtime.setOnClickListener(this);
 		if (endtimevalue != null) {
 			endtime.setText(endtimevalue);
 		}
 		
-		setresource = (LinearLayout) this.findViewById(R.id.button_class_resource);
-		setresource.setClickable(true);
-		setresource.setOnClickListener(this);
+		resource = (TextView) this.findViewById(R.id.classResource);
+		resource.setClickable(true);
+		resource.setOnClickListener(this);
 		if (resourcevalue != null) {
-			resource = (TextView) this.findViewById(R.id.classResource);
 			resource.setText(resourcevalue);
 		}
 		
@@ -115,9 +107,19 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 		buttoncancel.setOnClickListener(this);
 	}
 	
+	private void receivedBroadcast(Intent intent) {
+		//get all of the variables!
+		datevalue = datePicker.getReturnValue();
+		starttimevalue = stimePicker.getReturnValue();
+		endtimevalue = etimePicker.getReturnValue();
+		
+		setText();
+	}
+	
 	@Override
 	public void onPause(){
 		super.onPause();
+		this.unregisterReceiver(this.mBroadcastReceiver);
 		
 		if (alertDialog != null && alertDialog.isShowing()) {
 			alertDialog.dismiss();
@@ -125,6 +127,13 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 		}
 	}
 	
+	@Override 
+	public void onResume() {
+		super.onResume();
+		IntentFilter iff = new IntentFilter();
+	    iff.addAction(CLASSBROADCAST);
+	    this.registerReceiver(this.mBroadcastReceiver,iff);
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -157,15 +166,24 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 		 	if (Integer.parseInt(preferences.getString("sync_frequency", "-1")) == -1) {
 		 		Services.setPreference(this, "sync_frequency", "5");
 		 	}
-		 	PollingHandler polling = Services.getFreqPollingHandler();
+		 	PollingHandler polling = Services.getPollingHandler();
 	    	polling.startService();
 	    	return true;
 	    }
 	    case (R.id.action_halt): {
-	    	PollingHandler polling = Services.getFreqPollingHandler();
+	    	PollingHandler polling = Services.getPollingHandler();
 	    	polling.stopPolling(false);
 	    	Services.setPreference(this, "sync_frequency", "-1");
 	    	return true;
+	    }
+	    case (R.id.action_bookings):{
+	    	Intent bookings = new Intent(this, HornetDBService.class);
+			bookings.putExtra(Services.Statics.KEY, Services.Statics.BOOKING);
+		 	this.startService(bookings);
+	    	
+		 	Intent intent = new Intent(this, BookingsSlidePager.class);
+	       	startActivity(intent);
+	       	return true;
 	    }
 	    case (R.id.action_addMember):{
 	    	Intent intent = new Intent(this, MemberAdd.class);
@@ -200,10 +218,7 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 			
 			rb = new RadioButton(this);
 			rb.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Resource.Cols.NAME)));
-			ArrayList<String> tag = new ArrayList<String>();
-			tag.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Resource.Cols.ID)));
-			tag.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Resource.Cols.PERIOD)));
-			rb.setTag(tag);
+			rb.setTag(cur.getString(cur.getColumnIndex(ContentDescriptor.Resource.Cols.ID)));
 			rg.addView(rb);
 		}
 		
@@ -226,9 +241,7 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 				selectedRadio = (RadioButton) rg.findViewById(selectedid);
 				
 				resourcevalue = selectedRadio.getText().toString();
-				ArrayList<String> tag = (ArrayList<String>) selectedRadio.getTag();
-				resourceid = (String) tag.get(0);
-				period = tag.get(1);
+				resourceid = (String) selectedRadio.getTag();
 				
 				setText();
 			}
@@ -250,7 +263,7 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 	@Override
 	public void onClick(View view) {
 		switch (view.getId()) {
-			case R.id.button_class_date:{
+			case R.id.classDate:{
 				//date-picker
 				Bundle bdl;
 				
@@ -261,7 +274,7 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 			    datePicker.show(this.getSupportFragmentManager(), "datePicker");
 				break;
 			}
-			case R.id.button_start_time:{
+			case R.id.classStartTime:{
 			    stimePicker.show(this.getSupportFragmentManager(), "timePicker");
 				break;
 			}
@@ -269,7 +282,7 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 			    etimePicker.show(this.getSupportFragmentManager(), "timePicker");
 				break;
 			}
-			case R.id.button_class_resource:{
+			case R.id.classResource:{
 				buildResourceAlert();
 				break;
 			}
@@ -327,11 +340,7 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 		
 		contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, values);
 		System.out.print("\n\nClass inserted\n\n");
-		Toast.makeText(this, "Class Created!", Toast.LENGTH_LONG).show();
-		Intent updateInt = new Intent(this, HornetDBService.class);
-		updateInt.putExtra(Services.Statics.KEY, Services.Statics.FREQUENT_SYNC);
-	 	this.startService(updateInt);
-		
+		Toast.makeText(this, "Class Created!", Toast.LENGTH_LONG).show();;
 		this.finish();
 	}
 	
@@ -399,7 +408,16 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 			}
 		}
 		
-		
+		classmemberlimit = (EditText) this.findViewById(R.id.classMemberLimit);
+		if (classmemberlimit.getText().toString().compareTo("") == 0)
+		{
+			emptyViews.add(String.valueOf(R.id.classMemberLimitL));
+			validated = false;
+		} else {
+			TextView label;
+			label = (TextView) this.findViewById(R.id.classMemberLimitL);
+			label.setTextColor(Color.BLACK);
+		}
 		
 		resource = (TextView) this.findViewById(R.id.classResource);
 		if (resource.getText().toString().compareTo(this.getString(R.string.classresourcedefault)) == 0)
@@ -428,8 +446,7 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 		input.put(ContentDescriptor.Class.Cols.NAME, classname.getEditableText().toString());
 		
 		date = (TextView) this.findViewById(R.id.classDate);
-		input.put(ContentDescriptor.Class.Cols.SDATE, Services.dateFormat(date.getText().toString(),
-				"dd MMM yyyy", "yyyyMMdd"));
+		input.put(ContentDescriptor.Class.Cols.SDATE, date.getText().toString().replace(" ", ""));
 		
 		stime = (TextView) this.findViewById(R.id.classStartTime);
 		input.put(ContentDescriptor.Class.Cols.STIME, stime.getText().toString());
@@ -438,11 +455,7 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 		input.put(ContentDescriptor.Class.Cols.ETIME, etime.getText().toString());
 		
 		classmemberlimit = (EditText) this.findViewById(R.id.classMemberLimit);
-		if (classmemberlimit.getText().toString().compareTo("") == 0) {
-			input.put(ContentDescriptor.Class.Cols.MAX_ST, 25);
-		} else {
-			input.put(ContentDescriptor.Class.Cols.MAX_ST, classmemberlimit.getEditableText().toString());
-		}
+		input.put(ContentDescriptor.Class.Cols.MAX_ST, classmemberlimit.getEditableText().toString());
 		
 		repeating = (CheckBox) this.findViewById(R.id.classRepeating);
 		if (repeating.isChecked()) {
@@ -458,25 +471,6 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 		}
 		
 		return input;
-	}
-
-	@Override
-	public void onDateSelect(String date, DatePickerFragment theDatePicker) {
-		if (theDatePicker == datePicker) {
-			datevalue = date;
-		}
-		setText();
-	}
-
-	@Override
-	public void onTimeSelect(String time, TimePickerFragment theTimePicker) {
-		if (theTimePicker == stimePicker) {
-			starttimevalue = time;
-		}
-		if (theTimePicker == etimePicker) {
-			endtimevalue = time;
-		}
-		setText();
 	}
 
 }

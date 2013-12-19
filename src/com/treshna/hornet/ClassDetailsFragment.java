@@ -15,8 +15,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -186,9 +187,6 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 		curStudents = cur.getCount();
 		
 		if (curStudents >= maxStudents || online == 0) {
-			Log.e(TAG, "Current Students:"+curStudents);
-			Log.e(TAG, "MAX STUDENTS: "+maxStudents);
-			Log.e(TAG, "Online:"+online);
 			//can't add members, we're already full (or online booking's are set to false for this class).
 			Toast.makeText(getActivity(), "The class has already reached it's student limit!", Toast.LENGTH_LONG).show();
 			return;
@@ -268,7 +266,7 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 			cur.close();
 			//how many students are currently signed up?
 			cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.PARENTID+" = ?",
-					new String[] {bookingID}, null); //&& STATUS >= 10 || status == NULL ?
+					new String[] {bookingID}, null);
 			curStudents = cur.getCount();
 			
 			if (curStudents >= maxStudents || online == 0) {
@@ -301,10 +299,10 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 			cur.moveToFirst();
 			firstname = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.FNAME));
 			lastname = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.SNAME));
-			memberid = cur.getString(1); //changing this will break things!
-			/*for (int i = 0; i<cur.getColumnCount(); i +=1) {
+			memberid = cur.getString(0); //changing this will break things!
+			for (int i = 0; i<cur.getColumnCount(); i +=1) {
 				Log.v(TAG, cur.getColumnName(i)+": "+cur.getString(i));
-			}*/
+			}
 			Log.v(TAG, "MEMBERID: "+memberid);
 			cur.close();
 			// show pop-up to select membership ?
@@ -395,7 +393,7 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 	private void startTransaction(String membership, String memberid, String firstname, String surname) {
 		// get all the other variables, and insert them into SQLite
 		String resourceid, startid, stime, endid, etime, arrival, offset;
-		int bookingid, rowid = -1;
+		int bookingid;
 		
 		ContentResolver contentResolver = getActivity().getContentResolver();
 		Cursor cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.BID+" = ?",
@@ -417,12 +415,11 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 		cur.close();
 		
 		//bookingid as well.
-		cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.LASTUPDATE+" = 0",
+		cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.LASTUPDATED+" = 0",
 				null, null);
 		if (cur.getCount() > 0) {
 			cur.moveToFirst();
 			bookingid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Booking.Cols.BID));
-			rowid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Booking.Cols.ID));
 		} else {
 			//we haven't got any spare booking-id's. what should I do?
 			bookingid = -1;
@@ -442,25 +439,18 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 		values.put(ContentDescriptor.Booking.Cols.BID, bookingid);
 		values.put(ContentDescriptor.Booking.Cols.BOOKINGTYPE, 0); //class attendant = 0, probably shouldn't be hardcoded.
 		values.put(ContentDescriptor.Booking.Cols.RESULT, 20); //these default to 20?
-		//values.put(ContentDescriptor.Booking.Cols.IS_UPLOADED, 0);
-		values.put(ContentDescriptor.Booking.Cols.LASTUPDATE, new Date().getTime());
+		values.put(ContentDescriptor.Booking.Cols.IS_UPLOADED, 0);
+		values.put(ContentDescriptor.Booking.Cols.LASTUPDATED, new Date().getTime());
 		values.put(ContentDescriptor.Booking.Cols.PARENTID, bookingID);
 		values.put(ContentDescriptor.Booking.Cols.FNAME, firstname);
 		values.put(ContentDescriptor.Booking.Cols.SNAME, surname);
 		
 		if (bookingid <= 0) {
 			contentResolver.insert(ContentDescriptor.Booking.CONTENT_URI, values);
-			//rowid = Integer.parseInt(row.getLastPathSegment());
 		} else { //has real bookingid, update that booking.
 			contentResolver.update(ContentDescriptor.Booking.CONTENT_URI, values, ContentDescriptor.Booking.Cols.BID+" = ?",
 					new String[] {String.valueOf(bookingid)});
-			values = new ContentValues();
-			values.put(ContentDescriptor.PendingUploads.Cols.TABLEID, ContentDescriptor.TableIndex.Values.Booking.getKey());
-			values.put(ContentDescriptor.PendingUploads.Cols.ROWID, rowid);
-			
-			contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, values);
-		}
-		
+		} 
 		//refresh the view.
 		mLoaderManager.restartLoader(0, null, this);
 	}

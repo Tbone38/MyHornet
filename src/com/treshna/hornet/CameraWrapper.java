@@ -16,7 +16,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -106,36 +105,27 @@ public class CameraWrapper extends Activity {
              if (cur.getPosition() == -1) {
              	imgCount = 0;
              } else {
-             	imgCount = cur.getInt(cur.getColumnIndex(ContentDescriptor.Image.Cols.DISPLAYVALUE));
+             	imgCount = cur.getInt(0);
              	imgCount +=1;
              }
          cur.close();
-         
+         FileHandler fileHandler = new FileHandler(this);
+         System.out.print("\n\n**Writing "+imgCount+"_"+id);
+         fileHandler.writeFile(byteArray, imgCount+"_"+id);
         
          SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yy hh:mm:ss aa", Locale.US);
  		 java.util.Date date = new Date();
  		 ContentValues val = new ContentValues();
- 		 val.put(ContentDescriptor.Image.Cols.DISPLAYVALUE, imgCount);
+ 		 val.put(ContentDescriptor.Image.Cols.ID, imgCount);
          val.put(ContentDescriptor.Image.Cols.MID, id);
          val.put(ContentDescriptor.Image.Cols.DATE, dateFormat.format(date));
          val.put(ContentDescriptor.Image.Cols.IS_PROFILE, (imgCount==0));
          val.put(ContentDescriptor.Image.Cols.DESCRIPTION, description);
-         Uri row = contentResolver.insert(ContentDescriptor.Image.CONTENT_URI, val);
-         int rowid = Integer.parseInt(row.getLastPathSegment());
-         
-         FileHandler fileHandler = new FileHandler(this);
-         System.out.print("\n\n**Writing "+imgCount+"_"+id);
-         fileHandler.writeFile(byteArray, imgCount+"_"+id);
-         
-         val = new ContentValues();
-         val.put(ContentDescriptor.PendingUploads.Cols.TABLEID, ContentDescriptor.TableIndex.Values.Image.getKey());
-         val.put(ContentDescriptor.PendingUploads.Cols.ROWID, rowid);
-         contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, val);
-         //System.out.println("Updating Image Table");
-         contentResolver.notifyChange(ContentDescriptor.Image.CONTENT_URI, null);
+         contentResolver.insert(ContentDescriptor.Image.CONTENT_URI, val);
+         System.out.println("Updating Image Table");
+  
          Intent intent = new Intent(this, HornetDBService.class);
-         //intent.putExtra(Services.Statics.KEY,Services.Statics.UPLOAD);
-         intent.putExtra(Services.Statics.KEY, Services.Statics.FREQUENT_SYNC);
+         intent.putExtra(Services.Statics.KEY,Services.Statics.UPLOAD); 
          startService(intent);
          finish();
 	}
@@ -181,17 +171,17 @@ public class CameraWrapper extends Activity {
 		 	if (Integer.parseInt(preferences.getString("sync_frequency", "-1")) == -1) {
 		 		Services.setPreference(this, "sync_frequency", "5");
 		 	}
-		 	PollingHandler polling = Services.getFreqPollingHandler();
+		 	PollingHandler polling = Services.getPollingHandler();
 	    	polling.startService();
 	    	return true;
 	    }
 	    case (R.id.action_halt): {
-	    	PollingHandler polling = Services.getFreqPollingHandler();
+	    	PollingHandler polling = Services.getPollingHandler();
 	    	polling.stopPolling(false);
 	    	Services.setPreference(this, "sync_frequency", "-1");
 	    	return true;
 	    }
-	    /*case (R.id.action_bookings):{
+	    case (R.id.action_bookings):{
 	    	Intent bookings = new Intent(this, HornetDBService.class);
 			bookings.putExtra(Services.Statics.KEY, Services.Statics.BOOKING);
 		 	this.startService(bookings);
@@ -199,7 +189,7 @@ public class CameraWrapper extends Activity {
 		 	Intent intent = new Intent(this, BookingsSlidePager.class);
 	       	startActivity(intent);
 	       	return true;
-	    }*/
+	    }
 	    case (R.id.action_addMember):{
 	    	Intent intent = new Intent(this, MemberAdd.class);
 	    	startActivity(intent);
