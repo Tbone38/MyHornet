@@ -23,7 +23,8 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:layout_below="@id/member_visit_history_H"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:padding="4dp" >
         
     </LinearLayout>	
    	<include 

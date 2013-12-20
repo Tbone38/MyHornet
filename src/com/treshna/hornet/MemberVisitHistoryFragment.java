@@ -1,6 +1,7 @@
 package com.treshna.hornet;
 
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -65,18 +66,34 @@ public class MemberVisitHistoryFragment extends Fragment implements TagFoundList
 		TextView heading = (TextView) view.findViewById(R.id.member_visit_history_H);
 		heading.setText(String.format(getActivity().getResources().getString(R.string.member_visit_history), first_sync));
 		
-		Cursor cur = contentResolver.query(ContentDescriptor.Visitor.CONTENT_URI, null, 
-				ContentDescriptor.Visitor.Cols.MID+" = ?", new String[] {memberID}, null);
+		Cursor cur = contentResolver.query(ContentDescriptor.Visitor.VISITOR_PROGRAMME_URI, null, 
+				"v."+ContentDescriptor.Visitor.Cols.MID+" = ?", new String[] {memberID}, null);
 		LinearLayout list = (LinearLayout) view.findViewById(R.id.visit_history_list);
 		
 		while (cur.moveToNext()) {
 			View row = mInflater.inflate(R.layout.member_visit_history_row, null);
+			
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SS", Locale.US);
+			Date date = null;
+			try {
+				date = format.parse(cur.getString(cur.getColumnIndex(ContentDescriptor.Visitor.Cols.DATETIME)));	
+			} catch (ParseException e) {
+				date = null;
+			}
+			
+			format = new SimpleDateFormat("dd MMM yyyy, HH:mm:ss", Locale.US);
+			String outputdate;
+			if (date != null ) {
+				outputdate = format.format(date);
+			} else {
+				outputdate = cur.getString(cur.getColumnIndex(ContentDescriptor.Visitor.Cols.DATETIME));
+			}
+			
 			TextView datetime = (TextView) row.findViewById(R.id.visit_history_datetime);
-			datetime.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Visitor.Cols.DATETIME)));
+			datetime.setText(outputdate);
 			
 			TextView programme = (TextView) row.findViewById(R.id.visit_history_programme);
-			//TODO: get the programme-name from a join on the programme table (using membership table).
-			programme.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Visitor.Cols.MSID)));
+			programme.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PNAME)));
 			
 			TextView door = (TextView) row.findViewById(R.id.visit_history_door);
 			door.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Visitor.Cols.DOORNAME)));

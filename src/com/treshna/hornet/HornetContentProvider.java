@@ -703,6 +703,13 @@ public class HornetContentProvider extends ContentProvider {
             	builder.setTables(ContentDescriptor.PendingDeletes.NAME);
             	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
             }
+            case ContentDescriptor.Visitor.TOKEN_VISIT_PROGRAMME:{
+            	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+            	builder.setTables(ContentDescriptor.Visitor.NAME+" v LEFT JOIN "
+            		+ContentDescriptor.Membership.NAME+" ms ON "
+            		+ "(v."+ContentDescriptor.Visitor.Cols.MSID+" = ms."+ContentDescriptor.Membership.Cols.MSID+")");
+            	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+            }
             
             default: throw new UnsupportedOperationException("URI: " + uri + " not supported.");
         }

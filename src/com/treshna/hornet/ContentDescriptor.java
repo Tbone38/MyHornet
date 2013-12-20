@@ -16,10 +16,12 @@ import android.provider.BaseColumns;
  *   10:								127 = MembershipSuspend
  *   11 = TableIndex					130:
  *   12:								135:
+ *   									140 = Visitor
+ *   									141 = Visitors/Programme/Membership query.
  *   13 = PendingUploads				16:
  *   14:								17 = PendingUpdates
  *   15 = PendingDownloads				18 = PendingDeletes
- *   20 = FreeIds						140 = Visitor
+ *   20 = FreeIds						
  *   50:								111:
  *   55 = Company (unused)				112 = MemberNotes
  *   60:								113:
@@ -127,6 +129,7 @@ public class ContentDescriptor {
 	     matcher.addURI(authority, PaymentMethod.PATH, PaymentMethod.PATH_TOKEN);
 	     matcher.addURI(authority, Programme.PATH, Programme.PATH_TOKEN);
 	     matcher.addURI(authority, Programme.PATH_FOR_GROUP, Programme.PATH_FOR_GROUP_TOKEN);
+	     matcher.addURI(authority, Visitor.PATH_VISIT_PROGRAMME, Visitor.TOKEN_VISIT_PROGRAMME);
 	     
 	     matcher.addURI(authority, Door.PATH, Door.PATH_TOKEN);
 	     matcher.addURI(authority, MemberNotes.PATH, MemberNotes.PATH_TOKEN);
@@ -244,6 +247,10 @@ public class ContentDescriptor {
 	 		public static final int PATH_FOR_ID_TOKEN = 140;
 	 		public static final String PATH_FOR_JOIN = "Visitors_Members";
 	 		public static final int PATH_FOR_JOIN_TOKEN = 135;
+	 		
+	 		public static final String PATH_VISIT_PROGRAMME = "Visitors_Membership_Programme";
+	 		public static final int TOKEN_VISIT_PROGRAMME = 141;
+	 		public static final Uri VISITOR_PROGRAMME_URI = BASE_URI.buildUpon().appendPath(PATH_VISIT_PROGRAMME).build();
 	 		
 	 		public static final Uri VISITOR_JOIN_MEMBER_URI = BASE_URI.buildUpon().appendPath(
 	 				PATH_FOR_JOIN).build();
