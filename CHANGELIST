@@ -3,9 +3,10 @@
 			Added member Find Filters,
 			Added  'Add Notes' button on Member Details Page,
 		-TODO:
+			Add Programme Group to Find Filter,
 			Add Booking Day swipe,
 			Log Sync Errors, and upload them somewhere?
 			Add Visit History Page
-		-KNOWN BUGS:
+		-KNOWN BUGS/TO FIX:
 			-fix Get Card for new cards.
 			-manual checkin might be hard crashing.

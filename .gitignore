@@ -1,6 +1,5 @@
 ./bin/
 ./gen/
-./.gitignore
 ./gradle/
 ./.gradle
 ./gradlew

@@ -755,8 +755,8 @@ int id up 0x7f060021
 int id useLogo 0x7f060003
 int id visit_history_access 0x7f060177
 int id visit_history_datetime 0x7f060174
-int id visit_history_door 0x7f060175
-int id visit_history_programme 0x7f060176
+int id visit_history_door 0x7f060176
+int id visit_history_programme 0x7f060175
 int id visit_time_ic 0x7f0601b6
 int id visitor_colour_block 0x7f0601b2
 int id withText 0x7f06000c
