@@ -18,7 +18,8 @@ import android.provider.BaseColumns;
  *   12:								135:
  *   13 = PendingUploads				16:
  *   14:								17 = PendingUpdates
- *   15 = PendingDownloads				140 = Visitor
+ *   15 = PendingDownloads
+ *   20 = FreeIds						140 = Visitor
  *   50:								111:
  *   55 = Company (unused)				112 = MemberNotes
  *   60:								113:
@@ -133,6 +134,7 @@ public class ContentDescriptor {
 	     matcher.addURI(authority, Member.PATH_JOIN_BALANCE, Member.TOKEN_JOIN_BALANCE);
 	     matcher.addURI(authority, Member.PATH_FREE_IDS, Member.TOKEN_FREE_IDS);
 	     matcher.addURI(authority, Member.PATH_FIND, Member.TOKEN_FIND);
+	     matcher.addURI(authority, FreeIds.PATH, FreeIds.PATH_TOKEN);
 	     
 	     matcher.addURI(authority, DROPTABLE, TOKEN_DROPTABLE);
 	     
@@ -168,6 +170,12 @@ public class ContentDescriptor {
 	        public static class Indexs {
 	        	public static final String MEMBER_NAME = "member_member_name";
 	        }
+	        
+	        public static class Triggers {
+	 			public static final String ON_INSERT = "member_insert";
+	 			public static final String ON_UPDATE = "member_update";
+	 			public static final String ON_DELETE = "member_delete";
+	 		}
 	        
 	        public static class Cols implements BaseColumns{
 	        	
@@ -247,6 +255,7 @@ public class ContentDescriptor {
 	 			public static final String MS_ID = "visitor_membership_id";
 	 			public static final String DATE_TIME = "visitor_date_time";
 	 		}
+	 		
 	 		
 	 		public static class Cols {
 	 			public static final String ID = BaseColumns._ID;
@@ -817,6 +826,30 @@ public class ContentDescriptor {
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
 	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.pendingupdates";
 	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.pendingupdates";
+	 		
+	 		public static class Cols implements BaseColumns {
+	 			public static final String ROWID = "rowid";
+	 			public static final String TABLEID = "tableid";
+	 		}
+	 	}
+	 	
+	 	//PendingDeletes
+	 	
+	 	//TODO: move everything that uses ids to this table.
+	 	//**************************************************
+	 	/* Currently we get and store ids from the Postgres database for use when we upload new items (members, memberships)
+	 	 * etc. These Id's are stored in there respective tables. However retrieving them is convulted. 
+	 	 * Solution is to move them here, using the tableIndex # as the tableid, and changing all the relevent
+	 	 * code (ALOT!).
+	 	 */
+	 	public static class FreeIds {
+	 		public static final String NAME = "FreeIds";
+	 		public static final String PATH = "FreeIds";
+	 		public static final int PATH_TOKEN = 20;
+	 		
+	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
+	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.freeids";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.freeids";
 	 		
 	 		public static class Cols implements BaseColumns {
 	 			public static final String ROWID = "rowid";

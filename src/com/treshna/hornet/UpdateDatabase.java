@@ -1,8 +1,10 @@
 package com.treshna.hornet;
 
+import com.treshna.hornet.ContentDescriptor.FreeIds;
 import com.treshna.hornet.ContentDescriptor.Image;
 import com.treshna.hornet.ContentDescriptor.Member;
 import com.treshna.hornet.ContentDescriptor.PendingUpdates;
+import com.treshna.hornet.ContentDescriptor.PendingUploads;
 import com.treshna.hornet.ContentDescriptor.TableIndex;
 import com.treshna.hornet.ContentDescriptor.Visitor;
 
@@ -61,9 +63,26 @@ public class UpdateDatabase {
 					+Visitor.Cols.DOORNAME+", "+Visitor.Cols.MSID+", "+Visitor.Cols.LASTUPDATE
 				+" FROM tmp_"+Visitor.NAME+";"
 				+"DROP TABLE tmp_"+Visitor.NAME+";"
-				
 				+"COMMIT;"
 				
-				+ ""; //ADD TRIGGERS FOR ON UPDATES (set pending UPLOADS/UPDATES).
+				+"CREATE TABLE "+FreeIds.NAME+" ("+FreeIds.Cols._ID+" INTEGER PRIMARY KEY, "
+						+FreeIds.Cols.ROWID+" INTEGER, "+FreeIds.Cols.TABLEID+" INTEGER );"
+				//move more triggers here.
+				//TODO:ADD TRIGGERS FOR ON UPDATES/INSERTS that set pending UPLOADS/UPDATES table.
+				+ "CREATE TRIGGER "+Member.Triggers.ON_INSERT+" AFTER INSERT ON "+Member.NAME
+				+" FOR EACH ROW WHEN new."+Member.Cols.MID+" > 0"
+				+" BEGIN "
+					+"INSERT OR REPLACE INTO "+PendingUploads.NAME
+					+ " ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
+					+ " VALUES (new."+Member.Cols._ID+", "+TableIndex.Values.Member.getKey()+");"
+				+" END; "
+				
+				+"CREATE TRIGGER "+Member.Triggers.ON_UPDATE+" AFTER UPDATE ON "+Member.NAME
+				+" FOR EACH ROW"
+				+" BEGIN "
+					+"INSERT OR REPLACE INTO "+PendingUpdates.NAME
+					+" ("+PendingUpdates.Cols.ROWID+", "+PendingUpdates.Cols.TABLEID+")"
+					+" VALUES (new."+Member.Cols._ID+", "+TableIndex.Values.Member.getKey()+");"
+				+"END;"; 
 	}
 }

@@ -70,7 +70,7 @@ public class MemberVisitHistoryFragment extends ListFragment implements TagFound
 		int[] to = {};
 		Cursor cur = contentResolver.query(ContentDescriptor.Visitor.CONTENT_URI, null, 
 				ContentDescriptor.Visitor.Cols.MID+" = ?", new String[] {memberID}, null);
-		mAdapter = new SimpleCursorAdapter(getActivity(), R.layout.member_find_row, cur, from, to);
+		mAdapter = new SimpleCursorAdapter(getActivity(), R.layout.member_visit_history_row, cur, from, to);
 		setListAdapter(mAdapter);
 		
 		mActions.setupActions(view, memberID);

@@ -9,6 +9,10 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.util.Log;
 
+/*This class is an android database wrapper used by the Content provider.
+ * All queries/inserts/updates/deletes should go through it.
+ * (getType is only used when exporting the content Provider?)
+ */
 public class HornetContentProvider extends ContentProvider {
 	private HornetDatabase hornetDb;
 	private Context ctx;
@@ -180,6 +184,11 @@ public class HornetContentProvider extends ContentProvider {
         	getContext().getContentResolver().notifyChange(uri, null);
         	return rows;
         }
+        case ContentDescriptor.FreeIds.PATH_TOKEN:{
+        	int rows = db.delete(ContentDescriptor.FreeIds.NAME, selection, selectionArgs);
+        	getContext().getContentResolver().notifyChange(uri, null);
+        	return rows;
+        }
         
         
         case ContentDescriptor.TOKEN_DROPTABLE:{ //special case, drops tables/deletes database.
@@ -336,6 +345,11 @@ public class HornetContentProvider extends ContentProvider {
             	long id = db.insert(ContentDescriptor.PendingUpdates.NAME, null, values);
             	getContext().getContentResolver().notifyChange(uri, null);
             	return ContentDescriptor.PendingUpdates.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
+            }
+            case ContentDescriptor.FreeIds.PATH_TOKEN:{
+            	long id = db.insert(ContentDescriptor.FreeIds.NAME, null, values);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return ContentDescriptor.FreeIds.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
             }
             
             default: {
@@ -668,6 +682,11 @@ public class HornetContentProvider extends ContentProvider {
             case ContentDescriptor.PendingUpdates.PATH_TOKEN:{
             	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
             	builder.setTables(ContentDescriptor.PendingUpdates.NAME);
+            	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+            }
+            case ContentDescriptor.FreeIds.PATH_TOKEN:{
+            	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+            	builder.setTables(ContentDescriptor.FreeIds.NAME);
             	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
             }
             
