@@ -5,20 +5,20 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import com.treshna.hornet.BookingPage.TagFoundListener;
-
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
-import android.support.v4.widget.SimpleCursorAdapter;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.treshna.hornet.BookingPage.TagFoundListener;
 
-public class MemberVisitHistoryFragment extends ListFragment implements TagFoundListener {
+
+public class MemberVisitHistoryFragment extends Fragment implements TagFoundListener {
 	Cursor cur;
 	ContentResolver contentResolver;
 	String memberID;
@@ -26,7 +26,6 @@ public class MemberVisitHistoryFragment extends ListFragment implements TagFound
 	private View view;
 	LayoutInflater mInflater;
 	private MemberActions mActions;
-	private SimpleCursorAdapter mAdapter;
 	
 	private static final String TAG = "MemberVisitHistory";
 	
@@ -66,12 +65,27 @@ public class MemberVisitHistoryFragment extends ListFragment implements TagFound
 		TextView heading = (TextView) view.findViewById(R.id.member_visit_history_H);
 		heading.setText(String.format(getActivity().getResources().getString(R.string.member_visit_history), first_sync));
 		
-		String[] from = {};
-		int[] to = {};
 		Cursor cur = contentResolver.query(ContentDescriptor.Visitor.CONTENT_URI, null, 
 				ContentDescriptor.Visitor.Cols.MID+" = ?", new String[] {memberID}, null);
-		mAdapter = new SimpleCursorAdapter(getActivity(), R.layout.member_visit_history_row, cur, from, to);
-		setListAdapter(mAdapter);
+		LinearLayout list = (LinearLayout) view.findViewById(R.id.visit_history_list);
+		
+		while (cur.moveToNext()) {
+			View row = mInflater.inflate(R.layout.member_visit_history_row, null);
+			TextView datetime = (TextView) row.findViewById(R.id.visit_history_datetime);
+			datetime.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Visitor.Cols.DATETIME)));
+			
+			TextView programme = (TextView) row.findViewById(R.id.visit_history_programme);
+			//TODO: get the programme-name from a join on the programme table (using membership table).
+			programme.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Visitor.Cols.MSID)));
+			
+			TextView door = (TextView) row.findViewById(R.id.visit_history_door);
+			door.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Visitor.Cols.DOORNAME)));
+			
+			TextView access = (TextView) row.findViewById(R.id.visit_history_access);
+			access.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Visitor.Cols.DENY)));
+			
+			list.addView(row);
+		}
 		
 		mActions.setupActions(view, memberID);
 		return view;

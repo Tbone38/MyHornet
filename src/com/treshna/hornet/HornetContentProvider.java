@@ -189,7 +189,11 @@ public class HornetContentProvider extends ContentProvider {
         	getContext().getContentResolver().notifyChange(uri, null);
         	return rows;
         }
-        
+        case ContentDescriptor.PendingDeletes.PATH_TOKEN:{
+        	int rows = db.delete(ContentDescriptor.PendingDeletes.NAME, selection, selectionArgs);
+        	getContext().getContentResolver().notifyChange(uri, null);
+        	return rows;
+        }
         
         case ContentDescriptor.TOKEN_DROPTABLE:{ //special case, drops tables/deletes database.
         	FileHandler fh = new FileHandler(ctx);
@@ -350,6 +354,11 @@ public class HornetContentProvider extends ContentProvider {
             	long id = db.insert(ContentDescriptor.FreeIds.NAME, null, values);
             	getContext().getContentResolver().notifyChange(uri, null);
             	return ContentDescriptor.FreeIds.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
+            }
+            case ContentDescriptor.PendingDeletes.PATH_TOKEN:{
+            	long id = db.insert(ContentDescriptor.PendingDeletes.NAME, null, values);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return ContentDescriptor.PendingDeletes.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
             }
             
             default: {
@@ -591,7 +600,7 @@ public class HornetContentProvider extends ContentProvider {
             	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
             }
             
-            case ContentDescriptor.BookingTime.PATH_TOKEN:{ //changed 2013-11-14, check nothings been broken by this.
+            case ContentDescriptor.BookingTime.PATH_TOKEN:{ 
             	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
             	builder.setTables(ContentDescriptor.BookingTime.NAME+" bt LEFT JOIN "
             			+ContentDescriptor.Booking.NAME+" b ON (bt."
@@ -687,6 +696,11 @@ public class HornetContentProvider extends ContentProvider {
             case ContentDescriptor.FreeIds.PATH_TOKEN:{
             	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
             	builder.setTables(ContentDescriptor.FreeIds.NAME);
+            	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+            }
+            case ContentDescriptor.PendingDeletes.PATH_TOKEN:{
+            	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+            	builder.setTables(ContentDescriptor.PendingDeletes.NAME);
             	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
             }
             

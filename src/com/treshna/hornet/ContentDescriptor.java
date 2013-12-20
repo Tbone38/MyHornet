@@ -18,7 +18,7 @@ import android.provider.BaseColumns;
  *   12:								135:
  *   13 = PendingUploads				16:
  *   14:								17 = PendingUpdates
- *   15 = PendingDownloads
+ *   15 = PendingDownloads				18 = PendingDeletes
  *   20 = FreeIds						140 = Visitor
  *   50:								111:
  *   55 = Company (unused)				112 = MemberNotes
@@ -135,6 +135,7 @@ public class ContentDescriptor {
 	     matcher.addURI(authority, Member.PATH_FREE_IDS, Member.TOKEN_FREE_IDS);
 	     matcher.addURI(authority, Member.PATH_FIND, Member.TOKEN_FIND);
 	     matcher.addURI(authority, FreeIds.PATH, FreeIds.PATH_TOKEN);
+	     matcher.addURI(authority, PendingDeletes.PATH, PendingDeletes.PATH_TOKEN);
 	     
 	     matcher.addURI(authority, DROPTABLE, TOKEN_DROPTABLE);
 	     
@@ -834,6 +835,20 @@ public class ContentDescriptor {
 	 	}
 	 	
 	 	//PendingDeletes
+	 	public static class PendingDeletes {
+	 		public static final String NAME = "PendingDeletes";
+	 		public static final String PATH = "PendingDeletes";
+	 		public static final int PATH_TOKEN = 18;
+	 		
+	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
+	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.pendingdeletes";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.pendingdeletes";
+	 		
+	 		public static class Cols implements BaseColumns {
+	 			public static final String ROWID = "rowid";
+	 			public static final String TABLEID = "tableid";
+	 		}
+	 	}
 	 	
 	 	//TODO: move everything that uses ids to this table.
 	 	//**************************************************

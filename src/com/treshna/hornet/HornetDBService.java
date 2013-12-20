@@ -1827,7 +1827,8 @@ public class HornetDBService extends Service {
     	return result;
     }
     
-    
+    //I should really be getting the class ID's before I attempt to upload.
+    //That way I can signup members prior to uploading the class.
     private int uploadClass(){
     	Log.d(TAG, "STARTING CLASS UPLOAD");
     	int result = 0;

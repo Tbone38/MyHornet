@@ -2,12 +2,14 @@
 		-DONE:
 			Added member Find Filters,
 			Added 'Add Notes' button on Member Details Page,
+			Added PendingDeletes table (no code uses it atm, because you can't delete from the app).
 		-TODO:
 			Add Programme Group to Find Filter,
 			Add Booking Day swipe,
 			Log Sync Errors, and upload them somewhere?
 			Add Visit History Page,
-			Move Free ID's into a seperate table using the TableIDs as reference
+			Move Free ID's into a seperate table using the TableIDs as reference,
+			Add more triggers/remove the java code.
 		-KNOWN BUGS/TO FIX:
 			-fix Get Card for new cards.
 			-manual checkin might hard-crash if the door is null (why wasn't there any doors?)

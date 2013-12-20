@@ -6,6 +6,7 @@
     android:paddingTop="3dp"
     android:paddingBottom="3dp"
     android:paddingLeft="2dp"
+    android:layout_margin="4dp"
     tools:context=".MemberVisitHistory"
     android:background="@color/booking_resource_background" >
 	<TextView 

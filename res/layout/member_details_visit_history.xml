@@ -16,16 +16,19 @@
 	    android:padding="5dp"
 		android:paddingBottom="1dp" />
 	
-    <!--  List View? -->
-    <ListView 
-        android:id="@android:id/list"
+    <!--  ListView doesn't work.
+    		Need to swap to a LinearLayout instead. -->
+    <LinearLayout
+        android:id="@+id/visit_history_list"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:layout_below="@id/member_visit_history_H" />
-    
-    <include 
+        android:layout_below="@id/member_visit_history_H"
+        android:orientation="vertical" >
+        
+    </LinearLayout>	
+   	<include 
 	    layout="@layout/member_details_actions"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    android:layout_below="@android:id/list"/>
+	    android:layout_below="@id/visit_history_list"/>
 </RelativeLayout>

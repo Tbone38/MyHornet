@@ -285,8 +285,8 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		db.execSQL(UpdateDatabase.Ninety.SQL);
 		db.execSQL(UpdateDatabase.NinetyOne.SQL);
 		db.execSQL(UpdateDatabase.NinetyTwo.SQL);
-		/*db.execSQL(UpdateDatabase.NinetyThree.SQL);
-		db.execSQL("pragma full_column_names=ON;"); //TODO: will this break stuff?*/
+		db.execSQL(UpdateDatabase.NinetyThree.SQL);
+		//db.execSQL("pragma full_column_names=ON;"); //TODO: will this break stuff?*/
 	}
 	
 
