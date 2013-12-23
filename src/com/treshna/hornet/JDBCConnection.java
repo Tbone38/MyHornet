@@ -356,7 +356,10 @@ public class JDBCConnection {
     			+"CASE WHEN member.happiness = 1 THEN ':)' WHEN member.happiness = 0 THEN ':|'"
     			+" WHEN member.happiness <= -1 THEN ':(' WHEN member.happiness = 2 THEN '||' ELSE '' END AS happiness, "
     			+"member.phonehome AS mphhome, member.phonework AS mphwork, member.phonecell AS mphcell, "
-    			+"member.email AS memail, member.notes AS mnotes, member.status, member.cardno, member.gender FROM member"
+    			+"member.email AS memail, member.notes AS mnotes, member.status, member.cardno, member.gender, "
+    			+"emergencyname, emergencyhome, emergencywork, emergencycell, emergencyrelationship, "
+    			+"medication, medicationdosage, medicationbystaff, medicalconditions "
+    			+ "FROM member"
     			+" WHERE status != 3";
     	if (lastupdate != null) {
     		query = query + " AND lastupdate > ?::TIMESTAMP WITHOUT TIME ZONE";

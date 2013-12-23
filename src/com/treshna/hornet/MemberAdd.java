@@ -196,10 +196,14 @@ public class MemberAdd extends NFCActivity implements OnClickListener, DatePicke
 	private void displayID(){
 		Cursor cur = null;
 		ContentResolver contentResolver = this.getContentResolver();
-		String[] projection = {ContentDescriptor.Member.Cols.MID};
+		//String[] projection = {ContentDescriptor.Member.Cols.MID};
+		String[] projection = {ContentDescriptor.FreeIds.Cols.ROWID};
 		
-		cur = contentResolver.query(ContentDescriptor.Member.URI_FREE_IDS, projection, 
-				ContentDescriptor.Member.Cols.STATUS+" = -1", null, null);
+		/*cur = contentResolver.query(ContentDescriptor.Member.URI_FREE_IDS, projection, 
+				ContentDescriptor.Member.Cols.STATUS+" = -1", null, null);*/
+		cur = contentResolver.query(ContentDescriptor.FreeIds.CONTENT_URI, projection, 
+				ContentDescriptor.FreeIds.Cols.TABLEID+" = "+ContentDescriptor.TableIndex.Values.Member.getKey(),
+				null, null);
 		if (cur.moveToFirst()) {
 			TextView memberid = (TextView) this.findViewById(R.id.memberNo);
 			memberid.setText(cur.getString(0));
@@ -453,7 +457,10 @@ public class MemberAdd extends NFCActivity implements OnClickListener, DatePicke
 				contentResolver.insert(ContentDescriptor.Member.CONTENT_URI, val);
 				
 			} else {
-				String[] selection = {memberid};
+				val.put(ContentDescriptor.Member.Cols.MID, memberid);
+				contentResolver.insert(ContentDescriptor.Member.CONTENT_URI, val);
+				
+				/*String[] selection = {memberid};
 				Cursor cur = contentResolver.query(ContentDescriptor.Member.URI_FREE_IDS, null,
 						ContentDescriptor.Member.Cols.MID+" = ?", selection, null);
 				
@@ -466,7 +473,7 @@ public class MemberAdd extends NFCActivity implements OnClickListener, DatePicke
 				val = new ContentValues();
 				val.put(ContentDescriptor.PendingUploads.Cols.TABLEID, ContentDescriptor.TableIndex.Values.Member.getKey());
 				val.put(ContentDescriptor.PendingUploads.Cols.ROWID, rowid);
-				contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, val);
+				contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, val);*/
 			}			
 			
 			startService(intent);

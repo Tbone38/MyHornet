@@ -58,21 +58,16 @@ public class MemberVisitHistoryFragment extends Fragment implements TagFoundList
 	
 	private View setupView() {
 		
-		String first_sync = Services.getAppSettings(getActivity(), "first_sync");
-		if (first_sync.compareTo("-1")==0) {
-			SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy", Locale.US);
-			first_sync = format.format(new Date());
-		}
-		TextView heading = (TextView) view.findViewById(R.id.member_visit_history_H);
-		heading.setText(String.format(getActivity().getResources().getString(R.string.member_visit_history), first_sync));
-		
 		Cursor cur = contentResolver.query(ContentDescriptor.Visitor.VISITOR_PROGRAMME_URI, null, 
-				"v."+ContentDescriptor.Visitor.Cols.MID+" = ?", new String[] {memberID}, null);
+				"v."+ContentDescriptor.Visitor.Cols.MID+" = ?", new String[] {memberID}, ContentDescriptor.Visitor.Cols.DATETIME+" DESC");
 		LinearLayout list = (LinearLayout) view.findViewById(R.id.visit_history_list);
 		
 		while (cur.moveToNext()) {
-			View row = mInflater.inflate(R.layout.member_visit_history_row, null);
 			
+			View row = mInflater.inflate(R.layout.member_visit_history_row, null);
+			if (cur.getPosition()%2 == 0) {
+				row.setBackgroundColor(getActivity().getResources().getColor(R.color.white));
+			}
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SS", Locale.US);
 			Date date = null;
 			try {
@@ -81,25 +76,38 @@ public class MemberVisitHistoryFragment extends Fragment implements TagFoundList
 				date = null;
 			}
 			
-			format = new SimpleDateFormat("dd MMM yyyy, HH:mm:ss", Locale.US);
-			String outputdate;
+			format = new SimpleDateFormat("dd MMM yyyy", Locale.US); //HH:mm:ss
+			String outputdate, outputtime;
 			if (date != null ) {
 				outputdate = format.format(date);
+				format = new SimpleDateFormat("HH:mm:ss", Locale.US); //HH:mm:ss
+				outputtime = format.format(date);
 			} else {
-				outputdate = cur.getString(cur.getColumnIndex(ContentDescriptor.Visitor.Cols.DATETIME));
+				outputdate = cur.getString(cur.getColumnIndex(ContentDescriptor.Visitor.Cols.DATE));
+				outputtime = cur.getString(cur.getColumnIndex(ContentDescriptor.Visitor.Cols.TIME));
 			}
 			
-			TextView datetime = (TextView) row.findViewById(R.id.visit_history_datetime);
-			datetime.setText(outputdate);
+			TextView dateview = (TextView) row.findViewById(R.id.visit_history_date);
+			dateview.setText(outputdate);
+			
+			TextView timeview = (TextView) row.findViewById(R.id.visit_history_time);
+			timeview.setText(outputtime);
 			
 			TextView programme = (TextView) row.findViewById(R.id.visit_history_programme);
 			programme.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PNAME)));
 			
-			TextView door = (TextView) row.findViewById(R.id.visit_history_door);
-			door.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Visitor.Cols.DOORNAME)));
+			if (cur.getString(cur.getColumnIndex(ContentDescriptor.Visitor.Cols.DENY)).compareTo("Granted") == 0){
+				View access = (View) row.findViewById(R.id.visit_history_colour_block);
+				access.setBackgroundColor(this.getActivity().getResources().getColor(R.color.visitors_green));
+				access.setVisibility(View.VISIBLE);
+			} else {
+				View access = (View) row.findViewById(R.id.visit_history_colour_block); 
+				access.setBackgroundColor(this.getActivity().getResources().getColor(R.color.visitors_red));
+				access.setVisibility(View.VISIBLE);
+				
+				programme.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Visitor.Cols.DENY)));
+			}
 			
-			TextView access = (TextView) row.findViewById(R.id.visit_history_access);
-			access.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Visitor.Cols.DENY)));
 			
 			list.addView(row);
 		}

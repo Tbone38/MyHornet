@@ -11,18 +11,48 @@
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	    android:textSize="24sp"
-	    
+	    android:text="@string/member_visit_history2"
 	    android:textIsSelectable="false"
 	    android:padding="5dp"
 		android:paddingBottom="1dp" />
-	
-    <!--  ListView doesn't work.
-    		Need to swap to a LinearLayout instead. -->
+	<LinearLayout 
+	    android:id="@+id/visit_list_headings"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal"
+	    android:layout_below="@id/member_visit_history_H">
+	    <View
+	        android:layout_width="10dp"
+	        android:layout_height="wrap_content"
+	        />
+	    <TextView
+	        android:id="@+id/list_heading_date"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_weight=".8"
+	        android:textSize="17sp"
+	        android:text="Date"
+	        android:paddingLeft="10dp" />
+	    <TextView
+	        android:id="@+id/list_heading_time"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_weight=".8"
+	        android:textSize="17sp"
+	        android:text="Time" />
+	    <TextView 
+	        android:id="@+id/list_heading_details"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:textSize="17sp"
+	        android:text="Details"/>
+	</LinearLayout>
     <LinearLayout
         android:id="@+id/visit_history_list"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:layout_below="@id/member_visit_history_H"
+        android:layout_below="@id/visit_list_headings"
         android:orientation="vertical"
         android:padding="4dp" >
         

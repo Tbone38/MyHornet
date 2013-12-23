@@ -1,60 +1,49 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/listRow"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".MemberVisitHistory" >
-    <RelativeLayout
-        android:id="@+id/member_membership_content"
-        android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:background="@color/booking_resource_background"
-	    android:layout_margin="7dp"
-	    android:padding="5dp" >
-		<TextView 
-		    android:id="@+id/visit_history_datetime"
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:textSize="18sp"
-		    android:text="DD MMM yy, HH:mm am"
-		    android:paddingLeft="5dp"
-		    android:paddingTop="3dp"/>
-		<View
-		    android:layout_width="match_parent"
-		    android:layout_height="2dp"
-		    android:layout_below="@id/visit_history_datetime"
-		    android:background="@color/white"
-		    android:layout_marginLeft="5dp"
-		    android:layout_marginRight="5dp"
-		    android:layout_marginBottom="2dp" />
+    android:background="@color/booking_resource_background"
+    tools:context=".MemberVisitHistory"
+    android:orientation="horizontal" >
+	<View
+	    android:id="@+id/visit_history_colour_block"
+	    android:layout_width="5dp"
+	    android:layout_height="30dp"
+	    android:background="@color/visitors_red"
+	    android:visibility="visible"
+	    android:layout_marginTop="2dp"
+	    android:layout_marginBottom="2dp"/>
 	
-		<TextView
-		    android:id="@+id/visit_history_programme"
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:layout_below="@id/visit_history_datetime"
-		    android:textSize="14sp"
-		    android:text="## programme Name "
-		    android:paddingLeft="5dp"
-		    android:paddingBottom="3dp" />
-		<TextView
-		    android:id="@+id/visit_history_door"
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:layout_below="@id/visit_history_programme"
-		    android:textSize="14sp"
-		    android:text="Reception"
-		    android:paddingRight="5dp"/>
-		<TextView
-		    android:id="@+id/visit_history_access"
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:layout_below="@id/visit_history_programme"    
-		    android:textSize="14sp"
-		    android:text="Access Granted"
-		    android:layout_alignParentRight="true"
-		    android:layout_marginRight="50dp"
-		    android:paddingLeft="5dp"
-		    android:paddingBottom="3dp" />
-	</RelativeLayout>    
-</RelativeLayout>
+	<TextView 
+	    android:id="@+id/visit_history_date"
+	    android:layout_width="0dp"
+	    android:layout_height="match_parent"
+	    android:layout_weight=".8"
+	    android:textSize="14sp"
+	    android:text="DD MMM yy"
+	    android:gravity="left"
+	    android:paddingLeft="5dp"
+	    android:paddingTop="3dp"/>
+	
+	<TextView 
+	    android:id="@+id/visit_history_time"
+	    android:layout_width="0dp"
+	    android:layout_height="match_parent"
+	    android:layout_weight=".8"
+	    android:textSize="14sp"
+	    android:text="HH:mm:ss am"
+	    android:gravity="left"
+	    android:paddingTop="3dp"/>
+	
+	<TextView
+	    android:id="@+id/visit_history_programme"
+	    android:layout_width="0dp"
+	    android:layout_height="match_parent"
+	    android:layout_weight="1"
+	    android:textSize="14sp"
+	    android:text="## programme Name "
+	    android:gravity="left"
+	    android:paddingLeft="5dp"
+	    android:paddingTop="3dp" />
+	</LinearLayout>

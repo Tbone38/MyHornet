@@ -229,12 +229,26 @@ public class ContentDescriptor {
 	       	 	//added for merge with Pending.
 	       	 	public static final String DOB = "dob";
 	 			public static final String GENDER = "gender";
-	 			public static final String MEDICAL = "medical"; //rename this medicalconditions
+	 			public static final String MEDICAL = "medicalconditions"; //rename this medicalconditions
 	 			public static final String STREET = "street";
 	 			public static final String SUBURB = "suburb";
 	 			public static final String CITY = "city";
 	 			public static final String POSTAL = "postal";
 	 			
+	 			//YMCA request.
+	 			public static final String EMERGENCYNAME = "emergencyname";
+	 			public static final String EMERGENCYHOME = "emergencyhome";
+	 			public static final String EMERGENCYCELL = "emergencycell";
+	 			public static final String EMERGENCYWORK = "emergencywork";
+	 			public static final String EMERGENCYRELATIONSHIP = "emergencyrelationship";
+	 			public static final String MEDICALDOSAGE = "medicaldosage";
+	 			public static final String MEDICATIONBYSTAFF = "medicationbystaff";
+	 			public static final String MEDICATION = "medication";
+	 			
+	        }
+	        
+	        public static class OldCols {
+	        	public static final String MEDICAL = "medical"; //rename this medicalconditions
 	        }
 	        
 	    }

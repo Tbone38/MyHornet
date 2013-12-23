@@ -2059,20 +2059,7 @@ public class HornetDBService extends Service {
     			// the member is NOT already booked in for the class,
     			// the function should add them.
     			Log.v(TAG, "Adding New Member to the booking.");
-    			/**
-    			 * TODO: get the following values:
-    			 * 	- Resourceid				- DONE
-    			 * 	- Firstname & lastname		- DONE
-    			 *  - startid & endid			- DONE
-    			 *  - arrival					- DONE
-    			 *  - parentid					- DONE
-    			 *  - bookingid					- DONE
-    			 *  - stime & etime				- DONE
-    			 *  - Result					- DONE
-    			 *  - checkin					- DONE
-    			 *  - BookingType!!!			- DONE
-    			 *  - Offset					- DONE
-    			 */
+    			
     			String resourceid, startid, endid, stime, etime, arrival, firstname, lastname, offset;
     			int bookingid;
     			ContentValues values;
@@ -2970,6 +2957,15 @@ public class HornetDBService extends Service {
 		values.put(ContentDescriptor.Member.Cols.STATUS, rs.getString("status"));
 		values.put(ContentDescriptor.Member.Cols.CARDNO, rs.getString("cardno"));
 		values.put(ContentDescriptor.Member.Cols.GENDER, rs.getString("gender"));
+		values.put(ContentDescriptor.Member.Cols.EMERGENCYCELL, rs.getString("emergencycell"));
+		values.put(ContentDescriptor.Member.Cols.EMERGENCYHOME, rs.getString("emergencyhome"));
+		values.put(ContentDescriptor.Member.Cols.EMERGENCYWORK, rs.getString("emergencywork"));
+		values.put(ContentDescriptor.Member.Cols.EMERGENCYNAME, rs.getString("emergencyname"));
+		values.put(ContentDescriptor.Member.Cols.EMERGENCYRELATIONSHIP, rs.getString("emergencyrelationship"));
+		values.put(ContentDescriptor.Member.Cols.MEDICAL, rs.getString("medicalconditions"));
+		values.put(ContentDescriptor.Member.Cols.MEDICALDOSAGE, rs.getString("medicationdosage"));
+		values.put(ContentDescriptor.Member.Cols.MEDICATION, rs.getString("medication"));
+		values.put(ContentDescriptor.Member.Cols.MEDICATIONBYSTAFF, rs.getString("medicationbystaff"));
 		
 		return values;
     }
@@ -2999,7 +2995,10 @@ public class HornetDBService extends Service {
         			+"CASE WHEN member.happiness = 1 THEN ':)' WHEN member.happiness = 0 THEN ':|'"
         			+" WHEN member.happiness <= -1 THEN ':(' WHEN member.happiness = 2 THEN '||' ELSE '' END AS happiness, "
         			+"member.phonehome AS mphhome, member.phonework AS mphwork, member.phonecell AS mphcell, "
-        			+"member.email AS memail, member.notes AS mnotes, member.status, member.gender FROM member"
+        			+"member.email AS memail, member.notes AS mnotes, member.status, member.gender, "
+        			+"emergencyname, emergencyhome, emergencywork, emergencycell, emergencyrelationship, "
+        			+"medication, medicationdosage, medicationbystaff, medicalconditions "
+        			+ "FROM member"
         			+" WHERE id = "+member.get(i)+";";
     		ResultSet rs;
     		try {

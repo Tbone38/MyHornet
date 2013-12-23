@@ -10,6 +10,9 @@
 			Add Visit History Page,
 			Move Free ID's into a seperate table using the TableIDs as reference,
 			Add more triggers/remove the java code.
+			YMCA REQUESTS:
+				-enrolled in,
+				-Roll Call.
 		-KNOWN BUGS/TO FIX:
 			-fix Get Card for new cards.
 			-manual checkin might hard-crash if the door is null (why wasn't there any doors?)

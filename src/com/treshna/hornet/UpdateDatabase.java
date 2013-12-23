@@ -43,87 +43,163 @@ public class UpdateDatabase {
 				+ ");";
 	}
 	public static class NinetyThree {
-		public static final String SQL = 
-				"BEGIN TRANSACTION;"
-				+ "ALTER TABLE "+Visitor.NAME+" RENAME TO tmp_"+Visitor.NAME+";"
-				
-				+" CREATE TABLE "+Visitor.NAME+" ("+Visitor.Cols.ID+" INTEGER PRIMARY KEY, "
+		public static final String SQL1 = 
+				"ALTER TABLE "+Visitor.NAME+" RENAME TO tmp_"+Visitor.NAME+";";
+		public static final String SQL2 = 		
+				" CREATE TABLE "+Visitor.NAME+" ("+Visitor.Cols.ID+" INTEGER PRIMARY KEY,"
 						+Visitor.Cols.MID+" INTEGER, "+Visitor.Cols.DATETIME+" TIMESTAMP, "
 						+Visitor.Cols.DATE+" TEXT, "+Visitor.Cols.TIME+" TEXT, "
 						+Visitor.Cols.DENY+" TEXT, "+Visitor.Cols.CARDNO+" TEXT, "
 						+Visitor.Cols.DOORNAME+" TEXT, "+Visitor.Cols.MSID+" INTEGER, "
 						+Visitor.Cols.LASTUPDATE+" NUMERIC "
-						+");"
+						+");";
 						//Visitors indexes.
-				+" CREATE INDEX "+Visitor.Indexs.MEMBER_ID+" ON "+Visitor.NAME+" ( "
-						+Visitor.Cols.MID+" );"
-				+" CREATE INDEX "+Visitor.Indexs.MS_ID+" ON "+Visitor.NAME+" ( "
-						+Visitor.Cols.MSID+" );"
-				+" CREATE INDEX "+Visitor.Indexs.DATE_TIME+" ON "+Visitor.NAME+" ( "
-						+Visitor.Cols.DATETIME+" );"
+		public static final String SQL3 =
+				" CREATE INDEX "+Visitor.Indexs.MEMBER_ID+" ON "+Visitor.NAME+" ( "
+						+Visitor.Cols.MID+" );";
+		public static final String SQL4 =" CREATE INDEX "+Visitor.Indexs.MS_ID+" ON "+Visitor.NAME+" ( "
+						+Visitor.Cols.MSID+" );";
+		public static final String SQL5 =" CREATE INDEX "+Visitor.Indexs.DATE_TIME+" ON "+Visitor.NAME+" ( "
+						+Visitor.Cols.DATETIME+" );";
 				
-				+" INSERT INTO "+Visitor.NAME+"("+Visitor.Cols.ID+", "+Visitor.Cols.MID+", "
+		public static final String SQL6 =" INSERT INTO "+Visitor.NAME+"("+Visitor.Cols.ID+", "+Visitor.Cols.MID+", "
 					+Visitor.Cols.DATETIME+", "+Visitor.Cols.DATE+", "+Visitor.Cols.TIME+", "+Visitor.Cols.DENY+", "
 					+Visitor.Cols.CARDNO+", "+Visitor.Cols.DOORNAME+", "+Visitor.Cols.MSID+", "+Visitor.Cols.LASTUPDATE+")"
 				+" SELECT "+Visitor.Cols.ID+", "+Visitor.Cols.MID+", "+Visitor.Cols.DATETIME+", "
 					+Visitor.Cols.DATE+", "+Visitor.Cols.TIME+", "+Visitor.Cols.DENY+", "+Visitor.Cols.CARDNO+", "
 					+Visitor.Cols.DOORNAME+", "+Visitor.Cols.MSID+", "+Visitor.Cols.LASTUPDATE
-				+" FROM tmp_"+Visitor.NAME+";"
-				+"DROP TABLE tmp_"+Visitor.NAME+";"
-				+"COMMIT;"
+				+" FROM tmp_"+Visitor.NAME+";";
+		public static final String SQL7 =
+				"DROP TABLE tmp_"+Visitor.NAME+";\n";
 				
 				//create FreeIds table.
 				//move any free ids into the table then delete them.
 				//all future/current code needs to use this table.
-				+"CREATE TABLE "+FreeIds.NAME+" ("+FreeIds.Cols._ID+" INTEGER PRIMARY KEY, "
-						+FreeIds.Cols.ROWID+" INTEGER, "+FreeIds.Cols.TABLEID+" INTEGER );"
+		public static final String SQL8 ="CREATE TABLE "+FreeIds.NAME+" ("+FreeIds.Cols._ID+" INTEGER PRIMARY KEY, "
+						+FreeIds.Cols.ROWID+" INTEGER, "+FreeIds.Cols.TABLEID+" INTEGER );";
 				
-				+"INSERT INTO "+FreeIds.NAME+" ("+FreeIds.Cols.ROWID+", "+FreeIds.Cols.TABLEID+") "
+		public static final String SQL9 ="INSERT INTO "+FreeIds.NAME+" ("+FreeIds.Cols.ROWID+", "+FreeIds.Cols.TABLEID+") \n"
 						+ "SELECT "+Member.Cols.MID+", "+TableIndex.Values.Member.getKey()
-						+" FROM "+Member.NAME+" WHERE "+Member.Cols.STATUS+" =  -1 ;"
-				+"DELETE FROM "+Member.NAME+" WHERE "+Member.Cols.STATUS+" =  -1;"
+						+" FROM "+Member.NAME+" WHERE "+Member.Cols.STATUS+" =  -1 ;";
+		public static final String SQL10 ="DELETE FROM "+Member.NAME+" WHERE "+Member.Cols.STATUS+" =  -1;";
 				
-				+"INSERT INTO "+FreeIds.NAME+" ("+FreeIds.Cols.ROWID+", "+FreeIds.Cols.TABLEID+") "
+		public static final String SQL11 ="INSERT INTO "+FreeIds.NAME+" ("+FreeIds.Cols.ROWID+", "+FreeIds.Cols.TABLEID+") "
 						+ "SELECT "+Booking.Cols.BID+", "+TableIndex.Values.Booking.getKey()
-						+" FROM "+Booking.NAME+" WHERE "+Booking.Cols.LASTUPDATE+" = 0;"
-				+"DELETE FROM "+Booking.NAME+" WHERE "+Booking.Cols.LASTUPDATE+" = 0;"
+						+" FROM "+Booking.NAME+" WHERE "+Booking.Cols.LASTUPDATE+" = 0;";
+		public static final String SQL12 ="DELETE FROM "+Booking.NAME+" WHERE "+Booking.Cols.LASTUPDATE+" = 0;";
 				
-				+"INSERT INTO "+FreeIds.NAME+" ("+FreeIds.Cols.ROWID+", "+FreeIds.Cols.TABLEID+") "
+		public static final String SQL13 ="INSERT INTO "+FreeIds.NAME+" ("+FreeIds.Cols.ROWID+", "+FreeIds.Cols.TABLEID+") "
 						+ "SELECT "+MembershipSuspend.Cols.SID+", "+TableIndex.Values.MembershipSuspend.getKey()
-						+" FROM "+MembershipSuspend.NAME+" WHERE "+MembershipSuspend.Cols.MID+" = 0;"
-				+"DELETE FROM "+MembershipSuspend.NAME+" WHERE "+MembershipSuspend.Cols.MID+" = 0;"
+						+" FROM "+MembershipSuspend.NAME+" WHERE "+MembershipSuspend.Cols.MID+" = 0;";
+		public static final String SQL14 ="DELETE FROM "+MembershipSuspend.NAME+" WHERE "+MembershipSuspend.Cols.MID+" = 0;";
 				
-				+"INSERT INTO "+FreeIds.NAME+" ("+FreeIds.Cols.ROWID+", "+FreeIds.Cols.TABLEID+") "
+		public static final String SQL15 ="INSERT INTO "+FreeIds.NAME+" ("+FreeIds.Cols.ROWID+", "+FreeIds.Cols.TABLEID+") "
 						+ "SELECT "+Membership.Cols.MSID+", "+TableIndex.Values.Membership.getKey()
-						+" FROM "+Membership.NAME+" WHERE "+Membership.Cols.MID+" = 0;"
-				+"DELETE FROM "+Membership.NAME+" WHERE "+Membership.Cols.MID+" = 0;"
+						+" FROM "+Membership.NAME+" WHERE "+Membership.Cols.MID+" = 0;";
+		public static final String SQL16 ="DELETE FROM "+Membership.NAME+" WHERE "+Membership.Cols.MID+" = 0;";
 				
-				+"INSERT INTO "+FreeIds.NAME+" ("+FreeIds.Cols.ROWID+", "+FreeIds.Cols.TABLEID+") "
+		public static final String SQL17 ="INSERT INTO "+FreeIds.NAME+" ("+FreeIds.Cols.ROWID+", "+FreeIds.Cols.TABLEID+")"
 						+ "SELECT "+MemberNotes.Cols.MNID+", "+TableIndex.Values.MemberNotes.getKey()
-						+" FROM "+MemberNotes.NAME+" WHERE "+MemberNotes.Cols.MID+" = 0;"
-				+"DELETE FROM "+MemberNotes.NAME+" WHERE "+MemberNotes.Cols.MID+" = 0;"
+						+" FROM "+MemberNotes.NAME+" WHERE "+MemberNotes.Cols.MID+" = 0;";
+		public static final String SQL18 ="DELETE FROM "+MemberNotes.NAME+" WHERE "+MemberNotes.Cols.MID+" = 0;";
 				
 				
 				
 				//move more triggers here.
 				//TODO:ADD TRIGGERS FOR ON UPDATES/INSERTS that set pending UPLOADS/UPDATES table.
-				+ "CREATE TRIGGER "+Member.Triggers.ON_INSERT+" AFTER INSERT ON "+Member.NAME
+		public static final String SQL19 ="CREATE TRIGGER "+Member.Triggers.ON_INSERT+" AFTER INSERT ON "+Member.NAME
 				+" FOR EACH ROW WHEN new."+Member.Cols.MID+" > 0"
 				+" BEGIN "
 					+"INSERT OR REPLACE INTO "+PendingUploads.NAME
 					+ " ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
 					+ " VALUES (new."+Member.Cols._ID+", "+TableIndex.Values.Member.getKey()+");"
-				+" END; "
+				+" END; ";
 				
-				+"CREATE TRIGGER "+Member.Triggers.ON_UPDATE+" AFTER UPDATE ON "+Member.NAME
+		public static final String SQL20 ="CREATE TRIGGER "+Member.Triggers.ON_UPDATE+" AFTER UPDATE ON "+Member.NAME
 				+" FOR EACH ROW"
 				+" BEGIN "
-					+"INSERT OR REPLACE INTO "+PendingUpdates.NAME
-					+" ("+PendingUpdates.Cols.ROWID+", "+PendingUpdates.Cols.TABLEID+")"
-					+" VALUES (new."+Member.Cols._ID+", "+TableIndex.Values.Member.getKey()+");"
-				+"END;"
+					+"CASE WHEN old."+Member.Cols.MID+"<= 0 THEN "
+						+"CASE WHEN new."+Member.Cols.MID+" > 0 THEN "
+							+"INSERT OR REPLACE INTO "+PendingUploads.NAME
+							+ " ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
+							+ " VALUES (new."+Member.Cols._ID+", "+TableIndex.Values.Member.getKey()+");"
+						+"END; "
+					+"ELSE "
+						+"INSERT OR REPLACE INTO "+PendingUpdates.NAME
+						+" ("+PendingUpdates.Cols.ROWID+", "+PendingUpdates.Cols.TABLEID+")"
+						+" VALUES (new."+Member.Cols._ID+", "+TableIndex.Values.Member.getKey()+");"
+					+"END "
+				+"END;";
 					
-				+ "CREATE TABLE "+PendingDeletes.NAME+" ("+PendingDeletes.Cols._ID+" INTEGER PRIMARY KEY, "
-						+PendingDeletes.Cols.ROWID+" INTEGER, "+PendingDeletes.Cols.TABLEID+" INTEGER );"; 
+		public static final String SQL21 ="CREATE TABLE "+PendingDeletes.NAME+" ("+PendingDeletes.Cols._ID+" INTEGER PRIMARY KEY, "
+						+PendingDeletes.Cols.ROWID+" INTEGER, "+PendingDeletes.Cols.TABLEID+" INTEGER );";
+						
+				
+				// We're renaming the Medical column, and adding more medical Details/Emergency Contact Info.
+				 
+		public static final String SQL22 ="ALTER TABLE "+Member.NAME+" RENAME TO tmp_"+Member.NAME+";";
+				
+		public static final String SQL23 ="CREATE TABLE "+Member.NAME+" ("+Member.Cols._ID+" INTEGER PRIMARY KEY, "
+				+Member.Cols.MID+" INTEGER NOT NULL, "
+				+Member.Cols.COLOUR+" TEXT, "+Member.Cols.HAPPINESS+" TEXT, "
+				+Member.Cols.LENGTH+" TEXT, "+Member.Cols.BOOKP+" INTEGER, "
+				+Member.Cols.TASKP+" INTEGER, "+Member.Cols.RESULT+" TEXT, "
+				+Member.Cols.PHHOME+" TEXT, "+Member.Cols.PHCELL+" TEXT, "
+				+Member.Cols.PHWORK+" TEXT, "+Member.Cols.EMAIL+" TEXT, "
+				+Member.Cols.NOTES+" TEXT, "+Member.Cols.TASK1+" TEXT, "
+				+Member.Cols.TASK2+" TEXT, "+Member.Cols.TASK3+" TEXT, "
+				+Member.Cols.BOOK1+" TEXT, "+Member.Cols.BOOK2+" TEXT, "
+				+Member.Cols.BOOK3+" TEXT, "+Member.Cols.LASTVISIT+" TEXT, "
+				+Member.Cols.STATUS+" INTEGER, "+Member.Cols.FNAME+" TEXT, "
+				+Member.Cols.SNAME+" TEXT, "+Member.Cols.GENDER+" TEXT, "
+				+Member.Cols.DOB+" TEXT, "+Member.Cols.MEDICAL+" TEXT, "
+				+Member.Cols.STREET+" TEXT, "+Member.Cols.SUBURB+" TEXT, "
+				+Member.Cols.CITY+" TEXT, "+Member.Cols.POSTAL+" TEXT, "
+				+Member.Cols.EMERGENCYNAME+" TEXT, "+Member.Cols.EMERGENCYHOME+" TEXT, "
+				+Member.Cols.EMERGENCYCELL+" TEXT, "+Member.Cols.EMERGENCYWORK+" TEXT, "
+				+Member.Cols.MEDICATION+" TEXT, "+Member.Cols.MEDICALDOSAGE+" TEXT, "
+				+Member.Cols.MEDICATIONBYSTAFF+" INTEGER, "+Member.Cols.EMERGENCYRELATIONSHIP+" TEXT "
+				+");";
+				
+		public static final String SQL24 ="CREATE INDEX "+Member.Indexs.MEMBER_NAME+" ON "+Member.NAME+" ( "
+				+Member.Cols.FNAME+","+Member.Cols.SNAME+");";
+				
+		public static final String SQL25 ="INSERT INTO "+Member.NAME+" ("
+					+Member.Cols._ID+", "+Member.Cols.MID+", "
+					+Member.Cols.COLOUR+", "+Member.Cols.HAPPINESS+", "
+					+Member.Cols.LENGTH+", "+Member.Cols.BOOKP+", "
+					+Member.Cols.TASKP+", "+Member.Cols.RESULT+", "
+					+Member.Cols.PHHOME+", "+Member.Cols.PHCELL+", "
+					+Member.Cols.PHWORK+", "+Member.Cols.EMAIL+", "
+					+Member.Cols.NOTES+", "+Member.Cols.TASK1+", "
+					+Member.Cols.TASK2+", "+Member.Cols.TASK3+", "
+					+Member.Cols.BOOK1+", "+Member.Cols.BOOK2+", "
+					+Member.Cols.BOOK3+", "+Member.Cols.LASTVISIT+", "
+					+Member.Cols.STATUS+", "+Member.Cols.FNAME+", "
+					+Member.Cols.SNAME+", "+Member.Cols.GENDER+", "
+					+Member.Cols.DOB+", "+Member.Cols.MEDICAL+", "
+					+Member.Cols.STREET+", "+Member.Cols.SUBURB+", "
+					+Member.Cols.CITY+", "+Member.Cols.POSTAL+") "
+				+"SELECT "+Member.Cols._ID+", "+Member.Cols.MID+", "
+					+Member.Cols.COLOUR+", "+Member.Cols.HAPPINESS+", "
+					+Member.Cols.LENGTH+", "+Member.Cols.BOOKP+", "
+					+Member.Cols.TASKP+", "+Member.Cols.RESULT+", "
+					+Member.Cols.PHHOME+", "+Member.Cols.PHCELL+", "
+					+Member.Cols.PHWORK+", "+Member.Cols.EMAIL+", "
+					+Member.Cols.NOTES+", "+Member.Cols.TASK1+", "
+					+Member.Cols.TASK2+", "+Member.Cols.TASK3+", "
+					+Member.Cols.BOOK1+", "+Member.Cols.BOOK2+", "
+					+Member.Cols.BOOK3+", "+Member.Cols.LASTVISIT+", "
+					+Member.Cols.STATUS+", "+Member.Cols.FNAME+", "
+					+Member.Cols.SNAME+", "+Member.Cols.GENDER+", "
+					+Member.Cols.DOB+", "+Member.OldCols.MEDICAL+", "
+					+Member.Cols.STREET+", "+Member.Cols.SUBURB+", "
+					+Member.Cols.CITY+", "+Member.Cols.POSTAL
+				+" FROM tmp_"+Member.NAME+";";
+				
+				public static final String SQL26 =" DROP TABLE tmp_"+Member.NAME+";"
+				;
+		
+		
 	}
 }

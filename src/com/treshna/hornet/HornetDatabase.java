@@ -38,9 +38,11 @@ public class HornetDatabase extends SQLiteOpenHelper {
 	
 	 public static final String DATABASE_NAME="hornet.db";
 	 private static final int DATABASE_VERSION = 92;
+	 private Context theContext;
 	 
 	 public HornetDatabase (Context context) {
 		 super(context, DATABASE_NAME, null, DATABASE_VERSION);
+		 this.theContext = context;
 	 }
 
 	@Override
@@ -285,7 +287,65 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		db.execSQL(UpdateDatabase.Ninety.SQL);
 		db.execSQL(UpdateDatabase.NinetyOne.SQL);
 		db.execSQL(UpdateDatabase.NinetyTwo.SQL);
-		db.execSQL(UpdateDatabase.NinetyThree.SQL);
+		db.beginTransaction();
+		try {
+			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL1);
+			db.execSQL(UpdateDatabase.NinetyThree.SQL1);
+			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL2);
+			db.execSQL(UpdateDatabase.NinetyThree.SQL2);
+			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL3);
+			db.execSQL(UpdateDatabase.NinetyThree.SQL3);
+			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL4);
+			db.execSQL(UpdateDatabase.NinetyThree.SQL4);
+			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL5);
+			db.execSQL(UpdateDatabase.NinetyThree.SQL5);
+			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL6);
+			db.execSQL(UpdateDatabase.NinetyThree.SQL6);
+			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL7);
+			db.execSQL(UpdateDatabase.NinetyThree.SQL7);
+			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL8);
+			db.execSQL(UpdateDatabase.NinetyThree.SQL8);
+			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL9);
+			db.execSQL(UpdateDatabase.NinetyThree.SQL9);
+			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL10);
+			db.execSQL(UpdateDatabase.NinetyThree.SQL10);
+			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL11);
+			db.execSQL(UpdateDatabase.NinetyThree.SQL11);
+			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL12);
+			db.execSQL(UpdateDatabase.NinetyThree.SQL12);
+			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL13);
+			db.execSQL(UpdateDatabase.NinetyThree.SQL13);
+			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL14);
+			db.execSQL(UpdateDatabase.NinetyThree.SQL14);
+			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL15);
+			db.execSQL(UpdateDatabase.NinetyThree.SQL15);
+			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL16);
+			db.execSQL(UpdateDatabase.NinetyThree.SQL16);
+			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL17);
+			db.execSQL(UpdateDatabase.NinetyThree.SQL17);
+			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL18);
+			db.execSQL(UpdateDatabase.NinetyThree.SQL18);
+			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL19);
+			db.execSQL(UpdateDatabase.NinetyThree.SQL19);
+			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL20);
+			db.execSQL(UpdateDatabase.NinetyThree.SQL20);
+			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL21);
+			db.execSQL(UpdateDatabase.NinetyThree.SQL21);
+			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL22);
+			db.execSQL(UpdateDatabase.NinetyThree.SQL22);
+			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL23);
+			db.execSQL(UpdateDatabase.NinetyThree.SQL23);
+			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL24);
+			db.execSQL(UpdateDatabase.NinetyThree.SQL24);
+			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL25);
+			db.execSQL(UpdateDatabase.NinetyThree.SQL25);
+			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL26);
+			db.execSQL(UpdateDatabase.NinetyThree.SQL26);
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
+		
 		//db.execSQL("pragma full_column_names=ON;"); //TODO: will this break stuff?*/
 	}
 	
@@ -323,8 +383,8 @@ public class HornetDatabase extends SQLiteOpenHelper {
 				break;
 			}
 			case (93):{
-				Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL);
-				db.execSQL(UpdateDatabase.NinetyThree.SQL);
+				//Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL);
+				//db.execSQL(UpdateDatabase.NinetyThree.SQL);
 				//db.execSQL("pragma full_column_names=ON;"); //TODO: will this break stuff? 
 				break;
 			}
