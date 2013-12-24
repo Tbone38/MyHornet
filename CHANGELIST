@@ -6,7 +6,9 @@
 			Added Visit History Page,
 			Added Programme Group to Find Filter,
 			Save Filter settings permenantly.
+			Added Medical details to view.
 		-TODO:
+			Add emerceny contact access?
 			Add Booking Day swipe,
 			Log Sync Errors, and upload them somewhere?
 			Move Free ID's into a seperate table using the TableIDs as reference,

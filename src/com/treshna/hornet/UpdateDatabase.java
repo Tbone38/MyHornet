@@ -126,7 +126,7 @@ public class UpdateDatabase {
 				+Member.Cols.EMERGENCYNAME+" TEXT, "+Member.Cols.EMERGENCYHOME+" TEXT, "
 				+Member.Cols.EMERGENCYCELL+" TEXT, "+Member.Cols.EMERGENCYWORK+" TEXT, "
 				+Member.Cols.MEDICATION+" TEXT, "+Member.Cols.MEDICALDOSAGE+" TEXT, "
-				+Member.Cols.MEDICATIONBYSTAFF+" INTEGER, "+Member.Cols.EMERGENCYRELATIONSHIP+" TEXT, "
+				+Member.Cols.MEDICATIONBYSTAFF+" TEXT, "+Member.Cols.EMERGENCYRELATIONSHIP+" TEXT, "
 				+Member.Cols.DEVICESIGNUP+" TEXT DEFAULT 'f' "
 				+");";
 				

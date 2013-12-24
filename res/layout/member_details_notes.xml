@@ -7,13 +7,78 @@
     android:layout_height="wrap_content"
     android:padding="7dp"
     tools:context=".MemberDetails" >  
+    
+    <TextView
+        android:id="@+id/medicalH"
+        android:textSize="24sp"
+        android:text="@string/heading_member_medical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textIsSelectable="false"
+        android:padding="5dp"
+        android:paddingBottom="1dp" />
+    <TextView
+        android:id="@+id/medicalConditionsL"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/medicalH"
+        android:textSize="14sp"
+        android:text="@string/label_member_medical_conditions" />
+    <EditText
+        android:id="@+id/medicalConditions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/medicalConditionsL"
+        android:enabled="false"
+        android:editable="false"
+        android:inputType="none" />
+    
+    <TextView
+        android:id="@+id/medicationL"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/medicalConditions"
+        android:textSize="14sp"
+        android:text="@string/label_member_medication" />
+    <EditText
+        android:id="@+id/medication"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/medicationL"
+        android:enabled="false"
+        android:editable="false"
+        android:inputType="none" />
+    
+    <TextView
+        android:id="@+id/medicationDosageL"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/medication"
+        android:textSize="14sp"
+        android:text="@string/label_member_medication_dosage" />
+    <EditText
+        android:id="@+id/medicationDosage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/medicationDosageL"
+        android:enabled="false"
+        android:editable="false"
+        android:inputType="none" />
 	
+    <TextView
+        android:id="@+id/medicationByStaffL"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/medicationDosage"
+        android:textSize="14sp"
+        android:text="@string/label_member_medication_bystaff" />
 	<TextView
     	android:id="@+id/membernotesH"
     	android:textSize="24sp"
         android:text="@string/heading_member_notes"
         android:layout_width="wrap_content"
     	android:layout_height="wrap_content"
+    	android:layout_below="@id/medicationByStaffL"
         android:textIsSelectable="false"
         android:padding="5dp"
 		android:paddingBottom="1dp" />

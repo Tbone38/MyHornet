@@ -15,4 +15,9 @@
  <string name="member_note_H">Custom Note</string>
  <string name="member_visit_history">Visit History Since %1$s</string> <!-- First Sync Date -->
  <string name="member_visit_history2">Recent Visit History</string>
+ <string name="heading_member_medical">Medical Details</string>
+ <string name="label_member_medical_conditions">Medical Conditions</string>
+ <string name="label_member_medication">Medication</string>
+ <string name="label_member_medication_dosage">Dosage</string>
+ <string name="label_member_medication_bystaff">Medication By Staff</string>
 </resources>
