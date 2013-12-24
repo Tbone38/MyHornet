@@ -5,7 +5,7 @@
 			Added PendingDeletes table (no code uses it atm, because you can't delete from the app).
 			Added Visit History Page,
 			Added Programme Group to Find Filter,
-			Save Filter settings permenantly.
+			Save Filter settings permanently.
 			Added Medical details to view.
 		-TODO:
 			Add emerceny contact access?

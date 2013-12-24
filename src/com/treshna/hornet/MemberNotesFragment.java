@@ -100,7 +100,6 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 			medication.setVisibility(View.GONE);
 			mDosage.setVisibility(View.GONE);
 			mStaff.setVisibility(View.GONE);
-			
 		}
 		cur.close();
 		
