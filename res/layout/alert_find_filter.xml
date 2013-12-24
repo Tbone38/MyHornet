@@ -4,7 +4,16 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     android:orientation="vertical" >
-    
+    <TextView
+        android:id="@+id/select_programmegroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:text="@string/filter_programmegroup" />
+    <Spinner
+        android:id="@+id/programmegroup_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
     <TextView
         android:id="@+id/select_membership"
         android:layout_width="match_parent"
@@ -80,31 +89,7 @@
 			    	android:paddingRight="5dp"
 				    android:background="@color/button_underline_green" />
 		</LinearLayout>
-		<LinearLayout
-	        android:layout_width="0dp"
-	        android:layout_height="wrap_content"
-	        android:layout_weight="1"
-		    android:layout_marginRight="10dp"
-		    android:layout_marginBottom="5dp"
-	    	android:orientation="vertical">
-		        <TextView
-		            android:id="@+id/button_reset_text"
-		            android:layout_width="match_parent"
-		            android:layout_height="45dp"
-		            android:gravity="center"
-		            android:textSize="18sp"
-		            android:text="@string/button_filter_reset_apply"
-		            android:paddingLeft="5dp"
-		            android:paddingRight="5dp"
-		            android:clickable="true"
-		        	android:background="@drawable/button_large" />
-	        	<View
-			        android:layout_width="match_parent"
-				    android:layout_height="2dp"
-				    android:paddingLeft="5dp"
-			    	android:paddingRight="5dp"
-				    android:background="@color/button_underline_grey" />
-		</LinearLayout>
+		
 		<LinearLayout
 	        android:layout_width="0dp"
 	        android:layout_height="wrap_content"

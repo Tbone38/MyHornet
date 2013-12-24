@@ -59,7 +59,7 @@ SELECT
         ELSE '#000000'
     END AS fgcolour,
     member.phonehome AS mphhome, member.phonework AS mphwork, member.phonecell AS mphcell,
-    member.email AS memail, member.notes AS mnotes,
+    member.email AS memail,
     membership.startdate AS msstart,
     (SELECT flagon::text||' - '||description FROM task WHERE memberid=member.id AND flagon <= now() ORDER BY flagon DESC limit 1) as task1,
     (SELECT flagon::text||' - '||description FROM task WHERE memberid=member.id AND flagon <= now() ORDER BY flagon DESC limit 1 OFFSET 1) as task2,

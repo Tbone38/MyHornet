@@ -135,7 +135,6 @@ public class ContentDescriptor {
 	     matcher.addURI(authority, MemberNotes.PATH, MemberNotes.PATH_TOKEN);
 	     matcher.addURI(authority, MemberBalance.PATH, MemberBalance.PATH_TOKEN);
 	     matcher.addURI(authority, Member.PATH_JOIN_BALANCE, Member.TOKEN_JOIN_BALANCE);
-	     matcher.addURI(authority, Member.PATH_FREE_IDS, Member.TOKEN_FREE_IDS);
 	     matcher.addURI(authority, Member.PATH_FIND, Member.TOKEN_FIND);
 	     matcher.addURI(authority, FreeIds.PATH, FreeIds.PATH_TOKEN);
 	     matcher.addURI(authority, PendingDeletes.PATH, PendingDeletes.PATH_TOKEN);
@@ -163,10 +162,6 @@ public class ContentDescriptor {
 	        public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.member";
 	        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.member";
 	        
-	        public static final String PATH_FREE_IDS = "MemberIDs";
-	        public static final int TOKEN_FREE_IDS = 200;
-	        public static final Uri URI_FREE_IDS = BASE_URI.buildUpon().appendPath(PATH_FREE_IDS).build();
-	        
 	        public static final String PATH_JOIN_BALANCE = "MemberMemberBalance";
 	        public static final int TOKEN_JOIN_BALANCE = 115;
 	        public static final Uri URI_JOIN_BALANCE = BASE_URI.buildUpon().appendPath(PATH_JOIN_BALANCE).build();
@@ -177,6 +172,7 @@ public class ContentDescriptor {
 	        
 	        public static class Triggers {
 	 			public static final String ON_INSERT = "member_insert";
+	 			public static final String ON_UPDATE_MID = "memberid_update";
 	 			public static final String ON_UPDATE = "member_update";
 	 			public static final String ON_DELETE = "member_delete";
 	 		}
@@ -205,7 +201,7 @@ public class ContentDescriptor {
 	       	 	public static final String PHCELL = "phonecell";
 	       	 	public static final String PHWORK = "phonework";
 	       	 	public static final String EMAIL = "email";
-	       	 	public static final String NOTES = "notes";
+	       	 	
 	       	 	public static final String TASK1 = "task1";
 	       	 	public static final String TASK2 = "task2";
 	       	 	public static final String TASK3 = "task3";
@@ -234,6 +230,8 @@ public class ContentDescriptor {
 	 			public static final String SUBURB = "suburb";
 	 			public static final String CITY = "city";
 	 			public static final String POSTAL = "postal";
+	 			public static final String DEVICESIGNUP = "devicesignup"; 
+	 			//boolean field, to tell the difference between downloaded members and android signup members.
 	 			
 	 			//YMCA request.
 	 			public static final String EMERGENCYNAME = "emergencyname";
@@ -248,7 +246,8 @@ public class ContentDescriptor {
 	        }
 	        
 	        public static class OldCols {
-	        	public static final String MEDICAL = "medical"; //rename this medicalconditions
+	        	public static final String MEDICAL = "medical"; //renamed t0 medicalconditions
+	        	public static final String NOTES = "notes"; //deleted.
 	        }
 	        
 	    }

@@ -3,11 +3,12 @@
 			Added member Find Filters,
 			Added 'Add Notes' button on Member Details Page,
 			Added PendingDeletes table (no code uses it atm, because you can't delete from the app).
+			Added Visit History Page,
+			Added Programme Group to Find Filter,
+			Save Filter settings permenantly.
 		-TODO:
-			Add Programme Group to Find Filter,
 			Add Booking Day swipe,
 			Log Sync Errors, and upload them somewhere?
-			Add Visit History Page,
 			Move Free ID's into a seperate table using the TableIDs as reference,
 			Add more triggers/remove the java code.
 			YMCA REQUESTS:

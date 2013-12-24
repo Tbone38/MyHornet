@@ -450,6 +450,7 @@ public class MemberAdd extends NFCActivity implements OnClickListener, DatePicke
 			val.put(ContentDescriptor.Member.Cols.EMAIL, email);
 			val.put(ContentDescriptor.Member.Cols.PHHOME, homePh);
 			val.put(ContentDescriptor.Member.Cols.PHCELL, cellPh);
+			val.put(ContentDescriptor.Member.Cols.DEVICESIGNUP, "t");
 
 			if (memberid == null){
 				
@@ -460,6 +461,9 @@ public class MemberAdd extends NFCActivity implements OnClickListener, DatePicke
 				val.put(ContentDescriptor.Member.Cols.MID, memberid);
 				contentResolver.insert(ContentDescriptor.Member.CONTENT_URI, val);
 				
+				contentResolver.delete(ContentDescriptor.FreeIds.CONTENT_URI, ContentDescriptor.FreeIds.Cols.ROWID+" = ? AND "
+						+ContentDescriptor.FreeIds.Cols.TABLEID+" = "+ContentDescriptor.TableIndex.Values.Member.getKey(), 
+						new String[] {memberid});
 				/*String[] selection = {memberid};
 				Cursor cur = contentResolver.query(ContentDescriptor.Member.URI_FREE_IDS, null,
 						ContentDescriptor.Member.Cols.MID+" = ?", selection, null);

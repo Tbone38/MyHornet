@@ -43,6 +43,7 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 	private String membership = null;
 	private String gender = null;
 	private String owes = null;
+	private String programmeGroup = null;
 	private boolean is_booking;
 	private OnMemberSelectListener mCallback;
 	private static final String TAG = "MemberFindFragment";
@@ -67,6 +68,24 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 	 	} catch (Exception e) {
 	 		is_booking = false;
 	 	}
+	 	
+	 	membership = Services.getAppSettings(getActivity(), "filter_membership");
+	 	if (membership.compareTo("-1")==0){
+	 		membership = null;
+	 	}
+	 	gender = Services.getAppSettings(getActivity(), "filter_gender");
+	 	if (gender.compareTo("-1")==0){
+	 		gender = null;
+	 	}
+	 	owes = Services.getAppSettings(getActivity(), "filter_owes");
+	 	if (owes.compareTo("-1")==0){
+	 		owes = null;
+	 	}
+	 	programmeGroup = Services.getAppSettings(getActivity(), "filter_programmegroup");
+	 	if (programmeGroup.compareTo("-1")==0){
+	 		programmeGroup = null;
+	 	}
+	 	
 		loadermanager = getLoaderManager();
 		contentResolver = getActivity().getContentResolver();
 		parent = getActivity();
@@ -163,7 +182,7 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 	@Override
 	public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle) {
 		
-		if (input != null || owes != null || gender != null || membership != null) {
+		if (input != null || owes != null || gender != null || membership != null || programmeGroup != null) {
 			//setup the filter window:
 			LinearLayout filter_message_box = (LinearLayout) view.findViewById(R.id.filter_message);
 			filter_message_box.setVisibility(View.VISIBLE);
@@ -198,13 +217,23 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 				where = where + ContentDescriptor.Member.Cols.MID+" IN (SELECT "+ContentDescriptor.Membership.Cols.MID
 						+" FROM "+ContentDescriptor.Membership.NAME+" WHERE "+ContentDescriptor.Membership.Cols.PNAME
 						+" = '"+membership+"')";
-				message = message + "Membership: <b>"+membership+"</b>";
+				message = message + "Membership: <b>"+membership+"</b>;  ";
+			}
+			if (programmeGroup != null) {
+				if (!where.isEmpty()) where = where +" AND ";
+				where = where + ContentDescriptor.Member.Cols.MID+" IN (SELECT "+ContentDescriptor.Membership.Cols.MID
+						+" FROM "+ContentDescriptor.Membership.NAME+" ms LEFT JOIN "+ContentDescriptor.Programme.NAME+" p"
+						+" ON (ms."+ContentDescriptor.Membership.Cols.PNAME+" = p."+ContentDescriptor.Programme.Cols.NAME
+						+") WHERE "+ContentDescriptor.Programme.Cols.GNAME+" = '"+programmeGroup+"')";
+				message = message +"Programme Group: <b>"+programmeGroup+"</b>;  ";
 			}
 			filter_message.setTextColor(getResources().getColor(R.color.text_green_shade));
 			filter_message.setText(Html.fromHtml(message));
 			/*return new CursorLoader( getActivity(), ContentDescriptor.Member.CONTENT_URI,
 					null, where, whereArgs, null);*/
-			mAdapter.setSelectedPos(-1);
+			if (mAdapter != null) {
+				mAdapter.setSelectedPos(-1);
+			}
 			return new CursorLoader( getActivity(), ContentDescriptor.Member.URI_FIND,
 					null, where, whereArgs, null);
 		} else {
@@ -259,10 +288,24 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 		 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		 LayoutInflater inflater = getActivity().getLayoutInflater();
 		 View v = inflater.inflate(R.layout.alert_find_filter, null);
+		 
+		 Spinner select_programmegroup = (Spinner) v.findViewById(R.id.programmegroup_spinner);
+		 ArrayList<String> programmegroups = new ArrayList<String>();
+		 Cursor cur = contentResolver.query(ContentDescriptor.Programme.GROUP_URI, null, null, null, null);
+		 programmegroups.add(" ");
+		 while (cur.moveToNext()) {
+			 programmegroups.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Programme.Cols.GNAME)));
+		 }
+		 cur.close();
+		 
+		 ArrayAdapter<String> pgAdapter = new ArrayAdapter<String>(getActivity(),
+				 android.R.layout.simple_spinner_item, programmegroups);
+		 pgAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		 select_programmegroup.setAdapter(pgAdapter);
 		
 		 Spinner select_membership = (Spinner) v.findViewById(R.id.membership_spinner);
 		 ArrayList<String> memberships = new ArrayList<String>();
-		 Cursor cur = contentResolver.query(ContentDescriptor.Programme.CONTENT_URI, null, null, null, null);
+		 cur = contentResolver.query(ContentDescriptor.Programme.CONTENT_URI, null, null, null, null);
 		 memberships.add(" ");
 		 while (cur.moveToNext()) {
 			 memberships.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Programme.Cols.NAME)));
@@ -278,9 +321,6 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 		TextView applyFilter = (TextView) v.findViewById(R.id.button_apply_text);
 		applyFilter.setOnClickListener(this);
 		
-		TextView resetFilter = (TextView) v.findViewById(R.id.button_reset_text);
-		resetFilter.setOnClickListener(this);
-		
 		TextView cancel = (TextView) v.findViewById(R.id.button_cancel_text);
 		cancel.setOnClickListener(this);
 		
@@ -295,26 +335,47 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 		int selectedPos = selectedMembership.getSelectedItemPosition();
 		if (selectedPos > 0) {
 			membership = selectedMembership.getItemAtPosition(selectedPos).toString();
+			Services.setPreference(getActivity(), "filter_membership", membership);
 			Log.v(TAG, membership);
+		} else {
+			membership = null;
+			Services.setPreference(getActivity(), "filter_membership", "-1");
+		}
+		
+		Spinner selectedProgrammeGroup = (Spinner) mFilter.findViewById(R.id.programmegroup_spinner);
+		selectedPos = selectedProgrammeGroup.getSelectedItemPosition();
+		if (selectedPos > 0) {
+			programmeGroup = selectedProgrammeGroup.getItemAtPosition(selectedPos).toString();
+			Services.setPreference(getActivity(), "filter_programmegroup", programmeGroup);
+			Log.v(TAG, programmeGroup);
+		} else {
+			programmeGroup = null;
+			Services.setPreference(getActivity(), "filter_programmegroup", "-1");
 		}
 		
 		ToggleButton show_owe = (ToggleButton) mFilter.findViewById(R.id.filter_owing);
 		if (show_owe.isChecked()) {
 			owes = "1";
+			Services.setPreference(getActivity(), "filter_owes", "1");
 		} else {
 			owes = null;
+			Services.setPreference(getActivity(), "filter_owes", "-1");
 		};
 		//gender ?
 		RadioGroup getGender = (RadioGroup) mFilter.findViewById(R.id.gender_group);
 		if (getGender.getCheckedRadioButtonId() > 0) {
 			if (getGender.getCheckedRadioButtonId() == R.id.gender_male) {
 				gender = "M";
+				Services.setPreference(getActivity(), "filter_gender", gender);
 			} else if (getGender.getCheckedRadioButtonId() == R.id.gender_female) {
 				gender = "F";
+				Services.setPreference(getActivity(), "filter_gender", gender);
 			}
 		} else {
 			gender = null;
+			Services.setPreference(getActivity(), "filter_gender", "-1");
 		}
+		
 	}
 
 	@Override
@@ -331,15 +392,6 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 			}
 			break;
 		}
-		case (R.id.button_reset_text):{
-			//reset the filter, apply.
-			owes = null;
-			membership = null;
-			gender = null;
-			loadermanager.restartLoader(0, null, this);
-			mFilter.dismiss();
-			break;
-		}
 		case (R.id.button_apply_text):{
 			//get current filter setup, apply.
 			getFilters();
@@ -349,8 +401,13 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 		}
 		case (R.id.button_reset_filter):{
 			owes = null;
+			Services.setPreference(getActivity(), "filter_owes", "-1");
 			membership = null;
+			Services.setPreference(getActivity(), "filter_membership", "-1");
 			gender = null;
+			Services.setPreference(getActivity(), "filter_gender", "-1");
+			programmeGroup = null;
+			Services.setPreference(getActivity(), "filter_programmegroup", "-1");
 			loadermanager.restartLoader(0, null, this);
 			break;
 		}

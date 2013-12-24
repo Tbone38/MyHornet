@@ -459,7 +459,7 @@ public class HornetDBService extends Service {
 	        		val.put(ContentDescriptor.Member.Cols.PHCELL, rs.getString("mphcell"));
 	        		val.put(ContentDescriptor.Member.Cols.PHWORK, rs.getString("mphwork"));
 	        		val.put(ContentDescriptor.Member.Cols.EMAIL, rs.getString("memail"));
-	        		val.put(ContentDescriptor.Member.Cols.NOTES, rs.getString("mnotes"));
+	        		
 	        		val.put(ContentDescriptor.Member.Cols.TASK1, rs.getString("task1"));
 	        		val.put(ContentDescriptor.Member.Cols.TASK2, rs.getString("task2"));
 	        		val.put(ContentDescriptor.Member.Cols.TASK3, rs.getString("task3"));
@@ -820,8 +820,8 @@ public class HornetDBService extends Service {
     	}
     	
     	for (int i = 0; i <rows.size(); i ++) {
-    		cur = contentResolver.query(ContentDescriptor.Member.URI_FREE_IDS, null, 
-    				ContentDescriptor.Member.Cols._ID+" = ?", new String[] {rows.get(i)}, null);
+    		cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, 
+    				"m."+ContentDescriptor.Member.Cols._ID+" = ?", new String[] {rows.get(i)}, null);
     		if (!cur.moveToFirst()) {
     			Log.e(TAG, "COUD NOT FIND ROW ID :"+rows.get(i));
     			contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, 
@@ -889,6 +889,12 @@ public class HornetDBService extends Service {
     				cur.getInt(cur.getColumnIndex(ContentDescriptor.Member.Cols.MID)));
     		contentResolver.insert(ContentDescriptor.PendingDownloads.CONTENT_URI, values);
     		
+    		values = new ContentValues();
+    		values.put(ContentDescriptor.Member.Cols.DEVICESIGNUP, "f");
+    		contentResolver.update(ContentDescriptor.Member.CONTENT_URI, values, 
+    				ContentDescriptor.Member.Cols.DEVICESIGNUP+" = ?", 
+    				new String[] {cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.MID))});
+    		
     		cur.close();
     	}
     	
@@ -900,7 +906,7 @@ public class HornetDBService extends Service {
     	Log.v(TAG, "Updating Member for ID:"+memberid);
     	int result = 0;
     	String where = "id = "+memberid;
-    	cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, new String[] {ContentDescriptor.Member.Cols.NOTES,
+    	cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, new String[] {
     			"m."+ContentDescriptor.Member.Cols.CARDNO}, ContentDescriptor.Member.Cols.MID+" = ?",
     			new String[] {memberid}, null);
     	
@@ -912,8 +918,6 @@ public class HornetDBService extends Service {
     	/*for (int col =0; col < cur.getColumnCount(); col++){
     		Log.d(TAG, "Column:"+cur.getColumnName(col)+"  Value:"+cur.getString(col));
     	}*/
-    		values.add(new String[] {ContentDescriptor.Member.Cols.NOTES,"'"+
-    				cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.NOTES))+"'"});
     		values.add(new String[] {ContentDescriptor.Member.Cols.CARDNO, 
     				cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.CARDNO))});
     		Log.d(TAG, "GOT CARDNO:"+cur.getInt(cur.getColumnIndex(ContentDescriptor.Member.Cols.CARDNO)));
@@ -940,8 +944,10 @@ public class HornetDBService extends Service {
     		return -1; //connection failed; see statusMessage for why
     	}
     	
-    	cur = contentResolver.query(ContentDescriptor.Member.URI_FREE_IDS, null, ContentDescriptor.Member.Cols.STATUS+" = -1",
-    			null, null);
+    	cur = /*contentResolver.query(ContentDescriptor.Member.URI_FREE_IDS, null, ContentDescriptor.Member.Cols.STATUS+" = -1",
+    			null, null);*/
+    			contentResolver.query(ContentDescriptor.FreeIds.CONTENT_URI, null, ContentDescriptor.FreeIds.Cols.TABLEID+" = "
+    					+ContentDescriptor.TableIndex.Values.Member.getKey(),null, null);
     	count = cur.getCount();
     	cur.close();
     	if (count>= 7) {
@@ -958,13 +964,14 @@ public class HornetDBService extends Service {
     		
 	    		ContentValues val = new ContentValues();
 	    		Log.v(TAG, "MID: "+rs.getString("nextval"));
-	    		val.put(ContentDescriptor.Member.Cols.MID, rs.getString("nextval"));
+	    		
 	    		
 	    		cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null,
 	    				ContentDescriptor.Member.Cols.MID+" = -1", null, null);
 	    		
 	    		Log.v(TAG, "Pending Uploads (without ID):"+cur.getCount());
 	    		if (cur.getCount() != 0) {
+	    			val.put(ContentDescriptor.Member.Cols.MID, rs.getString("nextval"));
 	    			cur.moveToFirst();
 	    			id = cur.getInt(cur.getColumnIndex(ContentDescriptor.Member.Cols._ID));
 		    		cur.close();
@@ -979,10 +986,13 @@ public class HornetDBService extends Service {
 	    			
 	    			l +=1; 
 	    		}
-	    		else { 
-	    			val.put(ContentDescriptor.Member.Cols.STATUS, -1);
-	    			contentResolver.insert(ContentDescriptor.Member.CONTENT_URI, val);
-		    		
+	    		else {
+	    			val.put(ContentDescriptor.FreeIds.Cols.ROWID, rs.getString("nextval"));
+	    			val.put(ContentDescriptor.FreeIds.Cols.TABLEID, 
+	    					ContentDescriptor.TableIndex.Values.Member.getKey());
+	    			//val.put(ContentDescriptor.Member.Cols.STATUS, -1);
+	    			//contentResolver.insert(ContentDescriptor.Member.CONTENT_URI, val);
+		    		contentResolver.insert(ContentDescriptor.FreeIds.CONTENT_URI, val);
 		    		cur.close();
 	    		}
 	    		count +=1;
@@ -2953,7 +2963,7 @@ public class HornetDBService extends Service {
 		values.put(ContentDescriptor.Member.Cols.PHWORK, rs.getString("mphwork"));
 		values.put(ContentDescriptor.Member.Cols.PHCELL, rs.getString("mphcell"));
 		values.put(ContentDescriptor.Member.Cols.EMAIL, rs.getString("memail"));
-		values.put(ContentDescriptor.Member.Cols.NOTES, rs.getString("mnotes")); 
+		 
 		values.put(ContentDescriptor.Member.Cols.STATUS, rs.getString("status"));
 		values.put(ContentDescriptor.Member.Cols.CARDNO, rs.getString("cardno"));
 		values.put(ContentDescriptor.Member.Cols.GENDER, rs.getString("gender"));
@@ -2995,7 +3005,7 @@ public class HornetDBService extends Service {
         			+"CASE WHEN member.happiness = 1 THEN ':)' WHEN member.happiness = 0 THEN ':|'"
         			+" WHEN member.happiness <= -1 THEN ':(' WHEN member.happiness = 2 THEN '||' ELSE '' END AS happiness, "
         			+"member.phonehome AS mphhome, member.phonework AS mphwork, member.phonecell AS mphcell, "
-        			+"member.email AS memail, member.notes AS mnotes, member.status, member.gender, "
+        			+"member.email AS memail, member.status, member.gender, "
         			+"emergencyname, emergencyhome, emergencywork, emergencycell, emergencyrelationship, "
         			+"medication, medicationdosage, medicationbystaff, medicalconditions "
         			+ "FROM member"

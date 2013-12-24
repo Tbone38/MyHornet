@@ -14,6 +14,7 @@ import com.treshna.hornet.ContentDescriptor.Class;
 import com.treshna.hornet.ContentDescriptor.Company;
 import com.treshna.hornet.ContentDescriptor.Date;
 import com.treshna.hornet.ContentDescriptor.Door;
+import com.treshna.hornet.ContentDescriptor.FreeIds;
 import com.treshna.hornet.ContentDescriptor.IdCard;
 import com.treshna.hornet.ContentDescriptor.Image;
 import com.treshna.hornet.ContentDescriptor.Member;
@@ -23,6 +24,7 @@ import com.treshna.hornet.ContentDescriptor.Membership;
 import com.treshna.hornet.ContentDescriptor.MembershipSuspend;
 import com.treshna.hornet.ContentDescriptor.OpenTime;
 import com.treshna.hornet.ContentDescriptor.PaymentMethod;
+import com.treshna.hornet.ContentDescriptor.PendingDeletes;
 import com.treshna.hornet.ContentDescriptor.PendingDownloads;
 import com.treshna.hornet.ContentDescriptor.PendingUpdates;
 import com.treshna.hornet.ContentDescriptor.PendingUploads;
@@ -56,13 +58,13 @@ public class HornetDatabase extends SQLiteOpenHelper {
 				+Member.Cols.TASKP+" INTEGER, "+Member.Cols.RESULT+" TEXT, "
 				+Member.Cols.PHHOME+" TEXT, "+Member.Cols.PHCELL+" TEXT, "
 				+Member.Cols.PHWORK+" TEXT, "+Member.Cols.EMAIL+" TEXT, "
-				+Member.Cols.NOTES+" TEXT, "+Member.Cols.TASK1+" TEXT, "
+				+Member.OldCols.NOTES+" TEXT, "+Member.Cols.TASK1+" TEXT, "
 				+Member.Cols.TASK2+" TEXT, "+Member.Cols.TASK3+" TEXT, "
 				+Member.Cols.BOOK1+" TEXT, "+Member.Cols.BOOK2+" TEXT, "
 				+Member.Cols.BOOK3+" TEXT, "+Member.Cols.LASTVISIT+" TEXT, "
 				+Member.Cols.STATUS+" INTEGER, "+Member.Cols.FNAME+" TEXT, "
 				+Member.Cols.SNAME+" TEXT, "+Member.Cols.GENDER+" TEXT, "
-				+Member.Cols.DOB+" TEXT, "+Member.Cols.MEDICAL+" TEXT, "
+				+Member.Cols.DOB+" TEXT, "+Member.OldCols.MEDICAL+" TEXT, "
 				+Member.Cols.STREET+" TEXT, "+Member.Cols.SUBURB+" TEXT, "
 				+Member.Cols.CITY+" TEXT, "+Member.Cols.POSTAL+" TEXT "
 				+");");
@@ -335,12 +337,6 @@ public class HornetDatabase extends SQLiteOpenHelper {
 			db.execSQL(UpdateDatabase.NinetyThree.SQL22);
 			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL23);
 			db.execSQL(UpdateDatabase.NinetyThree.SQL23);
-			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL24);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL24);
-			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL25);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL25);
-			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL26);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL26);
 			db.setTransactionSuccessful();
 		} finally {
 			db.endTransaction();
@@ -435,6 +431,8 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS "+MemberNotes.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+MemberBalance.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+PendingUpdates.NAME);
+		db.execSQL("DROP TABLE IF EXISTS "+PendingDeletes.NAME);
+		db.execSQL("DROP TABLE IF EXISTS "+FreeIds.NAME);
 	}
 	
 	private void repopulateTable(SQLiteDatabase db) {
