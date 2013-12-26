@@ -102,21 +102,21 @@
         <activity
             android:name="com.treshna.hornet.MembershipHold"
             android:label="@string/title_activity_membership_hold"
-            android:parentActivityName="com.treshna.hornet.MemberDetails"
+            android:parentActivityName="com.treshna.hornet.MainActivity"
             android:theme="@style/Theme.AppCompat.Light" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.treshna.hornet.MemberDetails" />
+                android:value="com.treshna.hornet.MainActivity" />
         </activity>
         <activity
             android:name="com.treshna.hornet.EmptyActivity"
             android:label="@string/title_activity_membership_add"
-            android:parentActivityName="com.treshna.hornet.MemberDetails"
+            android:parentActivityName="com.treshna.hornet.MainActivity"
             android:theme="@style/Theme.AppCompat.Light"
             android:windowSoftInputMode="stateHidden" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.treshna.hornet.MemberDetails" />
+                android:value="com.treshna.hornet.MainActivity" />
         </activity>
     </application>
 

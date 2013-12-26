@@ -7,6 +7,9 @@
 			Added Programme Group to Find Filter,
 			Save Filter settings permanently.
 			Added Medical details to view.
+			Cancel booking return to the booking screen after OKAY button pressed
+			Remove tasks icons from last visitor. I guess it was the pending icon to remove if a task is pending for the user? I just add comment in case I am wrong.
+			Fix crash when click on home button from Empty activity and member ship hold (bad parent activity in manifest)
 		-TODO:
 			Add emerceny contact access?
 			Add Booking Day swipe,

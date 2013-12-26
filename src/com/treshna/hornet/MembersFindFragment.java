@@ -48,6 +48,7 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 	private OnMemberSelectListener mCallback;
 	private static final String TAG = "MemberFindFragment";
 	private AlertDialog mFilter;
+	private int listIndex;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -57,6 +58,7 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 		
 		if (savedInstanceState != null) {
 			input = savedInstanceState.getString("input");
+			listIndex = savedInstanceState.getInt("index");
 		}
 	 	is_booking = false;
 	 	Bundle b = null;
@@ -106,7 +108,7 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 	 @Override
 	 public void onSaveInstanceState(Bundle savedInstanceState) {
 		 super.onSaveInstanceState(savedInstanceState);
-		 
+		 savedInstanceState.putInt("index", this.getSelectedItemPosition());
 		 savedInstanceState.putString("input", input);
 	}
 	 
@@ -253,6 +255,7 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
         }
 		mAdapter.changeCursor(cursor);		
 		mAdapter.notifyDataSetChanged();
+		this.setSelection(listIndex);
 	}
 
 	@Override

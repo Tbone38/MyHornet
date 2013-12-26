@@ -55,7 +55,7 @@ public class VisitorsViewAdapter extends SimpleCursorAdapter implements OnClickL
 		TextView denyView = (TextView) rowView.findViewById(R.id.deny);
 		ImageView imageView = (ImageView) rowView.findViewById(R.id.image);
 		ImageView smileView = (ImageView) rowView.findViewById(R.id.smiley);
-		ImageView taskView = (ImageView) rowView.findViewById(R.id.task);
+		//ImageView taskView = (ImageView) rowView.findViewById(R.id.task);
 		View colorBlock = (View) rowView.findViewById(R.id.visitor_colour_block);
 		colorBlock.setBackgroundColor(context.getResources().getColor(R.color.visitors_green));
 				
@@ -105,7 +105,7 @@ public class VisitorsViewAdapter extends SimpleCursorAdapter implements OnClickL
 			smileView.setImageBitmap(sm);
 		}
 		//if a task (or booking?) is pending, show the task-pending picture.
-		if (cursor.isNull(cursor.getColumnIndex(ContentDescriptor.Member.Cols.TASKP)) == false){
+		/*if (cursor.isNull(cursor.getColumnIndex(ContentDescriptor.Member.Cols.TASKP)) == false){
 			if (cursor.getInt(cursor.getColumnIndex(ContentDescriptor.Member.Cols.TASKP)) != 0) {
 				InputStream is = null;
 				try {
@@ -121,7 +121,7 @@ public class VisitorsViewAdapter extends SimpleCursorAdapter implements OnClickL
 			}
 		}else {
 			taskView.setVisibility(View.INVISIBLE);
-		}
+		}*/
 		//TODO: move this to a asynchronous task. (it's causing memory issues on large db's).
 		//0 is default/first image.
 		String imgDir = context.getExternalFilesDir(null)+"/0_"+cursor.getString(cursor.getColumnIndex(ContentDescriptor.Visitor.Cols.MID))+".jpg"; //or column 6

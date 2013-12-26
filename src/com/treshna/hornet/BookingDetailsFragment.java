@@ -18,6 +18,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -336,6 +337,8 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 					
 					contentResolver.delete(ContentDescriptor.BookingTime.CONTENT_URI, ContentDescriptor.BookingTime.Cols.BID+" = ?",
 							new String[] {bookingID});
+					getActivity().finish();
+
 				}});
 		      alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 				@Override

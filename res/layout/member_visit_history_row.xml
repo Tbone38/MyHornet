@@ -21,7 +21,6 @@
 	    android:layout_height="match_parent"
 	    android:layout_weight=".8"
 	    android:textSize="14sp"
-	    android:text="DD MMM yy"
 	    android:gravity="left"
 	    android:paddingLeft="5dp"
 	    android:paddingTop="3dp"/>
@@ -32,7 +31,6 @@
 	    android:layout_height="match_parent"
 	    android:layout_weight=".8"
 	    android:textSize="14sp"
-	    android:text="HH:mm:ss am"
 	    android:gravity="left"
 	    android:paddingTop="3dp"/>
 	
@@ -42,7 +40,6 @@
 	    android:layout_height="match_parent"
 	    android:layout_weight="1"
 	    android:textSize="14sp"
-	    android:text="## programme Name "
 	    android:gravity="left"
 	    android:paddingLeft="5dp"
 	    android:paddingTop="3dp" />
