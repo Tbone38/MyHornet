@@ -8,7 +8,7 @@
 			Save Filter settings permanently.
 			Added Medical details to member notes page.
 			Cancel booking return to the booking screen after OKAY button pressed
-			Remove tasks icons from last visitor. I guess it was the pending icon to remove if a task is pending for the user? I just add comment in case I am wrong.
+			Remove tasks icons from last visitor.
 			Fix crash when click on home button from Empty activity and member ship hold (bad parent activity in manifest)
 			Added emergency contact access details to member notes page.
 		-TODO:

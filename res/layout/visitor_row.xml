@@ -54,7 +54,8 @@
          android:layout_height="30dp"
          android:layout_below="@id/name"
          android:layout_toRightOf="@id/imagewrapper"
-         android:background="@drawable/ic_action_time" />
+         android:background="@drawable/ic_action_time"
+         android:contentDescription="@string/hint_visitor_time" />
          
       <TextView android:id="@+id/time"
         android:textSize="16sp"
