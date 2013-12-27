@@ -7,87 +7,232 @@
     android:layout_height="wrap_content"
     android:padding="7dp"
     tools:context=".MemberDetails" >  
-    
-    <TextView
-        android:id="@+id/medicalH"
-        android:textSize="24sp"
-        android:text="@string/heading_member_medical"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/emergencyHeadingRow"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textIsSelectable="false"
-        android:padding="5dp"
-        android:paddingBottom="1dp" />
-    <TextView
-        android:id="@+id/medicalConditionsL"
-        android:layout_width="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/button"
+        android:clickable="true" >
+	    <TextView
+	        android:id="@+id/emergencyContactH"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight=".8"
+	        android:textSize="24sp"
+	        android:text="@string/heading_member_emergency"
+	        android:textIsSelectable="false"
+	        android:padding="5dp" />
+	    
+	    <ImageView
+	        android:id="@+id/emergency_expand_collapse"
+	        android:layout_width="40dp"
+	        android:layout_height="40dp"
+	        android:src="@drawable/ic_action_collapse" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/emergencyContactDetails"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/medicalH"
-        android:textSize="14sp"
-        android:text="@string/label_member_medical_conditions" />
-    <EditText
-        android:id="@+id/medicalConditions"
-        android:layout_width="wrap_content"
+        android:layout_below="@id/emergencyHeadingRow"
+        android:orientation="vertical" >
+	    <TextView
+	        android:id="@+id/emergencyContactNameL"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="14sp"
+	        android:text="@string/label_member_emergency_name"
+	        android:paddingLeft="10dp" />
+	    <EditText
+	        android:id="@+id/emergencyContactName"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:enabled="false"
+	        android:editable="false"
+	        android:inputType="none"
+	        android:paddingLeft="10dp" />
+	        
+	    <TextView
+	        android:id="@+id/emergencyContactRelationshipL"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="14sp"
+	        android:text="@string/label_member_emergency_relationship"
+	        android:paddingLeft="10dp" />
+	    <EditText
+	        android:id="@+id/emergencyContactRelationship"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:enabled="false"
+	        android:editable="false"
+	        android:inputType="none"
+	        android:paddingLeft="10dp" />
+	        
+	    <TextView
+	        android:id="@+id/emergencyContactCellL"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="14sp"
+	        android:text="@string/label_member_emergency_cell"
+	        android:paddingLeft="10dp" />
+	    <EditText
+	        android:id="@+id/emergencyContactCell"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:enabled="false"
+	        android:editable="false"
+	        android:inputType="none"
+	        android:paddingLeft="10dp" />
+	        
+	    <TextView
+	        android:id="@+id/emergencyContactWorkL"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="14sp"
+	        android:text="@string/label_member_emergency_work"
+	        android:paddingLeft="10dp" />
+	    <EditText
+	        android:id="@+id/emergencyContactWork"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:enabled="false"
+	        android:editable="false"
+	        android:inputType="none"
+	        android:paddingLeft="10dp" />
+	    
+	    <TextView
+	        android:id="@+id/emergencyContactHomeL"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="14sp"
+	        android:text="@string/label_member_emergency_home"
+	        android:paddingLeft="10dp" />
+	    <EditText
+	        android:id="@+id/emergencyContactHome"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:enabled="false"
+	        android:editable="false"
+	        android:inputType="none"
+	        android:paddingLeft="10dp" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/medicalHeadingRow"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/medicalConditionsL"
-        android:enabled="false"
-        android:editable="false"
-        android:inputType="none" />
-    
-    <TextView
-        android:id="@+id/medicationL"
-        android:layout_width="wrap_content"
+        android:layout_below="@id/emergencyContactDetails"
+        android:orientation="horizontal"
+        android:background="@drawable/button"
+        android:clickable="true" >
+	    <TextView
+	        android:id="@+id/medicalH"
+	        android:textSize="24sp"
+	        android:text="@string/heading_member_medical"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight=".8"
+	        android:textIsSelectable="false"
+	        android:padding="5dp"
+	        android:paddingBottom="1dp" />
+	    <ImageView 
+	        android:id="@+id/medical_expand_collapse"
+	        android:layout_width="40dp"
+	        android:layout_height="40dp"
+	        android:src="@drawable/ic_action_collapse"/>
+	</LinearLayout>
+    <LinearLayout
+        android:id="@+id/medicalDetails"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/medicalConditions"
-        android:textSize="14sp"
-        android:text="@string/label_member_medication" />
-    <EditText
-        android:id="@+id/medication"
-        android:layout_width="wrap_content"
+        android:layout_below="@id/medicalHeadingRow"
+        android:orientation="vertical" >
+	    <TextView
+	        android:id="@+id/medicalConditionsL"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="14sp"
+	        android:text="@string/label_member_medical_conditions"
+	        android:paddingLeft="10dp" />
+	    <EditText
+	        android:id="@+id/medicalConditions"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:enabled="false"
+	        android:editable="false"
+	        android:inputType="none"
+	        android:paddingLeft="10dp" />
+	    
+	    <TextView
+	        android:id="@+id/medicationL"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="14sp"
+	        android:text="@string/label_member_medication"
+	        android:paddingLeft="10dp" />
+	    <EditText
+	        android:id="@+id/medication"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:enabled="false"
+	        android:editable="false"
+	        android:inputType="none"
+	        android:paddingLeft="10dp" />
+	    
+	    <TextView
+	        android:id="@+id/medicationDosageL"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="14sp"
+	        android:text="@string/label_member_medication_dosage"
+	        android:paddingLeft="10dp" />
+	    <EditText
+	        android:id="@+id/medicationDosage"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:enabled="false"
+	        android:editable="false"
+	        android:inputType="none"
+	        android:paddingLeft="10dp" />
+		
+	    <TextView
+	        android:id="@+id/medicationByStaffL"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="14sp"
+	        android:text="@string/label_member_medication_bystaff"
+	        android:paddingLeft="10dp" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/notesHeadingRow"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/medicationL"
-        android:enabled="false"
-        android:editable="false"
-        android:inputType="none" />
-    
-    <TextView
-        android:id="@+id/medicationDosageL"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/medication"
-        android:textSize="14sp"
-        android:text="@string/label_member_medication_dosage" />
-    <EditText
-        android:id="@+id/medicationDosage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/medicationDosageL"
-        android:enabled="false"
-        android:editable="false"
-        android:inputType="none" />
-	
-    <TextView
-        android:id="@+id/medicationByStaffL"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/medicationDosage"
-        android:textSize="14sp"
-        android:text="@string/label_member_medication_bystaff" />
-	<TextView
-    	android:id="@+id/membernotesH"
-    	android:textSize="24sp"
-        android:text="@string/heading_member_notes"
-        android:layout_width="wrap_content"
-    	android:layout_height="wrap_content"
-    	android:layout_below="@id/medicationByStaffL"
-        android:textIsSelectable="false"
-        android:padding="5dp"
-		android:paddingBottom="1dp" />
+        android:layout_below="@id/medicalDetails"
+        android:orientation="horizontal"
+        android:background="@drawable/button"
+        android:clickable="true" >
+		<TextView
+	    	android:id="@+id/membernotesH"
+	    	android:textSize="24sp"
+	        android:text="@string/heading_member_notes"
+	        android:layout_width="0dp"
+	    	android:layout_height="wrap_content"
+	    	android:layout_weight=".8"
+	    	
+	        android:textIsSelectable="false"
+	        android:padding="5dp"
+			android:paddingBottom="1dp" />
+		<ImageView 
+	        android:id="@+id/notes_expand_collapse"
+	        android:layout_width="40dp"
+	        android:layout_height="40dp"
+	        android:src="@drawable/ic_action_collapse"/>
+	</LinearLayout>
     
 	<LinearLayout
 	    android:id="@+id/membernotes"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    android:layout_below="@id/membernotesH"
+	    android:layout_below="@id/notesHeadingRow"
 	    android:orientation="vertical" >
 	</LinearLayout>
 	
@@ -137,23 +282,35 @@
 			    android:background="@color/button_underline_grey" />
 		</LinearLayout>
 	</LinearLayout>
-	
-	<TextView
-    	android:id="@+id/membertasksH"
-    	android:textSize="24sp"
-        android:text="Tasks"
-        android:layout_width="wrap_content"
-    	android:layout_height="wrap_content"
-    	android:layout_below="@id/memberaddnotes"
-        android:textIsSelectable="false"
-        android:padding="5dp"
-		android:paddingBottom="1dp" />
-    
+	<LinearLayout
+        android:id="@+id/tasksHeadingRow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/memberaddnotes"
+        android:orientation="horizontal"
+        android:background="@drawable/button"
+        android:clickable="true" >
+		<TextView
+	    	android:id="@+id/membertasksH"
+	    	android:textSize="24sp"
+	        android:text="@string/heading_member_tasks"
+	        android:layout_width="0dp"
+	    	android:layout_height="wrap_content"
+	    	android:layout_weight=".8"
+	        android:textIsSelectable="false"
+	        android:padding="5dp"
+			android:paddingBottom="1dp" />
+		<ImageView 
+	        android:id="@+id/tasks_expand_collapse"
+	        android:layout_width="40dp"
+	        android:layout_height="40dp"
+	        android:src="@drawable/ic_action_collapse"/>
+    </LinearLayout>
 	<LinearLayout
 	    android:id="@+id/membertasks"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    android:layout_below="@id/membertasksH"
+	    android:layout_below="@id/tasksHeadingRow"
 	    android:orientation="vertical" >
 	    
 	</LinearLayout>

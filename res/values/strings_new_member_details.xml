@@ -20,4 +20,11 @@
  <string name="label_member_medication">Medication</string>
  <string name="label_member_medication_dosage">Dosage</string>
  <string name="label_member_medication_bystaff">Medication By Staff</string>
+ <string name="heading_member_emergency">Emergency Contact Details</string>
+ <string name="label_member_emergency_name">Contact Name</string>
+ <string name="label_member_emergency_relationship">Contact Relationship</string>
+ <string name="label_member_emergency_cell">Contact Cell Phone</string>
+ <string name="label_member_emergency_work">Contact Work Phone</string>
+ <string name="label_member_emergency_home">Contact Home Phone</string>
+ <string name="heading_member_tasks">Tasks</string>
 </resources>

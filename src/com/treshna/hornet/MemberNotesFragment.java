@@ -5,8 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import com.treshna.hornet.BookingPage.TagFoundListener;
-
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -18,8 +16,11 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.treshna.hornet.BookingPage.TagFoundListener;
 
 
 public class MemberNotesFragment extends Fragment implements OnClickListener, TagFoundListener {
@@ -58,54 +59,96 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 	public MemberActions getMemberActions(){
 		return this.mActions;
 	}
-		
-	private View setupView() {
-		
+	
+	private View setupEmergency() {
 		cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, ContentDescriptor.Member.Cols.MID+" = ?",
 				new String[] {memberID}, null);
 		if (!cur.moveToFirst()) {
 			return view;
 		}
-		EditText mConditions = (EditText) view.findViewById(R.id.medicalConditions);
-		EditText medication = (EditText) view.findViewById(R.id.medication);
-		EditText mDosage = (EditText) view.findViewById(R.id.medicationDosage);
+		
+		LinearLayout emergencyHeading = (LinearLayout) view.findViewById(R.id.emergencyHeadingRow);
+		emergencyHeading.setOnClickListener(this);
+		
+		if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMERGENCYNAME)) &&
+				!cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMERGENCYNAME)).isEmpty()) {
+			
+			EditText emergencyname = (EditText) view.findViewById(R.id.emergencyContactName);
+			EditText emergencyrelationship = (EditText) view.findViewById(R.id.emergencyContactRelationship);
+			EditText emergencycell = (EditText) view.findViewById(R.id.emergencyContactCell);
+			EditText emergencywork = (EditText) view.findViewById(R.id.emergencyContactWork);
+			EditText emergencyhome = (EditText) view.findViewById(R.id.emergencyContactHome);
+			
+			emergencyname.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMERGENCYNAME)));
+			emergencyrelationship.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMERGENCYRELATIONSHIP)));
+			emergencycell.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMERGENCYCELL)));
+			emergencywork.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMERGENCYWORK)));
+			emergencyhome.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMERGENCYHOME)));
+			
+		} else {
+			LinearLayout emergencyDetails = (LinearLayout) view.findViewById(R.id.emergencyContactDetails);
+			emergencyDetails.setVisibility(View.GONE);
+			ImageView expand_collapse = (ImageView) view.findViewById(R.id.emergency_expand_collapse);
+			expand_collapse.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_action_expand));
+		}
+		
+		return view;
+	}
+	
+	private View setupMedical() {
+		cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, ContentDescriptor.Member.Cols.MID+" = ?",
+				new String[] {memberID}, null);
+		if (!cur.moveToFirst()) {
+			return view;
+		}
+		
+		
 		TextView mStaff = (TextView) view.findViewById(R.id.medicationByStaffL);
+		if (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.MEDICATIONBYSTAFF)).compareTo("f")==0) {
+			mStaff.setText("No "+getActivity().getResources().getString(R.string.label_member_medication_bystaff));
+			mStaff.setTextColor(getActivity().getResources().getColor(R.color.visitors_red));
+		} else {
+			mStaff.setTextColor(getActivity().getResources().getColor(R.color.visitors_green));
+		}
+		
+		LinearLayout medicalHeading = (LinearLayout) view.findViewById(R.id.medicalHeadingRow);
+		medicalHeading.setOnClickListener(this);
+		
 		if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.MEDICAL)) &&
 				!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.MEDICATION)) &&
 				!cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.MEDICAL)).isEmpty() &&
 				!cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.MEDICATION)).isEmpty()) {
 			
+			EditText mConditions = (EditText) view.findViewById(R.id.medicalConditions);
+			EditText medication = (EditText) view.findViewById(R.id.medication);
+			EditText mDosage = (EditText) view.findViewById(R.id.medicationDosage);
+		
 			mConditions.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.MEDICAL)));
-			
 			medication.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.MEDICATION)));
-			
 			mDosage.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.MEDICALDOSAGE)));
 			
-			if (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.MEDICATIONBYSTAFF)).compareTo("f")==0) {
-				mStaff.setText("No "+getActivity().getResources().getString(R.string.label_member_medication_bystaff));
-				mStaff.setTextColor(getActivity().getResources().getColor(R.color.visitors_red));
-			} else {
-				mStaff.setTextColor(getActivity().getResources().getColor(R.color.visitors_green));
-			}
-		}  else {
-			TextView heading = (TextView) view.findViewById(R.id.medicalH);
-			TextView labelConditions = (TextView) view.findViewById(R.id.medicalConditionsL);
-			TextView labelMedication = (TextView) view.findViewById(R.id.medicationL);
-			TextView labelDosage = (TextView) view.findViewById(R.id.medicationDosageL);
-			heading.setVisibility(View.GONE);
-			labelConditions.setVisibility(View.GONE);
-			labelMedication.setVisibility(View.GONE);
-			labelDosage.setVisibility(View.GONE);
-			mConditions.setVisibility(View.GONE);
-			medication.setVisibility(View.GONE);
-			mDosage.setVisibility(View.GONE);
-			mStaff.setVisibility(View.GONE);
+		} else {
+			LinearLayout medicalDetails = (LinearLayout) view.findViewById(R.id.medicalDetails);
+			medicalDetails.setVisibility(View.GONE);
+			ImageView expand_collapse = (ImageView) view.findViewById(R.id.medical_expand_collapse);
+			expand_collapse.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_action_expand));
 		}
 		cur.close();
+		
+		return view;
+	}
+		
+	private View setupView() {
+		
+		setupEmergency();
+		setupMedical();
 		
 		cur = contentResolver.query(ContentDescriptor.MemberNotes.CONTENT_URI, null, 
 				ContentDescriptor.MemberNotes.Cols.MID+" = ?", new String[] {memberID}, 
 				ContentDescriptor.MemberNotes.Cols.MNID+" DESC LIMIT 10");
+		
+		LinearLayout notesHeading = (LinearLayout) view.findViewById(R.id.notesHeadingRow);
+		notesHeading.setOnClickListener(this);
 		
 		LinearLayout.LayoutParams llparams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		llparams.setMargins(5, 5, 5, 5);
@@ -128,13 +171,18 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 			return view;
 		}
 		
+		
+		LinearLayout taskHeading = (LinearLayout) view.findViewById(R.id.tasksHeadingRow);
+		taskHeading.setOnClickListener(this);
+		
 		if ((cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.TASK1)) == null) 
 				|| (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.TASK1)).compareTo("null") == 0)
 				|| (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.TASK1)).length() == 0)){
 			
-			TextView tasks = (TextView) view.findViewById(R.id.membertasksH);
+			LinearLayout tasks = (LinearLayout) view.findViewById(R.id.membertasks);
 			tasks.setVisibility(View.GONE);
-			
+			ImageView expand_collapse = (ImageView) view.findViewById(R.id.tasks_expand_collapse);
+			expand_collapse.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_action_expand));
 			
 		} else {
 			LinearLayout tasksGroup = (LinearLayout) view.findViewById(R.id.membertasks);
@@ -154,43 +202,7 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 			}			
 			
 		}
-				
-		if (visitDate != null && visitDate.compareTo("") != 0) { //fix this
-			TextView visitTH = new TextView(getActivity());
-			visitTH.setPadding(5, 0, 0, 0);
-			visitTH.setText("Visit Time");
-			visitTH.setTextSize(13);
-			visitTH.setLayoutParams(llparams);
-			notesGroup.addView(visitTH);
 			
-			TextView visitT = new TextView(getActivity());
-			visitT.setPadding(15, 0, 0, 0);
-			visitDate = Services.dateFormat(visitDate, "yyyy-MM-dd HH:mm", "dd MMM yy 'at' HH:mm aa");
-			visitT.setText(visitDate);
-			visitT.setTextSize(18);
-			visitT.setLayoutParams(llparams);
-			notesGroup.addView(visitT);
-		}
-		
-		if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.LASTVISIT)) 
-				&& cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.LASTVISIT)).compareTo("") != 0) {
-			String lastVisit = Services.dateFormat(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.LASTVISIT)), "yyyy-MM-dd HH:mm", "dd MMM yy 'at' HH:mm aa");
-			
-			TextView lastVH = new TextView(getActivity());
-			lastVH.setPadding(5, 0, 0, 0);
-			lastVH.setText("Previous Visit");
-			lastVH.setTextSize(13);
-			lastVH.setLayoutParams(llparams);
-			notesGroup.addView(lastVH);
-			
-			TextView lastVT = new TextView(getActivity());
-			lastVT.setPadding( 15, 0, 0, 0);
-			lastVT.setText(lastVisit);
-			lastVT.setTextSize(18);
-			lastVT.setLayoutParams(llparams);
-			notesGroup.addView(lastVT);
-		}
-		
 		cur.close();
 		
 		TextView add_note = (TextView) view.findViewById(R.id.button_add_note);
@@ -250,6 +262,54 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 			//get text from edit text, add it to cache/pending uploads.
 			String note = getNewNote();
 			updateNote(note);
+			break;
+		}
+		case (R.id.medicalHeadingRow):{
+			LinearLayout medicalDetails = (LinearLayout) view.findViewById(R.id.medicalDetails);
+			ImageView expand_collapse = (ImageView) view.findViewById(R.id.medical_expand_collapse);
+			if (medicalDetails.isShown()) {
+				medicalDetails.setVisibility(View.GONE);
+				expand_collapse.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_action_expand));
+			} else {
+				medicalDetails.setVisibility(View.VISIBLE);
+				expand_collapse.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_action_collapse));
+			}
+			break;
+		}
+		case (R.id.emergencyHeadingRow):{
+			LinearLayout emergencyDetails = (LinearLayout) view.findViewById(R.id.emergencyContactDetails);
+			ImageView expand_collapse = (ImageView) view.findViewById(R.id.emergency_expand_collapse);
+			if (emergencyDetails.isShown()) {
+				emergencyDetails.setVisibility(View.GONE);
+				expand_collapse.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_action_expand));
+			} else {
+				emergencyDetails.setVisibility(View.VISIBLE);
+				expand_collapse.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_action_collapse));
+			}
+			break;
+		}
+		case (R.id.notesHeadingRow):{
+			LinearLayout notesgroup = (LinearLayout) view.findViewById(R.id.membernotes);
+			ImageView expand_collapse = (ImageView) view.findViewById(R.id.notes_expand_collapse);
+			if (notesgroup.isShown()) {
+				notesgroup.setVisibility(View.GONE);
+				expand_collapse.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_action_expand));
+			} else {
+				notesgroup.setVisibility(View.VISIBLE);
+				expand_collapse.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_action_collapse));
+			}
+			break;
+		}
+		case (R.id.tasksHeadingRow):{
+			LinearLayout tasks = (LinearLayout) view.findViewById(R.id.membertasks);
+			ImageView expand_collapse = (ImageView) view.findViewById(R.id.tasks_expand_collapse);
+			if (tasks.isShown()) {
+				tasks.setVisibility(View.GONE);
+				expand_collapse.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_action_expand));
+			} else {
+				tasks.setVisibility(View.VISIBLE);
+				expand_collapse.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_action_collapse));
+			}
 			break;
 		}
 		default:
