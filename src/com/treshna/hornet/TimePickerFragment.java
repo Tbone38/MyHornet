@@ -6,7 +6,6 @@ import java.util.Locale;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.text.format.DateFormat;
@@ -40,7 +39,6 @@ public class TimePickerFragment extends DialogFragment
 	}
 	
 	public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-		Intent bcIntent;
 		Calendar cal;
 		
 		cal = Calendar.getInstance();

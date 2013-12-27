@@ -3,37 +3,25 @@ package com.treshna.hornet;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.CalendarView;
-import android.widget.CalendarView.OnDateChangeListener;
-import android.widget.DatePicker;
-import android.widget.DatePicker.OnDateChangedListener;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.RelativeLayout.LayoutParams;
-
-import com.treshna.hornet.R.color;
 
 /*
  * 
@@ -42,7 +30,7 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
 	
 	private static ContentResolver contentResolver = null;
     private static Cursor cur = null;
-	private static final String TAG = "LastVisitorsFragment";
+	//private static final String TAG = "LastVisitorsFragment";
 	private View view;
 	private String selectedDate;
 	private LayoutInflater mInflater;

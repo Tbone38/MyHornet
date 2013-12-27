@@ -32,7 +32,7 @@ public class ClassMemberListAdapter extends SimpleCursorAdapter implements Compo
 	String sdate;
 	public static final String TAG = "com.treshna.hornet.ClassMemberListAdapter";
 	private Cursor cur;
-	private ArrayList<String> checkedlist;
+	
 	private int mLayout;
 	
 	@SuppressWarnings("deprecation")
@@ -41,7 +41,6 @@ public class ClassMemberListAdapter extends SimpleCursorAdapter implements Compo
 		super(context, layout, c, from, to);
 		this.context = context;
 		contentResolver = context.getContentResolver();
-		checkedlist = new ArrayList<String>();
 		cur = c;
 		mLayout = layout;
 	}

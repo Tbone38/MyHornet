@@ -1,9 +1,6 @@
 package com.treshna.hornet;
 
 import java.util.ArrayList;
-
-import android.content.ContentResolver;
-import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,7 +16,7 @@ import android.view.ViewGroup;
  */
 public class LastVisitorsSuperFragment extends Fragment {
 	
-	private static ContentResolver contentResolver = null;
+	
     private static Cursor cur = null;
     
 	public static final int LASTVISITORS = 1;
@@ -29,7 +26,7 @@ public class LastVisitorsSuperFragment extends Fragment {
 	//public static final int DISPLAYERROR = -1;
 	
 	//NFCs
-	private static Context context;	
+		
 	
 	
 	@Override
@@ -37,8 +34,6 @@ public class LastVisitorsSuperFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Services.setContext(getActivity());
         Log.v(TAG, "Creating Last Visitors");
-        context = getActivity().getApplicationContext();
-        contentResolver = getActivity().getContentResolver();
         if (cur != null) cur.close();        
     }
 	

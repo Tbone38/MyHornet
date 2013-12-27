@@ -24,7 +24,7 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 	LayoutInflater mInflater;
 	private MemberActions mActions;
 	
-	private static final String TAG = "MemberDetails";
+	//private static final String TAG = "MemberDetails";
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

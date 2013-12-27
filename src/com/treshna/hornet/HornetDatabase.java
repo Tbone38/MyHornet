@@ -40,11 +40,12 @@ public class HornetDatabase extends SQLiteOpenHelper {
 	
 	 public static final String DATABASE_NAME="hornet.db";
 	 private static final int DATABASE_VERSION = 92;
-	 private Context theContext;
+	 //private Context theContext;
+	 //^^may be required for toasts etc at some point.
 	 
 	 public HornetDatabase (Context context) {
 		 super(context, DATABASE_NAME, null, DATABASE_VERSION);
-		 this.theContext = context;
+		 //this.theContext = context;
 	 }
 
 	@Override

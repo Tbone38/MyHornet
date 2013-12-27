@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.Locale;
 
-import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -27,7 +26,7 @@ import android.widget.Toast;
 public class Services {
 	
 	private static PollingHandler pollingFreqHandler;
-	private static PollingHandler pollingInfreqHandler;
+	//private static PollingHandler pollingInfreqHandler;
 	private static boolean DEBUG;
 	private static ProgressDialog progress;
 	private static Context theCtx;

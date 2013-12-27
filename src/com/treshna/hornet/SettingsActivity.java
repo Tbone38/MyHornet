@@ -18,7 +18,6 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
@@ -239,6 +238,7 @@ public class SettingsActivity extends PreferenceActivity {
 	 	this.startService(updateInt);
 	}
 	
+	@SuppressWarnings("deprecation")
 	private void createView() {
 		
 		//getPreferenceManager().findPreference(key)

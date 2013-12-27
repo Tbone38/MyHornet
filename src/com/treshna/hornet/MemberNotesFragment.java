@@ -27,12 +27,12 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 	Cursor cur;
 	ContentResolver contentResolver;
 	String memberID;
-	private String visitDate;
+	
 	private View view;
 	LayoutInflater mInflater;
 	private MemberActions mActions;
 	
-	private static final String TAG = "MemberNotes";
+	//private static final String TAG = "MemberNotes";
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -40,7 +40,6 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 		Services.setContext(getActivity());
 		contentResolver = getActivity().getContentResolver();
 		memberID = this.getArguments().getString(Services.Statics.MID);
-		visitDate = this.getArguments().getString(Services.Statics.KEY);
 		mActions = new MemberActions(getActivity());
 	}
 	

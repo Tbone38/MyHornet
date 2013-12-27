@@ -28,7 +28,8 @@
 	        android:id="@+id/emergency_expand_collapse"
 	        android:layout_width="40dp"
 	        android:layout_height="40dp"
-	        android:src="@drawable/ic_action_collapse" />
+	        android:src="@drawable/ic_action_collapse"
+	        android:contentDescription="@string/hint_emergency_expand" />
     </LinearLayout>
     <LinearLayout
         android:id="@+id/emergencyContactDetails"
@@ -138,7 +139,8 @@
 	        android:id="@+id/medical_expand_collapse"
 	        android:layout_width="40dp"
 	        android:layout_height="40dp"
-	        android:src="@drawable/ic_action_collapse"/>
+	        android:src="@drawable/ic_action_collapse"
+	        android:contentDescription="@string/hint_medical_expand"/>
 	</LinearLayout>
     <LinearLayout
         android:id="@+id/medicalDetails"
@@ -225,7 +227,8 @@
 	        android:id="@+id/notes_expand_collapse"
 	        android:layout_width="40dp"
 	        android:layout_height="40dp"
-	        android:src="@drawable/ic_action_collapse"/>
+	        android:src="@drawable/ic_action_collapse"
+	        android:contentDescription="@string/hint_notes_expand"/>
 	</LinearLayout>
     
 	<LinearLayout
@@ -304,7 +307,8 @@
 	        android:id="@+id/tasks_expand_collapse"
 	        android:layout_width="40dp"
 	        android:layout_height="40dp"
-	        android:src="@drawable/ic_action_collapse"/>
+	        android:src="@drawable/ic_action_collapse"
+	        android:contentDescription="@string/hint_tasks_expand"/>
     </LinearLayout>
 	<LinearLayout
 	    android:id="@+id/membertasks"

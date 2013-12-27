@@ -14,10 +14,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
@@ -104,24 +102,7 @@ public class VisitorsViewAdapter extends SimpleCursorAdapter implements OnClickL
 			Bitmap sm = BitmapFactory.decodeStream(is);
 			smileView.setImageBitmap(sm);
 		}
-		//if a task (or booking?) is pending, show the task-pending picture.
-		/*if (cursor.isNull(cursor.getColumnIndex(ContentDescriptor.Member.Cols.TASKP)) == false){
-			if (cursor.getInt(cursor.getColumnIndex(ContentDescriptor.Member.Cols.TASKP)) != 0) {
-				InputStream is = null;
-				try {
-					is = am.open("task-due.png");
-				} catch (IOException e) {
-					// not critical / doesn't matter.
-				}
-				taskView.setVisibility(View.VISIBLE);
-				Bitmap sm = BitmapFactory.decodeStream(is);
-				taskView.setImageBitmap(sm);
-			} else {
-				taskView.setVisibility(View.INVISIBLE);
-			}
-		}else {
-			taskView.setVisibility(View.INVISIBLE);
-		}*/
+		
 		//TODO: move this to a asynchronous task. (it's causing memory issues on large db's).
 		//0 is default/first image.
 		String imgDir = context.getExternalFilesDir(null)+"/0_"+cursor.getString(cursor.getColumnIndex(ContentDescriptor.Visitor.Cols.MID))+".jpg"; //or column 6

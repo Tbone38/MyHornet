@@ -47,15 +47,7 @@
         android:layout_alignParentRight="true"
      	android:layout_width="wrap_content"
      	android:layout_height="wrap_content" />
-      
-      <!-- <ImageView android:id="@+id/task"
-        android:contentDescription="@string/task_description"
-        android:layout_toLeftOf="@id/smiley"
-        android:layout_alignTop="@id/smiley"
-        android:layout_alignBottom="@id/smiley"
-     android:layout_width="wrap_content"
-     android:layout_height="wrap_content" /> -->
-     
+           
      <ImageView
          android:id="@+id/visit_time_ic"
          android:layout_width="30dp"

@@ -20,7 +20,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -31,6 +30,7 @@ import com.treshna.hornet.ContentDescriptor.Membership;
 
 /* TODO: consider refactoring this service out into:
  * 	Bookings, LastVisitors, Swipes, and Signups.
+ * (to make it easier to work on since we're at 3k lines, and only getting bigger).
  */
 
 public class HornetDBService extends Service {
@@ -1420,7 +1420,7 @@ public class HornetDBService extends Service {
     	return result;
     }
     
-    @SuppressWarnings("unused")
+    
 	private int getBookingType(){
     	
     	int result = 0;
@@ -1428,13 +1428,14 @@ public class HornetDBService extends Service {
     	
     	result = contentResolver.delete(ContentDescriptor.Bookingtype.CONTENT_URI,null, null);
 
-    	final int CACI = 0; //TODO: fix this
+    	//final int CACI = 0; //TODO: create a settings variable that checks if we're using caci stuff or not.
     	if (!openConnection()) {
     		return -1; //connection failed;
     	}
     	
     	try {
-    		rs = (CACI != 0)?connection.getBookingTypesValid() : connection.getBookingTypes();
+    		//rs = (CACI != 0)?connection.getBookingTypesValid() : connection.getBookingTypes();
+    		rs = connection.getBookingTypes();
     		while (rs.next()) {
     			
     				ContentValues values = new ContentValues();
@@ -1442,10 +1443,10 @@ public class HornetDBService extends Service {
     				values.put(ContentDescriptor.Bookingtype.Cols.NAME, rs.getString("name"));
     				values.put(ContentDescriptor.Bookingtype.Cols.PRICE, rs.getString("price"));
     				values.put(ContentDescriptor.Bookingtype.Cols.EXTERNAL, rs.getString("externalname"));
-    				if (CACI != 0){ //only applies to clinicMaster ?
+    				/*if (CACI != 0){ //only applies to clinicMaster ?
 	    				values.put(ContentDescriptor.Bookingtype.Cols.VALIDFROM, rs.getString("validfrom"));
 	    				values.put(ContentDescriptor.Bookingtype.Cols.VALIDTO, rs.getString("validto"));
-    				}
+    				}*/
 	    			
     				contentResolver.insert(ContentDescriptor.Bookingtype.CONTENT_URI, values);
     				result +=1;

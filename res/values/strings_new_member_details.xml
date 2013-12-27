@@ -27,4 +27,8 @@
  <string name="label_member_emergency_work">Contact Work Phone</string>
  <string name="label_member_emergency_home">Contact Home Phone</string>
  <string name="heading_member_tasks">Tasks</string>
+ <string name="hint_emergency_expand">expand/collapse emergency details icon</string>
+ <string name="hint_medical_expand">expand/collapse medical details icon</string>
+ <string name="hint_notes_expand">expand/collapse notes icon</string>
+ <string name="hint_tasks_expand">expand/collapse tasks icon</string>
 </resources>

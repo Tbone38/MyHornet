@@ -211,6 +211,7 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 		builder.setView(layout);
 		builder.setTitle("Select Optional Resource");
 		builder.setPositiveButton("Select", new DialogInterface.OnClickListener() {		
+			@SuppressWarnings("unchecked")
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				
@@ -226,7 +227,10 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 				selectedRadio = (RadioButton) rg.findViewById(selectedid);
 				
 				resourcevalue = selectedRadio.getText().toString();
-				ArrayList<String> tag = (ArrayList<String>) selectedRadio.getTag();
+				ArrayList<String> tag = null;
+				if (selectedRadio.getTag() instanceof ArrayList<?>) {
+					 tag = (ArrayList<String>) selectedRadio.getTag();
+				}
 				resourceid = (String) tag.get(0);
 				period = tag.get(1);
 				
@@ -347,7 +351,7 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 		boolean validated;
 		ArrayList<String> emptyViews;
 		TextView date, stime, etime, resource;
-		EditText classname, classmemberlimit;
+		EditText classname;
 		
 		validated = true;
 		emptyViews = new ArrayList<String>();

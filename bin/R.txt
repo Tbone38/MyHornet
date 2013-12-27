@@ -980,6 +980,10 @@ int string hintCity 0x7f0b0061
 int string hintDoB 0x7f0b006a
 int string hintMedical 0x7f0b0065
 int string hintSuburb 0x7f0b005f
+int string hint_emergency_expand 0x7f0b00e0
+int string hint_medical_expand 0x7f0b00e1
+int string hint_notes_expand 0x7f0b00e2
+int string hint_tasks_expand 0x7f0b00e3
 int string image_description 0x7f0b001a
 int string labelCellPhone 0x7f0b005c
 int string labelCity 0x7f0b0060
