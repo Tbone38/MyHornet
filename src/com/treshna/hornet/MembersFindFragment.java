@@ -49,8 +49,6 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 	private OnMemberSelectListener mCallback;
 	private static final String TAG = "MemberFindFragment";
 	private AlertDialog mFilter;
-	private int listIndex = 1;
-	private Parcelable mListState;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -60,9 +58,7 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 		
 		if (savedInstanceState != null) {
 			input = savedInstanceState.getString("input");
-			mListState = savedInstanceState.getParcelable("listState");
 			
-
 		}
 		
 	 	is_booking = false;
@@ -120,8 +116,6 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 	}
 	 
 	 
-	 
-	
 	 
 	 @Override
 	 public void onResume(){
@@ -246,7 +240,7 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 			/*return new CursorLoader( getActivity(), ContentDescriptor.Member.CONTENT_URI,
 					null, where, whereArgs, null);*/
 			if (mAdapter != null) {
-				mAdapter.setSelectedPos(-1);
+				mAdapter.setSelectedPos(0);
 			}
 			return new CursorLoader( getActivity(), ContentDescriptor.Member.URI_FIND,
 					null, where, whereArgs, null);
@@ -268,6 +262,8 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 		mAdapter.changeCursor(cursor);		
 		mAdapter.notifyDataSetChanged();
 		getListView().setSelection(mAdapter.getSelectedPos());
+		getListView().setSelected(true);
+	
 
 	}
 
@@ -281,6 +277,7 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 	 public interface OnMemberSelectListener {
 	        public void onMemberSelect(String id);
 	 }
+	 
 	 
 	 @Override
 	 public void onAttach(Activity activity) {

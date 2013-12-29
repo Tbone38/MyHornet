@@ -55,6 +55,9 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
         mInflater = inflater;
         mDatePicker = new DatePickerFragment();
         mDatePicker.setDatePickerSelectListener(this);
+        if (mDatePicker.getDialog() != null){
+        	mDatePicker.getDialog().dismiss();
+        }
         RelativeLayout calendarwrapper = (RelativeLayout) view.findViewById(R.id.booking_overview_calendar_wrapper);
         
     	RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
@@ -621,6 +624,7 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
 			
 			mDatePicker.setArguments(bdl);
 			mDatePicker.show(this.getChildFragmentManager(), "DatePicker");
+			
 		}
 		default:
 			break;
