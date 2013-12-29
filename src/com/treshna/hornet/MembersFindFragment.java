@@ -10,6 +10,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -48,7 +49,8 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 	private OnMemberSelectListener mCallback;
 	private static final String TAG = "MemberFindFragment";
 	private AlertDialog mFilter;
-	private int listIndex;
+	private int listIndex = 1;
+	private Parcelable mListState;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -58,9 +60,13 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 		
 		if (savedInstanceState != null) {
 			input = savedInstanceState.getString("input");
-			listIndex = savedInstanceState.getInt("index");
+			mListState = savedInstanceState.getParcelable("listState");
+			
+
 		}
+		
 	 	is_booking = false;
+	 	
 	 	Bundle b = null;
 	 	try {
 	 		b = getArguments();
@@ -101,16 +107,21 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 		 
 		 
 		  view = inflater.inflate(R.layout.member_find_fragment, container, false);
+
 		  return view;
 
 	  }
 	 
 	 @Override
 	 public void onSaveInstanceState(Bundle savedInstanceState) {
-		 super.onSaveInstanceState(savedInstanceState);
-		 savedInstanceState.putInt("index", this.getSelectedItemPosition());
 		 savedInstanceState.putString("input", input);
+		 super.onSaveInstanceState(savedInstanceState); 
+
 	}
+	 
+	 
+	 
+	
 	 
 	 @Override
 	 public void onResume(){
@@ -118,6 +129,7 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 		 Log.v(TAG, "Resuming MemberFindFragment");
 		 loadermanager.restartLoader(0, null, this);
 		 setupView();
+		 
 	 }
 	 
 	private void setupFilter() {
@@ -255,7 +267,8 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
         }
 		mAdapter.changeCursor(cursor);		
 		mAdapter.notifyDataSetChanged();
-		this.setSelection(listIndex);
+		getListView().setSelection(mAdapter.getSelectedPos());
+
 	}
 
 	@Override
