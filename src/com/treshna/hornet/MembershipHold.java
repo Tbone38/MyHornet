@@ -4,16 +4,12 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NavUtils;
@@ -66,7 +62,7 @@ public class MembershipHold extends ActionBarActivity implements OnClickListener
 	}
 	
 	
-	@SuppressWarnings("deprecation")
+	
 	@SuppressLint("NewApi")
 	private void setupView(){		
 		setupDate();

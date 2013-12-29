@@ -27,7 +27,7 @@ public class MemberGalleryFragment extends Fragment implements OnClickListener,
 	private GalleryViewAdapter mAdapter;
 	private LoaderManager mLoader;
 	
-	private static final String TAG = "MemberDetailsGallery";
+	//private static final String TAG = "MemberDetailsGallery";
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

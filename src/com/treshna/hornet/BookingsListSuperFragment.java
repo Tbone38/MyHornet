@@ -2,7 +2,6 @@ package com.treshna.hornet;
 
 import java.util.Date;
 
-import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;

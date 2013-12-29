@@ -39,6 +39,7 @@
     <string name="title_activity_membership_add">Add Membership</string>
     <string name="hello_world">Hello world!</string>
     <string name="cancel">Cancel</string>
+    <string name="hint_visitor_time">Visitor Time icon (clock)</string>
     
 
 </resources>

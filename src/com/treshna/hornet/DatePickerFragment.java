@@ -8,7 +8,6 @@ import java.util.Locale;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
@@ -55,7 +54,6 @@ public class DatePickerFragment extends DialogFragment
 	
 	public void onDateSet(DatePicker view, int year, int month, int day) {
 		
-		Intent bcIntent;
 		Calendar cal;
 		
 		cal = Calendar.getInstance();
@@ -81,7 +79,8 @@ public class DatePickerFragment extends DialogFragment
 	            mCallback = (DatePickerSelectListener) activity;
 	        } catch (ClassCastException e) {
 	            //mCallback not set
-	        	Log.e(TAG, "ERROR, CLASS STILL USING BROADCASTER");
+	        	Log.w(TAG, "WARNING, Class not using interface, this may cause issues if it doesn't manually call"
+	        			+ " setDatePickerSelectListener(DatePickerSelectListener);");
 	        }
 	    }
 	 

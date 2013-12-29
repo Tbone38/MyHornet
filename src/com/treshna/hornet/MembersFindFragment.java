@@ -424,6 +424,10 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 			Services.setPreference(getActivity(), "filter_gender", "-1");
 			programmeGroup = null;
 			Services.setPreference(getActivity(), "filter_programmegroup", "-1");
+			EditText inputField = (EditText) view.findViewById(R.id.find);
+			inputField.setText("");
+			input = null;
+
 			loadermanager.restartLoader(0, null, this);
 			break;
 		}

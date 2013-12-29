@@ -23,12 +23,11 @@ public class MemberVisitHistoryFragment extends Fragment implements TagFoundList
 	Cursor cur;
 	ContentResolver contentResolver;
 	String memberID;
-	private String visitDate;
 	private View view;
 	LayoutInflater mInflater;
 	private MemberActions mActions;
 	
-	private static final String TAG = "MemberVisitHistory";
+	//private static final String TAG = "MemberVisitHistory";
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -36,7 +35,7 @@ public class MemberVisitHistoryFragment extends Fragment implements TagFoundList
 		Services.setContext(getActivity());
 		contentResolver = getActivity().getContentResolver();
 		memberID = this.getArguments().getString(Services.Statics.MID);
-		visitDate = this.getArguments().getString(Services.Statics.KEY);
+		//visitDate = this.getArguments().getString(Services.Statics.KEY);
 		mActions = new MemberActions(getActivity());
 	}
 	

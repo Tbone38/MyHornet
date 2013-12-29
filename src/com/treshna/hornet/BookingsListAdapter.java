@@ -6,8 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Typeface;
-import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.GradientDrawable.Orientation;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
@@ -24,7 +22,7 @@ public class BookingsListAdapter extends SimpleCursorAdapter implements OnClickL
 	Cursor cursor;
 	String mDate;
 	private ListView mList;
-	private static final String TAG = "BookingsListAdapter";
+	//private static final String TAG = "BookingsListAdapter";
 	
 	@SuppressWarnings("deprecation")
 	public BookingsListAdapter(Context context, int layout, Cursor c,
