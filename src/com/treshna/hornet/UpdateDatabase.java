@@ -193,5 +193,54 @@ public class UpdateDatabase {
 							+ " VALUES (new."+Member.Cols._ID+", "+TableIndex.Values.Member.getKey()+");"
 						+"END;";
 				
+			//DO MORE TRIGGERS
+				public static final String SQL24 ="ALTER TABLE "+Booking.NAME+" RENAME TO tmp_"+Booking.NAME+";";
+				
+				public static final String SQL25="CREATE TABLE "+Booking.NAME+" ("+Booking.Cols.ID+" INTEGER PRIMARY KEY, "
+						+Booking.Cols.FNAME+" TEXT, "+Booking.Cols.SNAME+" TEXT, "
+						+Booking.Cols.BOOKING+" TEXT, "
+						+Booking.Cols.STIMEID+" INTEGER, "+Booking.Cols.ETIMEID+" INTEGER, "
+						+Booking.Cols.BID+" TEXT, "+Booking.Cols.BOOKINGTYPE+" INTEGER, "
+						+Booking.Cols.ETIME+" TEXT, "+Booking.Cols.NOTES+" TEXT, "
+						+Booking.Cols.RESULT+" INTEGER, "+Booking.Cols.MID+" INTEGER, "
+						+Booking.Cols.LASTUPDATE+" NUMERIC, "+Booking.Cols.STIME+" TEXT, "
+						+Booking.Cols.MSID+" INTEGER, "+Booking.Cols.CHECKIN+" NUMERIC, " //timestamp ?
+						+Booking.Cols.RID+" INTEGER, "+Booking.Cols.ARRIVAL+" INTEGER, "
+						+Booking.Cols.OFFSET+" TEXT, "
+						+Booking.Cols.CLASSID+" INTEGER DEFAULT 0, "+Booking.Cols.PARENTID+" INTEGER DEFAULT 0, "
+						+Booking.Cols.DEVICESIGNUP+" TEXT DEFAULT 'f', "
+						+"FOREIGN KEY ("+Booking.Cols.STIMEID
+						+") REFERENCES "+ContentDescriptor.Time.NAME+" ("+ContentDescriptor.Time.Cols.ID+") "
+						+");";
+				
+				public static final String SQL26="INSERT INTO "+Booking.NAME+" SELECT *, 'f' FROM tmp_"+Booking.NAME+";";
+				
+				public static final String SQL27= "CREATE TRIGGER "+Booking.Triggers.ON_INSERT+" AFTER INSERT ON "+Booking.NAME
+						+" FOR EACH ROW WHEN new."+Booking.Cols.BID+" > 0 AND new."+Booking.Cols.DEVICESIGNUP+"= 't' "
+						+"BEGIN "
+							+"INSERT OR REPLACE INTO "+PendingUploads.NAME
+							+ " ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
+							+ " VALUES (new."+Booking.Cols.ID+", "+TableIndex.Values.Booking.getKey()+");"
+						+" END; ";
+				
+				public static final String SQL28 ="CREATE TRIGGER "+Booking.Triggers.ON_UPDATE+" AFTER UPDATE ON "+Booking.NAME
+						+" FOR EACH ROW WHEN new."+Booking.Cols.BID+" > 0 "
+								//do we need to check for actual changes, 
+								//or just assume that the update clause changed relevant info?
+								//AND new.<column> != old.<column> ?
+						+" BEGIN "
+							+"INSERT OR REPLACE INTO "+PendingUpdates.NAME
+							+" ("+PendingUpdates.Cols.ROWID+", "+PendingUpdates.Cols.TABLEID+")"
+							+" VALUES (new."+Booking.Cols.ID+", "+TableIndex.Values.Booking.getKey()+");"
+						+"END;";
+				
+				public static final String SQL29= "CREATE TRIGGER "+Booking.Triggers.ON_UPDATE_BID+" AFTER UPDATE ON "+Booking.NAME
+						+" FOR EACH ROW WHEN old."+Booking.Cols.BID+" <= 0 AND new."+Booking.Cols.BID+" > 0 "
+						+"BEGIN "
+							+"INSERT OR REPLACE INTO "+PendingUploads.NAME
+							+ " ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
+							+ " VALUES (new."+Booking.Cols.ID+", "+TableIndex.Values.Booking.getKey()+");"
+						+"END;";
+				
 	}
 }

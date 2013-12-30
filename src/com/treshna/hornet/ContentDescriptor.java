@@ -174,7 +174,7 @@ public class ContentDescriptor {
 	 			public static final String ON_INSERT = "member_insert";
 	 			public static final String ON_UPDATE_MID = "memberid_update";
 	 			public static final String ON_UPDATE = "member_update";
-	 			public static final String ON_DELETE = "member_delete";
+	 			public static final String ON_DELETE = "member_delete"; //unused
 	 		}
 	        
 	        public static class Cols implements BaseColumns{
@@ -373,6 +373,13 @@ public class ContentDescriptor {
 	 			public static final String CLASS_ID = "booking_class_id";
 	 		}
 	 		
+	 		public static class Triggers {
+	 			public static final String ON_INSERT = "booking_insert";
+	 			public static final String ON_UPDATE_BID = "bookingid_update";
+	 			public static final String ON_UPDATE = "booking_update";
+	 			public static final String ON_DELETE = "booking_delete"; //unused
+	 		}
+	 		
 	 		public static class Cols {
 	 			public static final String ID = BaseColumns._ID;
 	 			public static final String BID = "bookingid";
@@ -402,9 +409,10 @@ public class ContentDescriptor {
 	 			public static final String LASTUPDATE = "lastupdate"; //since Unix Epoch
 	 			public static final String CHECKIN = "checkin";
 	 			public static final String OFFSET = "offset"; // == resource.period
-	 			//public static final String IS_UPLOADED = "is_uploaded"; //has the booking been uploaded?
 	 			public static final String CLASSID ="classid";
 	 			public static final String PARENTID = "parentid";
+	 			//was the booking made on this device. (used so we know what to upload).
+	 			public static final String DEVICESIGNUP = "devicesignup";
 	 		}
 	 	}
 	 	

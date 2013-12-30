@@ -173,12 +173,21 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 						cur.close();
 						cur = contentResolver.query(ContentDescriptor.Bookingtype.CONTENT_URI, null, ContentDescriptor.Bookingtype.Cols.ID+" = "+(pos+1), null, null);
 						cur.moveToFirst();
-						int j = cur.getInt(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.BTID)); //6
+						int newbookingtypeid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.BTID)); //6
 						cur.close();
-						ContentValues values = new ContentValues();
-						values.put(ContentDescriptor.Booking.Cols.BOOKINGTYPE, j);
-						//values.put(ContentDescriptor.Booking.Cols.LASTUPDATED, new Date().getTime()); //is this breaking things?
-						contentResolver.update(ContentDescriptor.Booking.CONTENT_URI, values, ContentDescriptor.Booking.Cols.BID+" = "+bookingID, null);
+						
+						cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, new String[] {
+								ContentDescriptor.Booking.Cols.BOOKINGTYPE}, ContentDescriptor.Booking.Cols.BID+" = "+bookingID,
+								null, null);
+						cur.moveToFirst();
+						int oldbookingtypeid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Booking.Cols.BOOKINGTYPE));
+						cur.close();
+						
+						if (oldbookingtypeid != newbookingtypeid) {
+							ContentValues values = new ContentValues();
+							values.put(ContentDescriptor.Booking.Cols.BOOKINGTYPE, newbookingtypeid);
+							contentResolver.update(ContentDescriptor.Booking.CONTENT_URI, values, ContentDescriptor.Booking.Cols.BID+" = "+bookingID, null);
+						}
 					}
 	
 					@Override

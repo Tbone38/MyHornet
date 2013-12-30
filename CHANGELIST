@@ -11,11 +11,12 @@
 			Remove tasks icons from last visitor.
 			Fix crash when click on home button from Empty activity and member ship hold (bad parent activity in manifest)
 			Added emergency contact access details to member notes page.
+			Fixed the Date table, it now dynamically fills in days 1 month in advance as needed.
 		-TODO:
 			Add Booking Day swipe,
 			Log Sync Errors, and upload them somewhere?
-			Move Free ID's into a seperate table using the TableIDs as reference,
-			Add more triggers/remove the java code.
+			Move Free ID's into a seperate table using the TableIDs as reference, (have done members & bookings so far).
+			Add more triggers/remove the java code. (have done members & bookings so far).
 			YMCA REQUESTS:
 				-enrolled in,
 				-Roll Call.

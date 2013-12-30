@@ -17,6 +17,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -459,20 +460,26 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 	}
 	
 	private int insertBooking(ArrayList<String> input) {
-		int _id, result = 0;
+		int result = 0;
+		
 		String bookingid, arrival, resourceid, offset;
 		
-		cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.LASTUPDATE+" = 0",
-				null, null);
+		
+		cur = contentResolver.query(ContentDescriptor.FreeIds.CONTENT_URI, null, ContentDescriptor.FreeIds.Cols.TABLEID+" = "
+				+ContentDescriptor.TableIndex.Values.Booking.getKey(), null, null);
 		if (cur.getCount() == 0) {
 			//no free booking id's.
 			statusMessage = "No Free Booking ID's available. Consider ReSync-ing";
 			return 0;
 		}
 		cur.moveToFirst();
-		_id = cur.getInt(cur.getColumnIndex(ContentDescriptor.Booking.Cols.ID)); //this is where we put the booking.
-		bookingid = cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.BID));
+		
+		bookingid = cur.getString(cur.getColumnIndex(ContentDescriptor.FreeIds.Cols.ROWID));
+		
 		cur.close();
+		if (bookingid == null || Integer.parseInt(bookingid)<= 0) {
+			bookingid = "-1";
+		}
 		
 		ContentValues values = new ContentValues();
 		values.put(ContentDescriptor.Booking.Cols.STIME, input.get(2));
@@ -501,7 +508,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		offset = cur.getString(cur.getColumnIndex(ContentDescriptor.Resource.Cols.PERIOD));
 		values.put(ContentDescriptor.Booking.Cols.RID, resourceid);
 		values.put(ContentDescriptor.Booking.Cols.OFFSET, offset);
-		//values.put(ContentDescriptor.Booking.Cols.IS_UPLOADED, 0);
+		
 		cur.close();
 		int correctspace = get_mod(input.get(3), input.get(2),offset);
 		if (correctspace != 0) {
@@ -535,7 +542,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		
 		
 		cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, ContentDescriptor.Member.Cols.FNAME+" = ? AND "
-				+ContentDescriptor.Member.Cols.SNAME+" = ?",  //TODO:
+				+ContentDescriptor.Member.Cols.SNAME+" = ?",  //TODO: bad form, what if we have members with the same name.
 				new String[] {input.get(0), input.get(7)}, null);
 		if (cur.getCount()<= 0 ) {
 			//bugger?
@@ -551,7 +558,6 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		values.put(ContentDescriptor.Booking.Cols.SNAME, input.get(7));
 		
 		values.put(ContentDescriptor.Booking.Cols.RESULT, 10); //10 for booking ?
-		//values.put(ContentDescriptor.Booking.Cols.FNAME, input.get(0));
 		if (input.get(6) != null) {
 			values.put(ContentDescriptor.Booking.Cols.NOTES, input.get(6));
 		}
@@ -573,19 +579,18 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 			values.put(ContentDescriptor.Booking.Cols.MSID, msID);
 		}
 		
-		
-		
+		values.put(ContentDescriptor.Booking.Cols.DEVICESIGNUP, "t");
+		values.put(ContentDescriptor.Booking.Cols.BID, bookingid);
 		values.put(ContentDescriptor.Booking.Cols.ARRIVAL, Services.dateFormat(input.get(1), "dd MMM yyyy", "yyyyMMdd"));
 		System.out.print("\n\nCreating Booking at:"+System.currentTimeMillis());
 		values.put(ContentDescriptor.Booking.Cols.LASTUPDATE, System.currentTimeMillis()); //new Date().getTime();
-		result = contentResolver.update(ContentDescriptor.Booking.CONTENT_URI, values, ContentDescriptor.Booking.Cols.ID+" = ?", 
-				new String[] {String.valueOf(_id)});
 		
-		values = new ContentValues();
-		values.put(ContentDescriptor.PendingUploads.Cols.TABLEID, ContentDescriptor.TableIndex.Values.Booking.getKey());
-		values.put(ContentDescriptor.PendingUploads.Cols.ROWID, _id);
+		contentResolver.insert(ContentDescriptor.Booking.CONTENT_URI, values);
+		result = 1;
 		
-		contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, values);
+		contentResolver.delete(ContentDescriptor.FreeIds.CONTENT_URI, ContentDescriptor.FreeIds.Cols.TABLEID+" = "
+				+ContentDescriptor.TableIndex.Values.Booking.getKey()+" AND "+ContentDescriptor.FreeIds.Cols.ROWID+" = ?",
+				new String[] {bookingid});
 		
 		if (result == 0){ //no free BID's found.
 			statusMessage = "Insert Failed";
@@ -797,9 +802,15 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 			return result;
 	    }
 	 
-	 /* get hours and minutes as separate values, check that the minutes match,
+	 /** Not sure if this function is still needed, but this is what it does:
+	  *  
+	  * get hours and minutes as separate values,
 	  * convert hours into minutes. add the hours to the minutes
-	  * subtract start from end, then modular against the minutes period.
+	  * subtract start from end, then modular the difference against the minutes period.
+	  * 
+	  * I think it returns 0 when the values are correct.
+	  * 
+	  * There's probably an easier way...
 	  */
 	 private int get_mod(String etime, String stime, String period) {
 		 int result = -1;
@@ -811,15 +822,15 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		 period = period.replace(":", "");
 	
 		 iehour = Integer.parseInt(etime.substring(0, 2));
-		 iehour = (iehour * 60);
+		 iehour = (iehour * 60); //convert hours value to minutes
 		 iemin = Integer.parseInt(etime.substring(2, 4));
 		 ietime = (iehour + iemin);
 		 ishour = Integer.parseInt(stime.substring(0, 2));
-		 ishour = (ishour *60);
+		 ishour = (ishour *60); //convert hours value to minutes.
 		 ismin = Integer.parseInt(stime.substring(2, 4));
 		 istime = (ishour + ismin);
 		 
-		 iperiod = Integer.parseInt(period.substring(2, 4));
+		 iperiod = Integer.parseInt(period.substring(2, 4)); //get the periods minute value. This will probably break if the period is more than an hour. 
 		 result = (ietime-istime)%iperiod;
 		 
 		 /*if ((ismin == 15 || ismin == 45) && (iperiod == 30 || iperiod == 60)) {
