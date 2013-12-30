@@ -1,6 +1,7 @@
 package com.treshna.hornet;
 
 import com.treshna.hornet.ContentDescriptor.Booking;
+import com.treshna.hornet.ContentDescriptor.Class;
 import com.treshna.hornet.ContentDescriptor.FreeIds;
 import com.treshna.hornet.ContentDescriptor.Image;
 import com.treshna.hornet.ContentDescriptor.Member;
@@ -215,7 +216,9 @@ public class UpdateDatabase {
 				
 				public static final String SQL26="INSERT INTO "+Booking.NAME+" SELECT *, 'f' FROM tmp_"+Booking.NAME+";";
 				
-				public static final String SQL27= "CREATE TRIGGER "+Booking.Triggers.ON_INSERT+" AFTER INSERT ON "+Booking.NAME
+				public static final String SQL27="DROP TABLE tmp_"+Booking.NAME+";";
+				
+				public static final String SQL28= "CREATE TRIGGER "+Booking.Triggers.ON_INSERT+" AFTER INSERT ON "+Booking.NAME
 						+" FOR EACH ROW WHEN new."+Booking.Cols.BID+" > 0 AND new."+Booking.Cols.DEVICESIGNUP+"= 't' "
 						+"BEGIN "
 							+"INSERT OR REPLACE INTO "+PendingUploads.NAME
@@ -223,7 +226,7 @@ public class UpdateDatabase {
 							+ " VALUES (new."+Booking.Cols.ID+", "+TableIndex.Values.Booking.getKey()+");"
 						+" END; ";
 				
-				public static final String SQL28 ="CREATE TRIGGER "+Booking.Triggers.ON_UPDATE+" AFTER UPDATE ON "+Booking.NAME
+				public static final String SQL29 ="CREATE TRIGGER "+Booking.Triggers.ON_UPDATE+" AFTER UPDATE ON "+Booking.NAME
 						+" FOR EACH ROW WHEN new."+Booking.Cols.BID+" > 0 "
 								//do we need to check for actual changes, 
 								//or just assume that the update clause changed relevant info?
@@ -234,7 +237,7 @@ public class UpdateDatabase {
 							+" VALUES (new."+Booking.Cols.ID+", "+TableIndex.Values.Booking.getKey()+");"
 						+"END;";
 				
-				public static final String SQL29= "CREATE TRIGGER "+Booking.Triggers.ON_UPDATE_BID+" AFTER UPDATE ON "+Booking.NAME
+				public static final String SQL30= "CREATE TRIGGER "+Booking.Triggers.ON_UPDATE_BID+" AFTER UPDATE ON "+Booking.NAME
 						+" FOR EACH ROW WHEN old."+Booking.Cols.BID+" <= 0 AND new."+Booking.Cols.BID+" > 0 "
 						+"BEGIN "
 							+"INSERT OR REPLACE INTO "+PendingUploads.NAME
@@ -242,5 +245,33 @@ public class UpdateDatabase {
 							+ " VALUES (new."+Booking.Cols.ID+", "+TableIndex.Values.Booking.getKey()+");"
 						+"END;";
 				
-	}
+				public static final String SQL31= "ALTER TABLE "+Class.NAME+" RENAME TO tmp_"+Class.NAME+";";
+				
+				public static final String SQL32="CREATE TABLE "+Class.NAME+" ("+Class.Cols._ID+" INTEGER PRIMARY KEY, "
+						+Class.Cols.CID+" INTEGER, "+Class.Cols.NAME+" TEXT, "
+						+Class.Cols.SDATE+" INTEGER, "+Class.Cols.FREQ+" TEXT, "
+						+Class.Cols.STIME+" TEXT, "+Class.Cols.ETIME+" TEXT, "
+						+Class.Cols.MAX_ST+" INTEGER, "+Class.Cols.RID+" INTEGER, "
+						+Class.Cols.LASTUPDATE+" NUMERIC, "+Class.Cols.ONLINE+" INTEGER DEFAULT 1,"
+						+Class.Cols.DESC+" TEXT, "+Class.Cols.DEVICESIGNUP+" TEXT DEFAULT 'f' "
+						+");";
+				public static final String SQL33="INSERT INTO "+Class.NAME+" SELECT *, 'f' FROM tmp_"+Class.NAME+";";
+				public static final String SQL34="DROP TABLE tmp_"+Class.NAME+";";
+				
+				public static final String SQL35= "CREATE TRIGGER "+Class.Triggers.ON_INSERT+" AFTER INSERT ON "+Class.NAME
+						+" FOR EACH ROW WHEN new."+Class.Cols.DEVICESIGNUP+" = 't' "
+						+"BEGIN "
+							+"INSERT OR REPLACE INTO "+PendingUploads.NAME
+							+ " ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
+							+ " VALUES (new."+Class.Cols._ID+", "+TableIndex.Values.Class.getKey()+");"
+						+" END; ";
+				
+				/*public static final String SQL36= "CREATE TRIGGER "+Class.Triggers.ON_UPDATE_CID+" AFTER UPDATE ON "+Class.NAME
+						+" FOR EACH ROW WHEN old."+Class.Cols.CID+" <= 0 AND new."+Class.Cols.CID+" > 0 "
+						+"BEGIN "
+							+"INSERT OR REPLACE INTO "+PendingUploads.NAME
+							+ " ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
+							+ " VALUES (new."+Class.Cols._ID+", "+TableIndex.Values.Class.getKey()+");"
+						+"END;";*/
+	}	
 }

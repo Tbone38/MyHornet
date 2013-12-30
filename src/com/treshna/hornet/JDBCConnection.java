@@ -530,11 +530,10 @@ public class JDBCConnection {
     		cal.setTime(date);
     		cal.add(Calendar.DATE, 1);
     		enddate = Services.dateFormat(cal.getTime().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyy-MM-dd");
-    		freq = "0 day";
+    		freq = "1 day";
     	} else {
     		enddate = null;
     	}
-    	
     	pStatement = con.prepareStatement("INSERT INTO recurrence (freq, startdate, enddate, starttime, endtime,"
     			+ "resourceid, classid ) VALUES (?::INTERVAL, ?::DATE, ?::DATE, ?::TIME WITHOUT TIME ZONE, "
     			+ "?::TIME WITHOUT TIME ZONE, ?::INTEGER , ? );");
@@ -554,8 +553,10 @@ public class JDBCConnection {
     		pStatement.setInt(6, rid);
     	}
     	pStatement.setInt(7, cid);
+    	Log.v(TAG, "SQL:"+pStatement.toString());
+    	pStatement.executeUpdate();
     	
-    	return pStatement.executeUpdate();
+    	return 0;
     }
     /**
      * DEPRECATED! use the internal idcard table instead.

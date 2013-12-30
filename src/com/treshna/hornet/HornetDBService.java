@@ -159,7 +159,8 @@ public class HornetDBService extends Service {
 			//do uploads
 			uploadMemberNotes();
 			uploadImage();
-			uploadClass();
+			int classcount = uploadClass();
+			Log.d(TAG, "Uploaded "+classcount+" Classes");
 			uploadBookings();
 			uploadMember();
 			uploadMembership();
@@ -1282,6 +1283,7 @@ public class HornetDBService extends Service {
 	   	  	updateOpenHours();
 	   	  	
     	}
+    	cur.close();
     	if (!openConnection()) {
     		return -1; //connection failed;
     	}
@@ -1890,7 +1892,7 @@ public class HornetDBService extends Service {
     		String name, freq, sdate, stime, etime;
     		int cid, rid, max_st, rowid;
     		ResultSet rs;
-    		
+    		Log.v(TAG, "getting first Upload");
     		cur = contentResolver.query(ContentDescriptor.Class.CONTENT_URI, null, ContentDescriptor.Class.Cols._ID+" = ?",
     				new String[] {idlist.get(i)}, null);
     		
@@ -1917,32 +1919,43 @@ public class HornetDBService extends Service {
     		
     		cur.close();
     		
+    		Log.v(TAG, "Uploading Class Now");
     		try {
     			rs = connection.uploadClass(name, max_st);
     			rs.next(); //move to first
         		cid = rs.getInt(1);
+        		rs.close();
     		} catch (SQLException e) {
     			//error occured with sql on upload class.
     			e.printStackTrace();
     			statusMessage = e.getLocalizedMessage();
     			return -2;
     		}
+    		
     		connection.closePreparedStatement();
     		
+    		Log.v(TAG, "Uploading Recurrence Now");
     		try {
-    			connection.uploadRecurrence(freq, sdate, stime, etime, cid, rid);
+    			int a = connection.uploadRecurrence(freq, sdate, stime, etime, cid, rid);
+    			Log.v(TAG, "Recurrence Result:"+a);
     		} catch (SQLException e) {
     			//error occured with sql on upload recurring;
+    			Log.v(TAG, "ERROR OCCURED");
     			e.printStackTrace();
     			statusMessage = e.getLocalizedMessage();
     			return -3;
     		}
-    		
-    		Log.d(TAG, "CLASS INSERTION SUCCESSFULL, DELETING.");
+    		Log.v(TAG, "Doing Non-Networky Stuff");
     		//if we got here the inserts must've been successful. so remove the pending upload.
     		contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, ContentDescriptor.PendingUploads.Cols.TABLEID+" = ? AND "
     				+ContentDescriptor.PendingUploads.Cols.ROWID+" = ?", new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Class.getKey()),
     					String.valueOf(rowid)});
+    		//and update the class with it's id.
+    		ContentValues values = new ContentValues();
+    		values.put(ContentDescriptor.Class.Cols.CID, cid);
+    		values.put(ContentDescriptor.Class.Cols.DEVICESIGNUP, "f");
+    		contentResolver.update(ContentDescriptor.Class.CONTENT_URI, values, ContentDescriptor.Class.Cols._ID+" = ?",
+    				new String [] {String.valueOf(rowid)});
     		
     		result += 1;
     	}

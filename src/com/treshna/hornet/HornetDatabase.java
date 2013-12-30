@@ -350,6 +350,20 @@ public class HornetDatabase extends SQLiteOpenHelper {
 			db.execSQL(UpdateDatabase.NinetyThree.SQL28);
 			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL29);
 			db.execSQL(UpdateDatabase.NinetyThree.SQL29);
+			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL30);
+			db.execSQL(UpdateDatabase.NinetyThree.SQL30);
+			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL31);
+			db.execSQL(UpdateDatabase.NinetyThree.SQL31);
+			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL32);
+			db.execSQL(UpdateDatabase.NinetyThree.SQL32);
+			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL33);
+			db.execSQL(UpdateDatabase.NinetyThree.SQL33);
+			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL34);
+			db.execSQL(UpdateDatabase.NinetyThree.SQL34);
+			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL35);
+			db.execSQL(UpdateDatabase.NinetyThree.SQL35);
+			/*Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL36);
+			db.execSQL(UpdateDatabase.NinetyThree.SQL36);*/
 			db.setTransactionSuccessful();
 		} finally {
 			db.endTransaction();

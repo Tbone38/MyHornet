@@ -556,6 +556,13 @@ public class ContentDescriptor {
 	 			public static final String MEMBERSHIP_ID = "membership_id";
 	 		}
 	 		
+	 		public static class Triggers {
+	 			public static final String ON_INSERT = "membership_insert";
+	 			public static final String ON_UPDATE_MID = "membershipid_update";
+	 			public static final String ON_UPDATE = "membership_update";
+	 			public static final String ON_DELETE = "membership_delete"; //unused
+	 		}
+	 		
 	 		public static class Cols implements BaseColumns {
 	 			public static final String MID = "memberID";
 	 			public static final String MSID="membershipid";
@@ -669,6 +676,12 @@ public class ContentDescriptor {
 	 			public static final String RESOURCE_ID = "class_resource_id";
 	 		}
 	 		
+	 		public static class Triggers {
+	 			public static final String ON_INSERT = "class_insert";
+	 			public static final String ON_UPDATE_CID = "classid_update";
+	 			public static final String ON_DELETE = "class_delete"; //unused
+	 		}
+	 		
 	 		public static class Cols implements BaseColumns {
 	 			public static final String CID = "cid";
 	 			public static final String NAME = "name";
@@ -683,6 +696,7 @@ public class ContentDescriptor {
 	 			public static final String ETIME = "endtime";
 	 			public static final String RID = "resourceid";
 	 			public static final String LASTUPDATE = "lastupdate";
+	 			public static final String DEVICESIGNUP = "devicesignup";
 	 		}
 	 	}
 	 	
