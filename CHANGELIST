@@ -14,8 +14,8 @@
 			Fixed the Date table, it now dynamically fills in days 1 month in advance as needed.
 			Moved Free ID's into a seperate table using the TableIDs as reference.
 			Added triggers on tables for insertion/update.
+			Added Booking Day swipe sorta (SEE KNOWN BUGS)
 		-TODO:
-			Add Booking Day swipe,
 			Log Sync Errors, and upload them somewhere?
 			YMCA REQUESTS:
 				-enrolled in,
@@ -24,3 +24,5 @@
 		-KNOWN BUGS/TO FIX:
 			-fix Get Card for new cards.
 			-manual checkin might hard-crash if the door is null (why wasn't there any doors?)
+			-Booking Swipe page has bad date handling (when a page that isn't #2 changes the date, 
+				the code assumes it was #2 and adjusts the dates for the other pages accordingly.)

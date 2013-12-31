@@ -604,16 +604,11 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
 			String resourceid = (String) v.getTag();
 			Services.setPreference(getActivity(), "resourcelist", resourceid);
 			
-			Fragment f = new BookingsResourceFragment();
+			//Fragment f = new BookingsResourceFragment();
+			Fragment f = new BookingsSlideFragment();
 			Bundle bdl = new Bundle(2);
-			SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd", Locale.US);
-			Date date;
-			try {
-				date = format.parse(selectedDate);
-			} catch (ParseException e) {
-				date = new Date();
-			}
-        	bdl.putLong("date", date.getTime());
+			
+        	bdl.putString("booking_dates", selectedDate);
         	bdl.putBoolean("hasOverview", true);
         	f.setArguments(bdl);
 			((BookingsListSuperFragment)this.getParentFragment()).changeFragment(f, "ResourceFragment");

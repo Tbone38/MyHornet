@@ -71,9 +71,10 @@ public class BookingsListSuperFragment extends Fragment {
     		ft.addToBackStack(null);
     		cFragment = f;
         } else {
-        	Fragment f = new BookingsResourceFragment();
+        	//Fragment f = new BookingsResourceFragment();
+        	Fragment f = new BookingsSlideFragment();
         	Bundle bdl = new Bundle(2);
-        	bdl.putLong("date", new Date().getTime());
+        	bdl.putLong("date", new Date().getTime()); //TODO: change this to putString("booking_dates", yyyyMMdd);
         	bdl.putBoolean("hasOverview", false);
         	f.setArguments(bdl);
         	ft.replace(R.id.empty_layout, f, "ResourceFragment");

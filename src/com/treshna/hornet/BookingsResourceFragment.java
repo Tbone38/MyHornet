@@ -34,6 +34,7 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
     private static final String TAG = "BookingsResourceFragment";
     private View view;
     private String selectedDate;
+    private int selectedResource;
     private LoaderManager mLoader;
     private BookingsListAdapter mAdapter;
     private ContentResolver mResolver;
@@ -45,16 +46,14 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "ON CREATE");
         Services.setContext(getActivity());
         mLoader = getLoaderManager();
         mResolver = this.getActivity().getContentResolver();
-        selectedDate = Services.getAppSettings(getActivity(), "bookings_date");
+        selectedDate = this.getArguments().getString("bookings_date");
     	if (Integer.parseInt(selectedDate) == -1) {
     		selectedDate = Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");
     	}
-        /*selectedDate = Services.dateFormat(new Date(this.getArguments().getLong("date")).toString(), 
-        		"EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");*/
+    	Log.w(TAG, "Selected Date OnCreate:"+selectedDate);
         hasOverview = this.getArguments().getBoolean("hasOverview");
     }
 	
@@ -64,7 +63,6 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-		Log.d(TAG, "ON CREATE VIEW");
 		try {
 			view = inflater.inflate(R.layout.booking_resource, container, false);
 		} catch (ClassCastException e) {
@@ -74,19 +72,12 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
 		setupSpinner();
 		setupList();
 		
-		Log.d(TAG, "FINSHED ON CREATE VIEW");
-		try {
-			return view;
-		} catch (ClassCastException e) {
-			Log.e(TAG, "ERROR RETURNING FROM ON CREATE VIEW", e);
-		}
-		return null;
+		return view;
 	}
 	
 	
 	@SuppressLint("NewApi")
 	private void setupCalendar(){
-		Log.d(TAG, "SETUP CALENDAR");
 		RelativeLayout calendarwrapper = (RelativeLayout) view.findViewById(R.id.booking_resource_calendar_wrapper);
 		
 		mDatePicker = new DatePickerFragment();
@@ -174,19 +165,37 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
 		}
 	}
 	
-	private void setupSpinner() {
-		Log.d(TAG, "SETTING UP SPINNER");
-		mResolver = getActivity().getContentResolver();
-		
+	private void updateSpinner() {
 		Spinner name = (Spinner) view.findViewById(R.id.booking_resource_resource_name);
         cur = mResolver.query(ContentDescriptor.Resource.CONTENT_URI, null, null, null, null);
-        String rid = Services.getAppSettings(getActivity(), "resourcelist");
+        //String rid = Services.getAppSettings(getActivity(), "resourcelist");
         int pos= 0, i = 0;
         
 		ArrayList<String> resourcelist = new ArrayList<String>();
 		while (cur.moveToNext()) {
 			resourcelist.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Resource.Cols.NAME)));
-			if (cur.getString(cur.getColumnIndex(ContentDescriptor.Resource.Cols.ID)).compareTo(rid) ==0){
+			if (cur.getInt(cur.getColumnIndex(ContentDescriptor.Resource.Cols.ID)) == selectedResource){
+				pos = i;
+			}
+			i +=1;
+		}
+		cur.close();
+        
+        name.setSelection(pos);
+	}
+	
+	private void setupSpinner() {
+		mResolver = getActivity().getContentResolver();
+		
+		Spinner name = (Spinner) view.findViewById(R.id.booking_resource_resource_name);
+        cur = mResolver.query(ContentDescriptor.Resource.CONTENT_URI, null, null, null, null);
+        //String rid = Services.getAppSettings(getActivity(), "resourcelist");
+        int pos= 0, i = 0;
+        
+		ArrayList<String> resourcelist = new ArrayList<String>();
+		while (cur.moveToNext()) {
+			resourcelist.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Resource.Cols.NAME)));
+			if (cur.getInt(cur.getColumnIndex(ContentDescriptor.Resource.Cols.ID)) == selectedResource){
 				pos = i;
 			}
 			i +=1;
@@ -207,9 +216,9 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
 					}
 					cur = mResolver.query(ContentDescriptor.Resource.CONTENT_URI, null, null, null, null);
 					cur.moveToPosition(pos);
-					resourceid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Resource.Cols.ID));
+					selectedResource = cur.getInt(cur.getColumnIndex(ContentDescriptor.Resource.Cols.ID));
 					
-					updateSelection(resourceid);
+					updateSelection();
 				}
 
 				@Override
@@ -219,12 +228,10 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
 		cur.close();
 	}
 	
-	private void updateSelection(int value){
-		Log.d(TAG, "UPDATING SELECTED");
-			if (value >= 0) {
-		    	Services.setPreference(getActivity(), "resourcelist", String.valueOf(value));
-			}
+	private void updateSelection(){
+			Services.setPreference(getActivity(), "resourcelist", String.valueOf(selectedResource));
 			updateDate();
+			
 		 	//just change the cursor.
 		 	mLoader.restartLoader(0, null, this);	
 		 	mAdapter.updateDate(selectedDate);
@@ -233,11 +240,13 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
 	@Override
 	public void onResume() {
 		super.onResume();
-		mLoader.restartLoader(0, null, this);
+		//selectedDate = Services.getAppSettings(getActivity(), "bookings_date");
+		selectedResource = Integer.parseInt(Services.getAppSettings(getActivity(), "resourcelist"));
+		updateSelection();
+		updateSpinner();
 	}
 	
 	private void setupList() {
-		Log.d(TAG, "SETTING UP LIST");
 		String[] from = {};
        	int[] to = {};
        	ListView list = (ListView) view.findViewById(android.R.id.list);
@@ -251,10 +260,9 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
-		Log.d(TAG, "ON CREATE LOADER");
 		if (getActivity() != null) {
-			String rid = Services.getAppSettings(getActivity(), "resourcelist");
-			String selection = "bt."+ContentDescriptor.BookingTime.Cols.RID+" = "+rid+" AND "
+			//String rid = Services.getAppSettings(getActivity(), "resourcelist");
+			String selection = "bt."+ContentDescriptor.BookingTime.Cols.RID+" = "+selectedResource+" AND "
 	       			+"bt."+ContentDescriptor.BookingTime.Cols.ARRIVAL+" = "+selectedDate;
 			String[] where = {selectedDate, ContentDescriptor.Booking.Cols.RESULT+" > 5 ", 
 	       			" AND b."+ContentDescriptor.Booking.Cols.PARENTID+" <= 0"};
@@ -267,19 +275,12 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-		Log.d(TAG, "ON LOAD FINISHED");
-		try {
-			mAdapter.changeCursor(cursor);		
-			mAdapter.notifyDataSetChanged();
-		} catch (Exception e) {
-			Log.e(TAG, "Error in Load Finished", e);
-		}
-		Log.d(TAG, "FINISHED ON LOAD FINISHED");
+		mAdapter.changeCursor(cursor);		
+		mAdapter.notifyDataSetChanged();
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		Log.d(TAG, "ON LOADER RESET");
 		mAdapter.changeCursor(null);
 		mAdapter.notifyDataSetChanged();
 	}
@@ -289,7 +290,7 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
 		selectedDate = date;
 		selectedDate = Services.dateFormat(selectedDate, "yyyy MM dd", "yyyyMMdd");
 		Services.setPreference(getActivity(), "bookings_date", selectedDate);
-		updateSelection(-1);
+		updateSelection();
 	}
 
 	@Override
