@@ -64,9 +64,10 @@ public class BookingsSlideFragment extends Fragment {
     /**
      * Known Issues: when the date changes on a fragment, all the dates change.
      * However this code assume the middle fragment is the point of origin, if it's not the point of origin
-     * (for the date change) then some of the other pages will get the same date.
+     * (for the date change) then some of the other pages will get the same date. (switch-case: 2)
      * 
-     * How do I fix?
+     * To fix I could reset/redraw all the fragments, moving the user back to fragment 2?
+     * 
      * @param position
      * @return
      */
