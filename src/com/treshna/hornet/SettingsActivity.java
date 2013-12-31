@@ -301,16 +301,29 @@ public class SettingsActivity extends PreferenceActivity {
 
 		Preference copydb = new Preference(this);
 		copydb.setKey("copydb");
-		copydb.setTitle("Copy Database");
+		copydb.setTitle("Backup Database");
 		copydb.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 			
 			@Override
 			public boolean onPreferenceClick(Preference preference) {
 				FileHandler fh = new FileHandler(Services.getContext());
-				fh.copyDatabase();
+				fh.copyDatabase(false);
 				return true;
 		}});
 		debug.addPreference(copydb);
+		
+		Preference restoredb = new Preference(this);
+		restoredb.setKey("restoredb");
+		restoredb.setTitle("Restore Backup");
+		restoredb.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+			
+			@Override
+			public boolean onPreferenceClick(Preference preference) {
+				FileHandler fh = new FileHandler(Services.getContext());
+				fh.copyDatabase(true);
+				return true;
+		}});
+		debug.addPreference(restoredb);
 	}
 	
 	private static void clearData(){

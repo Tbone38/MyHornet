@@ -226,31 +226,21 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 		values.put(ContentDescriptor.MemberNotes.Cols.MID, memberID);
 		values.put(ContentDescriptor.MemberNotes.Cols.NOTES, note);
 		values.put(ContentDescriptor.MemberNotes.Cols.OCCURRED, format.format(new Date()));
+		values.put(ContentDescriptor.MemberNotes.Cols.DEVICESIGNUP, "t");
 		
-		cur = contentResolver.query(ContentDescriptor.MemberNotes.CONTENT_URI, null, ContentDescriptor.MemberNotes.Cols.MID+" = 0",
-				null, null);
+		cur = contentResolver.query(ContentDescriptor.FreeIds.CONTENT_URI, null, ContentDescriptor.FreeIds.Cols.TABLEID+" = "
+				+ContentDescriptor.TableIndex.Values.MemberNotes.getKey(), null, null);
 		if (!cur.moveToFirst()) {
 			values.put(ContentDescriptor.MemberNotes.Cols.MNID, 0);
-			
-			contentResolver.insert(ContentDescriptor.MemberNotes.CONTENT_URI, values);
 		} else {
-			int rowid = cur.getInt(cur.getColumnIndex(ContentDescriptor.MemberNotes.Cols._ID));
-			contentResolver.update(ContentDescriptor.MemberNotes.CONTENT_URI, values, ContentDescriptor.MemberNotes.Cols.MNID+" = ?",
-					new String[] {cur.getString(cur.getColumnIndex(ContentDescriptor.MemberNotes.Cols.MNID))});
-			
-			values = new ContentValues();
-			values.put(ContentDescriptor.PendingUploads.Cols.TABLEID, 
-					ContentDescriptor.TableIndex.Values.MemberNotes.getKey());
-			values.put(ContentDescriptor.PendingUploads.Cols.ROWID, rowid);
-
-			contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, values);
+			values.put(ContentDescriptor.MemberNotes.Cols.MNID, 
+					cur.getInt(cur.getColumnIndex(ContentDescriptor.FreeIds.Cols.ROWID)));
 		}
+		contentResolver.insert(ContentDescriptor.MemberNotes.CONTENT_URI, values);
 		cur.close();
 		
 		EditText note_view = (EditText) view.findViewById(R.id.addnote);
 		note_view.setText("");
-		//why aren't either of these working ?
-		//should we try redrawing the fragment ?
 		setupView();
 	}
 	

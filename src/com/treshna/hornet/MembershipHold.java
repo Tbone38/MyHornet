@@ -239,28 +239,20 @@ public class MembershipHold extends ActionBarActivity implements OnClickListener
 		values.put(ContentDescriptor.MembershipSuspend.Cols.REASON, reason.getEditableText().toString());
 		
 		ContentResolver contentResolver = this.getContentResolver();
-		Cursor cur = contentResolver.query(ContentDescriptor.MembershipSuspend.CONTENT_URI, null, ContentDescriptor.MembershipSuspend.Cols.MID+" = 0",
-				null, null);
+		/*Cursor cur = contentResolver.query(ContentDescriptor.MembershipSuspend.CONTENT_URI, null, ContentDescriptor.MembershipSuspend.Cols.MID+" = 0",
+				null, null);*/
+		Cursor cur = contentResolver.query(ContentDescriptor.FreeIds.CONTENT_URI, null, ContentDescriptor.FreeIds.Cols.TABLEID+" = "
+				+ContentDescriptor.TableIndex.Values.MembershipSuspend.getKey(), null, null);
 		int sid;
 		if (cur.getCount() <= 0) { 	//insert!
 			sid = -1; 
-			values.put(ContentDescriptor.MembershipSuspend.Cols.SID, sid);
-			contentResolver.insert(ContentDescriptor.MembershipSuspend.CONTENT_URI, values);
-			//don't update the pending uploads table, we'll do that when we get a real sid.
 		} else {					//update!
 			cur.moveToFirst();
-			sid = cur.getInt(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.SID));
-			contentResolver.update(ContentDescriptor.MembershipSuspend.CONTENT_URI, values, 
-					ContentDescriptor.MembershipSuspend.Cols.SID+" = ?", new String[] {String.valueOf(sid)});
-			
-			int rowid = cur.getInt(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols._ID));
-			
-			values = new ContentValues();
-			values.put(ContentDescriptor.PendingUploads.Cols.TABLEID, 
-					ContentDescriptor.TableIndex.Values.MembershipSuspend.getKey());
-			values.put(ContentDescriptor.PendingUploads.Cols.ROWID, rowid);
-			contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, values);
+			sid = cur.getInt(cur.getColumnIndex(ContentDescriptor.FreeIds.Cols.ROWID));
 		}
+		values.put(ContentDescriptor.MembershipSuspend.Cols.SID, sid);
+		values.put(ContentDescriptor.MembershipSuspend.Cols.DEVICESIGNUP, "t");
+		contentResolver.insert(ContentDescriptor.MembershipSuspend.CONTENT_URI, values);
 		//success! we should que an upload then leave the page.
 		Intent suspend = new Intent(this, HornetDBService.class);
 		suspend.putExtra(Services.Statics.KEY, Services.Statics.FREQUENT_SYNC);

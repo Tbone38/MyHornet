@@ -123,7 +123,7 @@ public class JDBCConnection {
     			+ ") VALUES ('1|'||encode(?,'base64'), ?, ?, ?, ?, ?);");
     	pStatement.setBytes(1, image);
     	pStatement.setInt(2, memberId);
-    	pStatement.setTimestamp(3, new Timestamp(date.getTime()));
+    	pStatement.setTimestamp(3, new Timestamp(date.getTime())); //this isn't inserting correct timestamps.
     	pStatement.setTimestamp(4, new Timestamp(date.getTime()));
     	pStatement.setString(5, description);
     	pStatement.setBoolean(6, isProfile);

@@ -127,14 +127,14 @@ public class CameraWrapper extends Activity {
          System.out.print("\n\n**Writing "+imgCount+"_"+id);
          fileHandler.writeFile(byteArray, imgCount+"_"+id);
          
-         val = new ContentValues();
+         /*val = new ContentValues();
          val.put(ContentDescriptor.PendingUploads.Cols.TABLEID, ContentDescriptor.TableIndex.Values.Image.getKey());
          val.put(ContentDescriptor.PendingUploads.Cols.ROWID, rowid);
-         contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, val);
-         //System.out.println("Updating Image Table");
+         contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, val);*/
+
          contentResolver.notifyChange(ContentDescriptor.Image.CONTENT_URI, null);
          Intent intent = new Intent(this, HornetDBService.class);
-         //intent.putExtra(Services.Statics.KEY,Services.Statics.UPLOAD);
+
          intent.putExtra(Services.Statics.KEY, Services.Statics.FREQUENT_SYNC);
          startService(intent);
          finish();

@@ -848,7 +848,8 @@ public class HornetContentProvider extends ContentProvider {
             	}
             	else {
             		Log.e("Unsupported Operation", "DELETE FROM TABLE: "+tablename, 
-            				new UnsupportedOperationException("DELETE FROM TABLE: "+tablename+" NOT SUPPORTED."));            		
+            				new UnsupportedOperationException("DELETE FROM TABLE: "+tablename+" NOT SUPPORTED.")); 
+            		return 0;
             	}
             		
             }

@@ -1,5 +1,8 @@
 package com.treshna.hornet;
 
+import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
+
 import com.treshna.hornet.ContentDescriptor.Booking;
 import com.treshna.hornet.ContentDescriptor.Class;
 import com.treshna.hornet.ContentDescriptor.FreeIds;
@@ -84,8 +87,8 @@ public class UpdateDatabase {
 				
 		public static final String SQL10 ="INSERT INTO "+FreeIds.NAME+" ("+FreeIds.Cols.ROWID+", "+FreeIds.Cols.TABLEID+") "
 						+ "SELECT "+MembershipSuspend.Cols.SID+", "+TableIndex.Values.MembershipSuspend.getKey()
-						+" FROM "+MembershipSuspend.NAME+" WHERE "+MembershipSuspend.Cols.MID+" = 0;";
-		public static final String SQL11 ="DELETE FROM "+MembershipSuspend.NAME+" WHERE "+MembershipSuspend.Cols.MID+" = 0;";
+						+" FROM "+MembershipSuspend.Old.NAME+" WHERE "+MembershipSuspend.Cols.MID+" = 0;";
+		public static final String SQL11 ="DELETE FROM "+MembershipSuspend.Old.NAME+" WHERE "+MembershipSuspend.Cols.MID+" <= 0;";
 				
 		public static final String SQL12 ="INSERT INTO "+FreeIds.NAME+" ("+FreeIds.Cols.ROWID+", "+FreeIds.Cols.TABLEID+") "
 						+ "SELECT "+Membership.Cols.MSID+", "+TableIndex.Values.Membership.getKey()
@@ -164,114 +167,323 @@ public class UpdateDatabase {
 					+Member.Cols.CITY+", "+Member.Cols.POSTAL
 				+" FROM tmp_"+Member.NAME+";";
 				
-				public static final String SQL20 =" DROP TABLE tmp_"+Member.NAME+";"
-				;
+		public static final String SQL20 =" DROP TABLE tmp_"+Member.NAME+";"
+		;
+
+		public static final String SQL21 ="CREATE TRIGGER "+Member.Triggers.ON_INSERT+" AFTER INSERT ON "+Member.NAME
+				+" FOR EACH ROW WHEN new."+Member.Cols.MID+" > 0 AND new."+Member.Cols.DEVICESIGNUP+" = 't' " 
+				//how do I tell the difference between a member added from the device, and one that's just been downloaded?
+				+" BEGIN "
+					+"INSERT OR REPLACE INTO "+PendingUploads.NAME
+					+ " ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
+					+ " VALUES (new."+Member.Cols._ID+", "+TableIndex.Values.Member.getKey()+");"
+				+" END; ";
+				
+		public static final String SQL22 ="CREATE TRIGGER "+Member.Triggers.ON_UPDATE+" AFTER UPDATE ON "+Member.NAME
+				+" FOR EACH ROW WHEN new."+Member.Cols.MID+" > 0 "
+						+ "AND old."+Member.Cols.CARDNO+" != new."+Member.Cols.CARDNO
+				//Add OR statements here to allow for other changes.
+				+" BEGIN "
+					+"INSERT OR REPLACE INTO "+PendingUpdates.NAME
+					+" ("+PendingUpdates.Cols.ROWID+", "+PendingUpdates.Cols.TABLEID+")"
+					+" VALUES (new."+Member.Cols._ID+", "+TableIndex.Values.Member.getKey()+");"
+				+"END;";
 		
-				public static final String SQL21 ="CREATE TRIGGER "+Member.Triggers.ON_INSERT+" AFTER INSERT ON "+Member.NAME
-						+" FOR EACH ROW WHEN new."+Member.Cols.MID+" > 0 AND new."+Member.Cols.DEVICESIGNUP+" = 't' " 
-						//how do I tell the difference between a member added from the device, and one that's just been downloaded?
-						+" BEGIN "
-							+"INSERT OR REPLACE INTO "+PendingUploads.NAME
-							+ " ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
-							+ " VALUES (new."+Member.Cols._ID+", "+TableIndex.Values.Member.getKey()+");"
-						+" END; ";
-						
-				public static final String SQL22 ="CREATE TRIGGER "+Member.Triggers.ON_UPDATE+" AFTER UPDATE ON "+Member.NAME
-						+" FOR EACH ROW WHEN new."+Member.Cols.MID+" > 0 "
-								+ "AND old."+Member.Cols.CARDNO+" != new."+Member.Cols.CARDNO
-						//Add OR statements here to allow for other changes.
-						+" BEGIN "
-							+"INSERT OR REPLACE INTO "+PendingUpdates.NAME
-							+" ("+PendingUpdates.Cols.ROWID+", "+PendingUpdates.Cols.TABLEID+")"
-							+" VALUES (new."+Member.Cols._ID+", "+TableIndex.Values.Member.getKey()+");"
-						+"END;";
-				
-				public static final String SQL23= "CREATE TRIGGER "+Member.Triggers.ON_UPDATE_MID+" AFTER UPDATE ON "+Member.NAME
-						+" FOR EACH ROW WHEN old."+Member.Cols.MID+" <= 0 AND new."+Member.Cols.MID+" > 0 "
-						+"BEGIN "
-							+"INSERT OR REPLACE INTO "+PendingUploads.NAME
-							+ " ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
-							+ " VALUES (new."+Member.Cols._ID+", "+TableIndex.Values.Member.getKey()+");"
-						+"END;";
-				
-			//DO MORE TRIGGERS
-				public static final String SQL24 ="ALTER TABLE "+Booking.NAME+" RENAME TO tmp_"+Booking.NAME+";";
-				
-				public static final String SQL25="CREATE TABLE "+Booking.NAME+" ("+Booking.Cols.ID+" INTEGER PRIMARY KEY, "
-						+Booking.Cols.FNAME+" TEXT, "+Booking.Cols.SNAME+" TEXT, "
-						+Booking.Cols.BOOKING+" TEXT, "
-						+Booking.Cols.STIMEID+" INTEGER, "+Booking.Cols.ETIMEID+" INTEGER, "
-						+Booking.Cols.BID+" TEXT, "+Booking.Cols.BOOKINGTYPE+" INTEGER, "
-						+Booking.Cols.ETIME+" TEXT, "+Booking.Cols.NOTES+" TEXT, "
-						+Booking.Cols.RESULT+" INTEGER, "+Booking.Cols.MID+" INTEGER, "
-						+Booking.Cols.LASTUPDATE+" NUMERIC, "+Booking.Cols.STIME+" TEXT, "
-						+Booking.Cols.MSID+" INTEGER, "+Booking.Cols.CHECKIN+" NUMERIC, " //timestamp ?
-						+Booking.Cols.RID+" INTEGER, "+Booking.Cols.ARRIVAL+" INTEGER, "
-						+Booking.Cols.OFFSET+" TEXT, "
-						+Booking.Cols.CLASSID+" INTEGER DEFAULT 0, "+Booking.Cols.PARENTID+" INTEGER DEFAULT 0, "
-						+Booking.Cols.DEVICESIGNUP+" TEXT DEFAULT 'f', "
-						+"FOREIGN KEY ("+Booking.Cols.STIMEID
-						+") REFERENCES "+ContentDescriptor.Time.NAME+" ("+ContentDescriptor.Time.Cols.ID+") "
-						+");";
-				
-				public static final String SQL26="INSERT INTO "+Booking.NAME+" SELECT *, 'f' FROM tmp_"+Booking.NAME+";";
-				
-				public static final String SQL27="DROP TABLE tmp_"+Booking.NAME+";";
-				
-				public static final String SQL28= "CREATE TRIGGER "+Booking.Triggers.ON_INSERT+" AFTER INSERT ON "+Booking.NAME
-						+" FOR EACH ROW WHEN new."+Booking.Cols.BID+" > 0 AND new."+Booking.Cols.DEVICESIGNUP+"= 't' "
-						+"BEGIN "
-							+"INSERT OR REPLACE INTO "+PendingUploads.NAME
-							+ " ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
-							+ " VALUES (new."+Booking.Cols.ID+", "+TableIndex.Values.Booking.getKey()+");"
-						+" END; ";
-				
-				public static final String SQL29 ="CREATE TRIGGER "+Booking.Triggers.ON_UPDATE+" AFTER UPDATE ON "+Booking.NAME
-						+" FOR EACH ROW WHEN new."+Booking.Cols.BID+" > 0 "
-								//do we need to check for actual changes, 
-								//or just assume that the update clause changed relevant info?
-								//AND new.<column> != old.<column> ?
-						+" BEGIN "
-							+"INSERT OR REPLACE INTO "+PendingUpdates.NAME
-							+" ("+PendingUpdates.Cols.ROWID+", "+PendingUpdates.Cols.TABLEID+")"
-							+" VALUES (new."+Booking.Cols.ID+", "+TableIndex.Values.Booking.getKey()+");"
-						+"END;";
-				
-				public static final String SQL30= "CREATE TRIGGER "+Booking.Triggers.ON_UPDATE_BID+" AFTER UPDATE ON "+Booking.NAME
-						+" FOR EACH ROW WHEN old."+Booking.Cols.BID+" <= 0 AND new."+Booking.Cols.BID+" > 0 "
-						+"BEGIN "
-							+"INSERT OR REPLACE INTO "+PendingUploads.NAME
-							+ " ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
-							+ " VALUES (new."+Booking.Cols.ID+", "+TableIndex.Values.Booking.getKey()+");"
-						+"END;";
-				
-				public static final String SQL31= "ALTER TABLE "+Class.NAME+" RENAME TO tmp_"+Class.NAME+";";
-				
-				public static final String SQL32="CREATE TABLE "+Class.NAME+" ("+Class.Cols._ID+" INTEGER PRIMARY KEY, "
-						+Class.Cols.CID+" INTEGER, "+Class.Cols.NAME+" TEXT, "
-						+Class.Cols.SDATE+" INTEGER, "+Class.Cols.FREQ+" TEXT, "
-						+Class.Cols.STIME+" TEXT, "+Class.Cols.ETIME+" TEXT, "
-						+Class.Cols.MAX_ST+" INTEGER, "+Class.Cols.RID+" INTEGER, "
-						+Class.Cols.LASTUPDATE+" NUMERIC, "+Class.Cols.ONLINE+" INTEGER DEFAULT 1,"
-						+Class.Cols.DESC+" TEXT, "+Class.Cols.DEVICESIGNUP+" TEXT DEFAULT 'f' "
-						+");";
-				public static final String SQL33="INSERT INTO "+Class.NAME+" SELECT *, 'f' FROM tmp_"+Class.NAME+";";
-				public static final String SQL34="DROP TABLE tmp_"+Class.NAME+";";
-				
-				public static final String SQL35= "CREATE TRIGGER "+Class.Triggers.ON_INSERT+" AFTER INSERT ON "+Class.NAME
-						+" FOR EACH ROW WHEN new."+Class.Cols.DEVICESIGNUP+" = 't' "
-						+"BEGIN "
-							+"INSERT OR REPLACE INTO "+PendingUploads.NAME
-							+ " ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
-							+ " VALUES (new."+Class.Cols._ID+", "+TableIndex.Values.Class.getKey()+");"
-						+" END; ";
-				
-				/*public static final String SQL36= "CREATE TRIGGER "+Class.Triggers.ON_UPDATE_CID+" AFTER UPDATE ON "+Class.NAME
-						+" FOR EACH ROW WHEN old."+Class.Cols.CID+" <= 0 AND new."+Class.Cols.CID+" > 0 "
-						+"BEGIN "
-							+"INSERT OR REPLACE INTO "+PendingUploads.NAME
-							+ " ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
-							+ " VALUES (new."+Class.Cols._ID+", "+TableIndex.Values.Class.getKey()+");"
-						+"END;";*/
+		public static final String SQL23= "CREATE TRIGGER "+Member.Triggers.ON_UPDATE_MID+" AFTER UPDATE ON "+Member.NAME
+				+" FOR EACH ROW WHEN old."+Member.Cols.MID+" <= 0 AND new."+Member.Cols.MID+" > 0 "
+				+"BEGIN "
+					+"INSERT OR REPLACE INTO "+PendingUploads.NAME
+					+ " ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
+					+ " VALUES (new."+Member.Cols._ID+", "+TableIndex.Values.Member.getKey()+");"
+				+"END;";
+		
+	//DO MORE TRIGGERS
+		public static final String SQL24 ="ALTER TABLE "+Booking.NAME+" RENAME TO tmp_"+Booking.NAME+";";
+		
+		public static final String SQL25="CREATE TABLE "+Booking.NAME+" ("+Booking.Cols.ID+" INTEGER PRIMARY KEY, "
+				+Booking.Cols.FNAME+" TEXT, "+Booking.Cols.SNAME+" TEXT, "
+				+Booking.Cols.BOOKING+" TEXT, "
+				+Booking.Cols.STIMEID+" INTEGER, "+Booking.Cols.ETIMEID+" INTEGER, "
+				+Booking.Cols.BID+" TEXT, "+Booking.Cols.BOOKINGTYPE+" INTEGER, "
+				+Booking.Cols.ETIME+" TEXT, "+Booking.Cols.NOTES+" TEXT, "
+				+Booking.Cols.RESULT+" INTEGER, "+Booking.Cols.MID+" INTEGER, "
+				+Booking.Cols.LASTUPDATE+" NUMERIC, "+Booking.Cols.STIME+" TEXT, "
+				+Booking.Cols.MSID+" INTEGER, "+Booking.Cols.CHECKIN+" NUMERIC, " //timestamp ?
+				+Booking.Cols.RID+" INTEGER, "+Booking.Cols.ARRIVAL+" INTEGER, "
+				+Booking.Cols.OFFSET+" TEXT, "
+				+Booking.Cols.CLASSID+" INTEGER DEFAULT 0, "+Booking.Cols.PARENTID+" INTEGER DEFAULT 0, "
+				+Booking.Cols.DEVICESIGNUP+" TEXT DEFAULT 'f', "
+				+"FOREIGN KEY ("+Booking.Cols.STIMEID
+				+") REFERENCES "+ContentDescriptor.Time.NAME+" ("+ContentDescriptor.Time.Cols.ID+") "
+				+");";
+		
+		public static final String SQL26="INSERT INTO "+Booking.NAME+" SELECT *, 'f' FROM tmp_"+Booking.NAME+";";
+		
+		public static final String SQL27="DROP TABLE tmp_"+Booking.NAME+";";
+		
+		public static final String SQL28= "CREATE TRIGGER "+Booking.Triggers.ON_INSERT+" AFTER INSERT ON "+Booking.NAME
+				+" FOR EACH ROW WHEN new."+Booking.Cols.BID+" > 0 AND new."+Booking.Cols.DEVICESIGNUP+"= 't' "
+				+"BEGIN "
+					+"INSERT OR REPLACE INTO "+PendingUploads.NAME
+					+ " ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
+					+ " VALUES (new."+Booking.Cols.ID+", "+TableIndex.Values.Booking.getKey()+");"
+				+" END; ";
+		
+		public static final String SQL29 ="CREATE TRIGGER "+Booking.Triggers.ON_UPDATE+" AFTER UPDATE ON "+Booking.NAME
+				+" FOR EACH ROW WHEN new."+Booking.Cols.BID+" > 0 "
+						//do we need to check for actual changes, 
+						//or just assume that the update clause changed relevant info?
+						//AND new.<column> != old.<column> ?
+				+" BEGIN "
+					+"INSERT OR REPLACE INTO "+PendingUpdates.NAME
+					+" ("+PendingUpdates.Cols.ROWID+", "+PendingUpdates.Cols.TABLEID+")"
+					+" VALUES (new."+Booking.Cols.ID+", "+TableIndex.Values.Booking.getKey()+");"
+				+"END;";
+		
+		public static final String SQL30= "CREATE TRIGGER "+Booking.Triggers.ON_UPDATE_BID+" AFTER UPDATE ON "+Booking.NAME
+				+" FOR EACH ROW WHEN old."+Booking.Cols.BID+" <= 0 AND new."+Booking.Cols.BID+" > 0 "
+				+"BEGIN "
+					+"INSERT OR REPLACE INTO "+PendingUploads.NAME
+					+ " ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
+					+ " VALUES (new."+Booking.Cols.ID+", "+TableIndex.Values.Booking.getKey()+");"
+				+"END;";
+		
+		public static final String SQL31= "ALTER TABLE "+Class.NAME+" RENAME TO tmp_"+Class.NAME+";";
+		
+		public static final String SQL32="CREATE TABLE "+Class.NAME+" ("+Class.Cols._ID+" INTEGER PRIMARY KEY, "
+				+Class.Cols.CID+" INTEGER, "+Class.Cols.NAME+" TEXT, "
+				+Class.Cols.SDATE+" INTEGER, "+Class.Cols.FREQ+" TEXT, "
+				+Class.Cols.STIME+" TEXT, "+Class.Cols.ETIME+" TEXT, "
+				+Class.Cols.MAX_ST+" INTEGER, "+Class.Cols.RID+" INTEGER, "
+				+Class.Cols.LASTUPDATE+" NUMERIC, "+Class.Cols.ONLINE+" INTEGER DEFAULT 1,"
+				+Class.Cols.DESC+" TEXT, "+Class.Cols.DEVICESIGNUP+" TEXT DEFAULT 'f' "
+				+");";
+		public static final String SQL33="INSERT INTO "+Class.NAME+" SELECT *, 'f' FROM tmp_"+Class.NAME+";";
+		public static final String SQL34="DROP TABLE tmp_"+Class.NAME+";";
+		
+		public static final String SQL35= "CREATE TRIGGER "+Class.Triggers.ON_INSERT+" AFTER INSERT ON "+Class.NAME
+				+" FOR EACH ROW WHEN new."+Class.Cols.DEVICESIGNUP+" = 't' "
+				+"BEGIN "
+					+"INSERT OR REPLACE INTO "+PendingUploads.NAME
+					+ " ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
+					+ " VALUES (new."+Class.Cols._ID+", "+TableIndex.Values.Class.getKey()+");"
+				+" END; ";
+		
+		public static final String SQL36= "ALTER TABLE "+Membership.NAME+" RENAME TO tmp_"+Membership.NAME+";";
+		public static final String SQL37="CREATE TABLE "+Membership.NAME+
+				" ("+Membership.Cols._ID+" INTEGER PRIMARY KEY, "
+				+Membership.Cols.MID+" INTEGER NOT NULL, "+Membership.Cols.MSID+" INTEGER, "
+				+Membership.Cols.CARDNO+" TEXT, "+Membership.Cols.DENY+" INTEGER, "
+				+Membership.Cols.PNAME+" TEXT, "+Membership.Cols.MSSTART+" TEXT, "
+				+Membership.Cols.EXPIRERY+" TEXT, "+Membership.Cols.VISITS+" TEXT, "
+				+Membership.Cols.LASTUPDATE+" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, "
+				+Membership.Cols.PRIMARYMS+" INTEGER, "+Membership.Cols.PID+" INTEGER, "
+				+Membership.Cols.PGID+" INTEGER, "+Membership.Cols.PRICE+" TEXT, "
+				+Membership.Cols.SIGNUP+" TEXT, "+Membership.Cols.CREATION+" TEXT, "
+				+Membership.Cols.DEVICESIGNUP+" TEXT DEFAULT 'f' "
+				+");";
+		public static final String SQL38="INSERT INTO "+Membership.NAME+" SELECT *, 'f' FROM tmp_"+Membership.NAME+";";
+		public static final String SQL39="DROP TABLE tmp_"+Membership.NAME+";";
+		
+		public static final String SQL40= "CREATE TRIGGER "+Membership.Triggers.ON_INSERT+
+				" AFTER INSERT ON "+Membership.NAME
+				+" FOR EACH ROW WHEN new."+Membership.Cols.MSID+" > 0 AND new."+Membership.Cols.DEVICESIGNUP+"= 't' "
+				+"BEGIN "
+					+"INSERT OR REPLACE INTO "+PendingUploads.NAME
+					+ " ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
+					+ " VALUES (new."+Membership.Cols._ID+", "+TableIndex.Values.Membership.getKey()+");"
+				+" END; ";
+		
+		public static final String SQL41= "CREATE TRIGGER "+Membership.Triggers.ON_UPDATE_MSID+
+				" AFTER UPDATE ON "+Membership.NAME
+				+" FOR EACH ROW WHEN old."+Membership.Cols.MSID+" <= 0 AND new."+Membership.Cols.MSID+" > 0 "
+				+"BEGIN "
+					+"INSERT OR REPLACE INTO "+PendingUploads.NAME
+					+ " ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
+					+ " VALUES (new."+Membership.Cols._ID+", "+TableIndex.Values.Membership.getKey()+");"
+				+"END;";
+		
+		public static final String SQL42= "CREATE TRIGGER "+Image.Triggers.ON_INSERT+
+				" AFTER INSERT ON "+Image.NAME
+				+" FOR EACH ROW WHEN new."+Image.Cols.IID +" IS NULL " 
+				+"BEGIN "
+					+"INSERT OR REPLACE INTO "+PendingUploads.NAME
+					+ " ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
+					+ " VALUES (new."+Image.Cols.ID+", "+TableIndex.Values.Image.getKey()+");"
+				+" END; ";
+		
+		public static final String SQL43="ALTER TABLE "+MembershipSuspend.Old.NAME+" RENAME TO tmp_"+MembershipSuspend.NAME+";";
+		
+		public static final String SQL44="CREATE TABLE "+MembershipSuspend.NAME+" ("+MembershipSuspend.Cols._ID+" INTEGER PRIMARY KEY, "
+				+MembershipSuspend.Cols.SID+" INTEGER, "+MembershipSuspend.Cols.MID+" INTEGER DEFAULT 0, "
+				+MembershipSuspend.Cols.STARTDATE+" INTEGER, "+MembershipSuspend.Cols.REASON+" TEXT, "
+				+MembershipSuspend.Cols.LENGTH+" INTEGER, "+MembershipSuspend.Cols.ENDDATE+" TEXT, "
+				+MembershipSuspend.Cols.FREEZE+" INTEGER, "+MembershipSuspend.Cols.DEVICESIGNUP+" TEXT DEFAULT 'f' "
+				+");";
+		public static final String SQL45="INSERT INTO "+MembershipSuspend.NAME+" SELECT *, 'f' FROM tmp_"+MembershipSuspend.NAME+";";
+		public static final String SQL46="DROP TABLE tmp_"+MembershipSuspend.NAME+";";
+		
+		public static final String SQL47= "CREATE TRIGGER "+MembershipSuspend.Triggers.ON_INSERT+
+				" AFTER INSERT ON "+MembershipSuspend.NAME
+				+" FOR EACH ROW WHEN new."+MembershipSuspend.Cols.SID+" > 0 AND new."+MembershipSuspend.Cols.DEVICESIGNUP+"= 't' "
+				+"BEGIN "
+					+"INSERT OR REPLACE INTO "+PendingUploads.NAME
+					+ " ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
+					+ " VALUES (new."+MembershipSuspend.Cols._ID+", "+TableIndex.Values.MembershipSuspend.getKey()+");"
+				+" END; ";
+		
+		public static final String SQL48= "CREATE TRIGGER "+MembershipSuspend.Triggers.ON_UPDATE_SID+
+				" AFTER UPDATE ON "+MembershipSuspend.NAME
+				+" FOR EACH ROW WHEN old."+MembershipSuspend.Cols.SID+" <= 0 AND new."+MembershipSuspend.Cols.SID+" > 0 "
+				+"BEGIN "
+					+"INSERT OR REPLACE INTO "+PendingUploads.NAME
+					+ " ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
+					+ " VALUES (new."+MembershipSuspend.Cols._ID+", "+TableIndex.Values.MembershipSuspend.getKey()+");"
+				+"END;";
+		//MEMBER NOTES.
+		public static final String SQL49="ALTER TABLE "+MemberNotes.NAME+" RENAME TO tmp_"+MemberNotes.NAME+";";
+		public static final String SQL50="CREATE TABLE "+MemberNotes.NAME
+				+" ("+MemberNotes.Cols._ID+" INTEGER PRIMARY KEY, "
+				+MemberNotes.Cols.MNID+" INTEGER NOT NULL DEFAULT 0, "+MemberNotes.Cols.MID+" INTEGER NOT NULL DEFAULT 0, "
+				+MemberNotes.Cols.NOTES+" TEXT, "+MemberNotes.Cols.OCCURRED+" TEXT, "
+				+MemberNotes.Cols.DEVICESIGNUP+" TEXT DEFAULT 'f' "
+				+" );";
+		public static final String SQL51="INSERT INTO "+MemberNotes.NAME+" SELECT *, 'f' FROM tmp_"+MemberNotes.NAME+";";
+		public static final String SQL52="DROP TABLE tmp_"+MemberNotes.NAME+";";
+		
+		public static final String SQL53= "CREATE TRIGGER "+MemberNotes.Triggers.ON_INSERT+
+				" AFTER INSERT ON "+MemberNotes.NAME
+				+" FOR EACH ROW WHEN new."+MemberNotes.Cols.MNID+" > 0 AND new."+MemberNotes.Cols.DEVICESIGNUP+"= 't' "
+				+"BEGIN "
+					+"INSERT OR REPLACE INTO "+PendingUploads.NAME
+					+ " ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
+					+ " VALUES (new."+MemberNotes.Cols._ID+", "+TableIndex.Values.MemberNotes.getKey()+");"
+				+" END; ";
+		
+		public static final String SQL54= "CREATE TRIGGER "+MemberNotes.Triggers.ON_UPDATE_MNID+
+				" AFTER UPDATE ON "+MemberNotes.NAME
+				+" FOR EACH ROW WHEN old."+MemberNotes.Cols.MNID+" <= 0 AND new."+MemberNotes.Cols.MNID+" > 0 "
+				+"BEGIN "
+					+"INSERT OR REPLACE INTO "+PendingUploads.NAME
+					+ " ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
+					+ " VALUES (new."+MemberNotes.Cols._ID+", "+TableIndex.Values.MemberNotes.getKey()+");"
+				+"END;";
+		
+		public static void patchNinetyThree(SQLiteDatabase db) {
+			db.beginTransaction();
+			try {
+				Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL1);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL1);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL2);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL2);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL3);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL3);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL4);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL4);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL5);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL5);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL6);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL6);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL7);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL7);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL8);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL8);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL9);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL9);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL10);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL10);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL11);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL11);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL12);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL12);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL13);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL13);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL14);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL14);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL15);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL15);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL16);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL16);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL17);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL17);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL18);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL18);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL19);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL19);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL20);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL20);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL21);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL21);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL22);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL22);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL23);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL23);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL24);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL24);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL25);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL25);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL26);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL26);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL27);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL27);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL28);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL28);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL29);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL29);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL30);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL30);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL31);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL31);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL32);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL32);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL33);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL33);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL34);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL34);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL35);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL35);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL36);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL36);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL37);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL37);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL38);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL38);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL39);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL39);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL40);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL40);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL41);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL41);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL42);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL42);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL43);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL43);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL44);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL44);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL45);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL45);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL46);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL46);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL47);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL47);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL48);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL48);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL49);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL49);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL50);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL50);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL51);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL51);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL52);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL52);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL53);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL53);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL54);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL54);
+				db.setTransactionSuccessful();
+			} finally {
+				db.endTransaction();
+			}
+		}
 	}	
 }

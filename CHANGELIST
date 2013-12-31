@@ -12,14 +12,15 @@
 			Fix crash when click on home button from Empty activity and member ship hold (bad parent activity in manifest)
 			Added emergency contact access details to member notes page.
 			Fixed the Date table, it now dynamically fills in days 1 month in advance as needed.
+			Moved Free ID's into a seperate table using the TableIDs as reference.
+			Added triggers on tables for insertion/update.
 		-TODO:
 			Add Booking Day swipe,
 			Log Sync Errors, and upload them somewhere?
-			Move Free ID's into a seperate table using the TableIDs as reference, (have done members & bookings so far).
-			Add more triggers/remove the java code. (have done members, bookings, & class so far).
 			YMCA REQUESTS:
 				-enrolled in,
 				-Roll Call.
+				-parent name?
 		-KNOWN BUGS/TO FIX:
 			-fix Get Card for new cards.
 			-manual checkin might hard-crash if the door is null (why wasn't there any doors?)

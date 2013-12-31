@@ -314,6 +314,10 @@ public class ContentDescriptor {
 	        	public static final String MEMBER_ID = "image_member_id";
 	        }
 	        
+	        public static class Triggers {
+	        	public static final String ON_INSERT = "image_insert";
+	        }
+	        
 	        public static class Cols {
 	        	public static final String ID = BaseColumns._ID;
 	        	public static final String DISPLAYVALUE = "displayvalue";
@@ -558,7 +562,7 @@ public class ContentDescriptor {
 	 		
 	 		public static class Triggers {
 	 			public static final String ON_INSERT = "membership_insert";
-	 			public static final String ON_UPDATE_MID = "membershipid_update";
+	 			public static final String ON_UPDATE_MSID = "membershipid_update";
 	 			public static final String ON_UPDATE = "membership_update";
 	 			public static final String ON_DELETE = "membership_delete"; //unused
 	 		}
@@ -580,6 +584,7 @@ public class ContentDescriptor {
 	 			public static final String PRICE = "price";
 	 			public static final String SIGNUP = "signupfee";
 	 			public static final String CREATION = "creationdate";
+	 			public static final String DEVICESIGNUP = "devicesignup";  //TODO: add this
 	 		}
 	 	}
 	 	
@@ -701,7 +706,7 @@ public class ContentDescriptor {
 	 	}
 	 	
 	 	public static class MembershipSuspend {
-	 		public static final String NAME = "membership_suspend";
+	 		public static final String NAME = "membershipSuspend";
 	 		public static final String PATH = "MembershipSuspend";
 	 		public static final int PATH_TOKEN = 126;
 	 		public static final String PATH_FOR_ID = "MembershipSuspend/*";
@@ -711,6 +716,16 @@ public class ContentDescriptor {
 	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.membershipsuspend";
 	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.membershipsuspend";
 	 		
+	 		public static class Triggers {
+	 			public static final String ON_INSERT = "suspend_insert";
+	 			public static final String ON_UPDATE_SID = "suspendid_update";
+	 			public static final String ON_DELETE = "suspend_delete"; //unused
+	 		}
+	 		//referenced here for historical reasons.
+	 		public static class Old {
+	 			public static final String NAME = "membership_suspend";
+	 		}
+	 		
 	 		public static class Cols implements BaseColumns {
 	 			public static final String SID = "suspendid";
 	 			public static final String STARTDATE = "start";
@@ -719,6 +734,7 @@ public class ContentDescriptor {
 	 			public static final String MID = "memberid";
 	 			public static final String FREEZE = "freeze_fees";
 	 			public static final String ENDDATE = "enddate";
+	 			public static final String DEVICESIGNUP = "devicesignup";
 	 		}
 	 	}
 	 	
@@ -784,11 +800,18 @@ public class ContentDescriptor {
 	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.membernotes";
 	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.membernotes";
 	 		
+	 		public static class Triggers {
+	 			public static final String ON_INSERT = "note_insert";
+	 			public static final String ON_UPDATE_MNID = "noteid_update";
+	 			public static final String ON_DELETE = "note_delete"; //unused
+	 		}
+	 		
 	 		public static class Cols implements BaseColumns {
 	 			public static final String MNID = "membernoteid";
 	 			public static final String MID = "memberid";
 	 			public static final String OCCURRED = "occurred";
 	 			public static final String NOTES = "notes";
+	 			public static final String DEVICESIGNUP = "devicesignup";
 	 		}
 	 	}
 	 	
@@ -876,7 +899,7 @@ public class ContentDescriptor {
 	 		}
 	 	}
 	 	
-	 	//PendingDeletes
+	 	//PendingDeletes this is currently unused.
 	 	public static class PendingDeletes {
 	 		public static final String NAME = "PendingDeletes";
 	 		public static final String PATH = "PendingDeletes";

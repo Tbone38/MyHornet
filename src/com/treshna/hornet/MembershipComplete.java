@@ -220,44 +220,23 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 		
 		int msid;
 		String rowid = "-1";
-		cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols.MID+" = 0",
-				null, null);
+		
+		cur = contentResolver.query(ContentDescriptor.FreeIds.CONTENT_URI, null, ContentDescriptor.FreeIds.Cols.TABLEID+" = "
+				+ContentDescriptor.TableIndex.Values.Membership.getKey(), null, null);
 		if (!cur.moveToFirst()) {
 			msid = -1;
 		} else {
-			msid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MSID));
-			rowid = cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols._ID));
+			msid = cur.getInt(cur.getColumnIndex(ContentDescriptor.FreeIds.Cols.ROWID));
 		}
 		cur.close();
+	
+		values.put(ContentDescriptor.Membership.Cols.MSID, msid);
+		values.put(ContentDescriptor.Membership.Cols.DEVICESIGNUP, "t");
+		Uri row =contentResolver.insert(ContentDescriptor.Membership.CONTENT_URI, values);
+		rowid = row.getLastPathSegment();
 		
-		if (msid > 0) {
-			contentResolver.update(ContentDescriptor.Membership.CONTENT_URI, values, ContentDescriptor.Membership.Cols.MSID+" = ?",
-					new String[] {String.valueOf(msid)});
-			
-			values = new ContentValues();
-			values.put(ContentDescriptor.PendingUploads.Cols.TABLEID, ContentDescriptor.TableIndex.Values.Membership.getKey());
-			values.put(ContentDescriptor.PendingUploads.Cols.ROWID, rowid);
-			contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, values);
-		} else {
-			values.put(ContentDescriptor.Membership.Cols.MSID, msid);
-			Uri row =contentResolver.insert(ContentDescriptor.Membership.CONTENT_URI, values);
-			rowid = row.getLastPathSegment();
-		}
 		Log.v(TAG, "insert rowid: "+rowid);
 		
-		/*cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, new String[] {ContentDescriptor.Member.Cols.CARDNO},
-				ContentDescriptor.Member.Cols.MID+" = ?", new String[] {input.get(0)}, null);
-		if (cur.moveToNext()) {
-			int cardno = cur.getInt(cur.getColumnIndex(ContentDescriptor.Member.Cols.CARDNO));
-			if (cardno >= 0) {
-				values = new ContentValues();
-				values.put(ContentDescriptor.Member.Cols.CARDNO, cardid);
-				contentResolver.update(ContentDescriptor.Member.CONTENT_URI, values, 
-						ContentDescriptor.Member.Cols.MID+" = ?", new String[] {String.valueOf(cardno)});
-				//update the member on the server?
-			}
-		}
-		cur.close();*/
 		return Integer.parseInt(rowid);
 	}
 	

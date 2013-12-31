@@ -110,10 +110,9 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		
 		
 		//Image Table
-		//for quick look up of Images:, Uses composite PK
 		db.execSQL("CREATE TABLE "+ContentDescriptor.Image.NAME+" ("+ContentDescriptor.Image.Cols.ID+" INTEGER PRIMARY KEY, "
 				+ContentDescriptor.Image.Cols.MID+ " INTEGER, "+ContentDescriptor.Image.Cols.DATE+" DATETIME, "
-				+ContentDescriptor.Image.Cols.DESCRIPTION+" TEXT , "+ContentDescriptor.Image.Cols.IS_PROFILE+" INTEGER, "
+				+ContentDescriptor.Image.Cols.DESCRIPTION+" TEXT , "+ContentDescriptor.Image.Cols.IS_PROFILE+" INTEGER, "//IS_PROFILE row contains text. change the datattype.
 				+ContentDescriptor.Image.Cols.DISPLAYVALUE+" INTEGER, "
 				+"FOREIGN KEY("+ContentDescriptor.Image.Cols.MID
 				+") REFERENCES "+ContentDescriptor.Member.NAME+"("+ContentDescriptor.Member.Cols.MID+") "
@@ -152,8 +151,6 @@ public class HornetDatabase extends SQLiteOpenHelper {
 				+Booking.Cols.CLASSID+" INTEGER DEFAULT 0, "+Booking.Cols.PARENTID+" INTEGER DEFAULT 0, "
 				+"FOREIGN KEY ("+Booking.Cols.STIMEID
 				+") REFERENCES "+ContentDescriptor.Time.NAME+" ("+ContentDescriptor.Time.Cols.ID+") "
-				//+" FOREIGN KEY ("+Booking.Cols.ARRIVAL+") REFERENCES "+ContentDescriptor.Date.NAME+" ("
-				//+ContentDescriptor.Date.Cols.DATE+"));"); //lastupdated = seconds since epoch.
 				+");");
 		//booking indexs
 		db.execSQL("CREATE INDEX "+Booking.Indexs.BOOKING_ID+" ON "+Booking.NAME+" ( "
@@ -252,7 +249,7 @@ public class HornetDatabase extends SQLiteOpenHelper {
 				+");");
 		
 		//membership suspend table.
-		db.execSQL("CREATE TABLE "+MembershipSuspend.NAME+" ("+MembershipSuspend.Cols._ID+" INTEGER PRIMARY KEY, "
+		db.execSQL("CREATE TABLE "+MembershipSuspend.Old.NAME+" ("+MembershipSuspend.Cols._ID+" INTEGER PRIMARY KEY, "
 				+MembershipSuspend.Cols.SID+" INTEGER, "+MembershipSuspend.Cols.MID+" INTEGER DEFAULT 0, "
 				+MembershipSuspend.Cols.STARTDATE+" INTEGER, "+MembershipSuspend.Cols.REASON+" TEXT, "
 				+MembershipSuspend.Cols.LENGTH+" INTEGER, "+MembershipSuspend.Cols.ENDDATE+" TEXT, "
@@ -290,89 +287,12 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		db.execSQL(UpdateDatabase.Ninety.SQL);
 		db.execSQL(UpdateDatabase.NinetyOne.SQL);
 		db.execSQL(UpdateDatabase.NinetyTwo.SQL);
-		db.beginTransaction();
-		try {
-			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL1);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL1);
-			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL2);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL2);
-			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL3);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL3);
-			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL4);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL4);
-			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL5);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL5);
-			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL6);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL6);
-			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL7);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL7);
-			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL8);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL8);
-			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL9);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL9);
-			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL10);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL10);
-			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL11);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL11);
-			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL12);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL12);
-			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL13);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL13);
-			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL14);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL14);
-			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL15);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL15);
-			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL16);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL16);
-			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL17);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL17);
-			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL18);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL18);
-			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL19);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL19);
-			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL20);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL20);
-			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL21);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL21);
-			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL22);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL22);
-			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL23);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL23);
-			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL24);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL24);
-			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL25);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL25);
-			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL26);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL26);
-			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL27);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL27);
-			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL28);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL28);
-			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL29);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL29);
-			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL30);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL30);
-			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL31);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL31);
-			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL32);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL32);
-			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL33);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL33);
-			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL34);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL34);
-			Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL35);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL35);
-			/*Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL36);
-			db.execSQL(UpdateDatabase.NinetyThree.SQL36);*/
-			db.setTransactionSuccessful();
-		} finally {
-			db.endTransaction();
-		}
-		
+		UpdateDatabase.NinetyThree.patchNinetyThree(db);
 		//db.execSQL("pragma full_column_names=ON;"); //TODO: will this break stuff?*/
 	}
 	
 
+	
 	
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -406,8 +326,7 @@ public class HornetDatabase extends SQLiteOpenHelper {
 				break;
 			}
 			case (93):{
-				//Log.w(HornetDatabase.class.getName(), "SQL-Patch:93 \n"+UpdateDatabase.NinetyThree.SQL);
-				//db.execSQL(UpdateDatabase.NinetyThree.SQL);
+				//UpdateDatabase.NinetyThree.patchNinetyThree(db);
 				//db.execSQL("pragma full_column_names=ON;"); //TODO: will this break stuff? 
 				break;
 			}
@@ -418,14 +337,13 @@ public class HornetDatabase extends SQLiteOpenHelper {
 	
 	
 	public void dropTables(SQLiteDatabase db) {
-		db.execSQL("DROP TABLE IF EXISTS "+Member.NAME);
-		db.execSQL("DROP TABLE IF EXISTS "+Image.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+Visitor.NAME);
+		db.execSQL("DROP TABLE IF EXISTS "+Member.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+Membership.NAME);
+		db.execSQL("DROP TABLE IF EXISTS "+Image.NAME);
 		
-		db.execSQL("DROP TABLE IF EXISTS "+BookingTime.NAME);
-		
-		Cursor cur = db.query(Booking.NAME, null, Booking.Cols.LASTUPDATE+" = 0", 
+		/* I don't think this code is needed any more.
+		 * Cursor cur = db.query(Booking.NAME, null, Booking.Cols.LASTUPDATE+" = 0", 
 				null, null, null, null);
 		db.execSQL("CREATE TABLE old_"+Booking.NAME+" ("+Booking.Cols.ID+" INTEGER PRIMARY KEY, "
 				+Booking.Cols.BID+" INTEGER, "+Booking.Cols.LASTUPDATE+" NUMERIC );");
@@ -435,31 +353,37 @@ public class HornetDatabase extends SQLiteOpenHelper {
 			values.put(Booking.Cols.LASTUPDATE, cur.getString(cur.getColumnIndex(Booking.Cols.LASTUPDATE)));
 			db.insert("old_"+Booking.NAME, null, values);
 		}
-		cur.close();
+		cur.close();*/
 		
-		db.execSQL("DROP TABLE IF EXISTS "+Booking.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+Resource.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+Company.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+Swipe.NAME);   
+		
+		db.execSQL("DROP TABLE IF EXISTS "+BookingTime.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+Programme.NAME);
-		db.execSQL("DROP TABLE IF EXISTS "+Time.NAME);
+		db.execSQL("DROP TABLE IF EXISTS "+Booking.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+Bookingtype.NAME);
-		db.execSQL("DROP TABLE IF EXISTS "+ResultStatus.NAME);
-		db.execSQL("DROP TABLE IF EXISTS "+OpenTime.NAME);
-		db.execSQL("DROP TABLE IF EXISTS "+Date.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+Class.NAME); 
-		db.execSQL("DROP TABLE IF EXISTS "+TableIndex.NAME);
-		db.execSQL("DROP TABLE IF EXISTS "+PendingUploads.NAME); 
-		db.execSQL("DROP TABLE IF EXISTS "+MembershipSuspend.NAME); 
+		
+		db.execSQL("DROP TABLE IF EXISTS "+Time.NAME);
+		db.execSQL("DROP TABLE IF EXISTS "+Date.NAME);
+		
+		db.execSQL("DROP TABLE IF EXISTS "+OpenTime.NAME);
+		db.execSQL("DROP TABLE IF EXISTS "+Door.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+IdCard.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+PaymentMethod.NAME);
-		db.execSQL("DROP TABLE IF EXISTS "+PendingDownloads.NAME);
-		db.execSQL("DROP TABLE IF EXISTS "+Door.NAME);
+		db.execSQL("DROP TABLE IF EXISTS "+ResultStatus.NAME);
+		
+		db.execSQL("DROP TABLE IF EXISTS "+MembershipSuspend.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+MemberNotes.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+MemberBalance.NAME);
+		
+		db.execSQL("DROP TABLE IF EXISTS "+PendingUploads.NAME); 
+		db.execSQL("DROP TABLE IF EXISTS "+PendingDownloads.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+PendingUpdates.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+PendingDeletes.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+FreeIds.NAME);
+		db.execSQL("DROP TABLE IF EXISTS "+TableIndex.NAME);
 	}
 	
 	private void repopulateTable(SQLiteDatabase db) {
@@ -484,7 +408,7 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		}
 		
 		
-		{
+		{ //this code block probably wants moved.
 			ContentValues values = new ContentValues();
 			for (int i=1; i <=ContentDescriptor.TableIndex.Values.getLength(); i +=1) {
 				values.put(ContentDescriptor.TableIndex.Cols._ID, i);
@@ -492,9 +416,6 @@ public class HornetDatabase extends SQLiteOpenHelper {
 				
 				db.insert(ContentDescriptor.TableIndex.NAME, null, values);
 			}
-			
 		}
-				
-					
 	}
 }

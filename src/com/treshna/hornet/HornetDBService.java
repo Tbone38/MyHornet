@@ -638,7 +638,7 @@ public class HornetDBService extends Service {
 	        				String cDate = Services.dateFormat(cur.getString(cur.getColumnIndex(ContentDescriptor.Image.Cols.DATE)),
 	        						"dd MMM yy hh:mm:ss aa", "yyyy-MM-dd");
 	        				cacheDate = dateFormat.parse(cDate);
-		            		if (cacheDate.compareTo(sDate) == 0) {
+		            		if (cacheDate.compareTo(sDate) == 0) { //dates match, check if we already have the id from the db.
 		            			rowid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Image.Cols.ID));
 		            			imgExists = true;
 		            			int iid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Image.Cols.IID)); 
@@ -663,7 +663,7 @@ public class HornetDBService extends Service {
 		            	if (oldQuery != true) {
 			            	if (rs.getBoolean("is_profile") == true) { //isProfile
 			            		imgCount = 0;
-			            		
+			            		//TODO: if re-arranging image order, I need to tell previous image that it is no longer the profile.
 			            		if (cur.getCount() > 0) {
 			            			val = new ContentValues();
 			            			val.put(ContentDescriptor.Image.Cols.DISPLAYVALUE, cur.getCount());
@@ -698,19 +698,19 @@ public class HornetDBService extends Service {
 		        			description = rs.getString("description");
 		        		}
 		        		if (description == null || description.length() < 2 || description.compareTo(" ") == 0) {
-		        			description = "no description";
+		        			description = ""; //leave it empty.
 		        		}
 		        		val.put(ContentDescriptor.Image.Cols.DESCRIPTION, description);
 		        		isProfile = 0;
 		        		if (oldQuery != true){
 		        			isProfile = Services.booltoInt(rs.getBoolean("is_profile"));
 		        		} else {
-		        			isProfile = Services.booltoInt(rs.getBoolean(1)); //TODO: pretty sure this is broken, remove the rs.getBoolean
+		        			isProfile = Services.booltoInt(rs.getBoolean(1)); //rs.getBoolean returns 'true'. 
 		        		}
 		        		val.put(ContentDescriptor.Image.Cols.IS_PROFILE, isProfile);
 		        		contentResolver.insert(ContentDescriptor.Image.CONTENT_URI, val);
 	            	} 
-	            	else if (!hasid) { 
+	            	else if (!hasid) { //update the new image with the id returned by postgres.
 	            		val.put(ContentDescriptor.Image.Cols.IID, rs.getString("id"));
 		        		val.put(ContentDescriptor.Image.Cols.MID, rs.getString("memberid"));
 		        		String ssDate = Services.dateFormat(rs.getString("lastupdate"), "yyyy-MM-dd", "dd MMM yy hh:mm:ss aa");
@@ -2302,8 +2302,10 @@ public class HornetDBService extends Service {
     		return -1; //connection failed;
     	}
     	
-    	cur = contentResolver.query(ContentDescriptor.MembershipSuspend.CONTENT_URI, null, 
-    			ContentDescriptor.MembershipSuspend.Cols.MID+" = 0", null, null);
+    	/*cur = contentResolver.query(ContentDescriptor.MembershipSuspend.CONTENT_URI, null, 
+    			ContentDescriptor.MembershipSuspend.Cols.MID+" = 0", null, null);*/
+    	cur = contentResolver.query(ContentDescriptor.FreeIds.CONTENT_URI, null, ContentDescriptor.FreeIds.Cols.TABLEID+" = "
+    			+ContentDescriptor.TableIndex.Values.MembershipSuspend.getKey(), null, null);
     	int free_count = cur.getCount(); // = cur.count() where mid = 0;
     	cur.close();
     	
@@ -2321,8 +2323,9 @@ public class HornetDBService extends Service {
 	    		//Handle the insertion.
 	    		ContentValues values = new ContentValues();
 	    		
-	    		values.put(ContentDescriptor.MembershipSuspend.Cols.SID, rs.getString("nextval"));
+	    		
 	    		if (need_count > 0) { //we've got pending suspends that need an id before upload.
+	    			values.put(ContentDescriptor.MembershipSuspend.Cols.SID, rs.getString("nextval"));
 	    			cur = contentResolver.query(ContentDescriptor.MembershipSuspend.CONTENT_URI, null,
 	    	    			ContentDescriptor.MembershipSuspend.Cols.SID+" < 0", null, null);
 	    			cur.moveToFirst();
@@ -2331,27 +2334,12 @@ public class HornetDBService extends Service {
 	    			
 	    			contentResolver.update(ContentDescriptor.MembershipSuspend.CONTENT_URI, values,
 	    					ContentDescriptor.MembershipSuspend.Cols.MID+" = ?", new String[] {String.valueOf(memberid)});
-	    			
-	    			//should probably update the pending uploads table too?
-	    			cur = contentResolver.query(ContentDescriptor.MembershipSuspend.CONTENT_URI, new String[] 
-	    					{ContentDescriptor.MembershipSuspend.Cols._ID}, ContentDescriptor.MembershipSuspend.Cols.MID+" = ?",
-	    					new String[] {String.valueOf(memberid)}, null);
-	    			
-	    			if (cur.moveToFirst()) {
-	    				int rowid = cur.getInt(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols._ID));
-	    				
-	    				values = new ContentValues();
-	    				values.put(ContentDescriptor.PendingUploads.Cols.TABLEID,
-	    						ContentDescriptor.TableIndex.Values.MembershipSuspend.getKey());
-	    				values.put(ContentDescriptor.PendingUploads.Cols.ROWID, rowid);
-	    				
-	    				contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, values);
-	    			}
-	    			cur.close();
-	    			
 	    			need_count -=1;
 	    		} else {
-	    			contentResolver.insert(ContentDescriptor.MembershipSuspend.CONTENT_URI, values);
+	    			values.put(ContentDescriptor.FreeIds.Cols.ROWID, rs.getString("nextval"));
+	    			values.put(ContentDescriptor.FreeIds.Cols.TABLEID,
+	    					ContentDescriptor.TableIndex.Values.MembershipSuspend.getKey());
+	    			contentResolver.insert(ContentDescriptor.FreeIds.CONTENT_URI, values);
 	    		}
 	    	} catch (SQLException e) {
 	    		statusMessage = e.getLocalizedMessage();
@@ -2624,8 +2612,10 @@ public class HornetDBService extends Service {
     	if (!openConnection()) {
     		return -1; //see statusMessage for error;
     	}
-    	cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols.MID+" = 0",
-    			null, null);
+    	/*cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols.MID+" = 0",
+    			null, null);*/
+    	cur = contentResolver.query(ContentDescriptor.FreeIds.CONTENT_URI, null, ContentDescriptor.FreeIds.Cols.TABLEID+" = "
+    			+ContentDescriptor.TableIndex.Values.Membership.getKey(), null, null);
     	int free_count = cur.getCount();
     	cur.close();
     	
@@ -2647,7 +2637,7 @@ public class HornetDBService extends Service {
     			rs.next();
     			
     			ContentValues values = new ContentValues();
-    			values.put(ContentDescriptor.Membership.Cols.MSID, rs.getString("nextval"));
+    			
     			
     			if (need_count > 0) {
     				cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null,
@@ -2655,20 +2645,15 @@ public class HornetDBService extends Service {
     				cur.moveToFirst();
     				int rowid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Membership.Cols._ID));
     				cur.close();
-    				
+    				values.put(ContentDescriptor.Membership.Cols.MSID, rs.getString("nextval"));	
     				contentResolver.update(ContentDescriptor.Membership.CONTENT_URI, values, ContentDescriptor.Membership.Cols._ID+" = ?",
     						new String[] {String.valueOf(rowid)});
     				
-    				values = new ContentValues();
-    				values.put(ContentDescriptor.PendingUploads.Cols.TABLEID,
-    						ContentDescriptor.TableIndex.Values.Membership.getKey());
-    				values.put(ContentDescriptor.PendingUploads.Cols.ROWID, rowid);
-    				contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, values);
-    				
     				need_count -= 1;
     			} else {
-	    			values.put(ContentDescriptor.Membership.Cols.MID, 0);
-	    			contentResolver.insert(ContentDescriptor.Membership.CONTENT_URI, values);
+	    			values.put(ContentDescriptor.FreeIds.Cols.ROWID, rs.getString("nextval"));
+	    			values.put(ContentDescriptor.FreeIds.Cols.TABLEID, ContentDescriptor.TableIndex.Values.Membership.getKey());
+	    			contentResolver.insert(ContentDescriptor.FreeIds.CONTENT_URI, values);
     			}
     			
     			result +=1;
@@ -2732,6 +2717,11 @@ public class HornetDBService extends Service {
 					+"= ? AND "+ContentDescriptor.PendingUploads.Cols.ROWID+" = ?", 
 					new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Membership.getKey()),
 					String.valueOf(pendingRows.get(i))});
+    		
+    		ContentValues values = new ContentValues();
+    		values.put(ContentDescriptor.Membership.Cols.DEVICESIGNUP, "f");
+    		contentResolver.update(ContentDescriptor.Membership.CONTENT_URI, values, ContentDescriptor.Membership.Cols._ID+" = ?",
+    				new String[] {String.valueOf(pendingRows.get(i))});
     	}
     	
     	closeConnection();
@@ -2856,8 +2846,10 @@ public class HornetDBService extends Service {
     		return -1;
     		//see statusMessage for error;
     	}
-    	cur = contentResolver.query(ContentDescriptor.MemberNotes.CONTENT_URI, null, 
-    			ContentDescriptor.MemberNotes.Cols.MID+" = 0", null, null);
+    	/*cur = contentResolver.query(ContentDescriptor.MemberNotes.CONTENT_URI, null, 
+    			ContentDescriptor.MemberNotes.Cols.MID+" = 0", null, null);*/
+    	cur = contentResolver.query(ContentDescriptor.FreeIds.CONTENT_URI, null, ContentDescriptor.FreeIds.Cols.TABLEID+" = "
+    			+ContentDescriptor.TableIndex.Values.MemberNotes.getKey(), null, null);
     	
     	int id_count = cur.getCount();
     	cur.close();
@@ -2873,27 +2865,25 @@ public class HornetDBService extends Service {
     			rs.next();
     			
     			ContentValues values = new ContentValues();
-    			values.put(ContentDescriptor.MemberNotes.Cols.MNID, rs.getString("nextval"));
     			
     			if (req_count > 0) {
-    				int rowid;
+    				values.put(ContentDescriptor.MemberNotes.Cols.MNID, rs.getString("nextval"));
+    			
     				cur = contentResolver.query(ContentDescriptor.MemberNotes.CONTENT_URI, null, 
     						ContentDescriptor.MemberNotes.Cols.MNID+" = 0", null, null);
     				cur.moveToFirst();
-    				rowid = cur.getInt(cur.getColumnIndex(ContentDescriptor.MemberNotes.Cols._ID));
+    				int rowid = cur.getInt(cur.getColumnIndex(ContentDescriptor.MemberNotes.Cols._ID));
     				cur.close();
     				
     				contentResolver.update(ContentDescriptor.MemberNotes.CONTENT_URI, values, 
     						ContentDescriptor.MemberNotes.Cols._ID+" = ?", new String[] {String.valueOf(rowid)});
     				req_count -= 1;
-    				//add it to pending uploads.
-    				values = new ContentValues();
-    				values.put(ContentDescriptor.PendingUploads.Cols.TABLEID, 
-    						ContentDescriptor.TableIndex.Values.MemberNotes.getKey());
-    				values.put(ContentDescriptor.PendingUploads.Cols.ROWID, rowid);
-    				contentResolver.insert(ContentDescriptor.PendingDownloads.CONTENT_URI, values);
+
     			} else {
-    				contentResolver.insert(ContentDescriptor.MemberNotes.CONTENT_URI, values);
+    				values.put(ContentDescriptor.FreeIds.Cols.ROWID, rs.getString("nextval"));
+    				values.put(ContentDescriptor.FreeIds.Cols.TABLEID,
+    						ContentDescriptor.TableIndex.Values.MemberNotes.getKey());
+    				contentResolver.insert(ContentDescriptor.FreeIds.CONTENT_URI, values);
     			}
     			result +=1;
     		} catch (SQLException e) {
@@ -2943,13 +2933,22 @@ public class HornetDBService extends Service {
 	    				cur.getInt(cur.getColumnIndex(ContentDescriptor.MemberNotes.Cols.MID)),
 	    				cur.getString(cur.getColumnIndex(ContentDescriptor.MemberNotes.Cols.NOTES)),
 	    				cur.getString(cur.getColumnIndex(ContentDescriptor.MemberNotes.Cols.OCCURRED)));
+	    		//remove it from pendings
+	    		contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, ContentDescriptor.PendingUploads.Cols.ROWID+" = ? AND "
+	    				+ContentDescriptor.PendingUploads.Cols.TABLEID+" = ?", new String[] {rowids.get(i),
+	    				String.valueOf(ContentDescriptor.TableIndex.Values.MemberNotes.getKey())});
+	    		//update it to look like a normal.
+	    		ContentValues values = new ContentValues();
+	    		values.put(ContentDescriptor.MemberNotes.Cols.DEVICESIGNUP, "f");
+	    		contentResolver.update(ContentDescriptor.MemberNotes.CONTENT_URI, values, ContentDescriptor.MemberNotes.Cols._ID+" = ?",
+	    				new String[] {rowids.get(i)});
+	    		
     		} catch (SQLException e) {
     			statusMessage = e.getLocalizedMessage();
     			e.printStackTrace();
     			return -2;
     		}
     	}
-    	
     	return result;
     }
     

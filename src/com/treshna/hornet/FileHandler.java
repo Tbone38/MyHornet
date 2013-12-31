@@ -6,6 +6,7 @@ package com.treshna.hornet;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -148,7 +149,7 @@ public class FileHandler {
         return result;
     }
 	
-	public boolean copyDatabase() {
+	public boolean copyDatabase(boolean restore) {
 		try {
             File sd = Environment.getExternalStorageDirectory();
             File data = Environment.getDataDirectory();
@@ -158,21 +159,37 @@ public class FileHandler {
                 String backupDBPath = HornetDatabase.DATABASE_NAME;
                 File currentDB = new File(data, currentDBPath);
                 File backupDB = new File(sd, backupDBPath);
-
-                    FileInputStream fileInputStream = new FileInputStream(currentDB);
-					FileChannel src = fileInputStream.getChannel();
-                    FileOutputStream fileOutputStream = new FileOutputStream(backupDB);
-					FileChannel dst = fileOutputStream.getChannel();
-                    dst.transferFrom(src, 0, src.size());
-                    src.close();
-                    dst.close();
-                    fileInputStream.close();
-                    fileOutputStream.close();
+                
+                FileInputStream fileInputStream = null;
+                FileOutputStream fileOutputStream = null;
+                if (restore) {
+                	fileInputStream = new FileInputStream(backupDB);
+                    fileOutputStream = new FileOutputStream(currentDB);
+                } else {
+                	fileInputStream = new FileInputStream(currentDB);
+                	fileOutputStream = new FileOutputStream(backupDB);
+                }
+    			FileChannel src = fileInputStream.getChannel();
+				FileChannel dst = fileOutputStream.getChannel();
+                dst.transferFrom(src, 0, src.size());
+                src.close();
+                dst.close();
+                fileInputStream.close();
+                fileOutputStream.close();
+                
+                if (restore) {
+                	//delete the backup, otherwise we're wasting space.
+                	backupDB.delete();
+                }
             }
-        } catch (Exception e) {
+		} catch (FileNotFoundException e) {
+        	e.printStackTrace();
+        	return false;
+        } catch (IOException e){
         	e.printStackTrace();
         	return false;
         }
 		return true;	
 	}
+	
 }
