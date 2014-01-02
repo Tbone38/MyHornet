@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -24,7 +23,7 @@ public class BookingsSlideFragment extends Fragment {
 	private static int NUM_PAGES = 5; //?
 	
 	@SuppressLint("UseSparseArrays")
-	private Map<Integer, Fragment> fragmentlist = new HashMap<Integer, Fragment>();
+	private Map<Integer, BookingsResourceFragment> fragmentlist = new HashMap<Integer, BookingsResourceFragment>();
     private ViewPager mPager;
     private PagerAdapter mPagerAdapter;
     private String selectedDate;
@@ -56,6 +55,7 @@ public class BookingsSlideFragment extends Fragment {
 	    mPagerAdapter = new ScreenSlidePagerAdapter(getChildFragmentManager());
 	    mPager.setAdapter(mPagerAdapter);
 	    mPager.setCurrentItem(2);
+	    //mPager.setOffscreenPageLimit(0); //doesn't solve the issue.
 		  
 		return view;
 
@@ -76,6 +76,8 @@ public class BookingsSlideFragment extends Fragment {
     	SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd", Locale.US);
     	Calendar cal = Calendar.getInstance();
     	Date date;
+    	
+    	
     	try {
     		date = format.parse(selectedDate);
     	} catch (ParseException e) {
@@ -110,36 +112,50 @@ public class BookingsSlideFragment extends Fragment {
     	return selectedDate;
     }
     
-    class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter{
+    
+	public void setDate(String date) {
+    	this.selectedDate = date;
     	
+    	//mPager.getAdapter().notifyDataSetChanged();
+    	mPager.invalidate();
+    	mPager.setCurrentItem(2);
+    	
+    }
+	
+    class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter{
+    	FragmentManager fragManager;
         public ScreenSlidePagerAdapter(FragmentManager fragmentManager) {
             super(fragmentManager);
+            this.fragManager = fragmentManager; 
         }
 
         @Override
         public Fragment getItem(int position) {
+        	BookingsResourceFragment page;
         	
-        	//create fragment
-        	BookingsResourceFragment page = new BookingsResourceFragment();
-            Bundle bdl = new Bundle(2);
+        	page = new BookingsResourceFragment();
+            if (fragmentlist.containsKey(position)) { //unused.
+            	fragmentlist.remove(position);
+            }
+            fragmentlist.put(position, page);
+
+        	Bundle bdl = new Bundle(2);
             bdl.putBoolean("hasOverview", hasOverview);
             String date = BookingsSlideFragment.this.getDate(position);
             Log.w(TAG, "getItem Date:"+date);
             bdl.putString("bookings_date", date);
             page.setArguments(bdl);
             
-            //this is unused
-            if (fragmentlist.containsKey(position)) {
-            	fragmentlist.remove(position);
-            }
-            fragmentlist.put(position, page);
-      
         	return page;
         }
-        
         @Override
         public int getCount() {
             return NUM_PAGES;
+        }
+    
+        @Override
+        public int getItemPosition(Object object) {
+            return POSITION_NONE;
         }
     }
 

@@ -233,7 +233,7 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
 			updateDate();
 			
 		 	//just change the cursor.
-		 	mLoader.restartLoader(0, null, this);	
+		 	//mLoader.restartLoader(0, null, this);	
 		 	mAdapter.updateDate(selectedDate);
     }
 	
@@ -290,6 +290,7 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
 		selectedDate = date;
 		selectedDate = Services.dateFormat(selectedDate, "yyyy MM dd", "yyyyMMdd");
 		Services.setPreference(getActivity(), "bookings_date", selectedDate);
+		((BookingsSlideFragment) this.getParentFragment()).setDate(selectedDate);
 		updateSelection();
 	}
 
