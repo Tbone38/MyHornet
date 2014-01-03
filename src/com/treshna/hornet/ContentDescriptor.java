@@ -9,7 +9,8 @@ import android.provider.BaseColumns;
  *  100 > < 200 = Member/membership/images etc
  *  200 > < 300 = Pending member uploads & swipes.
  *  300 > < 400 = Bookings related tables.
- *  
+ *  400 > < 500 = Other GymMaster tables (id-card).
+ *  600 > < 700 = custom Tables (specific development).
  *  In use ID's:
  *    1 = drop table
  *    5 = DeletedRecords				126:
@@ -139,6 +140,9 @@ public class ContentDescriptor {
 	     matcher.addURI(authority, FreeIds.PATH, FreeIds.PATH_TOKEN);
 	     matcher.addURI(authority, PendingDeletes.PATH, PendingDeletes.PATH_TOKEN);
 	     
+	     matcher.addURI(authority, RollCall.PATH, RollCall.PATH_TOKEN);
+	     matcher.addURI(authority, RollItem.PATH, RollItem.PATH_TOKEN);
+	     
 	     matcher.addURI(authority, DROPTABLE, TOKEN_DROPTABLE);
 	     
 	     return matcher;
@@ -243,6 +247,8 @@ public class ContentDescriptor {
 	 			public static final String MEDICATIONBYSTAFF = "medicationbystaff";
 	 			public static final String MEDICATION = "medication";
 	 			
+	 			//YMCA SPECIFIC
+	 			public static final String PARENTNAME = "parentname"; //default this to empty.
 	        }
 	        
 	        public static class OldCols {
@@ -988,5 +994,39 @@ public class ContentDescriptor {
 	 			}
 	 		}
 	 	}
-
+	 	
+	 	public static class RollCall {
+	 		public static final String NAME = "roll";
+	 		public static final String PATH = "roll";
+	 		public static final int PATH_TOKEN = 601;
+	 		
+	 		public static final String PATH_FOR_ID = "roll/*";
+	 		public static final int PATH_FOR_ID_TOKEN = 602;
+	 		
+	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
+	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.roll";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.roll";
+	 		
+	 		public static class Cols implements BaseColumns {
+	 			public static final String DATETIME = "datetime"; //timestamp?
+	 			public static final String NAME = "name";
+	 		}
+	 	}
+	 	
+	 	//how do I generate rollItems?
+	 	public static class RollItem {
+	 		public static final String NAME = "rollitem";
+	 		public static final String PATH = "rollitem";
+	 		public static final int PATH_TOKEN = 603;
+	 		
+	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
+	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.rollitem";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.rollitem";
+	 		
+	 		public static class Cols implements BaseColumns {
+	 			public static final String ROLLID = "rollid"; //reference the roll.
+	 			public static final String MEMBERID = "memberid"; //reference member
+	 			public static final String ATTENDED = "attended"; //boolean
+	 		}
+	 	}
 }

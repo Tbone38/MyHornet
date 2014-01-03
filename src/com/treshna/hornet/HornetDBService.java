@@ -1619,10 +1619,19 @@ public class HornetDBService extends Service {
     		return -1; //connection failed;
     	}
     	try {
+    		int use_roll = Integer.parseInt(Services.getAppSettings(this.ctx, "use_roll"));
     		if (last_sync == -1) {
-    			rs = connection.getMembers(null);
+    			if (use_roll > 0) {
+    				rs = connection.getYMCAMembers(null);
+    			}else {
+    				rs = connection.getMembers(null);
+    			}
     		} else {
-    			rs = connection.getMembers(String.valueOf(last_sync));
+    			if (use_roll > 0) {
+    				rs = connection.getYMCAMembers(String.valueOf(last_sync));
+    			}else {
+    				rs = connection.getMembers(String.valueOf(last_sync));
+    			}
     		}
     		while (rs.next()) {
     			ContentValues values = new ContentValues();
@@ -3032,6 +3041,11 @@ public class HornetDBService extends Service {
 		values.put(ContentDescriptor.Member.Cols.MEDICATION, rs.getString("medication"));
 		values.put(ContentDescriptor.Member.Cols.MEDICATIONBYSTAFF, rs.getString("medicationbystaff"));
 		
+		int use_roll = Integer.parseInt(Services.getAppSettings(this.ctx, "use_roll"));
+		if (use_roll > 0) {
+			values.put(ContentDescriptor.Member.Cols.PARENTNAME, rs.getString("parentname"));
+		}
+		
 		return values;
     }
     
@@ -3057,15 +3071,15 @@ public class HornetDBService extends Service {
     	}
     	
     	for (int i = 0; i < member.size(); i++) {
-    		String query = "SELECT id, member.firstname, member.surname, member.cardno, " //get_name
-        			+"CASE WHEN member.happiness = 1 THEN ':)' WHEN member.happiness = 0 THEN ':|'"
-        			+" WHEN member.happiness <= -1 THEN ':(' WHEN member.happiness = 2 THEN '||' ELSE '' END AS happiness, "
-        			+"member.phonehome AS mphhome, member.phonework AS mphwork, member.phonecell AS mphcell, "
-        			+"member.email AS memail, member.status, member.gender, "
-        			+"emergencyname, emergencyhome, emergencywork, emergencycell, emergencyrelationship, "
-        			+"medication, medicationdosage, medicationbystaff, medicalconditions "
-        			+ "FROM member"
-        			+" WHERE id = "+member.get(i)+";";
+    		String query;
+
+    		int use_roll = Integer.parseInt(Services.getAppSettings(this.ctx, "use_roll"));
+    		if (use_roll > 0) {
+    			query = connection.YMCAMembersQuery+" WHERE id = "+member.get(i)+";";
+    					
+    		} else {
+    			query = connection.membersQuery+" WHERE id = "+member.get(i)+";";
+    		}
     		ResultSet rs;
     		try {
     			rs = connection.startStatementQuery(query);

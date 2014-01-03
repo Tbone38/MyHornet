@@ -128,8 +128,7 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.not_main, menu);
-		return true;
+		return Services.createOptionsMenu(getMenuInflater(), menu);
 	}
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {

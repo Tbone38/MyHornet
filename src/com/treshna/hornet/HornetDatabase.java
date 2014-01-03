@@ -326,7 +326,7 @@ public class HornetDatabase extends SQLiteOpenHelper {
 				break;
 			}
 			case (93):{
-				//UpdateDatabase.NinetyThree.patchNinetyThree(db);
+				UpdateDatabase.NinetyThree.patchNinetyThree(db);
 				//db.execSQL("pragma full_column_names=ON;"); //TODO: will this break stuff? 
 				break;
 			}

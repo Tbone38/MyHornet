@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action">Actions</string>
+	<string name="action_add_image">Add Image</string>
+	<string name="action_call">Call</string>
+	<string name="action_email">Email</string>
+	<string name="action_sms">SMS</string>
+	<string name="action_hold">Member Hold</string>
+	<string name="action_add_membership">Add Membership</string>
+	<string name="action_manual_checkin">Manual Check-In</string>
+	<string name="action_gallery">Gallery</string>
+	<string name="action_tag">Get Card</string>
+</resources>

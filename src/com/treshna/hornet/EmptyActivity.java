@@ -115,6 +115,10 @@ public class EmptyActivity extends NFCActivity{
 			f.setArguments(bdl);
 		}
 		
+		else if (view == Services.Statics.FragmentType.RollList.getKey()) {
+			f = new RollListFragment();
+		}
+		
 		else { //default!
 			f = null;
 		}
@@ -168,8 +172,7 @@ public class EmptyActivity extends NFCActivity{
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.not_main, menu);
-		return true;
+		return Services.createOptionsMenu(getMenuInflater(), menu);
 	}
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -211,7 +214,13 @@ public class EmptyActivity extends NFCActivity{
 	    	Intent intent = new Intent(this, MemberAdd.class);
 	    	startActivity(intent);
 	    	return true;
-	    }	    
+	    }
+	    case (R.id.action_rollcall):{
+	    	Intent i = new Intent(this, EmptyActivity.class);
+	    	i.putExtra(Services.Statics.KEY, Services.Statics.FragmentType.RollList.getKey());
+	    	startActivity(i);
+	    	return true;
+	    }
 	    default:
 	    	return super.onOptionsItemSelected(item);
 	    }

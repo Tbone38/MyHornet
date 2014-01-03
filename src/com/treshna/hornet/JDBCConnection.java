@@ -350,19 +350,48 @@ public class JDBCConnection {
     	return rs;
     }
     
+    public final String membersQuery  = "SELECT id, member.firstname, member.surname, " //get_name
+			+"CASE WHEN member.happiness = 1 THEN ':)' WHEN member.happiness = 0 THEN ':|'"
+			+" WHEN member.happiness <= -1 THEN ':(' WHEN member.happiness = 2 THEN '||' ELSE '' END AS happiness, "
+			+"member.phonehome AS mphhome, member.phonework AS mphwork, member.phonecell AS mphcell, "
+			+"member.email AS memail, member.notes AS mnotes, member.status, member.cardno, member.gender, "
+			+"emergencyname, emergencyhome, emergencywork, emergencycell, emergencyrelationship, "
+			+"medication, medicationdosage, medicationbystaff, medicalconditions "
+			+ "FROM member"
+			;
+    
     public ResultSet getMembers(String lastupdate) throws SQLException {
     	ResultSet rs = null;
-    	String query = "SELECT id, member.firstname, member.surname, " //get_name
-    			+"CASE WHEN member.happiness = 1 THEN ':)' WHEN member.happiness = 0 THEN ':|'"
-    			+" WHEN member.happiness <= -1 THEN ':(' WHEN member.happiness = 2 THEN '||' ELSE '' END AS happiness, "
-    			+"member.phonehome AS mphhome, member.phonework AS mphwork, member.phonecell AS mphcell, "
-    			+"member.email AS memail, member.notes AS mnotes, member.status, member.cardno, member.gender, "
-    			+"emergencyname, emergencyhome, emergencywork, emergencycell, emergencyrelationship, "
-    			+"medication, medicationdosage, medicationbystaff, medicalconditions "
-    			+ "FROM member"
-    			+" WHERE status != 3";
+    	String query = membersQuery;
     	if (lastupdate != null) {
-    		query = query + " AND lastupdate > ?::TIMESTAMP WITHOUT TIME ZONE";
+    		query = query + " WHERE status != 3 AND lastupdate > ?::TIMESTAMP WITHOUT TIME ZONE";
+    	}
+    	pStatement = con.prepareStatement(query);
+    	
+    	if (lastupdate != null) {
+    		pStatement.setString(1, Services.dateFormat(new Date(Long.parseLong(lastupdate)).toString(),
+    				"EEE MMM dd HH:mm:ss zzz yyyy", "dd-MM-yyyy HH:mm:ss"));
+    	}
+    	
+    	rs = pStatement.executeQuery();
+    	return rs;
+    }
+    
+    public final String YMCAMembersQuery = "SELECT id, member.firstname, member.surname, " //get_name
+			+"CASE WHEN member.happiness = 1 THEN ':)' WHEN member.happiness = 0 THEN ':|'"
+			+" WHEN member.happiness <= -1 THEN ':(' WHEN member.happiness = 2 THEN '||' ELSE '' END AS happiness, "
+			+"member.phonehome AS mphhome, member.phonework AS mphwork, member.phonecell AS mphcell, "
+			+"member.email AS memail, member.notes AS mnotes, member.status, member.cardno, member.gender, "
+			+"emergencyname, emergencyhome, emergencywork, emergencycell, emergencyrelationship, "
+			+"medication, medicationdosage, medicationbystaff, medicalconditions, parentname "
+			+ "FROM member"
+			; 
+    
+    public ResultSet getYMCAMembers(String lastupdate) throws SQLException {
+    	ResultSet rs = null;
+    	String query = YMCAMembersQuery;
+    	if (lastupdate != null) {
+    		query = query + " WHERE status != 3 AND lastupdate > ?::TIMESTAMP WITHOUT TIME ZONE";
     	}
     	pStatement = con.prepareStatement(query);
     	

@@ -165,8 +165,7 @@ public class BookingPage extends ActionBarActivity implements OnMemberSelectList
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.not_main, menu);
-		return true;
+		return Services.createOptionsMenu(getMenuInflater(), menu);
 	}
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {

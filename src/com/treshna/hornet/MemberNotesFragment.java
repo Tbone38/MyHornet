@@ -66,6 +66,16 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 			return view;
 		}
 		
+		//YMCA specific Parent Name.
+		int use_roll = Integer.parseInt(Services.getAppSettings(getActivity(), "use_roll"));
+		if (use_roll > 0) {
+			LinearLayout parentRow = (LinearLayout) view.findViewById(R.id.memberParentRow);
+			parentRow.setVisibility(View.VISIBLE);
+			
+			EditText parentname = (EditText) view.findViewById(R.id.memberParentName);
+			parentname.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.PARENTNAME)));
+		}
+		
 		LinearLayout emergencyHeading = (LinearLayout) view.findViewById(R.id.emergencyHeadingRow);
 		emergencyHeading.setOnClickListener(this);
 		

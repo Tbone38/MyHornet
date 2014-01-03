@@ -31,4 +31,6 @@
  <string name="hint_medical_expand">expand/collapse medical details icon</string>
  <string name="hint_notes_expand">expand/collapse notes icon</string>
  <string name="hint_tasks_expand">expand/collapse tasks icon</string>
+ 
+ <string name="label_parent_name">Parent\'s Name</string>
 </resources>

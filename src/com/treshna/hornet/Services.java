@@ -21,6 +21,8 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.widget.Toast;
 
 public class Services {
@@ -213,6 +215,16 @@ public class Services {
 		progress = prog;
 	}
 	
+	public static boolean createOptionsMenu(MenuInflater inflater, Menu menu) {
+		int use_roll = Integer.parseInt(Services.getAppSettings(getContext(), "use_roll"));
+		if (use_roll > 0) {
+			inflater.inflate(R.menu.not_main_roll, menu);
+		} else {
+			inflater.inflate(R.menu.not_main, menu);
+		}
+		return true;
+	}
+	
 	public static class ColorFilterGenerator {
 		/**
 		 * Creates a HUE ajustment ColorFilter
@@ -319,7 +331,7 @@ public class Services {
 			    cm.postConcat(new ColorMatrix(gMatrix));
 		}
 		
-		public static ColorFilter setColourGrey() { //why doesn't this work?
+		public static ColorFilter setColourGrey() {
 		
 			ColorMatrix cm = new ColorMatrix();
 			float[] gMatrix = { 
@@ -339,6 +351,7 @@ public class Services {
 		}
 	}
 	
+	//doesn't work/can be removed.
 	public static class Typefaces {
 		private static final String TAG = "Typefaces";
 
@@ -392,7 +405,8 @@ public class Services {
 		public static final String ERROR_MSHOLD2 = "ERROR: This member is already suspended from";
 		
 		public static enum FragmentType {
-			MembershipAdd(1), MembershipComplete(2), MemberDetails(3), MemberGallery(4);
+			MembershipAdd(1), MembershipComplete(2), MemberDetails(3), MemberGallery(4),
+			RollList(5), RollItemList(6);
 			
 			private final int key;
 			

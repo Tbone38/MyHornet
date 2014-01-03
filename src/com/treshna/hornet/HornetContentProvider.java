@@ -194,6 +194,16 @@ public class HornetContentProvider extends ContentProvider {
         	getContext().getContentResolver().notifyChange(uri, null);
         	return rows;
         }
+        case ContentDescriptor.RollCall.PATH_TOKEN:{
+        	int rows = db.delete(ContentDescriptor.RollCall.NAME, selection, selectionArgs);
+        	getContext().getContentResolver().notifyChange(uri, null);
+        	return rows;
+        }
+        case ContentDescriptor.RollItem.PATH_TOKEN:{
+        	int rows = db.delete(ContentDescriptor.RollItem.NAME, selection, selectionArgs);
+        	getContext().getContentResolver().notifyChange(uri, null);
+        	return rows;
+        }
         
         case ContentDescriptor.TOKEN_DROPTABLE:{ //special case, drops tables/deletes database.
         	FileHandler fh = new FileHandler(ctx);
@@ -360,7 +370,16 @@ public class HornetContentProvider extends ContentProvider {
             	getContext().getContentResolver().notifyChange(uri, null);
             	return ContentDescriptor.PendingDeletes.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
             }
-            
+            case ContentDescriptor.RollCall.PATH_TOKEN:{
+            	long id = db.insert(ContentDescriptor.RollCall.NAME, null, values);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return ContentDescriptor.RollCall.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
+            }
+            case ContentDescriptor.RollItem.PATH_TOKEN:{
+            	long id = db.insert(ContentDescriptor.RollItem.NAME, null, values);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return ContentDescriptor.RollItem.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
+            }
             default: {
                 throw new UnsupportedOperationException("URI: " + uri + " not supported.");
             }
@@ -702,6 +721,16 @@ public class HornetContentProvider extends ContentProvider {
             		+ "(v."+ContentDescriptor.Visitor.Cols.MSID+" = ms."+ContentDescriptor.Membership.Cols.MSID+")");
             	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
             }
+            case ContentDescriptor.RollCall.PATH_TOKEN:{
+            	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+            	builder.setTables(ContentDescriptor.RollCall.NAME);
+            	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+            }
+            case ContentDescriptor.RollItem.PATH_TOKEN:{
+            	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+            	builder.setTables(ContentDescriptor.RollItem.NAME);
+            	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+            }
             
             default: throw new UnsupportedOperationException("URI: " + uri + " not supported.");
         }
@@ -826,6 +855,16 @@ public class HornetContentProvider extends ContentProvider {
             }
             case ContentDescriptor.MemberBalance.PATH_TOKEN:{
             	int result = db.update(ContentDescriptor.MemberBalance.NAME, values, selection, selectionArgs);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return result;
+            }
+            case ContentDescriptor.RollCall.PATH_TOKEN:{
+            	int result = db.update(ContentDescriptor.RollCall.NAME, values, selection, selectionArgs);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return result;
+            }
+            case ContentDescriptor.RollItem.PATH_TOKEN:{
+            	int result = db.update(ContentDescriptor.RollItem.NAME, values, selection, selectionArgs);
             	getContext().getContentResolver().notifyChange(uri, null);
             	return result;
             }

@@ -151,23 +151,13 @@ public class MainActivity extends NFCActivity {
 	}
 	
 	@Override
-	public void onPostResume() {
-		Log.d(TAG, "STARTING ACTIVITY ON POST RESUME");
-		super.onPostResume();
-		Log.d(TAG, "FINISHING ACTIVITY ON POST RESUME");
-	}
-	
-	@Override
-	public void onResume(){
-		Log.d(TAG, "STARTING ACTIVITY ON RESUME");
-		super.onResume();
-		Log.d(TAG, "FINISHING ACTIVITY ON RESUME");
-	}
-
-	
-	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.main, menu);
+		int use_roll = Integer.parseInt(Services.getAppSettings(getContext(), "use_roll"));
+		if (use_roll > 0) {
+			getMenuInflater().inflate(R.menu.main_roll, menu);
+		} else {
+			getMenuInflater().inflate(R.menu.main, menu);
+		}
 		return true;
 	}
 	
@@ -205,6 +195,12 @@ public class MainActivity extends NFCActivity {
 	    case (R.id.action_addMember):{
 	    	Intent intent = new Intent(this, MemberAdd.class);
 	    	startActivity(intent);
+	    	return true;
+	    }
+	    case (R.id.action_rollcall):{
+	    	Intent i = new Intent(this, EmptyActivity.class);
+	    	i.putExtra(Services.Statics.KEY, Services.Statics.FragmentType.RollList.getKey());
+	    	startActivity(i);
 	    	return true;
 	    }
 	    default:

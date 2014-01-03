@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -18,11 +19,17 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
+import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -44,6 +51,8 @@ public class SettingsActivity extends PreferenceActivity {
 	 */
 	private static final boolean ALWAYS_SIMPLE_PREFS = true; //TODO: fix the fragments here;
 	private static Context ctx;
+	private View other_settings_view;
+	private AlertDialog other_settings_alert;
 
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
@@ -96,6 +105,7 @@ public class SettingsActivity extends PreferenceActivity {
 		fakeHeader.setTitle(R.string.pref_header_data_sync);
 		getPreferenceScreen().addPreference(fakeHeader);
 		addPreferencesFromResource(R.xml.pref_data_sync);
+		setupGymSpecificWindow();
 		
 		createDebugOpt();
 		Preference clear = createClearData();
@@ -145,6 +155,48 @@ public class SettingsActivity extends PreferenceActivity {
     		Services.getProgress().dismiss();
     		//Services.setProgress(null);
     	}
+	}
+	
+	//Currently used for YMCA specific features -- Roll call & parent-name ?
+	private void setupGymSpecificWindow() {
+		Preference button = getPreferenceScreen().findPreference("specific_gym");
+		button.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+
+			@Override
+			public boolean onPreferenceClick(Preference preference) {
+				LayoutInflater inflater = SettingsActivity.this.getLayoutInflater();
+				other_settings_view = inflater.inflate(R.layout.alert_settings_other, null);
+				
+				TextView accept, cancel;
+				accept = (TextView) other_settings_view.findViewById(R.id.button_apply_text);
+				accept.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						//get the value from the view.
+						ToggleButton roll = (ToggleButton) other_settings_view.findViewById(R.id.enable_roll);
+						SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(SettingsActivity.this.ctx);
+						Editor e = preferences.edit();
+						e.putString("use_roll", String.valueOf(Services.booltoInt(roll.isChecked())));
+						e.commit();
+						other_settings_alert.dismiss();
+				}});
+				
+				cancel = (TextView) other_settings_view.findViewById(R.id.button_cancel_text);
+				cancel.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						other_settings_alert.dismiss();
+				}});
+				
+				AlertDialog.Builder build = new AlertDialog.Builder(SettingsActivity.this.ctx);
+				build.setTitle("Gym Specific Settings");
+				build.setView(other_settings_view);
+				other_settings_alert = build.create();
+				other_settings_alert.show();
+				return true;
+			}
+			
+		});
 	}
 	
 	private Preference getDoorList() {

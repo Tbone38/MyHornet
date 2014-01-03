@@ -20,7 +20,7 @@
 			YMCA REQUESTS:
 				-enrolled in,
 				-Roll Call.
-				-parent name?
+				-parent name
 		-KNOWN BUGS/TO FIX:
 			-fix Get Card for new cards.
 			-manual checkin might hard-crash if the door is null (why wasn't there any doors?)

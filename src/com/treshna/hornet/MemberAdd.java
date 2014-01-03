@@ -80,8 +80,7 @@ public class MemberAdd extends NFCActivity implements OnClickListener, DatePicke
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.not_main, menu);
-		return true;
+		return Services.createOptionsMenu(getMenuInflater(), menu);
 	}
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -119,20 +118,17 @@ public class MemberAdd extends NFCActivity implements OnClickListener, DatePicke
 	    	Services.setPreference(this, "sync_frequency", "-1");
 	    	return true;
 	    }
-	    /*case (R.id.action_bookings):{
-	    	Intent bookings = new Intent(this, HornetDBService.class);
-			bookings.putExtra(Services.Statics.KEY, Services.Statics.BOOKING);
-		 	this.startService(bookings);
-	    	
-		 	Intent intent = new Intent(this, BookingsSlidePager.class);
-	       	startActivity(intent);
-	       	return true;
-	    }*/
 	    case (R.id.action_addMember):{
 	    	Intent intent = new Intent(this, MemberAdd.class);
 	    	startActivity(intent);
 	    	return true;
-	    }	    
+	    }
+	    case (R.id.action_rollcall):{
+	    	Intent i = new Intent(this, EmptyActivity.class);
+	    	i.putExtra(Services.Statics.KEY, Services.Statics.FragmentType.RollList.getKey());
+	    	startActivity(i);
+	    	return true;
+	    }
 	    default:
 	    	return super.onOptionsItemSelected(item);
 	    }

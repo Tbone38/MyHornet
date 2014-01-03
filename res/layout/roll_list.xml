@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="3dp"
+    android:padding="5dp"
+    android:orientation="vertical">
+	
+	<ListView
+	   	android:id="@android:id/list"
+	   	android:layout_width="match_parent"
+	   	android:layout_height="0dp"
+	   	android:layout_weight=".8"
+	   	android:padding="7dp" />
+
+	 <LinearLayout
+	     android:layout_width="match_parent"
+	     android:layout_height="wrap_content"
+	     android:layout_marginRight="10dp"
+	     android:gravity="center_horizontal"
+	     android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/button_add_rollcall"
+            android:layout_width="140dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:text="@string/button_add_rollcall"
+            android:padding="10dp"
+            android:clickable="true"
+        	android:background="@drawable/button_large"
+        	 />
+	    <View
+	        android:layout_width="140dp"
+		    android:layout_height="2dp"
+		    android:paddingLeft="5dp"
+	    	android:paddingRight="5dp"
+		    android:background="@color/button_underline_grey" />
+	</LinearLayout>
+</LinearLayout>

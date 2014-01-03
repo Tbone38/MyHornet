@@ -14,6 +14,8 @@ import com.treshna.hornet.ContentDescriptor.MembershipSuspend;
 import com.treshna.hornet.ContentDescriptor.PendingDeletes;
 import com.treshna.hornet.ContentDescriptor.PendingUpdates;
 import com.treshna.hornet.ContentDescriptor.PendingUploads;
+import com.treshna.hornet.ContentDescriptor.RollCall;
+import com.treshna.hornet.ContentDescriptor.RollItem;
 import com.treshna.hornet.ContentDescriptor.TableIndex;
 import com.treshna.hornet.ContentDescriptor.Visitor;
 
@@ -368,6 +370,21 @@ public class UpdateDatabase {
 					+ " ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
 					+ " VALUES (new."+MemberNotes.Cols._ID+", "+TableIndex.Values.MemberNotes.getKey()+");"
 				+"END;";
+
+		//do YMCA specific stuff. append ParentName to Member Table,
+		//Add roll-call & rollItem tables.
+		public static final String SQL55 = "ALTER TABLE "+Member.NAME+" ADD COLUMN "
+				+Member.Cols.PARENTNAME+" TEXT;";
+		
+		//CREATE TABLES
+		public static final String SQL56="CREATE TABLE "+RollCall.NAME+" ("+RollCall.Cols._ID+" INTEGER PRIMARY KEY NOT NULL, "
+				+RollCall.Cols.DATETIME+" TIMESTAMP, "+RollCall.Cols.NAME+" TEXT "
+				+");";
+		
+		public static final String SQL57="CREATE TABLE "+RollItem.NAME+" ("+RollItem.Cols._ID+" INTEGER PRIMARY KEY NOT NULL, "
+				+RollItem.Cols.ROLLID+" INTEGER, "+RollItem.Cols.MEMBERID+" INTEGER, "
+				+RollItem.Cols.ATTENDED+" TEXT DEFAULT 'f' "
+				+");";
 		
 		public static void patchNinetyThree(SQLiteDatabase db) {
 			db.beginTransaction();
@@ -480,6 +497,12 @@ public class UpdateDatabase {
 				db.execSQL(UpdateDatabase.NinetyThree.SQL53);
 				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL54);
 				db.execSQL(UpdateDatabase.NinetyThree.SQL54);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL55);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL55);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL56);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL56);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL57);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL57);
 				db.setTransactionSuccessful();
 			} finally {
 				db.endTransaction();
