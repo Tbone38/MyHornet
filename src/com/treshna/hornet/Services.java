@@ -1,5 +1,6 @@
 package com.treshna.hornet;
 
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -12,6 +13,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ColorFilter;
 import android.graphics.ColorMatrix;
@@ -23,6 +25,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 public class Services {
@@ -92,6 +95,30 @@ public class Services {
 		}
 		return inSampleSize;
 	}
+	public static Bitmap decodeSampledBitmapFromFile(File imgFile, 
+	        int reqWidth, int reqHeight) {
+
+	    // First decode with inJustDecodeBounds=true to check dimensions
+		final BitmapFactory.Options options = new BitmapFactory.Options();
+	    options.inJustDecodeBounds = true;
+	    BitmapFactory.decodeFile(imgFile.getAbsolutePath(), options);
+	    // Calculate inSampleSize
+	    options.inSampleSize = Services.calculateInSampleSize(options,reqWidth, reqHeight);
+	    // Decode bitmap with inSampleSize set
+	    options.inJustDecodeBounds = false;
+	    try {
+	    	return BitmapFactory.decodeFile(imgFile.getAbsolutePath(), options);
+	    } catch (OutOfMemoryError e) {
+	    	return null;
+	    }
+	   
+	}
+	
+	public static void loadBitmap(File imgFile, ImageView imageView, int reqWidth, int reqHeight) {
+		BitmapWorkerTask task = new BitmapWorkerTask(imageView, reqWidth, reqHeight);
+		task.execute(imgFile);
+		}
+	
 	/*
 	 * This function allows the application to manually set the value of an 
 	 * application property. (setting)

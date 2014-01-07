@@ -90,13 +90,8 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 		File imgFile = null;
 		imgFile = new File(imgDir);
 		if (imgFile.exists() == true){
-			final BitmapFactory.Options options = new BitmapFactory.Options();
-		    options.inJustDecodeBounds = true;
-		    BitmapFactory.decodeFile(imgFile.getAbsolutePath(), options);
-		    options.inSampleSize = Services.calculateInSampleSize(options,500, 450);
-		    options.inJustDecodeBounds = false;
-		    Bitmap bm = BitmapFactory.decodeFile(imgFile.getAbsolutePath(), options);
-		    img.setImageBitmap(bm);
+			
+			Services.loadBitmap(imgFile,img, 500, 450);
 		    img.setClickable(true);
 		    img.setOnClickListener(this);
 		}
