@@ -62,6 +62,10 @@ public class EmptyActivity extends NFCActivity{
 			String memberid = intent.getStringExtra(Services.Statics.MID);
 			bdl = new Bundle(1);
 			bdl.putString(Services.Statics.MID, memberid);
+		} else if (view == Services.Statics.FragmentType.RollItemList.getKey()) {
+			int rollid = intent.getIntExtra(Services.Statics.ROLLID, -1);
+			bdl = new Bundle(1);
+			bdl.putInt(Services.Statics.ROLLID, rollid);
 		}
 		
 		setFragment(view, bdl);
@@ -117,6 +121,10 @@ public class EmptyActivity extends NFCActivity{
 		
 		else if (view == Services.Statics.FragmentType.RollList.getKey()) {
 			f = new RollListFragment();
+		}
+		else if (view == Services.Statics.FragmentType.RollItemList.getKey()) {
+			f = new RollItemListFragment();
+			f.setArguments(bdl);
 		}
 		
 		else { //default!

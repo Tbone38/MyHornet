@@ -31,6 +31,8 @@ import com.treshna.hornet.ContentDescriptor.PendingUploads;
 import com.treshna.hornet.ContentDescriptor.Programme;
 import com.treshna.hornet.ContentDescriptor.Resource;
 import com.treshna.hornet.ContentDescriptor.ResultStatus;
+import com.treshna.hornet.ContentDescriptor.RollCall;
+import com.treshna.hornet.ContentDescriptor.RollItem;
 import com.treshna.hornet.ContentDescriptor.Swipe;
 import com.treshna.hornet.ContentDescriptor.TableIndex;
 import com.treshna.hornet.ContentDescriptor.Time;
@@ -281,7 +283,8 @@ public class HornetDatabase extends SQLiteOpenHelper {
 				+");");
 		
 		//todo remove this:
-		repopulateTable(db);
+		//repopulateTable(db);
+		setupTableIndex(db);
 		
 		//SQL patches.
 		db.execSQL(UpdateDatabase.Ninety.SQL);
@@ -291,7 +294,18 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		//db.execSQL("pragma full_column_names=ON;"); //TODO: will this break stuff?*/
 	}
 	
+	private void setupTableIndex(SQLiteDatabase db) {
 
+		db.delete(ContentDescriptor.TableIndex.NAME, null, null);
+		
+		ContentValues values = new ContentValues();
+		for (int i=1; i <=ContentDescriptor.TableIndex.Values.getLength(); i +=1) {
+			values.put(ContentDescriptor.TableIndex.Cols._ID, i);
+			values.put(ContentDescriptor.TableIndex.Cols.NAME, ContentDescriptor.TableIndex.Values.getValue(i).toString());
+			
+			db.insert(ContentDescriptor.TableIndex.NAME, null, values);
+		}
+	}
 	
 	
 	@Override
@@ -309,6 +323,9 @@ public class HornetDatabase extends SQLiteOpenHelper {
 				onCreate(db);
 				return;
 			}
+			//repopulate the index table.
+			setupTableIndex(db);
+			
 			switch (version){
 			case (90):{
 				Log.w(HornetDatabase.class.getName(),"SQL-Patch:90 \n"+ UpdateDatabase.Ninety.SQL);
@@ -384,6 +401,9 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS "+PendingDeletes.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+FreeIds.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+TableIndex.NAME);
+		
+		db.execSQL("DROP TABLE IF EXISTS "+RollCall.NAME);
+		db.execSQL("DROP TABLE IF EXISTS "+RollItem.NAME);
 	}
 	
 	private void repopulateTable(SQLiteDatabase db) {
@@ -406,16 +426,6 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		} else {
 			cur.close();
 		}
-		
-		
-		{ //this code block probably wants moved.
-			ContentValues values = new ContentValues();
-			for (int i=1; i <=ContentDescriptor.TableIndex.Values.getLength(); i +=1) {
-				values.put(ContentDescriptor.TableIndex.Cols._ID, i);
-				values.put(ContentDescriptor.TableIndex.Cols.NAME, ContentDescriptor.TableIndex.Values.getValue(i).toString());
-				
-				db.insert(ContentDescriptor.TableIndex.NAME, null, values);
-			}
-		}
 	}
+	
 }

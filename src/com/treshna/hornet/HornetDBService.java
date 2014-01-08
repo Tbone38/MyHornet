@@ -139,6 +139,8 @@ public class HornetDBService extends Service {
  	   		this_sync = System.currentTimeMillis();
  	   		last_sync = Long.parseLong(Services.getAppSettings(ctx, "last_freq_sync")); //use this for checking lastupdate
  	   		
+ 	   		
+ 	   		
  	   		setDate();
  	   		getPendingUpdates();
  	   		//get Visitors
@@ -271,6 +273,24 @@ public class HornetDBService extends Service {
 		   int days = getOpenHours();
 		   getDoors();
 		   
+		   int use_roll = Integer.parseInt(Services.getAppSettings(this.ctx, "use_roll"));
+		   if (use_roll > 0) {
+			   getMember(-1);
+			   getMembership(-1);
+			   getProgrammes(0);
+			   getLastVisitors();
+			   Services.stopProgress(handler, currentCall);
+			   Services.setPreference(ctx, "last_freq_sync", String.valueOf(this_sync));
+			   Services.showProgress(Services.getContext(), "Setting up resource", handler, currentCall, false);
+		   	   //rebuild times, then update the reference in date.
+		   	   setTime(); 
+		   	   setDate();
+		   	   updateOpenHours();
+		   	   Services.stopProgress(handler, currentCall);
+		   	   thread.is_networking = false;
+		   	   return;
+		   }
+		   
 		   //id's
 		   getMemberNoteID();
 		   getBookingID();
@@ -279,7 +299,7 @@ public class HornetDBService extends Service {
 		   if (statusMessage != null && statusMessage.length() >3 ) {
 				   Services.showToast(getApplicationContext(), statusMessage, handler);
 		   }
-
+		   		   
 		   //stuff
 		   getMemberNotes(-1);
 		   int rscount = getResultStatus();
@@ -1669,7 +1689,9 @@ public class HornetDBService extends Service {
     	}
     	
     	try {
-    		rs = connection.getMembership(String.valueOf(last_sync));
+    		int use_roll = Integer.parseInt(Services.getAppSettings(this.ctx, "use_roll"));
+    		rs = connection.getMembership(String.valueOf(last_sync), use_roll);
+    			
     		while (rs.next()){
     			ContentValues values = new ContentValues();
     			
@@ -1681,6 +1703,7 @@ public class HornetDBService extends Service {
     			values.put(ContentDescriptor.Membership.Cols.PNAME, rs.getString("name"));
     			values.put(ContentDescriptor.Membership.Cols.VISITS, rs.getString("concession"));
     			values.put(ContentDescriptor.Membership.Cols.LASTUPDATE, rs.getString("lastupdate"));
+    			values.put(ContentDescriptor.Membership.Cols.PID, rs.getString("programmeid"));
     			
     			cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols.MSID+" = ?",
     					new String[] {rs.getString("id")},null);

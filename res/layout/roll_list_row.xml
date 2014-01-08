@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/listRow"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:paddingTop="3dp"
+    android:paddingBottom="3dp"
+    android:paddingLeft="2dp"
+    android:layout_margin="7dp"
+    android:background="@drawable/button"
+    android:orientation="horizontal" >
+    <View
+        android:id="@+id/roll_list_colour_block"
+        android:layout_width="10dp"
+        android:layout_height="match_parent"
+        android:background="@color/visitors_red" />
+    <TextView
+        android:id="@+id/roll_list_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight=".8"
+        android:text="Roll Name" 
+        android:textSize="15sp"
+        android:paddingLeft="10dp"/>
+    <TextView 
+        android:id="@+id/roll_list_datetime"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight=".8"
+        android:text="dd MMM yyyy, hh:mm:ss aa"
+        android:textSize="15sp"
+        android:paddingLeft="10dp"/>
+    <TextView
+        android:id="@+id/roll_list_attend_count"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight=".35"
+        android:text="xx/yy"
+        android:textSize="15sp"
+        android:paddingLeft="10dp"/>
+</LinearLayout>

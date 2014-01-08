@@ -376,6 +376,19 @@ public class SettingsActivity extends PreferenceActivity {
 				return true;
 		}});
 		debug.addPreference(restoredb);
+		
+		Preference deletebackup = new Preference(this);
+		deletebackup.setKey("deletebackup");
+		deletebackup.setTitle("Delete Backup");
+		deletebackup.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+			
+			@Override
+			public boolean onPreferenceClick(Preference preference) {
+				FileHandler fh = new FileHandler(Services.getContext());
+				fh.deleteFile("../"+HornetDatabase.DATABASE_NAME);
+				return true;
+		}});
+		debug.addPreference(deletebackup);
 	}
 	
 	private static void clearData(){

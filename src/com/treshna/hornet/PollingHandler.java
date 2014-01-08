@@ -96,6 +96,7 @@ public class PollingHandler extends BroadcastReceiver {
 		//get the current status of the network
 		 ConnectivityManager connectivityManager = (ConnectivityManager) this.context.getSystemService(Context.CONNECTIVITY_SERVICE);
 		 NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+		 //Do I want to checn here that were using WIFI and not data?
 		 boolean result = activeNetworkInfo != null && activeNetworkInfo.isConnected();
 		 //System.out.print("\nConnection Status: "+result+"\n");
 		 Log.v(TAG, "Connection Status: "+result);

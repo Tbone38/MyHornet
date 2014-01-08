@@ -152,13 +152,14 @@ public class FileHandler {
 	public boolean copyDatabase(boolean restore) {
 		try {
             File sd = Environment.getExternalStorageDirectory();
-            File data = Environment.getDataDirectory();
+			File data = Environment.getDataDirectory();
+            File appdata = context.getExternalFilesDir(null);
 
             if (sd.canWrite()) {
                 String currentDBPath = "//data//com.treshna.hornet//databases//"+HornetDatabase.DATABASE_NAME;
-                String backupDBPath = HornetDatabase.DATABASE_NAME;
+                String backupDBPath = "../"+HornetDatabase.DATABASE_NAME;
                 File currentDB = new File(data, currentDBPath);
-                File backupDB = new File(sd, backupDBPath);
+                File backupDB = new File(appdata, backupDBPath);
                 
                 FileInputStream fileInputStream = null;
                 FileOutputStream fileOutputStream = null;

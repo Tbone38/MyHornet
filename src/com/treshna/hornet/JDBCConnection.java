@@ -390,8 +390,11 @@ public class JDBCConnection {
     public ResultSet getYMCAMembers(String lastupdate) throws SQLException {
     	ResultSet rs = null;
     	String query = YMCAMembersQuery;
+    	query = query + " WHERE id IN (SELECT DISTINCT memberid FROM membership "
+				+ "WHERE programmeid IN (SELECT id FROM programme WHERE history = false "
+				+ "AND programmegroupid = 0) GROUP BY memberid) ";
     	if (lastupdate != null) {
-    		query = query + " WHERE status != 3 AND lastupdate > ?::TIMESTAMP WITHOUT TIME ZONE";
+    		query = query + " AND status != 3 AND lastupdate > ?::TIMESTAMP WITHOUT TIME ZONE";
     	}
     	pStatement = con.prepareStatement(query);
     	
@@ -466,15 +469,21 @@ public class JDBCConnection {
     	return rs;
     }
     
-    public ResultSet getMembership(String lastsync) throws SQLException {
+    public ResultSet getMembership(String lastsync, int ymca) throws SQLException {
     	ResultSet rs = null;
     	String query ="SELECT membership.id, memberid, membership.startdate, membership.enddate, cardno, membership.notes, " +
     			"primarymembership, membership.lastupdate, " +
-    			" membership.concession, programme.name FROM membership LEFT JOIN programme ON (membership.programmeid = programme.id)" +
+    			" membership.concession, programme.name, programme.id AS programmeid FROM membership LEFT JOIN programme ON (membership.programmeid = programme.id)" +
     			" WHERE membership.history = 'f' ";
+    	if (ymca > 0) {
+    		query = query + " AND memberid IN (SELECT DISTINCT memberid FROM membership "
+    				+ "WHERE programmeid IN (SELECT id FROM programme WHERE history = false "
+    				+ "AND programmegroupid = 0) GROUP BY memberid) ";
+    	}
     	if (lastsync != null) {
     		query = query + "AND membership.lastupdate > ?::TIMESTAMP WITHOUT TIME ZONE ;";
     	}
+    	//ADD YMCA HANDLING.
   
     	pStatement = con.prepareStatement(query);
     	if (lastsync != null) {
@@ -768,7 +777,7 @@ public class JDBCConnection {
     	
     	pStatement.execute();
     }
-    
+    //stuff like this breaks on large databases.
     public ResultSet getMemberNotes(Long lastupdate) throws SQLException {
     	ResultSet rs = null;
     	

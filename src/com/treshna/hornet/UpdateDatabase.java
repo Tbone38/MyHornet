@@ -378,13 +378,52 @@ public class UpdateDatabase {
 		
 		//CREATE TABLES
 		public static final String SQL56="CREATE TABLE "+RollCall.NAME+" ("+RollCall.Cols._ID+" INTEGER PRIMARY KEY NOT NULL, "
+				+RollCall.Cols.ROLLID+" INTEGER NOT NULL, "+RollCall.Cols.DEVICESIGNUP+" TEXT DEFAULT 'f', "
 				+RollCall.Cols.DATETIME+" TIMESTAMP, "+RollCall.Cols.NAME+" TEXT "
 				+");";
 		
 		public static final String SQL57="CREATE TABLE "+RollItem.NAME+" ("+RollItem.Cols._ID+" INTEGER PRIMARY KEY NOT NULL, "
+				+RollItem.Cols.ROLLITEMID+" INTEGER NOT NULL, "+RollItem.Cols.DEVICESIGNUP+" TEXT DEFAULT 'f', "
 				+RollItem.Cols.ROLLID+" INTEGER, "+RollItem.Cols.MEMBERID+" INTEGER, "
 				+RollItem.Cols.ATTENDED+" TEXT DEFAULT 'f' "
 				+");";
+		
+		public static final String SQL58="CREATE TRIGGER "+RollCall.Triggers.ON_INSERT+
+				" AFTER INSERT ON "+RollCall.NAME
+				+" FOR EACH ROW WHEN new."+RollCall.Cols.ROLLID+" > 0 AND new."+RollCall.Cols.DEVICESIGNUP+"= 't' "
+				+"BEGIN "
+					+"INSERT OR REPLACE INTO "+PendingUploads.NAME
+					+ " ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
+					+ " VALUES (new."+RollCall.Cols._ID+", "+TableIndex.Values.RollCall.getKey()+");"
+				+" END; ";
+		//Can't create a roll unless we have a rollid for it, so no need for other triggers.
+		
+		public static final String SQL59="CREATE TRIGGER "+RollItem.Triggers.ON_INSERT+
+				" AFTER INSERT ON "+RollItem.NAME
+				+" FOR EACH ROW WHEN new."+RollItem.Cols.ROLLITEMID+" > 0 AND new."+RollItem.Cols.DEVICESIGNUP+"= 't' "
+				+"BEGIN "
+					+"INSERT OR REPLACE INTO "+PendingUploads.NAME
+					+ " ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
+					+ " VALUES (new."+RollItem.Cols._ID+", "+TableIndex.Values.RollItem.getKey()+");"
+				+" END; ";
+		
+		public static final String SQL60= "CREATE TRIGGER "+RollItem.Triggers.ON_UPDATE_RIID+
+				" AFTER UPDATE ON "+RollItem.NAME
+				+" FOR EACH ROW WHEN old."+RollItem.Cols.ROLLITEMID+" <= 0 AND new."+RollItem.Cols.ROLLITEMID+" > 0 "
+				+"BEGIN "
+				+"INSERT OR REPLACE INTO "+PendingUploads.NAME
+				+ " ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
+				+ " VALUES (new."+RollItem.Cols._ID+", "+TableIndex.Values.RollItem.getKey()+");"
+				+"END;";
+		public static final String SQL61= "CREATE TRIGGER "+RollItem.Triggers.ON_UPDATE+
+				" AFTER UPDATE ON "+RollItem.NAME
+				+" FOR EACH ROW WHEN old."+RollItem.Cols.ATTENDED+" != new."+RollItem.Cols.ATTENDED
+				+" BEGIN "
+				+"INSERT OR REPLACE INTO "+PendingUpdates.NAME
+				+ " ("+PendingUpdates.Cols.ROWID+", "+PendingUpdates.Cols.TABLEID+")"
+				+ " VALUES (new."+RollItem.Cols._ID+", "+TableIndex.Values.RollItem.getKey()+");"
+				+"END;";
+
 		
 		public static void patchNinetyThree(SQLiteDatabase db) {
 			db.beginTransaction();
@@ -503,6 +542,14 @@ public class UpdateDatabase {
 				db.execSQL(UpdateDatabase.NinetyThree.SQL56);
 				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL57);
 				db.execSQL(UpdateDatabase.NinetyThree.SQL57);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL58);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL58);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL59);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL59);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL60);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL60);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyThree.SQL61);
+				db.execSQL(UpdateDatabase.NinetyThree.SQL61);
 				db.setTransactionSuccessful();
 			} finally {
 				db.endTransaction();

@@ -102,10 +102,20 @@ public class MainActivity extends NFCActivity {
 				Log.v(TAG, "was OverView Fragment");
 				ActionBar ab = this.getSupportActionBar();
 				ab.setSelectedNavigationItem(0); //just go back to the Find Member View?
-			} else if (f.getCurrentFragment() instanceof BookingsResourceFragment){
+			} else if (f.getCurrentFragment() instanceof BookingsResourceFragment){ //this should be redundant now.
 				Log.v(TAG, "was Resource Fragment");
 				BookingsResourceFragment resourceFragment = (BookingsResourceFragment) f.getCurrentFragment();
 				if (resourceFragment.hasOverView()) {
+					f.onBackPressed();
+					
+				} else {
+					ActionBar ab = this.getSupportActionBar();
+					ab.setSelectedNavigationItem(0); //just go back to the Find Member View?
+				}
+			} else if (f.getCurrentFragment() instanceof BookingsSlideFragment) {
+				Log.v(TAG, "was Slider Fragment");
+				BookingsSlideFragment slideFragment = (BookingsSlideFragment) f.getCurrentFragment();
+				if (slideFragment.hasOverView()) {
 					f.onBackPressed();
 					
 				} else {

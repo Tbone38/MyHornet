@@ -1,5 +1,7 @@
 package com.treshna.hornet;
 
+import java.util.ArrayList;
+
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.Context;
@@ -380,6 +382,7 @@ public class HornetContentProvider extends ContentProvider {
             	getContext().getContentResolver().notifyChange(uri, null);
             	return ContentDescriptor.RollItem.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
             }
+            
             default: {
                 throw new UnsupportedOperationException("URI: " + uri + " not supported.");
             }
@@ -728,7 +731,9 @@ public class HornetContentProvider extends ContentProvider {
             }
             case ContentDescriptor.RollItem.PATH_TOKEN:{
             	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
-            	builder.setTables(ContentDescriptor.RollItem.NAME);
+            	builder.setTables(ContentDescriptor.RollItem.NAME+" r LEFT JOIN "
+            			+ContentDescriptor.Member.NAME+" m ON (r."+ContentDescriptor.RollItem.Cols.MEMBERID
+            			+" = m."+ContentDescriptor.Member.Cols.MID+")");
             	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
             }
             
@@ -884,7 +889,7 @@ public class HornetContentProvider extends ContentProvider {
             	} else if (tablename.compareTo(ContentDescriptor.Booking.NAME) == 0) {
             		return db.delete(ContentDescriptor.Booking.NAME, ContentDescriptor.Booking.Cols.BID+" = ?",
             				new String[] {rowid});
-            	}
+            	}//TODO: roll & roll_item
             	else {
             		Log.e("Unsupported Operation", "DELETE FROM TABLE: "+tablename, 
             				new UnsupportedOperationException("DELETE FROM TABLE: "+tablename+" NOT SUPPORTED.")); 

@@ -112,6 +112,10 @@ public class BookingsSlideFragment extends Fragment {
     	return selectedDate;
     }
     
+    public boolean hasOverView(){
+		return hasOverview;
+	}
+    
     
 	public void setDate(String date) {
     	this.selectedDate = date;

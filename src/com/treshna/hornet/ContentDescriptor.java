@@ -142,6 +142,7 @@ public class ContentDescriptor {
 	     
 	     matcher.addURI(authority, RollCall.PATH, RollCall.PATH_TOKEN);
 	     matcher.addURI(authority, RollItem.PATH, RollItem.PATH_TOKEN);
+	     matcher.addURI(authority, RollItem.CREATE_ROLL_PATH, RollItem.CREATE_ROLL_TOKEN);
 	     
 	     matcher.addURI(authority, DROPTABLE, TOKEN_DROPTABLE);
 	     
@@ -964,7 +965,7 @@ public class ContentDescriptor {
 	 		public static enum Values {
 	 			Booking(1), Class(2), Swipe(3),Membership(4) /*when adding memberships*/,
 	 					Member(5) /*when adding members/prospects*/,Image(6),
-	 					MembershipSuspend(7), MemberNotes(8);
+	 					MembershipSuspend(7), MemberNotes(8), RollCall(9), RollItem(10);
 	 			
 	 			private final int key;
 	 			
@@ -1007,26 +1008,45 @@ public class ContentDescriptor {
 	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.roll";
 	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.roll";
 	 		
+	 		public static class Triggers {
+	 			public static final String ON_INSERT = "roll_insert";
+	 			public static final String ON_UPDATE_RID = "rollid_update";
+	 			public static final String ON_DELETE = "roll_delete"; //unused
+	 		}
+	 		
 	 		public static class Cols implements BaseColumns {
 	 			public static final String DATETIME = "datetime"; //timestamp?
 	 			public static final String NAME = "name";
+	 			public static final String ROLLID = "rollid";
+	 			public static final String DEVICESIGNUP = "devicesignup";
 	 		}
 	 	}
 	 	
-	 	//how do I generate rollItems?
 	 	public static class RollItem {
-	 		public static final String NAME = "rollitem";
-	 		public static final String PATH = "rollitem";
+	 		public static final String NAME = "roll_item";
+	 		public static final String PATH = "roll_item";
 	 		public static final int PATH_TOKEN = 603;
+	 		
+	 		public static final String CREATE_ROLL_PATH = "createroll";
+	 		public static final int CREATE_ROLL_TOKEN = 604;
 	 		
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
 	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.rollitem";
 	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.rollitem";
 	 		
+	 		public static class Triggers {
+	 			public static final String ON_INSERT = "roll_item_insert";
+	 			public static final String ON_UPDATE = "roll_item_update";
+	 			public static final String ON_UPDATE_RIID = "roll_item_id_update";
+	 			public static final String ON_DELETE = "roll_item_delete"; //unused
+	 		}
+	 		
 	 		public static class Cols implements BaseColumns {
 	 			public static final String ROLLID = "rollid"; //reference the roll.
 	 			public static final String MEMBERID = "memberid"; //reference member
 	 			public static final String ATTENDED = "attended"; //boolean
+	 			public static final String ROLLITEMID = "rollitemid";
+	 			public static final String DEVICESIGNUP = "devicesignup";
 	 		}
 	 	}
 }

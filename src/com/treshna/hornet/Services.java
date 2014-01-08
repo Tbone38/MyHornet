@@ -393,6 +393,7 @@ public class Services {
 		public static final String MSID = "membershipid";
 		public static final String MID = "memberid";
 		public static final String VISIT = "visitdate";
+		public static final String ROLLID = "roll_id";
 		public static String PREF_NAME = "addMember";
 		public static String PREF_KEY = "memberType";
 		

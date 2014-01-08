@@ -15,14 +15,15 @@
 			Moved Free ID's into a seperate table using the TableIDs as reference.
 			Added triggers on tables for insertion/update.
 			Added Booking Day swipe (SEE KNOWN BUGS)
+			Added parentname (YMCA)
 		-TODO:
 			Log Sync Errors, and upload them somewhere?
 			YMCA REQUESTS:
 				-enrolled in,
 				-Roll Call.
-				-parent name
 		-KNOWN BUGS/TO FIX:
 			-fix Get Card for new cards.
 			-manual checkin might hard-crash if the door is null (why wasn't there any doors?)
 			-the booking swipe view pager doesn't invaildate cached fragments when the date is set. 
 				This means that one of the (5) fragments may show the wrong date.
+			-The database sync runs out of memory on large databases (e.g. YMCA db).

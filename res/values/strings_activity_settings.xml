@@ -59,7 +59,7 @@
     </string-array>
 	
     <string name="pref_title_specific_gym">Other Settings</string>
-    <string name="enable_roll">Enable Roll-Call System?</string>
+    <string name="enable_roll">Use YMCA Specific Features?</string>
     <string name="button_settings_apply">Apply Settings</string>
     <string name="pref_title_system_sync_settings">System sync settings</string>
 

@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="action">Actions</string>
-	<string name="action_add_image">Add Image</string>
-	<string name="action_call">Call</string>
-	<string name="action_email">Email</string>
-	<string name="action_sms">SMS</string>
-	<string name="action_hold">Member Hold</string>
-	<string name="action_add_membership">Add Membership</string>
-	<string name="action_manual_checkin">Manual Check-In</string>
-	<string name="action_gallery">Gallery</string>
-	<string name="action_tag">Get Card</string>
+    <string name="roll_add_name">Roll Name</string>
+    <string name="roll_set_date">Set Date</string>
+    <string name="roll_set_time">Set Time</string>
+    <string name="roll_select_membership">Roll Membership</string>
+    <string name="roll_add_roll">Add Roll</string>
+    <string name="button_add_rollcall">Add Roll-Call</string>
+    <string name="roll_heading_name">Name</string>
+    <string name="roll_heading_attended">Attended</string>
 </resources>
