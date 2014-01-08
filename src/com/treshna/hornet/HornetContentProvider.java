@@ -726,7 +726,7 @@ public class HornetContentProvider extends ContentProvider {
             }
             case ContentDescriptor.RollCall.PATH_TOKEN:{
             	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
-            	builder.setTables(ContentDescriptor.RollCall.NAME);
+            	builder.setTables(ContentDescriptor.RollCall.NAME+" r");
             	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
             }
             case ContentDescriptor.RollItem.PATH_TOKEN:{

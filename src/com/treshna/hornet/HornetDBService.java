@@ -3324,39 +3324,40 @@ public class HornetDBService extends Service {
     	if (!openConnection()) {
     		return -1;
     	}
-    	try {
-    		for (int i=0;i<rolls.size(); i++) {
-    			cur = contentResolver.query(ContentDescriptor.RollCall.CONTENT_URI, null, ContentDescriptor.RollCall.Cols._ID+" = ?",
-    					new String[] {rolls.get(i)}, null);
-    			if (!cur.moveToFirst()) {
-    				//should probably delete it from pending uploads.
-    				contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, ContentDescriptor.PendingUploads.Cols.ROWID+" = ? AND "
-        					+ContentDescriptor.PendingUploads.Cols.TABLEID+"= ?", new String[] {rolls.get(i),
-        					String.valueOf(ContentDescriptor.TableIndex.Values.RollCall.getKey())});
-    				continue;
-    			}
-    			connection.uploadRoll(cur.getInt(cur.getColumnIndex(ContentDescriptor.RollCall.Cols.ROLLID)),
-    					cur.getString(cur.getColumnIndex(ContentDescriptor.RollCall.Cols.NAME)), 
-    					cur.getString(cur.getColumnIndex(ContentDescriptor.RollCall.Cols.DATETIME)));
-    			cur.close();
-    			
-    			ContentValues values = new ContentValues();
-    			values.put(ContentDescriptor.RollCall.Cols.DEVICESIGNUP, "f");
-    			contentResolver.update(ContentDescriptor.RollCall.CONTENT_URI, values, ContentDescriptor.RollCall.Cols._ID+" = ?",
-    					new String[] {rolls.get(i)});
-    			
-    			contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, ContentDescriptor.PendingUploads.Cols.ROWID+" = ? AND "
-    					+ContentDescriptor.PendingUploads.Cols.TABLEID+"= ?", new String[] {rolls.get(i),
-    					String.valueOf(ContentDescriptor.TableIndex.Values.RollCall.getKey())});
-    			
-    			connection.closePreparedStatement();
-    			result +=1;
-    		}
-    	} catch (SQLException e) {
-    		statusMessage =e.getLocalizedMessage();
-    		e.printStackTrace();
-    		return -2;
-    	}
+    
+		for (int i=0;i<rolls.size(); i++) {
+			try {
+				cur = contentResolver.query(ContentDescriptor.RollCall.CONTENT_URI, null, "r."+ContentDescriptor.RollCall.Cols._ID+" = ?",
+						new String[] {rolls.get(i)}, null);
+				if (!cur.moveToFirst()) {
+					//should probably delete it from pending uploads.
+					contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, ContentDescriptor.PendingUploads.Cols.ROWID+" = ? AND "
+	    					+ContentDescriptor.PendingUploads.Cols.TABLEID+"= ?", new String[] {rolls.get(i),
+	    					String.valueOf(ContentDescriptor.TableIndex.Values.RollCall.getKey())});
+					continue;
+				}
+				connection.uploadRoll(cur.getInt(cur.getColumnIndex(ContentDescriptor.RollCall.Cols.ROLLID)),
+						cur.getString(cur.getColumnIndex(ContentDescriptor.RollCall.Cols.NAME)), 
+						cur.getString(cur.getColumnIndex(ContentDescriptor.RollCall.Cols.DATETIME)));
+				cur.close();
+				
+				ContentValues values = new ContentValues();
+				values.put(ContentDescriptor.RollCall.Cols.DEVICESIGNUP, "f");
+				contentResolver.update(ContentDescriptor.RollCall.CONTENT_URI, values, ContentDescriptor.RollCall.Cols._ID+" = ?",
+						new String[] {rolls.get(i)});
+				
+				contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, ContentDescriptor.PendingUploads.Cols.ROWID+" = ? AND "
+						+ContentDescriptor.PendingUploads.Cols.TABLEID+"= ?", new String[] {rolls.get(i),
+						String.valueOf(ContentDescriptor.TableIndex.Values.RollCall.getKey())});
+				
+				connection.closePreparedStatement();
+				result +=1;
+			} catch (SQLException e) {
+	    		statusMessage =e.getLocalizedMessage();
+	    		e.printStackTrace();
+	    		return -2;
+	    	}
+		}
     	closeConnection();
     	
     	return result;
@@ -3377,43 +3378,45 @@ public class HornetDBService extends Service {
     	if (!openConnection()) {
     		return -1;
     	}
-    	try {
-    		for (int i=0;i<rollitems.size();i++) {
-    			cur = contentResolver.query(ContentDescriptor.RollItem.CONTENT_URI, null, "r."+ContentDescriptor.RollItem.Cols._ID+" = ?", 
-    					new String[] {rollitems.get(i)}, null);
-    			if (!cur.moveToFirst()) {
-    				//delete from pendinguploads.
-    				contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, 
-    						ContentDescriptor.PendingUploads.Cols.ROWID+" = ? AND"
-        					+ContentDescriptor.PendingUploads.Cols.TABLEID+" = ?", 
-        					new String[] {rollitems.get(i), 
-    						String.valueOf(ContentDescriptor.TableIndex.Values.RollItem.getKey())});
-    				continue;
-    			}
-    			connection.uploadRollItem(cur.getInt(cur.getColumnIndex(ContentDescriptor.RollItem.Cols.ROLLITEMID)),
-    					cur.getInt(cur.getColumnIndex(ContentDescriptor.RollItem.Cols.ROLLID)), 
-    					cur.getInt(cur.getColumnIndex(ContentDescriptor.RollItem.Cols.MEMBERID)), 
-    					cur.getString(cur.getColumnIndex(ContentDescriptor.RollItem.Cols.ATTENDED)));
-    			cur.close();
-    			
-    			ContentValues values = new ContentValues();
-    			values.put(ContentDescriptor.RollItem.Cols.DEVICESIGNUP, "f");
-    			contentResolver.update(ContentDescriptor.RollItem.CONTENT_URI, values, ContentDescriptor.RollItem.Cols._ID+" = ?",
-    					new String[] {rollitems.get(i)});
-    			
-    			contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, ContentDescriptor.PendingUploads.Cols.ROWID+" = ? AND"
-    					+ContentDescriptor.PendingUploads.Cols.TABLEID+" = ?", 
-    					new String[] {rollitems.get(i), String.valueOf(ContentDescriptor.TableIndex.Values.RollItem.getKey())});
-    			
-    			connection.closePreparedStatement();
-    			
-    			result +=1;
-    		}
-    	}catch (SQLException e) {
-    		statusMessage = e.getLocalizedMessage();
-    		e.printStackTrace();
-    		return -2;
-    	}
+	
+		for (int i=0;i<rollitems.size();i++) {
+			try {
+				cur = contentResolver.query(ContentDescriptor.RollItem.CONTENT_URI, null, "r."+ContentDescriptor.RollItem.Cols._ID+" = ?", 
+						new String[] {rollitems.get(i)}, null);
+				if (!cur.moveToFirst()) {
+					//delete from pendinguploads.
+					contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, 
+							ContentDescriptor.PendingUploads.Cols.ROWID+" = ? AND"
+	    					+ContentDescriptor.PendingUploads.Cols.TABLEID+" = ?", 
+	    					new String[] {rollitems.get(i), 
+							String.valueOf(ContentDescriptor.TableIndex.Values.RollItem.getKey())});
+					continue;
+				}
+				connection.uploadRollItem(cur.getInt(cur.getColumnIndex(ContentDescriptor.RollItem.Cols.ROLLITEMID)),
+						cur.getInt(cur.getColumnIndex(ContentDescriptor.RollItem.Cols.ROLLID)), 
+						cur.getInt(cur.getColumnIndex(ContentDescriptor.RollItem.Cols.MEMBERID)), 
+						cur.getString(cur.getColumnIndex(ContentDescriptor.RollItem.Cols.ATTENDED)));
+				cur.close();
+				
+				ContentValues values = new ContentValues();
+				values.put(ContentDescriptor.RollItem.Cols.DEVICESIGNUP, "f");
+				contentResolver.update(ContentDescriptor.RollItem.CONTENT_URI, values, ContentDescriptor.RollItem.Cols._ID+" = ?",
+						new String[] {rollitems.get(i)});
+				
+				contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, ContentDescriptor.PendingUploads.Cols.ROWID+" = ? AND "
+						+ContentDescriptor.PendingUploads.Cols.TABLEID+" = ?", 
+						new String[] {rollitems.get(i), String.valueOf(ContentDescriptor.TableIndex.Values.RollItem.getKey())});
+				
+				connection.closePreparedStatement();
+				
+				result +=1;
+			}catch (SQLException e) {
+        		statusMessage = e.getLocalizedMessage();
+        		e.printStackTrace();
+        		return -2;
+			}
+		}
+	
     	closeConnection();
     	
     	return result;
@@ -3434,30 +3437,31 @@ public class HornetDBService extends Service {
     	if (!openConnection()) {
     		return -1;
     	}
-    	try {
-    		for (int i=0; i<rollitems.size();i++) {
-    			cur = contentResolver.query(ContentDescriptor.RollItem.CONTENT_URI, null, ContentDescriptor.RollItem.Cols._ID+" = ?",
-    					new String[] {rollitems.get(i)}, null);
-    			if (!cur.moveToFirst()) {
-    				//can't find the item.
-    				contentResolver.delete(ContentDescriptor.PendingUpdates.CONTENT_URI, ContentDescriptor.PendingUpdates.Cols.ROWID+" = ? AND "
-        					+ContentDescriptor.PendingUpdates.Cols.TABLEID+" = ?", new String[] {rollitems.get(i),
-        					String.valueOf(ContentDescriptor.TableIndex.Values.RollItem.getKey())});
-    				continue;
-    			}
-    			connection.updateRollItem(cur.getInt(cur.getColumnIndex(ContentDescriptor.RollItem.Cols.ROLLITEMID)),
-    					cur.getString(cur.getColumnIndex(ContentDescriptor.RollItem.Cols.ATTENDED)));
-    			
-    			contentResolver.delete(ContentDescriptor.PendingUpdates.CONTENT_URI, ContentDescriptor.PendingUpdates.Cols.ROWID+" = ? AND "
-    					+ContentDescriptor.PendingUpdates.Cols.TABLEID+" = ?", new String[] {rollitems.get(i),
-    					String.valueOf(ContentDescriptor.TableIndex.Values.RollItem.getKey())});
-    			result +=1;
-    		}
-    	} catch (SQLException e) {
-    		statusMessage = e.getLocalizedMessage();
-    		e.printStackTrace();
-    		return -2;
-    	}
+
+		for (int i=0; i<rollitems.size();i++) {
+	    	try {
+				cur = contentResolver.query(ContentDescriptor.RollItem.CONTENT_URI, null, "r."+ContentDescriptor.RollItem.Cols._ID+" = ?",
+						new String[] {rollitems.get(i)}, null);
+				if (!cur.moveToFirst()) {
+					//can't find the item.
+					contentResolver.delete(ContentDescriptor.PendingUpdates.CONTENT_URI, ContentDescriptor.PendingUpdates.Cols.ROWID+" = ? AND "
+	    					+ContentDescriptor.PendingUpdates.Cols.TABLEID+" = ?", new String[] {rollitems.get(i),
+	    					String.valueOf(ContentDescriptor.TableIndex.Values.RollItem.getKey())});
+					continue;
+				}
+				connection.updateRollItem(cur.getInt(cur.getColumnIndex(ContentDescriptor.RollItem.Cols.ROLLITEMID)),
+						cur.getString(cur.getColumnIndex(ContentDescriptor.RollItem.Cols.ATTENDED)));
+				
+				contentResolver.delete(ContentDescriptor.PendingUpdates.CONTENT_URI, ContentDescriptor.PendingUpdates.Cols.ROWID+" = ? AND "
+						+ContentDescriptor.PendingUpdates.Cols.TABLEID+" = ?", new String[] {rollitems.get(i),
+						String.valueOf(ContentDescriptor.TableIndex.Values.RollItem.getKey())});
+				result +=1;
+	    	} catch (SQLException e) {
+	    		statusMessage = e.getLocalizedMessage();
+	    		e.printStackTrace();
+	    		return -2;
+	    	}
+		}
     	
     	return result;
     }

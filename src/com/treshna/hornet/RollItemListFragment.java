@@ -12,6 +12,7 @@ import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 
 public class RollItemListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -51,12 +52,22 @@ public class RollItemListFragment extends ListFragment implements LoaderManager.
 	public void onResume() {
 		super.onResume();
 		mLoader.restartLoader(0, null, this);
+		getActivity().setTitle("Roll Call");
 	}
 		
 
 	private View setupView() {
-		String[] from = {};//{"name", ContentDescriptor.RollItem.Cols.ATTENDED};
-		int[] to = {};//{R.id.roll_item_name, R.id.roll_item_attended};
+		ContentResolver contentResolver = getActivity().getContentResolver();
+		Cursor cur = contentResolver.query(ContentDescriptor.RollCall.CONTENT_URI, null, "r."+ContentDescriptor.RollCall.Cols.ROLLID+" = ?",
+				new String[] {String.valueOf(rollId)}, null);
+		if (!cur.moveToFirst()) return view;
+
+		TextView roll_name = (TextView) view.findViewById(R.id.roll_item_list_title);
+		roll_name.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.RollCall.Cols.NAME))+", \n"
+				+cur.getString(cur.getColumnIndex(ContentDescriptor.RollCall.Cols.DATETIME)));
+		
+		String[] from = {};
+		int[] to = {};
 		mAdapter = new RollItemAdapter(getActivity(), R.layout.roll_item_row, null, from, to);
 		
         setListAdapter(mAdapter);
@@ -66,7 +77,7 @@ public class RollItemListFragment extends ListFragment implements LoaderManager.
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
 		return new CursorLoader( getActivity(), ContentDescriptor.RollItem.CONTENT_URI,
-				new String[] {ContentDescriptor.Member.Cols.FNAME+"+' '+"+ContentDescriptor.Member.Cols.SNAME+" AS name",
+				new String[] {ContentDescriptor.Member.Cols.FNAME,ContentDescriptor.Member.Cols.SNAME,
 		"r."+ContentDescriptor.RollItem.Cols._ID, ContentDescriptor.RollItem.Cols.ATTENDED}, 
 		ContentDescriptor.RollItem.Cols.ROLLID+" = ?", new String[] {String.valueOf(rollId)}, null);
 	}

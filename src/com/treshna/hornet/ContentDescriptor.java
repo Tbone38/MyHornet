@@ -1047,6 +1047,9 @@ public class ContentDescriptor {
 	 			public static final String ATTENDED = "attended"; //boolean
 	 			public static final String ROLLITEMID = "rollitemid";
 	 			public static final String DEVICESIGNUP = "devicesignup";
+	 			
+	 			//aggregate column name, not an actual column!:
+	 			public static final String TOTAL = "total";
 	 		}
 	 	}
 }

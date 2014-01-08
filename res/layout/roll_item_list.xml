@@ -11,28 +11,29 @@
 	    android:id="@+id/roll_item_list_title"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    android:layout_weight=".05"/>
+	    android:layout_weight=".05"
+	    android:textSize="22sp"
+	    android:gravity="center"/>
 	<LinearLayout 
 	    android:id="@+id/roll_item_heading"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    android:layout_weight=".1"
 	    android:orientation="horizontal"
 	    android:padding="5dp">
 	    <TextView 
 	        android:id="@+id/roll_heading_name"
 	        android:layout_width="0dp"
 	        android:layout_height="wrap_content"
-	        android:layout_weight=".8"
-	        android:layout_marginLeft="10dp"
+	        android:layout_weight="1"
+	        android:layout_marginLeft="17dp"
 	        android:textSize="16sp"
 	        android:text="@string/roll_heading_name"
 	        android:paddingLeft="10dp"/>
 	    <TextView
 	        android:id="@+id/roll_heading_attended"
-	        android:layout_width="0dp"
+	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:layout_weight=".25"
+	        
 	        android:textSize="16sp"
 	        android:text="@string/roll_heading_attended" />
 	</LinearLayout>	
@@ -40,6 +41,60 @@
 	   	android:id="@android:id/list"
 	   	android:layout_width="match_parent"
 	   	android:layout_height="0dp"
-	   	android:layout_weight=".8"
+	   	android:layout_weight="1"
 	   	android:padding="7dp" />
+	<!--<LinearLayout
+	    android:id="@+id/roll_item_button_row"
+	    android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:baselineAligned="false" >
+	    <LinearLayout
+		        android:layout_width="0dp"
+		        android:layout_height="wrap_content"
+		        android:layout_weight=".4"
+			    android:layout_marginRight="10dp"
+		    	android:orientation="vertical">
+				<TextView
+			        android:id="@+id/cancel"
+			        android:layout_width="match_parent"
+			        android:layout_height="wrap_content"
+			        android:gravity="center"
+			        android:textSize="18sp"
+			        android:text="Remove Member"
+			        android:padding="4dp"
+			        android:background="@drawable/button_large_cancel"
+			    	android:clickable="true" />
+				<View
+			        android:layout_width="match_parent"
+				    android:layout_height="2dp"
+				    android:paddingLeft="5dp"
+			    	android:paddingRight="5dp"
+				    android:background="@color/button_underline_red" />
+			</LinearLayout>
+			<LinearLayout
+		        android:layout_width="0dp"
+		        android:layout_height="wrap_content"
+		        android:layout_weight=".4"
+			    android:layout_marginRight="10dp"
+		    	android:orientation="vertical">
+			    <TextView
+			        android:id="@+id/accept"
+			        android:layout_width="match_parent"
+			    	android:layout_height="wrap_content"
+			        android:gravity="center"
+			        android:text="Add Member"
+			        android:textSize="18sp"
+			        android:padding="5dp"
+			        android:background="@drawable/button_large_accept"
+			    	android:clickable="true" />
+				<View
+			        android:layout_width="match_parent"
+				    android:layout_height="2dp"
+				    android:paddingLeft="5dp"
+			    	android:paddingRight="5dp"
+				    android:background="@color/button_underline_green" />
+				</LinearLayout>
+	</LinearLayout>-->
+		    
 </LinearLayout>

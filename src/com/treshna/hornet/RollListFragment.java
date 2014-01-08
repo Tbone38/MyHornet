@@ -40,15 +40,15 @@ public class RollListFragment extends ListFragment implements OnClickListener, L
 		DatePickerSelectListener, TimePickerSelectListener, OnItemClickListener {
 	Cursor cur;
 	ContentResolver contentResolver;
-	String memberID;
 	private View view;
 	LayoutInflater mInflater;
-	private SimpleCursorAdapter mAdapter;
+	private RollListAdapter mAdapter;
 	private LoaderManager mLoader;
 	private DatePickerFragment mDatePicker;
 	private TimePickerFragment mTimePicker;
 	private View add_roll_view;
 	private AlertDialog mAddRoll;
+	private String membership;
 	
 	private static final String TAG = "RollListFragment";
 	
@@ -58,6 +58,8 @@ public class RollListFragment extends ListFragment implements OnClickListener, L
 		Services.setContext(getActivity());
 		contentResolver = getActivity().getContentResolver();
 		mLoader = this.getLoaderManager();
+		membership = Services.getAppSettings(getActivity(), "filter_membership");
+		if (membership.compareTo("-1")==0) membership =null;
 	}
 	
 	@Override
@@ -77,9 +79,9 @@ public class RollListFragment extends ListFragment implements OnClickListener, L
 		super.onResume();
 		mLoader.restartLoader(0, null, this);
 		this.getListView().setOnItemClickListener(this);
+		getActivity().setTitle("Roll Lists");
 	}
 		
-	@SuppressWarnings("deprecation")
 	private View setupView() {
 		TextView add_roll = (TextView) view.findViewById(R.id.button_add_rollcall);
 		add_roll.setOnClickListener(this);
@@ -89,12 +91,9 @@ public class RollListFragment extends ListFragment implements OnClickListener, L
 		mTimePicker = new TimePickerFragment();
 		mTimePicker.setTimePickerSelectListener(this);
 		
-		// TODO: 	-dynamically set the colour block to green for full/successful rolls.
-		// 			-show the fraction of roll/people checked in.
-		// May need a special Adapter.
-		String[] from = {ContentDescriptor.RollCall.Cols.NAME, ContentDescriptor.RollCall.Cols.DATETIME};
-		int[] to = {R.id.roll_list_name, R.id.roll_list_datetime};
-		mAdapter = new SimpleCursorAdapter(getActivity(), R.layout.roll_list_row, null, from, to);
+		String[] from = {};
+		int[] to = {};
+		mAdapter = new RollListAdapter(getActivity(), R.layout.roll_list_row, null, from, to);
 		
         setListAdapter(mAdapter);
 		
@@ -103,8 +102,22 @@ public class RollListFragment extends ListFragment implements OnClickListener, L
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
+		/* SELECT r.*, 
+		 * 	(SELECT count(CASE WHEN r1.attended = 't' THEN r1.attended ELSE NULL END) 
+		 * 		FROM roll_item r1 WHERE r1.rollid = r.rollid) AS attended,
+		 * 	(SELECT count(r2._id) FROM roll_item r2 WHERE r2.rollid = r.rollid) AS total
+		 * FROM roll r;
+		 */
 		return new CursorLoader( getActivity(), ContentDescriptor.RollCall.CONTENT_URI,
-				null, null, null, null);
+				new String[] {"r.*", "(SELECT COUNT(CASE WHEN r1."+ContentDescriptor.RollItem.Cols.ATTENDED+" = 't' THEN "
+						+ContentDescriptor.RollItem.Cols.ATTENDED+" ELSE NULL END) FROM "+
+						ContentDescriptor.RollItem.NAME+" r1 WHERE r1."+ContentDescriptor.RollItem.Cols.ROLLID
+						+" = r."+ContentDescriptor.RollCall.Cols.ROLLID+") AS "
+						+ContentDescriptor.RollItem.Cols.ATTENDED, "(SELECT COUNT(r2."
+						+ContentDescriptor.RollItem.Cols._ID+") FROM "+ContentDescriptor.RollItem.NAME
+						+" r2 WHERE r2."+ContentDescriptor.RollItem.Cols.ROLLID+" = r."
+						+ContentDescriptor.RollCall.Cols.ROLLID+") AS "
+						+ContentDescriptor.RollItem.Cols.TOTAL}, null, null, null);
 	}
 
 	@Override
@@ -121,6 +134,7 @@ public class RollListFragment extends ListFragment implements OnClickListener, L
 	
 	private void setupAlert(View view) {
 		//handle on click listeners here
+		int setselectedpos = -1;
 		TextView set_date = (TextView) view.findViewById(R.id.button_set_date);
 		set_date.setOnClickListener(this);
 		
@@ -134,6 +148,10 @@ public class RollListFragment extends ListFragment implements OnClickListener, L
 		memberships.add(""); //empty first value
 		while (cur.moveToNext()) {
 			memberships.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Programme.Cols.NAME)));
+			if (membership.compareTo(cur.getString(cur.getColumnIndex(ContentDescriptor.Programme.Cols.NAME)))==0){
+				setselectedpos = cur.getPosition();
+				setselectedpos +=1; //we have an empty at the start of the list. so +1 to match the list
+			}
 		}
 		cur.close();
 		
@@ -141,6 +159,9 @@ public class RollListFragment extends ListFragment implements OnClickListener, L
 				android.R.layout.simple_spinner_item, memberships);
 		membershipAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		membership_spinner.setAdapter(membershipAdapter);
+		if (setselectedpos > 0) {
+			membership_spinner.setSelection(setselectedpos);
+		}
 		
 		TextView button_accept = (TextView) view.findViewById(R.id.button_add_roll_text);
 		button_accept.setOnClickListener(this);
@@ -204,8 +225,8 @@ public class RollListFragment extends ListFragment implements OnClickListener, L
 		int programmeid, rollid;
 		
 	//GET THE VALUES	
-		EditText namefield = (EditText) add_roll_view.findViewById(R.id.roll_name);
-		name = namefield.getEditableText().toString();
+		/*EditText namefield = (EditText) add_roll_view.findViewById(R.id.roll_name);
+		name = namefield.getEditableText().toString();*/
 		
 		TextView datefield = (TextView) add_roll_view.findViewById(R.id.button_set_date);
 		date = datefield.getText().toString();
@@ -215,6 +236,7 @@ public class RollListFragment extends ListFragment implements OnClickListener, L
 		
 		Spinner membershipfield = (Spinner) add_roll_view.findViewById(R.id.roll_membership);
 		int cursorposition = membershipfield.getSelectedItemPosition();
+		name = membershipfield.getItemAtPosition(cursorposition).toString();
 		//the first item in the spinner is empty, use spinner pos -1 to get the equv item from the cursor.
 		cursorposition = cursorposition -1;
 		
@@ -289,14 +311,14 @@ public class RollListFragment extends ListFragment implements OnClickListener, L
 		ArrayList<String> results = new ArrayList<String>();
 		boolean is_valid = true;
 		
-		EditText namefield = (EditText) add_roll_view.findViewById(R.id.roll_name);
+		/*EditText namefield = (EditText) add_roll_view.findViewById(R.id.roll_name);
 		if (namefield.getEditableText().toString().isEmpty()) {
 			is_valid = false;
 			results.add(String.valueOf(R.id.roll_name_text));
 		} else {
 			TextView label = (TextView)add_roll_view.findViewById(R.id.roll_name_text);
 			label.setTextColor(Color.BLACK);
-		}
+		}*/
 		
 		TextView selectdate = (TextView) add_roll_view.findViewById(R.id.button_set_date);
 		if (selectdate.getText().toString().compareTo(
@@ -359,7 +381,7 @@ public class RollListFragment extends ListFragment implements OnClickListener, L
 		int rollid;
 		Cursor cur = contentResolver.query(ContentDescriptor.RollCall.CONTENT_URI, null, null, null, null);
 		cur.moveToPosition(position);
-		rollid = cur.getInt(cur.getColumnIndex(ContentDescriptor.RollCall.Cols._ID));
+		rollid = cur.getInt(cur.getColumnIndex(ContentDescriptor.RollCall.Cols.ROLLID));
 		//change fragments to one which shows the Roll-Items.
 		Bundle bdl = new Bundle(2);
 		bdl.putInt(Services.Statics.KEY, Services.Statics.FragmentType.RollItemList.getKey());
