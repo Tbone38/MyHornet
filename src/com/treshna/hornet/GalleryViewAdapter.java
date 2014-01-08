@@ -46,22 +46,7 @@ public class GalleryViewAdapter extends SimpleCursorAdapter implements OnClickLi
 		File imgFile = new File(imgDir);
 				
 		if (imgFile.exists() == true) {
-			final BitmapFactory.Options options = new BitmapFactory.Options();
-		    options.inJustDecodeBounds = true;
-		 
-		    BitmapFactory.decodeFile(imgFile.getAbsolutePath(), options);
-		    // Calculate inSampleSize
-		    options.inSampleSize = Services.calculateInSampleSize(options,REQ_WIDTH, REQ_HEIGHT);
-		    // Decode bitmap with inSampleSize set
-		    options.inJustDecodeBounds = false;
-		    Bitmap bm = null;
-		    try {
-		    	bm = BitmapFactory.decodeFile(imgFile.getAbsolutePath(), options);
-		    } catch (OutOfMemoryError e) {
-		    	bm = null;
-		    }
-		
-		    image.setImageBitmap(bm);
+			Services.loadBitmap(imgFile,image,REQ_WIDTH,REQ_HEIGHT);		   
 		    image.setTag(tag);
 		    image.setOnClickListener(this);
 		}

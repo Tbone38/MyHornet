@@ -136,16 +136,7 @@ public class MembersFindAdapter extends SimpleCursorAdapter implements OnClickLi
 		ImageView imageView = (ImageView) rowLayout.findViewById(R.id.rowimage);
 		imageView.setVisibility(View.VISIBLE);
 		if (imgFile.exists() == true){
-			
-			final BitmapFactory.Options options = new BitmapFactory.Options();
-		    options.inJustDecodeBounds = true;
-		    BitmapFactory.decodeFile(imgFile.getAbsolutePath(), options);
-		    // Calculate inSampleSize
-		    options.inSampleSize = Services.calculateInSampleSize(options,80, 80);
-		    // Decode bitmap with inSampleSize set
-		    options.inJustDecodeBounds = false;
-		    Bitmap bm = BitmapFactory.decodeFile(imgFile.getAbsolutePath(), options);
-		    imageView.setImageBitmap(bm);
+			Services.loadBitmap(imgFile,imageView,80,80);
 		}
 		else {
 			imageView.setVisibility(View.INVISIBLE);
