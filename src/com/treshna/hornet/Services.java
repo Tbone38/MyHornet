@@ -115,8 +115,9 @@ public class Services {
 	}
 	
 	public static void loadBitmap(File imgFile, ImageView imageView, int reqWidth, int reqHeight) {
-		BitmapWorkerTask task = new BitmapWorkerTask(imageView, reqWidth, reqHeight);
-		task.execute(imgFile);
+		//can't find reference to BitmapWorkerTask anywhere else?
+		//BitmapWorkerTask task = new BitmapWorkerTask(imageView, reqWidth, reqHeight);
+		//task.execute(imgFile);
 		}
 	
 	/*

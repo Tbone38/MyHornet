@@ -113,24 +113,7 @@ public class HornetDBService extends Service {
  	   	case (Services.Statics.FREQUENT_SYNC): { //this should be run frequently
  	   		
  	   		thread.is_networking = true;
- 	   		/*long polling_start = PreferenceManager.getDefaultSharedPreferences(ctx).getLong(PollingHandler.POLLING_START, -1);
- 	   		long threehours = (180 * 60 * 1000);
- 	   		long currenttime = new Date().getTime();
-
- 		   //TODO: remove this code.
- 	   		if (currenttime > (polling_start+threehours)) {
- 	   			//polling has been running for over three hours, turn it off.
- 	   			//I should probably let myself know that the Polling has been turned off.
- 	   			Log.w(TAG, "Polling has been going for 3 hours, turning it off.");
- 	   			PollingHandler poller = Services.getFreqPollingHandler();
- 	   			if (poller != null) {
- 	   				poller.stopPolling(false);
- 	   			}
- 	   			Services.setPreference(ctx, "sync_frequency", "-1");
- 	   			return;
- 	   		}*/
- 	   		
-	 	   	String first_sync = Services.getAppSettings(ctx, "first_sync");
+ 	   		String first_sync = Services.getAppSettings(ctx, "first_sync");
 			if (first_sync.compareTo("-1")==0) {
 				SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy", Locale.US);
 				Services.setPreference(ctx, "first_sync", format.format(new Date()));
@@ -138,8 +121,14 @@ public class HornetDBService extends Service {
  	   		
  	   		this_sync = System.currentTimeMillis();
  	   		last_sync = Long.parseLong(Services.getAppSettings(ctx, "last_freq_sync")); //use this for checking lastupdate
- 	   		
- 	   		
+	 	   	int use_roll = Integer.parseInt(Services.getAppSettings(this.ctx, "use_roll"));
+			if (use_roll > 0) {
+	 	   		getRollID();
+	 	   		getRollItemID();
+	 	   		uploadRoll();
+	 	   		uploadRollItem();
+	 	   		updateRollItem();
+			}
  	   		
  	   		setDate();
  	   		getPendingUpdates();
@@ -279,6 +268,14 @@ public class HornetDBService extends Service {
 			   getMembership(-1);
 			   getProgrammes(0);
 			   getLastVisitors();
+			   
+			   //ROLL STUFF
+			   getRollID();
+			   getRollItemID();
+			   uploadRoll();
+			   uploadRollItem();
+			   updateRollItem();
+			   
 			   Services.stopProgress(handler, currentCall);
 			   Services.setPreference(ctx, "last_freq_sync", String.valueOf(this_sync));
 			   Services.showProgress(Services.getContext(), "Setting up resource", handler, currentCall, false);
@@ -3124,6 +3121,11 @@ public class HornetDBService extends Service {
     	return result;
     }
     
+    /**
+     * Pending updates are rows that we know are out of sync with the master DB.
+     * we should always sync these first. Currently, it's used after a member has been signed up on the device.
+     * we then re-download that members details, as we miss some of the default data during the signup.
+     */
     private int getPendingUpdates() {
     	Log.v(TAG, "Getting Pending Updates");
     	int result = 0;
@@ -3202,6 +3204,260 @@ public class HornetDBService extends Service {
     	}
     	
     	closeConnection();
+    	
+    	return result;
+    }
+    /**
+     * gets 30 roll-ids.
+     * @return
+     */
+    private int getRollID(){
+    	int result = 0;
+    	ContentValues values;
+    	ResultSet rs;
+    	String query ="select nextval('roll_id_seq');";
+    	 if (!openConnection()) {
+    		 return -1;
+    		 //connection didn't open!
+    	 }
+    	 cur = contentResolver.query(ContentDescriptor.FreeIds.CONTENT_URI, null, ContentDescriptor.FreeIds.Cols.TABLEID+" = "+
+    			 ContentDescriptor.TableIndex.Values.RollCall.getKey(), null, null);
+    	 int free_count = cur.getCount();
+    	 cur.close();
+    	 //don't bother checking for required count; we're not going to add Roll's if we haven't got ID's for them.
+    	 if (free_count > 10) {
+    		 return 0;
+    	 }
+    	 for (int i=(30-free_count); i>0;i--){
+    		 try {
+    	    		rs = connection.startStatementQuery(query);
+    	    		rs.next();
+    	    		values = new ContentValues();
+    	    		values.put(ContentDescriptor.FreeIds.Cols.TABLEID, ContentDescriptor.TableIndex.Values.RollCall.getKey());
+    	    		values.put(ContentDescriptor.FreeIds.Cols.ROWID, rs.getString("nextval"));
+    	    		
+    	    		contentResolver.insert(ContentDescriptor.FreeIds.CONTENT_URI, values);
+    	    		result +=1;
+    	    		rs.close();
+    	    	} catch (SQLException e) {
+    	    		statusMessage = e.getLocalizedMessage();
+    	    		e.printStackTrace();
+    	    		return -2;
+    	    	}
+    	}
+    	closeConnection();
+    	 
+    	return result;
+    }
+    /**
+     * get 400 roll-item ids.
+     * @return
+     */
+    private int getRollItemID(){
+    	int result = 0;
+    	ResultSet rs;
+    	ContentValues values;
+    	
+    	if (!openConnection()){
+    		return -1;
+    		//we didn't open the connection.
+    	}
+    	cur = contentResolver.query(ContentDescriptor.FreeIds.CONTENT_URI, null, ContentDescriptor.FreeIds.Cols.TABLEID+" = "
+    			+ContentDescriptor.TableIndex.Values.RollItem.getKey(), null, null);
+    	int free_count = cur.getCount();
+    	cur.close();
+    	
+    	cur = contentResolver.query(ContentDescriptor.RollItem.CONTENT_URI, null, ContentDescriptor.RollItem.Cols.ROLLID+" <=0",
+    			null, null);
+    	int req_count = cur.getCount();
+    	cur.close();
+    	
+    	for (int i=((400+req_count)-free_count);i>0;i--) {
+    		try {
+    			rs = connection.startStatementQuery("select nextval('roll_item_id_seq');");
+    			rs.next();
+    			
+    			if (req_count > 0) {
+    				cur = contentResolver.query(ContentDescriptor.RollItem.CONTENT_URI, null, 
+    						ContentDescriptor.RollItem.Cols.ROLLITEMID+" <= 0", null, null);
+    				cur.moveToFirst();
+    				int rowid = cur.getInt(cur.getColumnIndex(ContentDescriptor.RollItem.Cols._ID));
+    				cur.close();
+    				values = new ContentValues();
+    				values.put(ContentDescriptor.RollItem.Cols.ROLLITEMID, rs.getString("nextval"));
+    				contentResolver.update(ContentDescriptor.RollItem.CONTENT_URI, values, ContentDescriptor.RollItem.Cols._ID+" = ?",
+    						new String[] {String.valueOf(rowid)});
+    				//update the devicesignup field when we upload ?
+    				req_count -= 1;
+    				
+    			} else {
+	    			values = new ContentValues();
+	    			values.put(ContentDescriptor.FreeIds.Cols.TABLEID, ContentDescriptor.TableIndex.Values.RollItem.getKey());
+	    			values.put(ContentDescriptor.FreeIds.Cols.ROWID, rs.getString("nextval"));
+	    			
+	    			contentResolver.insert(ContentDescriptor.FreeIds.CONTENT_URI, values);
+    			}
+    			result +=1;
+    			rs.close();
+    		} catch (SQLException e) {
+    			statusMessage = e.getLocalizedMessage();
+    			e.printStackTrace();
+    			return -2;
+    		}
+    	}
+    	closeConnection();
+    	return result;
+    }
+    
+    private int uploadRoll(){
+    	int result = 0;
+    	ArrayList<String> rolls;
+    	
+    	cur = contentResolver.query(ContentDescriptor.PendingUploads.CONTENT_URI, null, ContentDescriptor.PendingUploads.Cols.TABLEID+" = "
+    			+ContentDescriptor.TableIndex.Values.RollCall.getKey(), null, null);
+    	rolls = new ArrayList<String>();
+    	while (cur.moveToNext()){
+    		rolls.add(cur.getString(cur.getColumnIndex(ContentDescriptor.PendingUploads.Cols.ROWID)));
+    	}
+    	cur.close();
+    	
+    	if (!openConnection()) {
+    		return -1;
+    	}
+    	try {
+    		for (int i=0;i<rolls.size(); i++) {
+    			cur = contentResolver.query(ContentDescriptor.RollCall.CONTENT_URI, null, ContentDescriptor.RollCall.Cols._ID+" = ?",
+    					new String[] {rolls.get(i)}, null);
+    			if (!cur.moveToFirst()) {
+    				//should probably delete it from pending uploads.
+    				contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, ContentDescriptor.PendingUploads.Cols.ROWID+" = ? AND "
+        					+ContentDescriptor.PendingUploads.Cols.TABLEID+"= ?", new String[] {rolls.get(i),
+        					String.valueOf(ContentDescriptor.TableIndex.Values.RollCall.getKey())});
+    				continue;
+    			}
+    			connection.uploadRoll(cur.getInt(cur.getColumnIndex(ContentDescriptor.RollCall.Cols.ROLLID)),
+    					cur.getString(cur.getColumnIndex(ContentDescriptor.RollCall.Cols.NAME)), 
+    					cur.getString(cur.getColumnIndex(ContentDescriptor.RollCall.Cols.DATETIME)));
+    			cur.close();
+    			
+    			ContentValues values = new ContentValues();
+    			values.put(ContentDescriptor.RollCall.Cols.DEVICESIGNUP, "f");
+    			contentResolver.update(ContentDescriptor.RollCall.CONTENT_URI, values, ContentDescriptor.RollCall.Cols._ID+" = ?",
+    					new String[] {rolls.get(i)});
+    			
+    			contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, ContentDescriptor.PendingUploads.Cols.ROWID+" = ? AND "
+    					+ContentDescriptor.PendingUploads.Cols.TABLEID+"= ?", new String[] {rolls.get(i),
+    					String.valueOf(ContentDescriptor.TableIndex.Values.RollCall.getKey())});
+    			
+    			connection.closePreparedStatement();
+    			result +=1;
+    		}
+    	} catch (SQLException e) {
+    		statusMessage =e.getLocalizedMessage();
+    		e.printStackTrace();
+    		return -2;
+    	}
+    	closeConnection();
+    	
+    	return result;
+    }
+    
+    private int uploadRollItem(){
+    	int result = 0;
+    	ArrayList<String> rollitems;
+    	
+    	cur = contentResolver.query(ContentDescriptor.PendingUploads.CONTENT_URI, null, ContentDescriptor.PendingUploads.Cols.TABLEID+" = "
+    			+ContentDescriptor.TableIndex.Values.RollItem.getKey(), null, null);
+    	rollitems = new ArrayList<String>();
+    	while (cur.moveToNext()) {
+    		rollitems.add(cur.getString(cur.getColumnIndex(ContentDescriptor.PendingUploads.Cols.ROWID)));
+    	}
+    	cur.close();
+    	
+    	if (!openConnection()) {
+    		return -1;
+    	}
+    	try {
+    		for (int i=0;i<rollitems.size();i++) {
+    			cur = contentResolver.query(ContentDescriptor.RollItem.CONTENT_URI, null, "r."+ContentDescriptor.RollItem.Cols._ID+" = ?", 
+    					new String[] {rollitems.get(i)}, null);
+    			if (!cur.moveToFirst()) {
+    				//delete from pendinguploads.
+    				contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, 
+    						ContentDescriptor.PendingUploads.Cols.ROWID+" = ? AND"
+        					+ContentDescriptor.PendingUploads.Cols.TABLEID+" = ?", 
+        					new String[] {rollitems.get(i), 
+    						String.valueOf(ContentDescriptor.TableIndex.Values.RollItem.getKey())});
+    				continue;
+    			}
+    			connection.uploadRollItem(cur.getInt(cur.getColumnIndex(ContentDescriptor.RollItem.Cols.ROLLITEMID)),
+    					cur.getInt(cur.getColumnIndex(ContentDescriptor.RollItem.Cols.ROLLID)), 
+    					cur.getInt(cur.getColumnIndex(ContentDescriptor.RollItem.Cols.MEMBERID)), 
+    					cur.getString(cur.getColumnIndex(ContentDescriptor.RollItem.Cols.ATTENDED)));
+    			cur.close();
+    			
+    			ContentValues values = new ContentValues();
+    			values.put(ContentDescriptor.RollItem.Cols.DEVICESIGNUP, "f");
+    			contentResolver.update(ContentDescriptor.RollItem.CONTENT_URI, values, ContentDescriptor.RollItem.Cols._ID+" = ?",
+    					new String[] {rollitems.get(i)});
+    			
+    			contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, ContentDescriptor.PendingUploads.Cols.ROWID+" = ? AND"
+    					+ContentDescriptor.PendingUploads.Cols.TABLEID+" = ?", 
+    					new String[] {rollitems.get(i), String.valueOf(ContentDescriptor.TableIndex.Values.RollItem.getKey())});
+    			
+    			connection.closePreparedStatement();
+    			
+    			result +=1;
+    		}
+    	}catch (SQLException e) {
+    		statusMessage = e.getLocalizedMessage();
+    		e.printStackTrace();
+    		return -2;
+    	}
+    	closeConnection();
+    	
+    	return result;
+    }
+    
+    private int updateRollItem() {
+    	int result = 0;
+    	ArrayList<String> rollitems;
+    	
+    	cur = contentResolver.query(ContentDescriptor.PendingUpdates.CONTENT_URI, null, ContentDescriptor.PendingUpdates.Cols.TABLEID+" = "
+    			+ContentDescriptor.TableIndex.Values.RollItem.getKey(), null, null);
+    	rollitems = new ArrayList<String>();
+    	while (cur.moveToNext()) {
+    		rollitems.add(cur.getString(cur.getColumnIndex(ContentDescriptor.PendingUpdates.Cols.ROWID)));
+    	}
+    	cur.close();
+    	
+    	if (!openConnection()) {
+    		return -1;
+    	}
+    	try {
+    		for (int i=0; i<rollitems.size();i++) {
+    			cur = contentResolver.query(ContentDescriptor.RollItem.CONTENT_URI, null, ContentDescriptor.RollItem.Cols._ID+" = ?",
+    					new String[] {rollitems.get(i)}, null);
+    			if (!cur.moveToFirst()) {
+    				//can't find the item.
+    				contentResolver.delete(ContentDescriptor.PendingUpdates.CONTENT_URI, ContentDescriptor.PendingUpdates.Cols.ROWID+" = ? AND "
+        					+ContentDescriptor.PendingUpdates.Cols.TABLEID+" = ?", new String[] {rollitems.get(i),
+        					String.valueOf(ContentDescriptor.TableIndex.Values.RollItem.getKey())});
+    				continue;
+    			}
+    			connection.updateRollItem(cur.getInt(cur.getColumnIndex(ContentDescriptor.RollItem.Cols.ROLLITEMID)),
+    					cur.getString(cur.getColumnIndex(ContentDescriptor.RollItem.Cols.ATTENDED)));
+    			
+    			contentResolver.delete(ContentDescriptor.PendingUpdates.CONTENT_URI, ContentDescriptor.PendingUpdates.Cols.ROWID+" = ? AND "
+    					+ContentDescriptor.PendingUpdates.Cols.TABLEID+" = ?", new String[] {rollitems.get(i),
+    					String.valueOf(ContentDescriptor.TableIndex.Values.RollItem.getKey())});
+    			result +=1;
+    		}
+    	} catch (SQLException e) {
+    		statusMessage = e.getLocalizedMessage();
+    		e.printStackTrace();
+    		return -2;
+    	}
     	
     	return result;
     }

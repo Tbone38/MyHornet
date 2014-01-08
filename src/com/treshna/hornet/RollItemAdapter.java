@@ -22,7 +22,7 @@ public class RollItemAdapter extends SimpleCursorAdapter implements OnCheckedCha
 	
 	@SuppressWarnings("deprecation")
 	public RollItemAdapter(Context context, int layout, Cursor c,
-			String[] from, int[] to, OnClickListener clicker) {
+			String[] from, int[] to) {
 		super(context, layout, c, from, to);
 		this.context = context;
 		this.FROM = from;
@@ -30,6 +30,7 @@ public class RollItemAdapter extends SimpleCursorAdapter implements OnCheckedCha
 	
 	@Override
 	public void bindView(View rowView, Context context, Cursor cursor) {
+		//TODO: we're not seeing anythere here.
 		TextView name_view = (TextView) rowView.findViewById(R.id.roll_item_name);
 		name_view.setText(cursor.getString(cursor.getColumnIndex("name")));
 		

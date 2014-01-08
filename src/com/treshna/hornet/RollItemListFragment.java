@@ -20,7 +20,7 @@ public class RollItemListFragment extends ListFragment implements LoaderManager.
 	String memberID;
 	private View view;
 	LayoutInflater mInflater;
-	private SimpleCursorAdapter mAdapter;
+	private RollItemAdapter mAdapter;
 	private LoaderManager mLoader;
 	private int rollId;
 		
@@ -53,11 +53,11 @@ public class RollItemListFragment extends ListFragment implements LoaderManager.
 		mLoader.restartLoader(0, null, this);
 	}
 		
-	@SuppressWarnings("deprecation")
+
 	private View setupView() {
-		String[] from = {"name", ContentDescriptor.RollItem.Cols.ATTENDED};
-		int[] to = {R.id.roll_item_name, R.id.roll_item_attended};
-		mAdapter = new SimpleCursorAdapter(getActivity(), R.layout.roll_item_row, null, null, null);
+		String[] from = {};//{"name", ContentDescriptor.RollItem.Cols.ATTENDED};
+		int[] to = {};//{R.id.roll_item_name, R.id.roll_item_attended};
+		mAdapter = new RollItemAdapter(getActivity(), R.layout.roll_item_row, null, from, to);
 		
         setListAdapter(mAdapter);
 		return view;

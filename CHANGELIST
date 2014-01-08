@@ -21,6 +21,10 @@
 			YMCA REQUESTS:
 				-enrolled in,
 				-Roll Call.
+				-set & save filter via options. Use the filter save as the default filter for roll generation.
+			Handle permissions/Roles for different staff, to limit what certain staff can see.
+			Setup the automated database script.
+			Get Users (when they download the app) email address, so we can contact them (leeds etc).
 		-KNOWN BUGS/TO FIX:
 			-fix Get Card for new cards.
 			-manual checkin might hard-crash if the door is null (why wasn't there any doors?)

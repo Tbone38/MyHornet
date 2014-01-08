@@ -189,6 +189,7 @@ public class RollListFragment extends ListFragment implements OnClickListener, L
 			}
 			addRoll();
 			mAddRoll.dismiss();
+			mLoader.restartLoader(0, null, this);
 			break;
 		}
 		case (R.id.button_cancel_text):{
@@ -222,13 +223,26 @@ public class RollListFragment extends ListFragment implements OnClickListener, L
 		programmeid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Programme.Cols.PID));
 		Log.d(TAG, "ProgrammeID: "+programmeid+" FOR programme:"+cur.getString(cur.getColumnIndex(ContentDescriptor.Programme.Cols.NAME)));
 		cur.close();
+
+	//GET THE ROLLID
+		cur = contentResolver.query(ContentDescriptor.FreeIds.CONTENT_URI, null, ContentDescriptor.FreeIds.Cols.TABLEID+" = "
+				+ContentDescriptor.TableIndex.Values.RollCall.getKey(), null, null);
+		cur.moveToFirst();
+		rollid = cur.getInt(cur.getColumnIndex(ContentDescriptor.FreeIds.Cols.ROWID));
+		cur.close();	
 	//INSERT THE ROLL	
 		ContentValues values = new ContentValues();
 		values.put(ContentDescriptor.RollCall.Cols.NAME, name);
 		values.put(ContentDescriptor.RollCall.Cols.DATETIME, date+" "+time);
+		values.put(ContentDescriptor.RollCall.Cols.DEVICESIGNUP, "t");
+		values.put(ContentDescriptor.RollCall.Cols.ROLLID, rollid);
 		
-		Uri result = contentResolver.insert(ContentDescriptor.RollCall.CONTENT_URI, values);
-		rollid = Integer.parseInt(result.getLastPathSegment());
+		contentResolver.insert(ContentDescriptor.RollCall.CONTENT_URI, values);
+		contentResolver.delete(ContentDescriptor.FreeIds.CONTENT_URI, ContentDescriptor.FreeIds.Cols.TABLEID+" = ? AND "
+				+ContentDescriptor.FreeIds.Cols.ROWID+" = ?", new String[] {
+				String.valueOf(ContentDescriptor.TableIndex.Values.RollCall.getKey()), String.valueOf(rollid)});
+		
+		
 	//GET THE LIST OF MEMBERS TO ADD TO THE ROLL	
 		cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols.PID+" = ?",
 				new String[] {String.valueOf(programmeid)}, null);
@@ -242,13 +256,30 @@ public class RollListFragment extends ListFragment implements OnClickListener, L
 		Log.d(TAG, "Member Count for chosen Programme:"+memberids.size());
 		Iterator<Integer> midsIterator = memberids.iterator();
 		while (midsIterator.hasNext()) {
+			cur = contentResolver.query(ContentDescriptor.FreeIds.CONTENT_URI, null, ContentDescriptor.FreeIds.Cols.TABLEID+" = "
+					+ContentDescriptor.TableIndex.Values.RollItem.getKey(),null, null);
+			int rollitemid = -1;
+			boolean got_id = cur.moveToFirst(); 
+			if (got_id) {
+				rollitemid = cur.getInt(cur.getColumnIndex(ContentDescriptor.FreeIds.Cols.ROWID));
+			}
+			cur.close();	
+			
 			int mid = midsIterator.next();
 			values = new ContentValues();
-			values.put(ContentDescriptor.RollItem.Cols.ROLLID, rollid);
+			values.put(ContentDescriptor.RollItem.Cols.ROLLID, rollid); 
 			values.put(ContentDescriptor.RollItem.Cols.MEMBERID, mid);
+			values.put(ContentDescriptor.RollItem.Cols.DEVICESIGNUP, "t");
+			values.put(ContentDescriptor.RollItem.Cols.ROLLITEMID, rollitemid);
 			
 			contentResolver.insert(ContentDescriptor.RollItem.CONTENT_URI, values);
 			Log.d(TAG, "Inserting MemberID:"+mid);
+			
+			if (got_id) {
+				contentResolver.delete(ContentDescriptor.FreeIds.CONTENT_URI, ContentDescriptor.FreeIds.Cols.ROWID+" = ? AND "
+						+ContentDescriptor.FreeIds.Cols.TABLEID+" = ?", new String[] {String.valueOf(rollitemid),
+						String.valueOf(ContentDescriptor.TableIndex.Values.RollItem.getKey())});
+			}
 		}
 		//we return.
 	}

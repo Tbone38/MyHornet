@@ -825,6 +825,32 @@ public class JDBCConnection {
     	
     }
     
+    public int uploadRoll(int rollid, String rollname, String datetime) throws SQLException {
+    	pStatement = con.prepareStatement("INSERT INTO roll (id, name, datetime) VALUES (?, ?, ?::TIMESTAMP WITHOUT TIME ZONE);");
+    	pStatement.setInt(1, rollid);
+    	pStatement.setString(2, rollname);
+    	pStatement.setString(3, datetime);
+    	
+    	return pStatement.executeUpdate();
+    }
+    
+    public int uploadRollItem(int rollitemid, int rollid, int memberid, String attended) throws SQLException {
+    	pStatement = con.prepareStatement("INSERT INTO roll_item (id, rollid, memberid, attended) VALUES (?, ?, ?, ?::BOOLEAN)");
+    	pStatement.setInt(1, rollitemid);
+    	pStatement.setInt(2, rollid);
+    	pStatement.setInt(3, memberid);
+    	pStatement.setString(4, attended); //this is a boolean. hopefully it plays nice with postgres.
+    	
+    	return pStatement.executeUpdate();
+    }
+    
+    public int updateRollItem(int rollitemid, String attended) throws SQLException {
+    	pStatement = con.prepareStatement("UPDATE roll_item SET (attended) = (?::BOOLEAN) WHERE id = ?;");
+    	pStatement.setString(1, attended);
+    	pStatement.setInt(2, rollitemid);
+    	return pStatement.executeUpdate();
+    }
+    
     
     public SQLWarning getWarnings() throws SQLException {
     	return con.getWarnings();
