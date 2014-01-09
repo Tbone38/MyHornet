@@ -17,7 +17,7 @@
 			Added Booking Day swipe (SEE KNOWN BUGS)
 			Added parentname (YMCA)
 			Added Roll Call feature, automatically generates a roll off of the members by there membership.
-			Roll Call feature uses filter as default membership for generating rolls.
+			Roll Call feature uses filter as default membership for generating rolls (and syncs back from db).
 		-TODO:
 			Log Sync Errors, and upload them somewhere?
 			YMCA REQUESTS:

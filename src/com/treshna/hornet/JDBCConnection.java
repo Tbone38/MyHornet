@@ -851,6 +851,19 @@ public class JDBCConnection {
     	return pStatement.executeUpdate();
     }
     
+    public ResultSet getRoll(long last_sync) throws SQLException {
+    	pStatement = con.prepareStatement("SELECT id, name, datetime FROM roll WHERE created >= ?;");
+    	pStatement.setTimestamp(1, new Timestamp(last_sync));
+    	
+    	return pStatement.executeQuery();
+    }
+    
+    public ResultSet getRollItem(long last_sync) throws SQLException {
+    	pStatement = con.prepareStatement("SELECT id, rollid, memberid, attended FROM roll_item WHERE lastupdate >= ?;");
+    	pStatement.setTimestamp(1, new Timestamp(last_sync));
+    	
+    	return pStatement.executeQuery();
+    }
     
     public SQLWarning getWarnings() throws SQLException {
     	return con.getWarnings();

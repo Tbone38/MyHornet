@@ -128,6 +128,8 @@ public class HornetDBService extends Service {
 	 	   		uploadRoll();
 	 	   		uploadRollItem();
 	 	   		updateRollItem();
+	 	   		getRoll(last_sync);
+	 	   		getRollItem(last_sync);
 			}
  	   		
  	   		setDate();
@@ -275,6 +277,8 @@ public class HornetDBService extends Service {
 			   uploadRoll();
 			   uploadRollItem();
 			   updateRollItem();
+			   getRoll(0);
+	 	   	   getRollItem(0);
 			   
 			   Services.stopProgress(handler, currentCall);
 			   Services.setPreference(ctx, "last_freq_sync", String.valueOf(this_sync));
@@ -3466,4 +3470,76 @@ public class HornetDBService extends Service {
     	return result;
     }
     
+    private int getRoll(long last_sync){
+    	int result = 0;
+    	ResultSet rs;
+    	
+    	if (!openConnection()) {
+    		return -1;
+    	}
+    	try {
+    		rs = connection.getRoll(last_sync);
+    		while (rs.next()) {
+    			ContentValues values = new ContentValues();
+    			values.put(ContentDescriptor.RollCall.Cols.NAME, rs.getString("name"));
+    			values.put(ContentDescriptor.RollCall.Cols.DATETIME, rs.getString("datetime"));
+    			String rollid = rs.getString("id");
+    			cur = contentResolver.query(ContentDescriptor.RollCall.CONTENT_URI, null, "r."+ContentDescriptor.RollCall.Cols.ROLLID
+    					+" = ?", new String[] {rollid}, null);
+    			if (cur.getCount() > 0) { //update
+    				contentResolver.update(ContentDescriptor.RollCall.CONTENT_URI, values, 
+    						"r."+ContentDescriptor.RollCall.Cols.ROLLID+" = ?", new String[] {rollid});
+    			} else { //insert.
+    				values.put(ContentDescriptor.RollCall.Cols.ROLLID, rollid);
+    				contentResolver.insert(ContentDescriptor.RollCall.CONTENT_URI, values);
+    			}
+    			cur.close();
+    			result +=1;
+    		}
+    		rs.close();
+    	} catch (SQLException e) {
+    		statusMessage = e.getLocalizedMessage();
+    		e.printStackTrace();
+    		return -2;
+    	}
+    	closeConnection();
+    	
+    	return result;
+    }
+    
+    private int getRollItem(long last_sync){
+    	int result = 0;
+    	ResultSet rs;
+    	
+    	if (!openConnection()) {
+    		return -1;
+    	}
+    	try {
+    		rs = connection.getRollItem(last_sync);
+    		while (rs.next()) {
+    			ContentValues values = new ContentValues();
+    			String rollitemid = rs.getString("id");
+    			
+    			values.put(ContentDescriptor.RollItem.Cols.ROLLID, rs.getString("rollid"));
+    			values.put(ContentDescriptor.RollItem.Cols.MEMBERID, rs.getString("memberid"));
+    			values.put(ContentDescriptor.RollItem.Cols.ATTENDED, rs.getString("attended"));
+    			
+    			cur = contentResolver.query(ContentDescriptor.RollItem.CONTENT_URI, null, ContentDescriptor.RollItem.Cols.ROLLITEMID+" = ?",
+    					new String[] {rollitemid}, null);
+    			if (cur.getCount() > 0) { //update
+    				contentResolver.update(ContentDescriptor.RollItem.CONTENT_URI, values, ContentDescriptor.RollItem.Cols.ROLLITEMID+" = ?",
+    						new String[] {rollitemid});
+    			} else { //insert
+    				values.put(ContentDescriptor.RollItem.Cols.ROLLITEMID, rollitemid);
+    				contentResolver.insert(ContentDescriptor.RollItem.CONTENT_URI, values);
+    			}
+    		}
+    		rs.close();
+    	} catch (SQLException e) {
+    		statusMessage = e.getLocalizedMessage();
+    		e.printStackTrace();
+    		return -2;
+    	}
+    	return result;
+    }
 }

@@ -148,7 +148,7 @@ public class RollListFragment extends ListFragment implements OnClickListener, L
 		memberships.add(""); //empty first value
 		while (cur.moveToNext()) {
 			memberships.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Programme.Cols.NAME)));
-			if (membership.compareTo(cur.getString(cur.getColumnIndex(ContentDescriptor.Programme.Cols.NAME)))==0){
+			if (membership != null && membership.compareTo(cur.getString(cur.getColumnIndex(ContentDescriptor.Programme.Cols.NAME)))==0){
 				setselectedpos = cur.getPosition();
 				setselectedpos +=1; //we have an empty at the start of the list. so +1 to match the list
 			}
