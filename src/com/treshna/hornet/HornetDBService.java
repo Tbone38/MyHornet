@@ -121,16 +121,7 @@ public class HornetDBService extends Service {
  	   		
  	   		this_sync = System.currentTimeMillis();
  	   		last_sync = Long.parseLong(Services.getAppSettings(ctx, "last_freq_sync")); //use this for checking lastupdate
-	 	   	int use_roll = Integer.parseInt(Services.getAppSettings(this.ctx, "use_roll"));
-			if (use_roll > 0) {
-	 	   		getRollID();
-	 	   		getRollItemID();
-	 	   		uploadRoll();
-	 	   		uploadRollItem();
-	 	   		updateRollItem();
-	 	   		getRoll(last_sync);
-	 	   		getRollItem(last_sync);
-			}
+	 	   	
  	   		
  	   		setDate();
  	   		getPendingUpdates();
@@ -167,12 +158,27 @@ public class HornetDBService extends Service {
 			
 			//downloads!
 			getMember(last_sync);
-			getMemberBalance(last_sync);
 			getProgrammes(last_sync);
 			getMembership(last_sync);
 			getMembershipSuspends(last_sync);
 			getClasses(last_sync);
+			
+			//Roll Stuff.
+			int use_roll = Integer.parseInt(Services.getAppSettings(this.ctx, "use_roll"));
+			if (use_roll > 0) {
+	 	   		getRollID();
+	 	   		getRollItemID();
+	 	   		uploadRoll();
+	 	   		uploadRollItem();
+	 	   		updateRollItem();
+	 	   		getRoll(last_sync);
+	 	   		getRollItem(last_sync);
+	 	   		Services.setPreference(ctx, "last_freq_sync", String.valueOf(this_sync));
+	 	   		return;
+			}
+			
 			getMemberNotes(last_sync);
+			getMemberBalance(last_sync);
 			
 			//do bookings!
 			updateBookings(); 
@@ -3456,6 +3462,11 @@ public class HornetDBService extends Service {
 				connection.updateRollItem(cur.getInt(cur.getColumnIndex(ContentDescriptor.RollItem.Cols.ROLLITEMID)),
 						cur.getString(cur.getColumnIndex(ContentDescriptor.RollItem.Cols.ATTENDED)));
 				
+				ContentValues values = new ContentValues();
+				values.put(ContentDescriptor.RollItem.Cols.DEVICESIGNUP, "f");
+				contentResolver.update(ContentDescriptor.RollItem.CONTENT_URI, values,
+						ContentDescriptor.RollItem.Cols._ID+" = ?", new String[] {rollitems.get(i)});
+				
 				contentResolver.delete(ContentDescriptor.PendingUpdates.CONTENT_URI, ContentDescriptor.PendingUpdates.Cols.ROWID+" = ? AND "
 						+ContentDescriptor.PendingUpdates.Cols.TABLEID+" = ?", new String[] {rollitems.get(i),
 						String.valueOf(ContentDescriptor.TableIndex.Values.RollItem.getKey())});
@@ -3488,7 +3499,7 @@ public class HornetDBService extends Service {
     					+" = ?", new String[] {rollid}, null);
     			if (cur.getCount() > 0) { //update
     				contentResolver.update(ContentDescriptor.RollCall.CONTENT_URI, values, 
-    						"r."+ContentDescriptor.RollCall.Cols.ROLLID+" = ?", new String[] {rollid});
+    						ContentDescriptor.RollCall.Cols.ROLLID+" = ?", new String[] {rollid});
     			} else { //insert.
     				values.put(ContentDescriptor.RollCall.Cols.ROLLID, rollid);
     				contentResolver.insert(ContentDescriptor.RollCall.CONTENT_URI, values);

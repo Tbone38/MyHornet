@@ -166,8 +166,7 @@ public class PollingHandler extends BroadcastReceiver {
 	    @Override
 	    public void run() {
 	        super.run();
-	        // TODO: check that the hang is fixed.
-	        //I think this function is causing app hang on start up.
+	        // This needs redesigned to be threaded off of the UI. currently it's holding up the app.
 	        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 			InetAddress server = null;
 			try {

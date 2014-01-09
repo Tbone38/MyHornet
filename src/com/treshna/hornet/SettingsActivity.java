@@ -167,6 +167,12 @@ public class SettingsActivity extends PreferenceActivity {
 				LayoutInflater inflater = SettingsActivity.this.getLayoutInflater();
 				other_settings_view = inflater.inflate(R.layout.alert_settings_other, null);
 				
+				ToggleButton roll = (ToggleButton) other_settings_view.findViewById(R.id.enable_roll);
+				int use_roll = Integer.parseInt(Services.getAppSettings(ctx, "use_roll"));
+				if (use_roll > 0) {
+					roll.setChecked(true);
+				}
+				
 				TextView accept, cancel;
 				accept = (TextView) other_settings_view.findViewById(R.id.button_apply_text);
 				accept.setOnClickListener(new OnClickListener() {

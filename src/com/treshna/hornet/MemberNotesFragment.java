@@ -113,7 +113,8 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 		
 		
 		TextView mStaff = (TextView) view.findViewById(R.id.medicationByStaffL);
-		if (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.MEDICATIONBYSTAFF)).compareTo("f")==0) {
+		if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.MEDICATIONBYSTAFF))&& 
+				cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.MEDICATIONBYSTAFF)).compareTo("f")==0) {
 			mStaff.setText("No "+getActivity().getResources().getString(R.string.label_member_medication_bystaff));
 			mStaff.setTextColor(getActivity().getResources().getColor(R.color.visitors_red));
 		} else {

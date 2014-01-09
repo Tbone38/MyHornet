@@ -9,7 +9,7 @@
     android:paddingTop="3dp"
     android:paddingBottom="3dp"
     android:paddingLeft="2dp"
-    android:layout_margin="7dp"
+    android:layout_margin="10dp"
     android:background="@drawable/button"
     android:orientation="horizontal" >
     <View
@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_weight=".8"
         android:text="Roll Name" 
-        android:textSize="15sp"
+        android:textSize="17sp"
         android:paddingLeft="10dp"/>
     <TextView 
         android:id="@+id/roll_list_datetime"
@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_weight=".8"
         android:text="dd MMM yyyy, hh:mm:ss aa"
-        android:textSize="15sp"
+        android:textSize="17sp"
         android:paddingLeft="10dp"/>
     <TextView
         android:id="@+id/roll_list_attend_count"
@@ -39,6 +39,6 @@
         android:layout_height="wrap_content"
         android:layout_weight=".35"
         android:text="xx/yy"
-        android:textSize="15sp"
+        android:textSize="17sp"
         android:paddingLeft="10dp"/>
 </LinearLayout>

@@ -418,6 +418,7 @@ public class UpdateDatabase {
 		public static final String SQL61= "CREATE TRIGGER "+RollItem.Triggers.ON_UPDATE+
 				" AFTER UPDATE ON "+RollItem.NAME
 				+" FOR EACH ROW WHEN old."+RollItem.Cols.ATTENDED+" != new."+RollItem.Cols.ATTENDED
+				+" AND new."+RollItem.Cols.DEVICESIGNUP+" = 't' AND old."+RollItem.Cols.DEVICESIGNUP+" IS NOT NULL"
 				+" BEGIN "
 				+"INSERT OR REPLACE INTO "+PendingUpdates.NAME
 				+ " ("+PendingUpdates.Cols.ROWID+", "+PendingUpdates.Cols.TABLEID+")"

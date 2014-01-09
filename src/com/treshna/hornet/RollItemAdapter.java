@@ -77,6 +77,7 @@ public class RollItemAdapter extends SimpleCursorAdapter implements OnCheckedCha
 		}
 		ContentValues values = new ContentValues();
 		values.put(ContentDescriptor.RollItem.Cols.ATTENDED, attended);
+		values.put(ContentDescriptor.RollItem.Cols.DEVICESIGNUP, "t");
 		ContentResolver contentResolver = context.getContentResolver();
 		contentResolver.update(ContentDescriptor.RollItem.CONTENT_URI, values, ContentDescriptor.RollItem.Cols._ID+" = ?",
 				new String[] {String.valueOf(rowid)});

@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_weight=".8"
         android:text="Firstname Surname" 
-        android:textSize="15sp"
+        android:textSize="18sp"
         android:paddingLeft="10dp"/>
     
     <CheckBox

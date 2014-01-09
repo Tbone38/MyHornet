@@ -1,6 +1,7 @@
 package com.treshna.hornet;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -19,6 +20,7 @@ import android.graphics.ColorFilter;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -115,10 +117,44 @@ public class Services {
 	}
 	
 	public static void loadBitmap(File imgFile, ImageView imageView, int reqWidth, int reqHeight) {
-		//can't find reference to BitmapWorkerTask anywhere else?
-		//BitmapWorkerTask task = new BitmapWorkerTask(imageView, reqWidth, reqHeight);
-		//task.execute(imgFile);
+		BitmapWorkerTask task = new Services.BitmapWorkerTask(imageView, reqWidth, reqHeight);
+		task.execute(imgFile);
 		}
+	
+	/**
+	 * I've added a BitmapWorkerTask as I was getting class not found errors on compilation.
+	 * Is this correct?
+	 */
+	public static class BitmapWorkerTask extends AsyncTask<File, Void, Bitmap> {
+	    private final WeakReference<ImageView> imageViewReference;
+	    
+	    private int width = 0;
+	    private int height = 0;
+
+	    public BitmapWorkerTask(ImageView imageView, int w, int h) {
+	        // Use a WeakReference to ensure the ImageView can be garbage collected
+	        imageViewReference = new WeakReference<ImageView>(imageView);
+	        width = w;
+	        height = h;
+	    }
+
+	    // Decode image in background.
+	    @Override
+	    protected Bitmap doInBackground(File... params) {
+	        return Services.decodeSampledBitmapFromFile(params[0], width, height);
+	    }
+
+	    // Once complete, see if ImageView is still around and set bitmap.
+	    @Override
+	    protected void onPostExecute(Bitmap bitmap) {
+	        if (imageViewReference != null && bitmap != null) {
+	            final ImageView imageView = imageViewReference.get();
+	            if (imageView != null) {
+	                imageView.setImageBitmap(bitmap);
+	            }
+	        }
+	    }
+	}
 	
 	/*
 	 * This function allows the application to manually set the value of an 

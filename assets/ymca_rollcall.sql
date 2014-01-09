@@ -1,13 +1,13 @@
 --SQL to create roll-tables in the YMCA database.
 -- Create our two tables.
-CREATE TABLE IF NOT EXISTS roll (
+CREATE TABLE roll (
 	id SERIAL PRIMARY KEY,
 	name TEXT,
 	datetime TIMESTAMP WITHOUT TIME ZONE,
 	created  TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW()
 	);
 --stuff hangs when broken queries are left altering the database.
-CREATE TABLE IF NOT EXISTS roll_item (
+CREATE TABLE roll_item (
 	id SERIAL PRIMARY KEY NOT NULL,
 	rollid INTEGER NOT NULL REFERENCES roll(id),
 	memberid INTEGER NOT NULL REFERENCES member(id),
