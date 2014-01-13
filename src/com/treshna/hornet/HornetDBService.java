@@ -35,7 +35,7 @@ import com.treshna.hornet.ContentDescriptor.Membership;
 
 public class HornetDBService extends Service {
 	
-	private static String TAG = "HORNET SERVICE";
+	private static String TAG = "HORNETSERVICE";
 	private static ContentResolver contentResolver = null;
     private static  Cursor cur = null; 
     private JDBCConnection connection = null;
@@ -43,6 +43,7 @@ public class HornetDBService extends Service {
     private String statusMessage = "";
     private static Handler handler;
     private static int currentCall;
+    private static FileHandler logger;
 
     Context ctx;
     private long this_sync;
@@ -66,7 +67,8 @@ public class HornetDBService extends Service {
 				 preferences.getString("password", "-1"));
 	   contentResolver = this.getContentResolver();
 	   ctx = getApplicationContext();
-	   
+	   logger = new FileHandler(ctx);
+	   logger.clearLog();
 	   currentCall = intent.getIntExtra(Services.Statics.KEY, -1);
 	   Bundle bundle = intent.getExtras();
 	   /**
@@ -200,7 +202,8 @@ public class HornetDBService extends Service {
 			bcIntent.setAction("com.treshna.hornet.serviceBroadcast");
 			sendBroadcast(bcIntent);
 			Log.v(TAG, "Sending Intent, Stopping Service");
-
+			logger.writeLog();
+			
  		   	break;
  	   } 
  	   /****/
@@ -352,6 +355,7 @@ public class HornetDBService extends Service {
 		  bcIntent.setAction("com.treshna.hornet.serviceBroadcast");
 		  sendBroadcast(bcIntent);
 		  Log.v(TAG, "Sending Intent, Stopping Service");
+		  logger.writeLog();
  		  break;
  	   }
  	   /* The below service is not networking, but updates the local-database based on
@@ -713,7 +717,7 @@ public class HornetDBService extends Service {
 			            	//Add some null handling as well.
 		            	is = rs.getBytes(1); //imagedata
 		            	
-		        		fileHandler.writeFile(is, imgCount+"_"+rs.getString("memberid"));
+		        		fileHandler.writeFile(is, imgCount+"_"+rs.getString("memberid")+".jpg");
 		        		is = null;
 		        		val.put(ContentDescriptor.Image.Cols.IID, rs.getString("id"));
 		        		val.put(ContentDescriptor.Image.Cols.DISPLAYVALUE, imgCount);

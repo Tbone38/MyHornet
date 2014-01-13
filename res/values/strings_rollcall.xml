@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="action_roll">Roll Call</string>
     <string name="roll_add_name">Roll Name</string>
     <string name="roll_set_date">Set Date</string>
     <string name="roll_set_time">Set Time</string>

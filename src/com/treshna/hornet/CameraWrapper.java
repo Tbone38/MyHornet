@@ -120,18 +120,12 @@ public class CameraWrapper extends Activity {
          val.put(ContentDescriptor.Image.Cols.DATE, dateFormat.format(date));
          val.put(ContentDescriptor.Image.Cols.IS_PROFILE, (imgCount==0));
          val.put(ContentDescriptor.Image.Cols.DESCRIPTION, description);
-         Uri row = contentResolver.insert(ContentDescriptor.Image.CONTENT_URI, val);
-         int rowid = Integer.parseInt(row.getLastPathSegment());
+         contentResolver.insert(ContentDescriptor.Image.CONTENT_URI, val);
          
          FileHandler fileHandler = new FileHandler(this);
          System.out.print("\n\n**Writing "+imgCount+"_"+id);
-         fileHandler.writeFile(byteArray, imgCount+"_"+id);
+         fileHandler.writeFile(byteArray, imgCount+"_"+id+".jpg");
          
-         /*val = new ContentValues();
-         val.put(ContentDescriptor.PendingUploads.Cols.TABLEID, ContentDescriptor.TableIndex.Values.Image.getKey());
-         val.put(ContentDescriptor.PendingUploads.Cols.ROWID, rowid);
-         contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, val);*/
-
          contentResolver.notifyChange(ContentDescriptor.Image.CONTENT_URI, null);
          Intent intent = new Intent(this, HornetDBService.class);
 

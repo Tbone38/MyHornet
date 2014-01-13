@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical" >
+    <TextView
+        android:id="@+id/setup_advanced_hint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:textSize="18sp"
+        android:text="@string/setup_advanced_hint" />
+    <TextView
+        android:id="@+id/setup_advanced_server_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:textSize="18sp"
+        android:text="@string/advanced_address"/>
+    
+    <EditText 
+        android:id="@+id/setup_database_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:padding="5dp"
+        android:layout_marginLeft="3dp"/>
+    
+    <TextView
+        android:id="@+id/setup_advanced_database_name_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:textSize="18sp"
+        android:text="@string/advanced_database_name" />
+    
+    <EditText 
+        android:id="@+id/setup_database_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textCapWords"
+        android:padding="5dp"
+        android:layout_marginLeft="3dp"
+        android:hint="@string/advanced_hint"/>
+    
+    <TextView
+        android:id="@+id/setup_advanced_database_port_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:textSize="18sp"
+        android:text="@string/advanced_port" />
+    
+    <EditText 
+        android:id="@+id/setup_database_port"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textCapWords"
+        android:padding="5dp"
+        android:layout_marginLeft="3dp"
+        android:hint="@string/advanced_hint"/>
+    
+    <TextView
+        android:id="@+id/setup_advanced_user_name_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:textSize="18sp"
+        android:text="@string/advanced_username" />
+    
+    <EditText 
+        android:id="@+id/setup_user_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textCapWords"
+        android:padding="5dp"
+        android:layout_marginLeft="3dp"
+        android:hint="@string/advanced_hint"/>
+    
+    <TextView
+        android:id="@+id/setup_advanced_user_password_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:textSize="18sp"
+        android:text="@string/advanced_password" />
+    
+    <EditText 
+        android:id="@+id/setup_user_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:padding="5dp"
+        android:layout_marginLeft="3dp"
+        android:hint="@string/advanced_hint"/>
+    
+    <LinearLayout
+        android:id="@+id/button_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:baselineAligned="false"	>
+        <LinearLayout
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+		    android:layout_marginRight="10dp"
+		    android:layout_marginBottom="5dp"
+	    	android:orientation="vertical">
+		        <TextView
+		            android:id="@+id/button_advanced_accept"
+		            android:layout_width="match_parent"
+		            android:layout_height="45dp"
+		            android:gravity="center"
+		            android:textSize="18sp"
+		            android:text="@string/buttonAccept"
+		            android:paddingLeft="5dp"
+		            android:paddingRight="5dp"
+		            android:clickable="true"
+		        	android:background="@drawable/button_large_accept" />
+	        	<View
+			        android:layout_width="match_parent"
+				    android:layout_height="2dp"
+				    android:paddingLeft="5dp"
+			    	android:paddingRight="5dp"
+				    android:background="@color/button_underline_green" />
+		</LinearLayout>
+		
+		<LinearLayout
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+		    android:layout_marginRight="10dp"
+		    android:layout_marginBottom="5dp"
+	    	android:orientation="vertical">
+		        <TextView
+		            android:id="@+id/button_advanced_cancel"
+		            android:layout_width="match_parent"
+		            android:layout_height="45dp"
+		            android:gravity="center"
+		            android:textSize="18sp"
+		            android:text="@string/cancel"
+		            android:paddingLeft="5dp"
+		            android:paddingRight="5dp"
+		            android:clickable="true"
+		        	android:background="@drawable/button_large_cancel" />
+	        	<View
+			        android:layout_width="match_parent"
+				    android:layout_height="2dp"
+				    android:paddingLeft="5dp"
+			    	android:paddingRight="5dp"
+				    android:background="@color/button_underline_red" />
+		</LinearLayout>
+    </LinearLayout>
+</LinearLayout>

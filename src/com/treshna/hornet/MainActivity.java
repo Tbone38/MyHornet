@@ -81,15 +81,29 @@ public class MainActivity extends NFCActivity {
             Services.setFreqPollingHandler(this, pintent);
 		}
 		
-		/*{
-			Intent updateInt = new Intent(this, HornetDBService.class);
-            updateInt.putExtra(Services.Statics.KEY, Services.Statics.INFREQUENT_SYNC);
-            PendingIntent pintent = PendingIntent.getService(this, 0, updateInt, PendingIntent.FLAG_UPDATE_CURRENT);
-            Services.setInfreqPollingHandler(this, pintent);
-		}*/
-            startReciever();
+		
+        startReciever();
                 /************************************/
 		Log.v("MainActivity", "Finished onCreate");
+	}
+	
+	private void doMagic() {
+		//take me to the magic page.
+		Intent i = new Intent(this, MagicActivity.class);
+		this.startActivity(i);
+	}
+	/**
+	 * We need a way to check if the app is being run for the first time.
+	 **/
+	@Override
+	public void onResume() {
+		super.onResume();
+		//add back in at a later date.
+		/*SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		if (prefs.getBoolean("firstrun", true)) {
+    		doMagic();
+            prefs.edit().putBoolean("firstrun", false).commit();
+        }*/
 	}
 	
 	@Override
@@ -102,16 +116,6 @@ public class MainActivity extends NFCActivity {
 				Log.v(TAG, "was OverView Fragment");
 				ActionBar ab = this.getSupportActionBar();
 				ab.setSelectedNavigationItem(0); //just go back to the Find Member View?
-			} else if (f.getCurrentFragment() instanceof BookingsResourceFragment){ //this should be redundant now.
-				Log.v(TAG, "was Resource Fragment");
-				BookingsResourceFragment resourceFragment = (BookingsResourceFragment) f.getCurrentFragment();
-				if (resourceFragment.hasOverView()) {
-					f.onBackPressed();
-					
-				} else {
-					ActionBar ab = this.getSupportActionBar();
-					ab.setSelectedNavigationItem(0); //just go back to the Find Member View?
-				}
 			} else if (f.getCurrentFragment() instanceof BookingsSlideFragment) {
 				Log.v(TAG, "was Slider Fragment");
 				BookingsSlideFragment slideFragment = (BookingsSlideFragment) f.getCurrentFragment();

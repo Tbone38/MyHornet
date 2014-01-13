@@ -26,7 +26,7 @@
      <item
          android:id="@+id/action_rollcall"
          android:orderInCategory="600"
-         android:title="Roll Call" />    
+         android:title="@string/action_roll" />    
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="700"

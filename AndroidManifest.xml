@@ -25,7 +25,6 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-
         <provider
             android:name="com.treshna.hornet.HornetContentProvider"
             android:authorities="com.treshna.hornet"
@@ -79,11 +78,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.treshna.hornet.MainActivity" />
         </activity>
-        
         <activity
             android:name="com.treshna.hornet.BookingPage"
             android:label="@string/title_activity_add_booking"
-           	android:parentActivityName="com.treshna.hornet.MainActivity"
+            android:parentActivityName="com.treshna.hornet.MainActivity"
             android:theme="@style/Theme.AppCompat.Light"
             android:windowSoftInputMode="stateHidden" >
             <meta-data
@@ -117,6 +115,10 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.treshna.hornet.MainActivity" />
+        </activity>
+        <activity
+            android:name="com.treshna.hornet.MagicActivity"
+            android:label="@string/title_activity_magic" >
         </activity>
     </application>
 

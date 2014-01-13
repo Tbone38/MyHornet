@@ -7,7 +7,7 @@
 			Added Programme Group to Find Filter,
 			Save Filter settings permanently.
 			Added Medical details to member notes page.
-			Cancel booking return to the booking screen after OKAY button pressed
+			Cancel booking returns to the booking screen after OKAY button pressed
 			Remove tasks icons from last visitor.
 			Fix crash when click on home button from Empty activity and member ship hold (bad parent activity in manifest)
 			Added emergency contact access details to member notes page.
@@ -18,16 +18,32 @@
 			Added parentname (YMCA)
 			Added Roll Call feature, automatically generates a roll off of the members by there membership.
 			Roll Call feature uses filter as default membership for generating rolls (and syncs back from db).
+			Sync Warnings/Errors are logged to a file called 'log.file';
+		
+	(V116):
 		-TODO:
-			Log Sync Errors, and upload them somewhere?
-			YMCA REQUESTS:
-				-enrolled in,
+			On first run, we prompt for an easy setup/install.
+				This easy setup gets there email address & gymname/organisational name.
+				A central database (sms.treshna.com) generates a username and password, and emails said password the email-address.
+				the username is used for the web-address (username.SERVERLOCATION.gymmaster.co.nz).
+					the username needs to be unique.
+				We query the central database (using the username and password) for the database name (g_USERNAME) & location (SERVERLOCATION.gymmaster.co.nz).
+				Will all need to be handled by JSON and only run very occasionally (only once?).
+				
+				& Someones going to magically tie this in with the WhatNext database, in order to keep track of client-leads/etc.
+			
 			Handle permissions/Roles for different staff, to limit what certain staff can see.
-			Setup the automated database script.
-			Get Users (when they download the app) email address, so we can contact them (leads etc).
-		-KNOWN BUGS/TO FIX:
-			-fix Get Card for new cards.
-			-manual checkin might hard-crash if the door is null (why wasn't there any doors?)
-			-the booking swipe view pager doesn't invaildate cached fragments when the date is set. 
-				This means that one of the (5) fragments may show the wrong date.
-			-The database sync runs out of memory on large databases (e.g. YMCA db).
+			upload the log.file after each sync to a server.
+				-the log.file needs a unique identifier so we know which device has the issues.
+				-we need to check that the file isn't empty before we upload it. (only upload files with actual warnings/errors in them).
+
+	-KNOWN BUGS/TO FIX:
+		-fix Get Card for new cards.
+		-manual checkin might hard-crash if the door is null (why wasn't there any doors?)
+		-the booking swipe view pager doesn't invaildate cached fragments when the date is set. 
+			This means that one of the (5) fragments may show the wrong date.
+		-The database sync runs out of memory on large databases (e.g. YMCA db).
+		-Sometimes app needs to restart for the roll menu item to show up.
+		-Sometimes the BookingOverview list shows bookings, but when click the BookingResource list can't find the bookings.
+			Overview list only shows on tablets.
+			This may be caused by the wrong date/resource being passed?

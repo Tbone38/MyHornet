@@ -3,6 +3,7 @@
  */
 package com.treshna.hornet;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,6 +11,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.channels.FileChannel;
 
 import android.content.Context;
@@ -89,7 +91,7 @@ public class FileHandler {
 		//System.out.println("writing Data");
 		Log.v(TAG+".writefile", "writing data");
 		try{
-			File imageFile = new File(context.getExternalFilesDir(null), fileName+".jpg");
+			File imageFile = new File(context.getExternalFilesDir(null), fileName);
 			if (imageFile.exists()) {
 	            imageFile.delete();
 	      }
@@ -191,6 +193,35 @@ public class FileHandler {
         	return false;
         }
 		return true;	
+	}
+	
+	public void clearLog() {
+		try {
+			Runtime.getRuntime().exec("logcat -c");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	//TODO upload this somewhere.
+	public void writeLog() {
+		Process process = null;
+		try {
+		      process = Runtime.getRuntime().exec("logcat -d -s HORNETSERVICE:W *:S");
+		      BufferedReader bufferedReader = new BufferedReader(
+		      new InputStreamReader(process.getInputStream()));
+
+		      StringBuilder log=new StringBuilder();
+		      String line;
+		      while ((line = bufferedReader.readLine()) != null) {
+		        log.append(line);
+		      }
+		      this.writeFile(log.toString().getBytes(), "log.file");
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			process.destroy();
+		}
 	}
 	
 }
