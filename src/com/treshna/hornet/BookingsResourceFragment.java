@@ -233,7 +233,7 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
 			updateDate();
 			
 		 	//just change the cursor.
-		 	//mLoader.restartLoader(0, null, this);	
+		 	mLoader.restartLoader(0, null, this);	
 		 	mAdapter.updateDate(selectedDate);
     }
 	
