@@ -8,8 +8,7 @@ import android.os.Bundle;
 public class NetworkThread extends Thread {
 	 public  boolean is_networking = false;
 	 private Queue<Integer> queue = new LinkedList<Integer>();
-	 private Queue<Bundle> bundlequeue = new LinkedList<Bundle>();
-	 //private String theResource; 
+	 private Queue<Bundle> bundlequeue = new LinkedList<Bundle>(); 
 	 private HornetDBService theService;
 	 
 	@Override
@@ -17,14 +16,13 @@ public class NetworkThread extends Thread {
 		while (!queue.isEmpty()) {
 			while (is_networking) {
 				try {
-					Thread.sleep(15000); //check if network is free every 15 seconds.
+					Thread.sleep(10000); //check if network is free every 10 seconds.
 				} catch (InterruptedException e) { //interrupted   
 				}
 			}
 			if (queue.peek() != null) {
 				int currentCall = queue.poll();
 				Bundle bundle = bundlequeue.poll();
-			   //startNetworking(currentCall, intent);
 			   theService.startNetworking(currentCall, bundle);
 			} else {
 			   //the queue is empty.
@@ -37,9 +35,7 @@ public class NetworkThread extends Thread {
 			queue.add(call);
 			bundlequeue.add(bundle);
 		 }
-		 /*if (resourceid != null) {
-			 theResource = resourceid;
-		 }*/
+		 
 		 if (parent != null) {
 			 theService = parent;
 		 }

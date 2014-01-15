@@ -317,19 +317,13 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 		
 		ContentResolver contentResolver;
 		ContentValues values;
-		String id;
 		
 		values = getInput();
 		values.put(ContentDescriptor.Class.Cols.DEVICESIGNUP, "t");
 		contentResolver = this.getContentResolver();
-		id = contentResolver.insert(ContentDescriptor.Class.CONTENT_URI, values).getLastPathSegment();
+		contentResolver.insert(ContentDescriptor.Class.CONTENT_URI, values).getLastPathSegment();
 		
-		/*values = new ContentValues();
-		values.put(ContentDescriptor.PendingUploads.Cols.ROWID, id);
-		values.put(ContentDescriptor.PendingUploads.Cols.TABLEID,
-				ContentDescriptor.TableIndex.Values.Class.getKey());
 		
-		contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, values);*/
 		System.out.print("\n\nClass inserted\n\n");
 		Toast.makeText(this, "Class Created!", Toast.LENGTH_LONG).show();
 		Intent updateInt = new Intent(this, HornetDBService.class);

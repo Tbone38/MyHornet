@@ -10,33 +10,33 @@
         android:layout_height="wrap_content"
         android:padding="5dp"
         android:textSize="18sp"
-        android:text="@string/setup_simple_hint" />
+        android:text="@string/simple_page2_hint" />
     <TextView
-        android:id="@+id/setup_simple_email_text"
+        android:id="@+id/setup_simple_username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="5dp"
         android:textSize="18sp"
-        android:text="@string/simple_email"/>
+        android:text="@string/simple_username"/>
     
     <EditText 
-        android:id="@+id/setup_email_address"
+        android:id="@+id/setup_username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textEmailAddress"
+        android:inputType="text"
         android:padding="5dp"
         android:layout_marginLeft="3dp"/>
     
     <TextView
-        android:id="@+id/setup_simple_company_name_text"
+        android:id="@+id/setup_simple_country"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="5dp"
         android:textSize="18sp"
-        android:text="@string/simple_company_name" />
+        android:text="@string/simple_country" />
     
     <EditText 
-        android:id="@+id/setup_company_name"
+        android:id="@+id/setup_country"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textCapWords"
@@ -57,12 +57,12 @@
 		    android:layout_marginBottom="5dp"
 	    	android:orientation="vertical">
 		        <TextView
-		            android:id="@+id/button_simple_continue"
+		            android:id="@+id/button_simple_accept"
 		            android:layout_width="match_parent"
 		            android:layout_height="45dp"
 		            android:gravity="center"
 		            android:textSize="18sp"
-		            android:text="@string/buttonContinue"
+		            android:text="@string/buttonAccept"
 		            android:paddingLeft="5dp"
 		            android:paddingRight="5dp"
 		            android:clickable="true"

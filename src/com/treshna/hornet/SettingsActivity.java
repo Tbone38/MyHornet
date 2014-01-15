@@ -159,6 +159,7 @@ public class SettingsActivity extends PreferenceActivity {
 	
 	//Currently used for YMCA specific features -- Roll call & parent-name ?
 	private void setupGymSpecificWindow() {
+		@SuppressWarnings("deprecation")
 		Preference button = getPreferenceScreen().findPreference("specific_gym");
 		button.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 
@@ -180,7 +181,7 @@ public class SettingsActivity extends PreferenceActivity {
 					public void onClick(View v) {
 						//get the value from the view.
 						ToggleButton roll = (ToggleButton) other_settings_view.findViewById(R.id.enable_roll);
-						SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(SettingsActivity.this.ctx);
+						SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(SettingsActivity.ctx);
 						Editor e = preferences.edit();
 						e.putString("use_roll", String.valueOf(Services.booltoInt(roll.isChecked())));
 						e.commit();
@@ -194,7 +195,7 @@ public class SettingsActivity extends PreferenceActivity {
 						other_settings_alert.dismiss();
 				}});
 				
-				AlertDialog.Builder build = new AlertDialog.Builder(SettingsActivity.this.ctx);
+				AlertDialog.Builder build = new AlertDialog.Builder(SettingsActivity.ctx);
 				build.setTitle("Gym Specific Settings");
 				build.setView(other_settings_view);
 				other_settings_alert = build.create();

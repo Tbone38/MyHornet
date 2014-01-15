@@ -209,7 +209,7 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
 				@Override
 				public void onItemSelected(AdapterView<?> parent, View view,
 						int pos, long id) {
-					int resourceid;
+					
 					
 					if (cur != null){
 						cur.close();

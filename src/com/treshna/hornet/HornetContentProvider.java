@@ -1,6 +1,5 @@
 package com.treshna.hornet;
 
-import java.util.ArrayList;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;

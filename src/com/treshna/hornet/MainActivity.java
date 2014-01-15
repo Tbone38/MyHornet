@@ -87,23 +87,22 @@ public class MainActivity extends NFCActivity {
 		Log.v("MainActivity", "Finished onCreate");
 	}
 	
-	private void doMagic() {
+	private void firstSetup() {
 		//take me to the magic page.
-		Intent i = new Intent(this, MagicActivity.class);
+		Intent i = new Intent(this, SetupActivity.class);
 		this.startActivity(i);
 	}
-	/**
-	 * We need a way to check if the app is being run for the first time.
-	 **/
+	
+	
 	@Override
 	public void onResume() {
 		super.onResume();
 		//add back in at a later date.
-		/*SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		if (prefs.getBoolean("firstrun", true)) {
-    		doMagic();
+    		firstSetup();
             prefs.edit().putBoolean("firstrun", false).commit();
-        }*/
+        }
 	}
 	
 	@Override

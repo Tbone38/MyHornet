@@ -4,10 +4,12 @@
         \n\nPlease select one of the setup procedures:</string>
     <string name="simple_setup">Simple Setup</string>
     <string name="advanced_setup">Advanced Setup</string>
-    <string name="setup_simple_hint">Enter your details below to have a GymMaster Database generated for you.</string>
+    <string name="setup_simple_hint">Please Enter your details below</string>
     <string name="simple_email">Your Email:</string>
     <string name="simple_company_name">Your Company Name:</string>
-    
+    <string name="simple_page2_hint">Please fill in your details below to complete the setup</string>
+	<string name="simple_username">Preferred Username:</string>
+    <string name="simple_country">Country of Residence:</string>
     <string name="setup_advanced_hint">Please enter your GymMaster details below. </string>
     <string name="advanced_address">Database Address/IP:</string>
     <string name="advanced_port">Port:</string>
@@ -15,4 +17,6 @@
     <string name="advanced_username">Username</string>
     <string name="advanced_password">Password</string>
     <string name="advanced_database_name">Database Name:</string>
+    
+    <string name="buttonContinue">Continue</string>
 </resources>

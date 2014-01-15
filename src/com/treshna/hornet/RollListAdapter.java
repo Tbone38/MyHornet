@@ -11,7 +11,7 @@ public class RollListAdapter extends SimpleCursorAdapter {
 	Context context;
 	String[] FROM;
 	Cursor cursor;
-	private static final String TAG = "RollListAdapter";
+	//private static final String TAG = "RollListAdapter";
 	
 	@SuppressWarnings("deprecation")
 	public RollListAdapter(Context context, int layout, Cursor c,
