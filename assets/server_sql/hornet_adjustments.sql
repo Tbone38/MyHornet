@@ -73,7 +73,7 @@ BEGIN TRANSACTION;
 	BEGIN
 		IF input_email IS NOT NULL THEN
 			UPDATE meta_db_list SET (password) = ((SELECT generate_random(6))) WHERE
-				email = input_email RETURNING password INTO passwd;
+				email_address = input_email RETURNING password INTO passwd;
 		END IF;
 		RETURN passwd;
 	END;
@@ -105,15 +105,26 @@ BEGIN TRANSACTION;
 	BEGIN
 		SELECT generate_dbname(new.username) INTO new.db_name;
 		SELECT generate_weburl(new.username, new.db_server) INTO new.weburl;
+		SELECT now() INTO new.lastupdate;
 		RETURN new;
 	END;
 	$$ LANGUAGE plpgsql;
 
-	--we'll probably also be setting the server at this point too.	
 	CREATE TRIGGER meta_db_list_update BEFORE UPDATE ON meta_db_list
 		FOR EACH ROW WHEN (old.username IS NULL AND new.username IS NOT NULL
-			AND old.db_server IS NULL AND new.db_server IS NOT NULL)
+			AND old.db_server IS NULL AND new.db_server IS NOT NULL
+			AND new.db_name IS NULL AND new.weburl IS NULL)
 		EXECUTE PROCEDURE meta_db_list_update();
+
+	CREATE OR REPLACE FUNCTION db_list_update_timestamp() RETURNS trigger AS $$
+	BEGIN
+		SELECT now() INTO new.lastupdate;
+		RETURN new;
+	END;
+	$$ LANGUAGE plpgsql;
+
+	CREATE TRIGGER db_list_update_timestamp BEFORE UPDATE ON meta_db_list
+		FOR EACH ROW EXECUTE PROCEDURE db_list_update_timestamp();
 
 --below insert test, prints when we violate a unique constraint.
 /*DO

@@ -18,5 +18,13 @@
     <string name="advanced_password">Password</string>
     <string name="advanced_database_name">Database Name:</string>
     
+    <string name="setup_new_password_hint">Please enter your current username and password.\n\nFollowed by your new password.</string>
+    <string name="setup_current_username">Your Username:</string>
+    <string name="setup_current_password">Current Password:</string>
+    <string name="setup_new_password">New Password:</string>
+    <string name="setup_reset_password_hint">Please enter the email address you signed up with.</string>
+    <string name="setup_current_email">Your Email:</string>
+    
     <string name="buttonContinue">Continue</string>
+    <string name="buttonSubmit">Submit</string>
 </resources>

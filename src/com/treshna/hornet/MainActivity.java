@@ -100,7 +100,7 @@ public class MainActivity extends NFCActivity {
 		//add back in at a later date.
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		if (prefs.getBoolean("firstrun", true)) {
-    		firstSetup();
+    		//firstSetup();
             prefs.edit().putBoolean("firstrun", false).commit();
         }
 	}

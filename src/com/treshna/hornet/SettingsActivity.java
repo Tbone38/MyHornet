@@ -42,7 +42,7 @@ import android.widget.ToggleButton;
  * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
  * API Guide</a> for more information on developing a Settings UI.
  */
-public class SettingsActivity extends PreferenceActivity {
+public class SettingsActivity extends PreferenceActivity implements OnPreferenceClickListener {
 	/**
 	 * Determines whether to always show the simplified settings UI, where
 	 * settings are presented in a single list. When false, settings are shown
@@ -86,6 +86,20 @@ public class SettingsActivity extends PreferenceActivity {
 
 		// Add 'general' preferences.
 		addPreferencesFromResource(R.xml.pref_general);
+		Preference setup = this.findPreference("setup");
+		setup.setOnPreferenceClickListener(this);
+		
+		Preference reset = this.findPreference("resetpassword");
+		reset.setEnabled(false);
+		reset.setShouldDisableView(true);
+		
+		Preference setpassword = this.findPreference("setpassword");
+		setpassword.setEnabled(false);
+		setpassword.setShouldDisableView(true);
+		
+		Preference getconfig = this.findPreference("getconfig");
+		getconfig.setEnabled(false);
+		getconfig.setShouldDisableView(true);
 		
 		Preference collect = createCollectData();
 		getPreferenceScreen().addPreference(collect);
@@ -115,11 +129,11 @@ public class SettingsActivity extends PreferenceActivity {
 		// Bind the summaries of EditText/List/Dialog/Ringtone preferences to
 		// their values. When their values change, their summaries are updated
 		// to reflect the new value, per the Android Design guidelines.
-		bindPreferenceSummaryToValue(findPreference("address"));
+		/*bindPreferenceSummaryToValue(findPreference("address"));
 		bindPreferenceSummaryToValue(findPreference("port"));
 		bindPreferenceSummaryToValue(findPreference("database"));
 		bindPreferenceSummaryToValue(findPreference("username"));
-		bindPreferenceSummaryToValue(findPreference("password"));
+		bindPreferenceSummaryToValue(findPreference("password"));*/
 		bindPreferenceSummaryToValue(findPreference("door"));
 		//bindPreferenceSummaryToValue(findPreference("resourcelist"));
 		bindPreferenceSummaryToValue(findPreference("sync_frequency"));
@@ -596,5 +610,14 @@ public class SettingsActivity extends PreferenceActivity {
 			// guidelines.
 			bindPreferenceSummaryToValue(findPreference("sync_frequency"));
 		}
+	}
+
+	@Override
+	public boolean onPreferenceClick(Preference preference) {
+		if (preference.getKey().compareTo("setup")==0){
+			Intent i = new Intent(this, SetupActivity.class);
+			this.startActivity(i);
+		}
+		return false;
 	}
 }

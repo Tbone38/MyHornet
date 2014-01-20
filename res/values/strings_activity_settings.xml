@@ -17,6 +17,10 @@
     <string name="pref_default_server_username">gymmaster</string>
     <string name="pref_title_server_password">Password</string>
     <string name="pref_default_server_password">7urb0</string>
+    <string name="pref_title_simple_setup">Setup</string>
+    <string name="pref_title_reset_password">Reset Password</string>
+    <string name="pref_title_set_password">Set Password</string>
+    <string name="pref_title_get_config">Get Configuration</string>
     
     <string name="pref_title_door">Door ID</string>
     <string name="pref_default_door">1</string>

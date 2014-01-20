@@ -10,18 +10,16 @@
 
 	V116:
 		-DONE:
-		
-		-TODO:
                 	On first run, we prompt for an easy setup/install.
-                        	This easy setup gets there email address & gymname/organisational name.
-                                A central database (sms.treshna.com) generates a username and password, and emails said email-address the password.
-                                the username is used for the web-address (username.SERVERLOCATION.gymmaster.co.nz).
+                        	This easy setup gets there email address, gymname/organisational name, a username, & a location.
                                         the username needs to be unique.
-                                We query the central database (using the username and password) for the database name (g_USERNAME) & location (SERVERLOCATION.gymmaster.co.nz).
-                                Will all need to be handled by JSON and only run very occasionally (only once?).
-                                
-                                & Someones going to magically tie this in with the WhatNext database, in order to keep track of client-leads/etc.
-                        
+					the email address needs to be unique.	
+                                the username is used for the web-address (username.SERVERLOCATION.gymmaster.co.nz).
+				the username is used for the database name (g_<USERNAME>)
+                                passed to a cental database on sms.treshna.com, which generates a password, and emails said email-address the password.
+					the username, password, db_name, and server are returned by the API
+				It's all passed through a JSON (flask) server (api.gymmaster.co.nz).
+		-TODO:
                         Handle permissions/Roles for different staff, to limit what certain staff can see.
                         upload the log.file after each sync to a server.
                                 -the log.file needs a unique identifier so we know which device has the issues.
