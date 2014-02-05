@@ -20,19 +20,22 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
 
 public class JSONHandler {
+	private static final String TESTING = ":3223"; //append testing to end of host to enable testing. Python script must be running.
 	private static final String HOST = "http://api.gymmaster.co.nz";
-	//private static final String HOST = "http://192.168.2.132"; //TESTING
+	
 	private static final String TAG = "JSONHandler";
 	
 	private Context ctx;
@@ -40,12 +43,13 @@ public class JSONHandler {
 	private String errormsg = null;
 	
 	public JSONHandler(Context context) {
+		
 		this.ctx = context;
 	}
 	
-	public static enum JSONError {
-		SQL(0),MAIL(1), INTERNALCON(2), MISSINGINPUT(3),
-		INVALIDINPUT(4), POST(5), USEREXISTS(6), USERNOTSETUP(7),
+	public static enum JSONError { //large-ish values (i.e 255/254/253) probably mean a broken bash script.
+		NOERROR(0), SQL(1),MAIL(2), INTERNALCON(3), MISSINGINPUT(4),
+		INVALIDINPUT(5), POST(6), USEREXISTS(7), USERNOTSETUP(8), GENERICERROR(9),
 		UNIQUEVIOLATION(23505), DUPLICATEOBJECT(42710), UNDEFINEDOBJECT(42704),
 		NORESPONSE(20), BADRETRIEVE(21);
 		        
@@ -94,8 +98,8 @@ public class JSONHandler {
 		}
 		
 		Log.d(TAG, result.toString());
-		//errorcodes 7 = email exists but isn't setup, < 0 is success.
-		return (errorcode < 0 || errorcode == 7);
+		//errorcodes 8 = email exists but isn't setup, < 0 is success.
+		return (errorcode <= 0 || errorcode == JSONError.USERNOTSETUP.getKey());
 	}
 	
 	public String getError(){
@@ -107,6 +111,7 @@ public class JSONHandler {
 	}
 	
 	public boolean updateUser(String email, String username, String countrycode) {
+		username = username.replace(" ", "%20");
 		String url = HOST+"/updateuser?email="+email+"&username="+username+"&country="+countrycode;
 		JSONObject result;
 		String status;
@@ -159,7 +164,7 @@ public class JSONHandler {
 			editor.commit();
 		}
 		
-		return (errorcode < 0);
+		return (errorcode <= 0);
 	}
 	
 	public boolean resetPassword(String email){
@@ -229,7 +234,44 @@ public class JSONHandler {
 		
 		return false;
 	}
-		
+	
+	public boolean uploadLog(long this_sync, String te_username, String schemaversion, String company_name) {
+    	String contents = null;
+    	FileHandler filehandler = new FileHandler(ctx);
+    	contents = filehandler.getLog();
+    	
+    	if (contents == null) {
+    		return false;
+    	}
+    	
+    	if (te_username == null || te_username.isEmpty()) {
+    		//we don't care about them!
+    		return false;
+    	}
+    	
+    	String url = HOST+"/uploadlog";
+		JSONObject result, post;
+		post = new JSONObject();
+		try {
+			post.put("te_username", te_username);
+			post.put("schemaversion", schemaversion);
+			post.put("time", this_sync);
+			post.put("contents", contents);
+			post.put("company_name", company_name);
+			
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return false;
+		}
+    	result = this.postJSON(url, post);
+    	
+    	Log.d(TAG, result.toString());
+    	
+    	//filehandler.deleteFile("db_sync.log"); 
+    	
+    	return true;
+    }
+	
 	
 	private SecretKeySpec generatekey() {
 		SecretKeySpec key = null;
@@ -310,29 +352,55 @@ public class JSONHandler {
 		return output;
 	}
 	
-	public JSONObject getJSON(String url) {
+	private JSONObject postJSON(String url, JSONObject post) {
+		StringEntity se;
+		HttpPost httpPost;
+		httpPost = new HttpPost(url);
+		httpPost.setHeader("Accept", "application/json");
+		httpPost.setHeader("Content-type", "application/json");
+		
+		Log.d("JSON Parser", "Posting " + post.toString());
+		try {
+			se = new StringEntity(post.toString(), "UTF-8");
+			se.setContentType("application/json; charset=UTF-8");
+			Log.d("JSON Parser", "Setting se");
+			httpPost.setEntity(se);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return JSONResponse(null, httpPost);
+	}
+	
+	private JSONObject getJSON(String url) {
+		
+		HttpGet httpGet;
+		httpGet = new HttpGet(url);
+		httpGet.setHeader("Accept", "application/json");
+		httpGet.setHeader("Content-type", "application/json");
+		
+		return JSONResponse(httpGet, null);
+	}
+
+	private JSONObject JSONResponse(HttpGet httpGet, HttpPost httpPost) {
 		InputStream io = null;
 		JSONObject jObj = null;
 		String json = "";
-		
 			
 		try {
 			// defaultHttpClient
-			DefaultHttpClient httpClient;
-			HttpGet httpGet;
+			DefaultHttpClient httpClient = new DefaultHttpClient();
 			HttpResponse httpResponse;
 			HttpEntity httpEntity;
 			
-			httpClient = new DefaultHttpClient();
-			httpGet = new HttpGet(url);
-			httpGet.setHeader("Accept", "application/json");
-			httpGet.setHeader("Content-type", "application/json");
+			if (httpGet != null) {
+				httpResponse = httpClient.execute(httpGet);
+			} else if (httpPost != null) {
+				httpResponse = httpClient.execute(httpPost);
+			} else {
+				httpResponse = null;
+			}
 			
-			JSONObject json2 = new JSONObject();
-			Log.d("JSON Parser", "Getting " + json2.toString());
-			
-			Log.d("JSON Parser", "Execute");
-			httpResponse = httpClient.execute(httpGet);
 			if (httpResponse == null)
 				return null;
 			Log.d("JSON Parser", "Getting Response");
@@ -341,9 +409,6 @@ public class JSONHandler {
 			if (io == null)
 				return null;
 			Log.d("JSON Parser", "Got Response");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-			return null;
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
 			return null;
@@ -370,7 +435,7 @@ public class JSONHandler {
 		catch (IllegalArgumentException e) {
 			Log.e("Buffer Error", "Error converting result " + e.toString());
 		}
-
+	
 		// try parse the string to a JSON object
 		try {
 			jObj = new JSONObject(json);
@@ -382,5 +447,6 @@ public class JSONHandler {
 
 		// return JSON String
 		return jObj;
+
 	}
 }

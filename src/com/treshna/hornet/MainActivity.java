@@ -100,8 +100,31 @@ public class MainActivity extends NFCActivity {
 		//add back in at a later date.
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		if (prefs.getBoolean("firstrun", true)) {
-    		//firstSetup();
+    		firstSetup();
             prefs.edit().putBoolean("firstrun", false).commit();
+        }
+		Services.setContext(this);
+		if (Services.getProgress() != null) {
+    		Services.getProgress().show();
+		}
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		if (Services.getProgress() != null && Services.getProgress().isShowing()) {
+    		Services.getProgress().dismiss();
+    		//Services.setProgress(null);
+    	}		
+	}
+	
+	@Override
+	public void onStop() {
+		super.onStop();
+		try {
+        	unregisterReceiver(Services.getFreqPollingHandler()); //?
+        } catch (Exception e) {
+        	//doesn't matter.
         }
 	}
 	
@@ -151,16 +174,6 @@ public class MainActivity extends NFCActivity {
 		IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION);
         registerReceiver(Services.getFreqPollingHandler(), intentFilter);
-	}
-	
-	@Override
-	public void onStop() {
-		super.onStop();
-		try {
-        	unregisterReceiver(Services.getFreqPollingHandler()); //?
-        } catch (Exception e) {
-        	//doesn't matter.
-        }
 	}
 	
 	@Override

@@ -49,7 +49,7 @@ public class HornetDBService extends Service {
     private long this_sync;
     private long last_sync;
     
-    /****/
+    /****/ //does this need to be final as well?
     private static NetworkThread thread;
     
 	@Override
@@ -62,6 +62,7 @@ public class HornetDBService extends Service {
 	   
 
 	   SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+	   //TODO: NULL HANDLING AT ALL QUERIES.
 	   connection = new JDBCConnection(preferences.getString("address", "-1"),preferences.getString("port", "-1"),
 				 preferences.getString("database", "-1"), preferences.getString("username", "-1"),
 				 preferences.getString("password", "-1"));
@@ -73,7 +74,6 @@ public class HornetDBService extends Service {
 	   Bundle bundle = intent.getExtras();
 	   /**
 	    * magical queue-ing, used to enforce one network operation at a time.
-	    * 
 	    */
 	   
 	   if (thread == null) {
@@ -175,6 +175,9 @@ public class HornetDBService extends Service {
 	 	   		updateRollItem();
 	 	   		getRoll(last_sync);
 	 	   		getRollItem(last_sync);
+		 	   		
+		 	   	logger.writeLog();
+		   	  	uploadLog();
 	 	   		Services.setPreference(ctx, "last_freq_sync", String.valueOf(this_sync));
 	 	   		return;
 			}
@@ -187,8 +190,10 @@ public class HornetDBService extends Service {
 			getBookings();
 			bookingImages();
 			getClasses(last_sync);
-			
+			uploadPendingDeletes();
 			getDeletedRecords(last_sync);
+			logger.writeLog();
+	   	  	uploadLog();
 			
 
 			Services.setPreference(ctx, "last_freq_sync", String.valueOf(this_sync));
@@ -202,7 +207,6 @@ public class HornetDBService extends Service {
 			bcIntent.setAction("com.treshna.hornet.serviceBroadcast");
 			sendBroadcast(bcIntent);
 			Log.v(TAG, "Sending Intent, Stopping Service");
-			logger.writeLog();
 			
  		   	break;
  	   } 
@@ -265,13 +269,15 @@ public class HornetDBService extends Service {
  		  }
  		  
  		  this_sync = System.currentTimeMillis();
-		   Services.showProgress(Services.getContext(), "Syncing Local Database setting from Server", handler, currentCall, true);
-		   //the above box should probably always show.
+		  //Services.showProgress(Services.getContext(), "Syncing Local Database setting from Server", handler, currentCall, true);
+		   //the above box should probably always show. & should be controlled by an async task.
 		   
 		   //config
 		   int rcount = getResource();
 		   int days = getOpenHours();
 		   getDoors();
+		   getConfig();
+		   getProgrammes(0);
 		   
 		   int use_roll = Integer.parseInt(Services.getAppSettings(this.ctx, "use_roll"));
 		   if (use_roll > 0) {
@@ -289,14 +295,16 @@ public class HornetDBService extends Service {
 			   getRoll(0);
 	 	   	   getRollItem(0);
 			   
-			   Services.stopProgress(handler, currentCall);
+			   //Services.stopProgress(handler, currentCall);
 			   Services.setPreference(ctx, "last_freq_sync", String.valueOf(this_sync));
-			   Services.showProgress(Services.getContext(), "Setting up resource", handler, currentCall, false);
+			   //Services.showProgress(Services.getContext(), "Setting up resource", handler, currentCall, false);
 		   	   //rebuild times, then update the reference in date.
 		   	   setTime(); 
 		   	   setDate();
 		   	   updateOpenHours();
-		   	   Services.stopProgress(handler, currentCall);
+			   logger.writeLog();
+		   	   uploadLog();
+		   	   //Services.stopProgress(handler, currentCall);
 		   	   thread.is_networking = false;
 		   	   return;
 		   }
@@ -326,18 +334,19 @@ public class HornetDBService extends Service {
 		   //do Memberships!
 		   getIdCards();
 		   getPaymentMethods();
-		   getProgrammes(0);
+		   uploadPendingDeletes();
 		   
-		   
-		   Services.stopProgress(handler, currentCall);
+		   //Services.stopProgress(handler, currentCall);
 		   Services.setPreference(ctx, "last_freq_sync", String.valueOf(this_sync));
-		   Services.showProgress(Services.getContext(), "Setting up resource", handler, currentCall, false);
+		   //Services.showProgress(Services.getContext(), "Setting up resource", handler, currentCall, false);
 
 	   	  	//rebuild times, then update the reference in date.
 	   	  	setTime(); 
 	   	  	setDate();
 	   	  	updateOpenHours();
-	   	  	Services.stopProgress(handler, currentCall);
+	   	  	logger.writeLog();
+	   	  	uploadLog();
+	   	  	//Services.stopProgress(handler, currentCall);
 	   	  	
 	   	 thread.is_networking = false;
 		   if (statusMessage != null) {
@@ -355,7 +364,7 @@ public class HornetDBService extends Service {
 		  bcIntent.setAction("com.treshna.hornet.serviceBroadcast");
 		  sendBroadcast(bcIntent);
 		  Log.v(TAG, "Sending Intent, Stopping Service");
-		  logger.writeLog();
+		  
  		  break;
  	   }
  	   /* The below service is not networking, but updates the local-database based on
@@ -1115,6 +1124,8 @@ public class HornetDBService extends Service {
     			rs.close();
     		}catch (SQLException e) {
     			//doesn't matter, we're only closing the statement anyway.
+    		} catch (NullPointerException e) {
+    			//either the connection or the resultSet is null. likely because of bad settings.
     		}
     	}
     	closeConnection();
@@ -1307,7 +1318,7 @@ public class HornetDBService extends Service {
     	    	
     	cur = contentResolver.query(ContentDescriptor.BookingTime.CONTENT_URI, null, null, null, null);
     	if (cur.getCount() <= 0) {
-    		Log.w(TAG, "No Rows returned by BookingTime table, will now setup date/time tables before continuing.");
+    		Log.d(TAG, "No Rows returned by BookingTime table, will now setup date/time tables before continuing.");
 	   	  	//rebuild times, then update the reference in date.
 	   	  	setTime(); 
 	   	  	setDate();
@@ -2737,6 +2748,7 @@ public class HornetDBService extends Service {
     					+"= ? AND "+ContentDescriptor.PendingUploads.Cols.ROWID+" = ?", 
     					new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Membership.getKey()),
     					String.valueOf(pendingRows.get(i))});
+    			continue;
     		}
     		try {
     			//will this be OK with nulls?
@@ -2838,7 +2850,7 @@ public class HornetDBService extends Service {
     		return -1;
     	}
     	ResultSet rs;
-    	try { //TODO: this_sync OR 0
+    	try {
     		rs = connection.getMemberNotes(last_update);
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
@@ -3555,6 +3567,127 @@ public class HornetDBService extends Service {
     		e.printStackTrace();
     		return -2;
     	}
+    	return result;
+    }
+    
+    private int getConfig() {
+    	int result = 0;
+    	ResultSet rs;
+    	final long ONE_WEEK = 604800000; 
+    	long last_update = 0;
+    	
+    	cur = contentResolver.query(ContentDescriptor.Company.CONTENT_URI, null, null, null, null);
+		if (cur.moveToFirst()) {
+			last_update = cur.getLong(cur.getColumnIndex(ContentDescriptor.Company.Cols.LASTUPDATE));
+		}
+		cur.close();
+		
+		if (last_update+ONE_WEEK > new Date().getTime()) {
+			return 0;
+		}
+    	
+    	if (!openConnection()) {
+    		return -1;
+    	}
+    	
+    	try {
+    		rs = connection.getCompanyConfig();
+    	} catch (SQLException e) {
+    		statusMessage = e.getLocalizedMessage();
+    		e.printStackTrace();
+    		return -2;
+    	}
+    	
+    	try {
+    		while (rs.next()) {
+    			ContentValues values = new ContentValues();
+    			values.put(ContentDescriptor.Company.Cols.NAME, rs.getString("name"));
+    			values.put(ContentDescriptor.Company.Cols.TE_USERNAME, rs.getString("te_username"));
+    			values.put(ContentDescriptor.Company.Cols.SCHEMAVERSION, rs.getString("schemaversion"));
+    			values.put(ContentDescriptor.Company.Cols.LASTUPDATE, new Date().getTime());
+    			
+    			cur = contentResolver.query(ContentDescriptor.Company.CONTENT_URI, null, ContentDescriptor.Company.Cols.NAME+" = ?",
+    					new String[] {rs.getString("name")}, null);
+    			if (cur.moveToFirst()) {
+    				int row_id = cur.getInt(cur.getColumnIndex(ContentDescriptor.Company.Cols.ID));
+    				cur.close();
+    				contentResolver.update(ContentDescriptor.Company.CONTENT_URI, values, ContentDescriptor.Company.Cols.ID+" = ?", 
+    						new String[] {String.valueOf(row_id)});
+    			} else {
+    				cur.close();
+    				contentResolver.insert(ContentDescriptor.Company.CONTENT_URI, values);
+    			}
+    			result +=1;
+    		}
+    		rs.close();
+    	} catch (SQLException e) {
+    		statusMessage = e.getLocalizedMessage();
+    		e.printStackTrace();
+    		return -3;
+    	}
+    	closeConnection();
+    	
+    	return result;
+    }
+    
+    private boolean uploadLog(){ //TODO: fix this. it uploads a ton of fairly useless shit.
+    	JSONHandler json = new JSONHandler(ctx);
+    	String te_username = "", schemaversion = "", company_name = "";
+    	
+    	cur = contentResolver.query(ContentDescriptor.Company.CONTENT_URI, null, null, null, null);
+    	if (cur.moveToFirst()) {
+    		te_username = cur.getString(cur.getColumnIndex(ContentDescriptor.Company.Cols.TE_USERNAME));
+    		schemaversion = cur.getString(cur.getColumnIndex(ContentDescriptor.Company.Cols.SCHEMAVERSION));
+    		company_name = cur.getString(cur.getColumnIndex(ContentDescriptor.Company.Cols.NAME));
+    	}
+    	cur.close();
+    	
+    	return json.uploadLog(this_sync, te_username, schemaversion, company_name);
+    }
+    
+    private int uploadPendingDeletes() {
+    	Log.d(TAG, "Uploading Pending Deletes");
+    	int result = 0;
+    	ArrayList<Integer> memberships = new ArrayList<Integer>();
+    	
+    	cur = contentResolver.query(ContentDescriptor.PendingDeletes.CONTENT_URI, null, null, null, null);
+    	while (cur.moveToNext()) {
+    		if (cur.getInt(cur.getColumnIndex(ContentDescriptor.PendingDeletes.Cols.TABLEID)) 
+    				== ContentDescriptor.TableIndex.Values.Membership.getKey()) {
+    			memberships.add(cur.getInt(cur.getColumnIndex(ContentDescriptor.PendingDeletes.Cols.ROWID)));
+    			//the membershipid
+    		} else {
+    			//another type of pending delete.
+    			//should probably throw an error so I know to write code here.
+    		}
+    	}
+    	cur.close();
+    	
+    	if (!openConnection()) {
+    		return -1; //Connection Failed!
+    	}
+    	
+    	//handle the pending Membership Deletes;
+    	for (int i=0; i<memberships.size(); i++) {
+    		try {
+    			connection.deleteMembership(memberships.get(i));
+    			
+    			contentResolver.delete(ContentDescriptor.PendingDeletes.CONTENT_URI, ContentDescriptor.PendingDeletes.Cols.ROWID+" = ? AND "
+    					+ContentDescriptor.PendingDeletes.Cols.TABLEID+" = ?", new String[] {String.valueOf(memberships.get(i)),
+    					String.valueOf(ContentDescriptor.TableIndex.Values.Membership.getKey())});
+    		} catch (SQLException e) {
+    			statusMessage = e.getLocalizedMessage();
+    			e.printStackTrace();
+    			//may as well remove the pending delete, the SQL Exception may have been caused by it.
+    			contentResolver.delete(ContentDescriptor.PendingDeletes.CONTENT_URI, ContentDescriptor.PendingDeletes.Cols.ROWID+" = ? AND "
+    					+ContentDescriptor.PendingDeletes.Cols.TABLEID+" = ?", new String[] {String.valueOf(memberships.get(i)),
+    					String.valueOf(ContentDescriptor.TableIndex.Values.Membership.getKey())});
+    		}
+    	}
+    	//do other magic handling here.
+    	
+    	closeConnection();
+    	Log.d(TAG, "Finished upload.");
     	return result;
     }
 }

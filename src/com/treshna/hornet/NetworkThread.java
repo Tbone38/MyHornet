@@ -10,6 +10,7 @@ public class NetworkThread extends Thread {
 	 private Queue<Integer> queue = new LinkedList<Integer>();
 	 private Queue<Bundle> bundlequeue = new LinkedList<Bundle>(); 
 	 private HornetDBService theService;
+	 private int currentCall;
 	 
 	@Override
 	public void run() {
@@ -21,17 +22,17 @@ public class NetworkThread extends Thread {
 				}
 			}
 			if (queue.peek() != null) {
-				int currentCall = queue.poll();
+				currentCall = queue.poll();
 				Bundle bundle = bundlequeue.poll();
 			   theService.startNetworking(currentCall, bundle);
 			} else {
-			   //the queue is empty.
+			   //the queue is empty, basically, we finish.
 			}
 		}
 	}
 	
 	public void addNetwork(int call, Bundle bundle, HornetDBService parent){
-		 if (queue.peek() == null ||queue.peek() != call) {
+		 if (queue.peek() == null ||currentCall != call) {
 			queue.add(call);
 			bundlequeue.add(bundle);
 		 }

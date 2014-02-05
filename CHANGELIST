@@ -7,26 +7,40 @@
                 -Sometimes app needs to restart for the roll menu item to show up.
                 -Dates need to be handled better. Currently they're breaking on Dru's phone because the default format (Date().toString()) returns differently.
                         Fix is to call SimpleDateFormat.format(Date()) instead of trying to parse the Date().toString().
+				-Progress Box no longer works. needs to be added back in via a aSync Task for the db_syncing.
+					(had issues trying to attach to windows from the service thread, due to 'Context' complications.)
 
 	V116:
 		-DONE:
-                	On first run, we prompt for an easy setup/install.
-                        	This easy setup gets there email address, gymname/organisational name, a username, & a location.
-                                        the username needs to be unique.
-					the email address needs to be unique.	
-                                the username is used for the web-address (username.SERVERLOCATION.gymmaster.co.nz).
-				the username is used for the database name (g_<USERNAME>)
-                                passed to a cental database on sms.treshna.com, which generates a password, and emails said email-address the password.
-					the username, password, db_name, and server are returned by the API
-				It's all passed through a JSON (flask) server (api.gymmaster.co.nz).
+               	On first run, we prompt for an easy setup/install.
+               		This easy setup gets there email address, gymname/organisational name, a username, & a location.
+                    	the username needs to be unique.
+						the email address needs to be unique.	
+                        	is the username used for the web-address (username.SERVERLOCATION.gymmaster.co.nz)?
+							the username is used for the database name (g_<USERNAME>)
+                            passed to a cental database on sms.treshna.com, which generates a password, and emails said email-address the password.
+							the username, password, db_name, and server are returned by the API
+							It's all passed through a JSON (flask) server (api.gymmaster.co.nz).
+						We also generate the actual Database.
+							this generation can be done prior, at which point the script will rename a free gymmaster db.
+								see ~api-gymmaster/free_db/ & ~api-gymmaster/scripts for more details.
+							the database bondfrontend.conf file can be found in ~api-gymmaster/config/<database name>/
+							the databases can be upgraded via the ./scripts/update_dbs.sh file
+						# DATABASE MAINTENANCE:
+							a number of scripts exists in the ~api-gymmaster/scripts directory for helping with this.
+						
+                upload the log-file after each sync to our central server,
+    	            -we store the schema version, company_name, and te_username as well.
+					-the log file will only contain warnings and errors.
+					-it may want manual deletion, or a trigger that truncates data.
+						(because at the moment the logs are massive and fairly unhelpful).
+                Remove membership Button.
+
 		-TODO:
                         Handle permissions/Roles for different staff, to limit what certain staff can see.
-                        upload the log.file after each sync to a server.
-                                -the log.file needs a unique identifier so we know which device has the issues.
-                                -we need to check that the file isn't empty before we upload it. (only upload files with actual warnings/errors in them).
-                                -this can probably go into our central db?
-                        Remove membership.
-                        Remove member from class.
+                        the log-file needs a unique identifier so we know which device has the issues.
+                        Remove member from class Button.
+						KPI's.
 
 	v115:
 		Added member Find Filters,
@@ -47,4 +61,4 @@
 		Added parentname (YMCA)
 		Added Roll Call feature, automatically generates a roll off of the members by there membership.
 		Roll Call feature uses filter as default membership for generating rolls (and syncs back from db).
-		Sync Warnings/Errors are logged to a file called 'log.file';
+		sync Warnings/Errors are logged to a file called 'log.file';

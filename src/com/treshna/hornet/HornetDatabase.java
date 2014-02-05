@@ -291,6 +291,7 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		db.execSQL(UpdateDatabase.NinetyOne.SQL);
 		db.execSQL(UpdateDatabase.NinetyTwo.SQL);
 		UpdateDatabase.NinetyThree.patchNinetyThree(db);
+		UpdateDatabase.NinetyFour.patchNinetyFour(db);
 		//db.execSQL("pragma full_column_names=ON;"); //TODO: will this break stuff?*/
 	}
 	
@@ -347,6 +348,10 @@ public class HornetDatabase extends SQLiteOpenHelper {
 				//db.execSQL("pragma full_column_names=ON;"); //TODO: will this break stuff? 
 				break;
 			}
+			case (94):{
+				UpdateDatabase.NinetyFour.patchNinetyFour(db);
+				break;
+			}
 			}
 		}
 		
@@ -392,6 +397,7 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS "+ResultStatus.NAME);
 		
 		db.execSQL("DROP TABLE IF EXISTS "+MembershipSuspend.NAME);
+		db.execSQL("DROP TABLE IF EXISTS "+MembershipSuspend.Old.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+MemberNotes.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+MemberBalance.NAME);
 		

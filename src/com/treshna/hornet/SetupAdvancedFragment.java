@@ -141,6 +141,24 @@ public class SetupAdvancedFragment extends Fragment implements OnClickListener {
 	}
 	
 	@Override
+	public void onPause() {
+		super.onPause();
+		if (Services.getProgress() != null && Services.getProgress().isShowing()) {
+    		Services.getProgress().dismiss();
+    		//Services.setProgress(null);
+    	}		
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		Services.setContext(getActivity());
+		if (Services.getProgress() != null) {
+    		Services.getProgress().show();
+		}
+	}
+	
+	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case (R.id.button_advanced_cancel):{
@@ -161,6 +179,10 @@ public class SetupAdvancedFragment extends Fragment implements OnClickListener {
 			Intent i = new Intent(getActivity(), MainActivity.class);
 			startActivity(i);
 			getActivity().finish();
+			
+			Intent updateInt = new Intent(getActivity(), HornetDBService.class);
+			updateInt.putExtra(Services.Statics.KEY, Services.Statics.FIRSTRUN);
+		 	getActivity().startService(updateInt);
 			break;
 		}
 		}

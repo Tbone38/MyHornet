@@ -512,6 +512,9 @@ public class ContentDescriptor {
 	 		public static class Cols {
 	 			public static final String ID = BaseColumns._ID;
 	 			public static final String NAME = "name";
+	 			public static final String TE_USERNAME = "te_username";
+	 			public static final String SCHEMAVERSION = "schemaversion";
+	 			public static final String LASTUPDATE = "lastupdate";
 	 		}
 	 	}
 	 	// for creating member ships ?
@@ -571,7 +574,7 @@ public class ContentDescriptor {
 	 			public static final String ON_INSERT = "membership_insert";
 	 			public static final String ON_UPDATE_MSID = "membershipid_update";
 	 			public static final String ON_UPDATE = "membership_update";
-	 			public static final String ON_DELETE = "membership_delete"; //unused
+	 			public static final String ON_DELETE = "membership_delete"; 
 	 		}
 	 		
 	 		public static class Cols implements BaseColumns {

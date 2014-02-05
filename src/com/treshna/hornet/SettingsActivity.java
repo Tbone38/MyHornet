@@ -5,9 +5,11 @@ import java.util.List;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -413,11 +415,49 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 	}
 	
 	private static void clearData(){
+		/*We need to check that theres no pending uploads/updates/Deletes, otherwise don't let them delete.*/
+		ContentResolver contentResolver =  MainActivity.getContext().getContentResolver();
+		boolean has_pending = false;
+		
+		Cursor cur = contentResolver.query(ContentDescriptor.PendingUpdates.CONTENT_URI, null, null, null, null);
+		if (cur.getCount() > 0) {
+			has_pending = true;
+		}
+		cur.close();
+		
+		cur = contentResolver.query(ContentDescriptor.PendingUploads.CONTENT_URI, null, null, null, null);
+		if (cur.getCount() > 0) {
+			has_pending = true;
+		}
+		cur.close();
+		
+		cur = contentResolver.query(ContentDescriptor.PendingDeletes.CONTENT_URI, null, null, null, null);
+		if (cur.getCount() > 0) {
+			has_pending = true;
+		}
+		cur.close();
+		
+		if (has_pending) {
+			AlertDialog.Builder ad = new AlertDialog.Builder(getContext());
+			ad.setTitle("Warning!");
+			ad.setMessage("You have pending changes, please sync before trying to clear the data.");
+			
+			ad.setPositiveButton("OK", new Dialog.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+					
+				}
+			});
+			ad.show();
+			return;
+		}
+		
 		Editor editor = PreferenceManager.getDefaultSharedPreferences(MainActivity.getContext()).edit();
 		editor.clear();
 		editor.commit();
 		//does this break things?
-		ContentResolver contentResolver =  MainActivity.getContext().getContentResolver();
+		
 		ContentResolver.cancelSync(null, ContentDescriptor.AUTHORITY);
 		contentResolver.delete(ContentDescriptor.DROPTABLE_URI, null, null);
 		Toast.makeText(MainActivity.getContext(), "Data Cleared, restarting Application.", Toast.LENGTH_LONG).show();

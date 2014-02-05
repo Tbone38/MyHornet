@@ -146,8 +146,8 @@ public class SetupSimpleEndFragment extends Fragment implements OnClickListener 
 		}
 		
 		protected void onPreExecute() {
-			 progress = ProgressDialog.show(getActivity(), "Retrieving..", 
-					 "Retrieving user settings from central database.", true);
+			 progress = ProgressDialog.show(getActivity(), "Generating..", 
+					 "Generating your GymMaster Database.", true);
 		}
 		
 		@Override

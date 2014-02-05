@@ -872,6 +872,12 @@ public class HornetContentProvider extends ContentProvider {
             	getContext().getContentResolver().notifyChange(uri, null);
             	return result;
             }
+            case ContentDescriptor.Company.PATH_TOKEN:{
+            	int result = db.update(ContentDescriptor.Company.NAME, values, selection, selectionArgs);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return result;
+            }
+            
             //TODO: fill this out further.
             case ContentDescriptor.DeletedRecords.PATH_TOKEN:{ //special case, deletes row from table.
             	String tablename = values.getAsString(ContentDescriptor.DeletedRecords.TABLENAME);

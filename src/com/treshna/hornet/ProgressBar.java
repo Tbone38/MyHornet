@@ -15,6 +15,10 @@ public class ProgressBar {
 	public ProgressBar (Handler handler, Context ctx, final String message){
 		thehandler = handler;
 		theCtx = ctx;
+		if (theCtx == null) {
+			progress = null;
+			return;
+		}
 		
 		DEBUG = PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean("progress", false);
 		System.out.print("\n\nDebug:"+DEBUG);

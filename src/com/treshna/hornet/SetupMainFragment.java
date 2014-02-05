@@ -39,10 +39,10 @@ public class SetupMainFragment extends Fragment implements OnClickListener {
 	private View setupPageOne() {
 		TextView simple = (TextView) view.findViewById(R.id.button_simple_setup);
 		simple.setOnClickListener(this);
-		simple.setVisibility(View.INVISIBLE);
+		//simple.setVisibility(View.INVISIBLE);
 		
-		View simpleline = (View) view.findViewById(R.id.button_simple_underline);
-		simpleline.setVisibility(View.INVISIBLE);
+		/*View simpleline = (View) view.findViewById(R.id.button_simple_underline);
+		simpleline.setVisibility(View.INVISIBLE);*/
 		
 		TextView advanced = (TextView) view.findViewById(R.id.button_advanced_setup);
 		advanced.setOnClickListener(this);

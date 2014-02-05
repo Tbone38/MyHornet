@@ -235,6 +235,10 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 		Uri row =contentResolver.insert(ContentDescriptor.Membership.CONTENT_URI, values);
 		rowid = row.getLastPathSegment();
 		
+		contentResolver.delete(ContentDescriptor.FreeIds.CONTENT_URI, ContentDescriptor.FreeIds.Cols.ROWID+" = ? AND "
+		+ContentDescriptor.FreeIds.Cols.TABLEID+" = ?", new String[] {String.valueOf(msid),
+		String.valueOf(ContentDescriptor.TableIndex.Values.Membership.getKey())});
+		
 		Log.v(TAG, "insert rowid: "+rowid);
 		
 		return Integer.parseInt(rowid);

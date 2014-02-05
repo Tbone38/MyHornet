@@ -203,7 +203,6 @@ public class FileHandler {
 		}
 	}
 	
-	//TODO upload this somewhere.
 	public void writeLog() {
 		Process process = null;
 		try {
@@ -216,12 +215,45 @@ public class FileHandler {
 		      while ((line = bufferedReader.readLine()) != null) {
 		        log.append(line);
 		      }
-		      this.writeFile(log.toString().getBytes(), "log.file");
+		      this.writeFile(log.toString().getBytes(), "db_sync.log");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
 			process.destroy();
 		}
+	}
+	
+	//what the hell is this returning? 
+	public String getLog() {
+		File logfile = new File(context.getExternalFilesDir(null), "db_sync.log");
+		long fileSize = 0;
+		InputStream is = null;
+		StringBuffer fileContents = new StringBuffer("");
+		
+		fileSize = logfile.length();
+		if (fileSize <= 0) {
+			return null;
+		}
+		
+		try {
+			is = new FileInputStream(logfile);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		} 
+  	  	
+  	  	byte[] buffer = new byte[(int)fileSize]; //size of the file in bytes
+  	  	try {
+  	  		while (is.read(buffer) != -1) {
+  	  			fileContents.append(new String(buffer));
+  	  		}
+  	  		is.close();
+  	  	} catch (IOException e) {
+  	  		e.printStackTrace();
+  	  		return null;
+  	  	}
+  	  	
+  	  	return fileContents.toString();
 	}
 	
 }

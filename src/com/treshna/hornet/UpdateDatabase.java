@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.treshna.hornet.ContentDescriptor.Booking;
 import com.treshna.hornet.ContentDescriptor.Class;
+import com.treshna.hornet.ContentDescriptor.Company;
 import com.treshna.hornet.ContentDescriptor.FreeIds;
 import com.treshna.hornet.ContentDescriptor.Image;
 import com.treshna.hornet.ContentDescriptor.Member;
@@ -101,13 +102,9 @@ public class UpdateDatabase {
 						+ "SELECT "+MemberNotes.Cols.MNID+", "+TableIndex.Values.MemberNotes.getKey()
 						+" FROM "+MemberNotes.NAME+" WHERE "+MemberNotes.Cols.MID+" = 0;";
 		public static final String SQL15 ="DELETE FROM "+MemberNotes.NAME+" WHERE "+MemberNotes.Cols.MID+" = 0;";
-				
-				//move more triggers here.
-				//TODO:ADD TRIGGERS FOR ON UPDATES/INSERTS that set pending UPLOADS/UPDATES table.
 					
 		public static final String SQL16 ="CREATE TABLE "+PendingDeletes.NAME+" ("+PendingDeletes.Cols._ID+" INTEGER PRIMARY KEY, "
 						+PendingDeletes.Cols.ROWID+" INTEGER, "+PendingDeletes.Cols.TABLEID+" INTEGER );";
-						
 				
 				// We're renaming the Medical column, and adding more medical Details/Emergency Contact Info.
 				//also deleting the notes column (use the table instead). 
@@ -315,6 +312,7 @@ public class UpdateDatabase {
 				+" END; ";
 		
 		public static final String SQL43="ALTER TABLE "+MembershipSuspend.Old.NAME+" RENAME TO tmp_"+MembershipSuspend.NAME+";";
+		//TODO: make sure this isn't broken.
 		
 		public static final String SQL44="CREATE TABLE "+MembershipSuspend.NAME+" ("+MembershipSuspend.Cols._ID+" INTEGER PRIMARY KEY, "
 				+MembershipSuspend.Cols.SID+" INTEGER, "+MembershipSuspend.Cols.MID+" INTEGER DEFAULT 0, "
@@ -556,5 +554,34 @@ public class UpdateDatabase {
 				db.endTransaction();
 			}
 		}
-	}	
+	}
+	
+	public static class NinetyFour {
+		public static final String SQL1 = "CREATE TABLE "+Company.NAME+" ("+Company.Cols.ID+" INTEGER PRIMARY KEY,"
+				+Company.Cols.NAME+" TEXT, "+Company.Cols.TE_USERNAME+" TEXT, "
+				+Company.Cols.SCHEMAVERSION+" TEXT, "+Company.Cols.LASTUPDATE+" NUMERIC );";
+		
+		public static final String SQL2 = "CREATE TRIGGER "+Membership.Triggers.ON_DELETE+
+				" BEFORE DELETE ON "+Membership.NAME
+				+" FOR EACH ROW "
+				+"BEGIN "
+					+"INSERT OR REPLACE INTO "+PendingDeletes.NAME
+					+ " ("+PendingDeletes.Cols.ROWID+", "+PendingDeletes.Cols.TABLEID+")"
+					+ " VALUES (old."+Membership.Cols.MSID+", "+TableIndex.Values.Membership.getKey()+");"
+				+" END; ";
+		
+		public static void patchNinetyFour(SQLiteDatabase db) {
+			db.beginTransaction();
+			try {
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyFour.SQL1);
+				db.execSQL(UpdateDatabase.NinetyFour.SQL1);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyFour.SQL2);
+				db.execSQL(UpdateDatabase.NinetyFour.SQL2);
+				db.setTransactionSuccessful();
+			} finally {
+				db.endTransaction();
+			}
+		}
+	}
+	
 }

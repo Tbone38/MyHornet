@@ -1,4 +1,4 @@
--- This script creates tables that are needed on the central server for handling
+-- This script creates tables that are needed on OUR central servers for handling generating DB's.
 -- new features of the Hornet(GymMaster Mobile) client.
         -- The new cloud-based dynamic building of databases. (meta-table containing info on each database).
         -- The Logging of database sync errors.
@@ -17,19 +17,16 @@ CREATE TABLE IF NOT EXISTS hornet_errorlog(id SERIAL PRIMARY KEY,
 error TEXT, lastupdate TIMESTAMP WITHOUT TIME ZONE,
 uploader TEXT);
 
+ALTER TABLE hornet_errorlog DROP COLUMN error;
+ALTER TABLE hornet_errorlog DROP COLUMN uploader;
+ALTER TABLE hornet_errorlog ADD COLUMN content TEXT;
+ALTER TABLE hornet_errorlog ADD COLUMN te_username TEXT;
+ALTER TABLE hornet_errorlog ADD COLUMN company_name TEXT;
+DROP TRIGGER IF EXISTS hornet_errorlog_update ON hornet_errorlog;
+DROP FUNCTION IF EXISTS hornet_errorlog_update();
 
 --CREATE THE FUNCTIONS.
 BEGIN TRANSACTION;
-
-	CREATE OR REPLACE FUNCTION hornet_errorlog_update() RETURNS trigger AS $$
-	BEGIN
-        	SELECT now() INTO new.lastupdate;
-		RETURN new;
-	END;
-	$$ LANGUAGE plpgsql;
- 
-	CREATE TRIGGER hornet_errorlog_update BEFORE UPDATE ON hornet_errorlog
-        	FOR EACH ROW EXECUTE PROCEDURE hornet_errorlog_update();
 
 	DROP FUNCTION IF EXISTS generate_password();
 	CREATE OR REPLACE FUNCTION generate_random(length INTEGER) RETURNS TEXT AS $$
