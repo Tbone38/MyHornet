@@ -363,6 +363,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 				 * 			Resource ID,				- DONE
 				 * 			Time ID, 					- DONE
 				 * 			Booking ID,					- DONE
+				 * 			Device Signup				- ?
 				 */
 				int inscount = insertBooking(results);
 				if (inscount <= 0) {

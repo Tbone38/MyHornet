@@ -26,6 +26,7 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -258,10 +259,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		clearData.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-            	clearData();       	
-            		Intent i = getPackageManager().getLaunchIntentForPackage( getApplicationContext().getPackageName() );
-                	i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                	startActivity(i);	
+            	clearData();
             	return true;
         }});
 		return clearData;
@@ -414,25 +412,28 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		debug.addPreference(deletebackup);
 	}
 	
-	private static void clearData(){
+	private void clearData(){
 		/*We need to check that theres no pending uploads/updates/Deletes, otherwise don't let them delete.*/
 		ContentResolver contentResolver =  MainActivity.getContext().getContentResolver();
 		boolean has_pending = false;
 		
 		Cursor cur = contentResolver.query(ContentDescriptor.PendingUpdates.CONTENT_URI, null, null, null, null);
 		if (cur.getCount() > 0) {
+			Log.v(SettingsActivity.class.getName(), "Updates Pending...!");
 			has_pending = true;
 		}
 		cur.close();
 		
 		cur = contentResolver.query(ContentDescriptor.PendingUploads.CONTENT_URI, null, null, null, null);
 		if (cur.getCount() > 0) {
+			Log.v(SettingsActivity.class.getName(), "Uploads Pending...!");
 			has_pending = true;
 		}
 		cur.close();
 		
 		cur = contentResolver.query(ContentDescriptor.PendingDeletes.CONTENT_URI, null, null, null, null);
 		if (cur.getCount() > 0) {
+			Log.v(SettingsActivity.class.getName(), "Deletes Pending...!");
 			has_pending = true;
 		}
 		cur.close();
@@ -461,6 +462,10 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		ContentResolver.cancelSync(null, ContentDescriptor.AUTHORITY);
 		contentResolver.delete(ContentDescriptor.DROPTABLE_URI, null, null);
 		Toast.makeText(MainActivity.getContext(), "Data Cleared, restarting Application.", Toast.LENGTH_LONG).show();
+		
+		Intent i = SettingsActivity.this.getPackageManager().getLaunchIntentForPackage(getApplicationContext().getPackageName());
+    	i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+    	startActivity(i);
 		//return result;
 	}
 	

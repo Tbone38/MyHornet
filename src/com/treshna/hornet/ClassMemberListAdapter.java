@@ -6,9 +6,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
+import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.database.Cursor;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
@@ -24,7 +29,8 @@ import android.widget.TextView;
 //		- Adding members to class.
 
 
-public class ClassMemberListAdapter extends SimpleCursorAdapter implements CompoundButton.OnCheckedChangeListener{
+public class ClassMemberListAdapter extends SimpleCursorAdapter implements CompoundButton.OnCheckedChangeListener,
+		View.OnClickListener {
 	
 	Context context;
 	ContentResolver contentResolver;
@@ -32,6 +38,8 @@ public class ClassMemberListAdapter extends SimpleCursorAdapter implements Compo
 	String sdate;
 	public static final String TAG = "com.treshna.hornet.ClassMemberListAdapter";
 	private Cursor cur;
+	
+	private String deleteid;
 	
 	private int mLayout;
 	
@@ -46,66 +54,23 @@ public class ClassMemberListAdapter extends SimpleCursorAdapter implements Compo
 	}
 	
 	
-	/*@Override
-	public void bindView(View rowLayout, Context context, Cursor cursor){
-		super.bindView(rowLayout, context, cursor);
-		int pos;
-		TextView membername;
-		CheckBox checkin;
-		String fname, sname;
-		ArrayList<String> tag;
-		
-		pos = cursor.getPosition();
-		Log.v(TAG, "Cursor Position:"+pos);
-		stime = cursor.getString(cursor.getColumnIndex(ContentDescriptor.Booking.Cols.STIME));
-		sdate = cursor.getString(cursor.getColumnIndex(ContentDescriptor.Booking.Cols.ARRIVAL));
-		
-		membername = (TextView) rowLayout.findViewById(R.id.memberName);
-		fname = cursor.getString(cursor.getColumnIndex(ContentDescriptor.Booking.Cols.FNAME));
-		sname = cursor.getString(cursor.getColumnIndex(ContentDescriptor.Booking.Cols.SNAME));
-		membername.setText(fname+" "+sname);
-		
-		//work out check-in based off of result or check-in (timestamp, if null not checked).
-		
-		checkin = (CheckBox) rowLayout.findViewById(R.id.classMemberCheckin);
-		checkin.setChecked(false);
-		if (!cursor.isNull(cursor.getColumnIndex(ContentDescriptor.Booking.Cols.CHECKIN))) {
-			checkin.setChecked(true);
-			Log.v(TAG, "Checked = true for Member:"+fname+" "+sname);
-			Log.v(TAG, "With Value:"+cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.CHECKIN)));
-		}
-		
-		tag = new ArrayList<String>();
-		tag.add(cursor.getString(cursor.getColumnIndex(ContentDescriptor.Booking.Cols.BID)));
-		tag.add(cursor.getString(cursor.getColumnIndex(ContentDescriptor.Booking.Cols.ID)));
-		checkin.setTag(tag);
-		checkin.setOnCheckedChangeListener(this);
-	}*/
-	
-	
 	@Override
 	public void changeCursor(Cursor c) {
 		cur = c;
 		super.changeCursor(c);
 	}
 	
-	
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-			
-		LayoutInflater inflater = (LayoutInflater) context
-					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			
-		View rowLayout = inflater.inflate(mLayout, parent, false);
-		
-		
+	public void bindView(View rowLayout, Context context, Cursor cursor){
+		super.bindView(rowLayout, context, cursor);
+		cur = cursor;
 		TextView membername;
 		CheckBox checkin;
 		String fname, sname;
 		ArrayList<String> tag;
 		
 		//pos = cursor.getPosition();
-		cur.moveToPosition(position);
+		
 		//Log.v(TAG, "Cursor Position:"+pos);
 		stime = cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.STIME));
 		sdate = cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.ARRIVAL));
@@ -121,25 +86,30 @@ public class ClassMemberListAdapter extends SimpleCursorAdapter implements Compo
 		checkin.setChecked(false);
 		if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Booking.Cols.CHECKIN))) {
 			checkin.setChecked(true);
-			Log.v(TAG, "Checked = true for Member:"+fname+" "+sname);
-			Log.v(TAG, "With Value:"+cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.CHECKIN)));
+			//Log.v(TAG, "Checked = true for Member:"+fname+" "+sname);
+			//Log.v(TAG, "With Value:"+cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.CHECKIN)));
 		}
 		
 		tag = new ArrayList<String>();
 		tag.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.BID)));
-		tag.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.ID)));
 		checkin.setTag(tag);
 		checkin.setOnCheckedChangeListener(this);
+		
+		ImageView cancel_booking = (ImageView) rowLayout.findViewById(R.id.classMemberCancel);
+		cancel_booking.setColorFilter(Services.ColorFilterGenerator.setColourRed());
+		cancel_booking.setClickable(true);
+		tag = new ArrayList<String>();
+		tag.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.BID)));
+		cancel_booking.setTag(tag);
+		cancel_booking.setOnClickListener(this);
 			
-		return rowLayout;
 	}
-	
 	
 	@SuppressWarnings("unchecked")
 	@Override
 	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 		ContentValues values;
-		String bookingid, rowid;
+		String bookingid;
 		ArrayList<String> tag = null;
 		
 		if (buttonView.getTag() instanceof ArrayList<?> ) {
@@ -147,9 +117,6 @@ public class ClassMemberListAdapter extends SimpleCursorAdapter implements Compo
 		}
 		bookingid = tag.get(0);
 		Log.v(TAG, "Check Box Tag: BookingID:"+bookingid);
-		rowid = tag.get(1);
-		Log.v(TAG,"Check Box Tag: rowid:"+rowid);
-		
 		
 		if (isChecked) {//is checked, set checkin time.
 			long tenminutes = 600000;
@@ -181,11 +148,63 @@ public class ClassMemberListAdapter extends SimpleCursorAdapter implements Compo
 		contentResolver.update(ContentDescriptor.Booking.CONTENT_URI, values, ContentDescriptor.Booking.Cols.BID+" = ?",
 				new String[] {bookingid});
 		
-		/*********Add to pendingUploads********/
-		//TODO: look into this; (new booking vs updated booking).
-		values = new ContentValues();
-		values.put(ContentDescriptor.PendingUploads.Cols.TABLEID, ContentDescriptor.TableIndex.Values.Booking.getKey());
-		values.put(ContentDescriptor.PendingUploads.Cols.ROWID, rowid);
-		contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, values);
+	}
+
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()){
+		case (R.id.classMemberCancel):{
+			ArrayList<String> tag = null;
+			
+			if (v.getTag() instanceof ArrayList<?> ) {
+				tag = (ArrayList<String>) v.getTag();
+			}
+			deleteid = tag.get(0);
+			
+			//show a popup before we delete stuff!.
+			Cursor cur2 = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, new String[] {ContentDescriptor.Booking.Cols.FNAME,
+					ContentDescriptor.Booking.Cols.SNAME}, ContentDescriptor.Booking.Cols.BID+" = ?",new String[] {deleteid}, null);
+			if (!cur2.moveToFirst()) {
+				break;
+			}
+			String membername = cur2.getString(cur2.getColumnIndex(ContentDescriptor.Booking.Cols.FNAME))+" "
+					+cur2.getString(cur2.getColumnIndex(ContentDescriptor.Booking.Cols.SNAME));
+			
+			AlertDialog.Builder builder = new AlertDialog.Builder(context);
+			builder.setTitle("Confirm...");
+			builder.setMessage("Are you sure you want to remove "+membername+" from the class?");
+			builder.setNegativeButton("Cancel", null);
+			builder.setPositiveButton("OK", new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+					
+					ContentValues values = new ContentValues();
+					values.put(ContentDescriptor.Booking.Cols.RESULT, 5);
+					
+					contentResolver.update(ContentDescriptor.Booking.CONTENT_URI, values, ContentDescriptor.Booking.Cols.BID+" = ?",
+							new String[] {deleteid});
+					
+					Cursor cur2 = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, new String[] {ContentDescriptor.Booking.Cols.PARENTID},
+							ContentDescriptor.Booking.Cols.BID+" = ?",new String[] {deleteid}, null);
+					if (!cur2.moveToFirst()) {
+						return;
+					}
+					
+					String classid = cur2.getString(cur2.getColumnIndex(ContentDescriptor.Booking.Cols.PARENTID));
+					Intent bcIntent = new Intent();
+					bcIntent.setAction("com.treshna.hornet.serviceBroadcast");
+					bcIntent.putExtra(Services.Statics.IS_CLASSSWIPE, classid);
+					context.sendBroadcast(bcIntent);
+					
+				}
+			});
+			builder.show();
+			break;
+		}
+		}
+		
 	}
 }

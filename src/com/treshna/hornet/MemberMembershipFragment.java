@@ -1,31 +1,43 @@
 package com.treshna.hornet;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.treshna.hornet.BookingPage.TagFoundListener;
+import com.treshna.hornet.DatePickerFragment.DatePickerSelectListener;
 
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 
-public class MemberMembershipFragment extends Fragment implements TagFoundListener, OnClickListener {
+public class MemberMembershipFragment extends Fragment implements TagFoundListener, OnClickListener, DatePickerSelectListener {
 	Cursor cur;
 	ContentResolver contentResolver;
 	String memberID;
 	private View view;
 	LayoutInflater mInflater;
 	private MemberActions mActions;
+	private int membershipid;
+	private View alert_cancel_ms;
+	
+	private DatePickerFragment datePicker;
 	
 	//private static final String TAG = "MemberDetails";
 	
@@ -36,6 +48,8 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 		contentResolver = getActivity().getContentResolver();
 		memberID = this.getArguments().getString(Services.Statics.MID);
 		mActions = new MemberActions(getActivity());
+		datePicker = new DatePickerFragment();
+		datePicker.setDatePickerSelectListener(this);
 	}
 	
 	@Override
@@ -111,12 +125,13 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 		mActions.onNewTag(serial);
 	}
 	
-	private void cancelMembership(int membershipid) {
-		contentResolver.delete(ContentDescriptor.Membership.CONTENT_URI, ContentDescriptor.Membership.Cols.MSID+" = ?",
-				new String[] {String.valueOf(membershipid)});
-		//this should trigger a trigger, which adds the row to the pending deletes.
-		//we then just sync and it does a look-up on that table to determine what pending deletes are waiting.
-		//we also need to refresh the view.
+	private void cancelMembership(ArrayList<String> inputs, int membershipid) {
+		/*contentResolver.delete(ContentDescriptor.Membership.CONTENT_URI, ContentDescriptor.Membership.Cols.MSID+" = ?",
+				new String[] {String.valueOf(membershipid)});*/
+		//TODO: we need to hide/grey-out expired memberships.
+		//			we need a way to check the membership status?
+		// 		we need somewhere to insert this input to.
+		//probably need more columns on our membership table.
 		setupView();
 	}
 
@@ -124,10 +139,8 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case (R.id.member_membership_cancel):{
-			final int membershipid = Integer.parseInt(v.getTag().toString());
+			membershipid = Integer.parseInt(v.getTag().toString());
 			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-			
-			builder.setTitle("Confirm Delete Membership");
 			
 			cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, new String[] {ContentDescriptor.Membership.Cols.PNAME},
 					ContentDescriptor.Membership.Cols.MSID+" = ?",new String[] {String.valueOf(membershipid)}, null);
@@ -135,20 +148,110 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 				setupView();
 			}
 			
-			builder.setMessage("Really Cancel "+cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PNAME)));
+			builder.setTitle(this.getString(R.string.membership_expire_text, cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PNAME))));
 			cur.close();
+			
+			
+			alert_cancel_ms = mInflater.inflate(R.layout.alert_cancel_membership, null);
+
+			
+			TextView date_text = (TextView) alert_cancel_ms.findViewById(R.id.text_cancel_date);
+			date_text.setClickable(true);
+			date_text.setOnClickListener(this);
+			
+			
+			Spinner cancel_reason = (Spinner) alert_cancel_ms.findViewById(R.id.spinner_cancel_reason);
+			List<String> cancel_list = new ArrayList<String>();
+			
+			cur = contentResolver.query(ContentDescriptor.MembershipExpiryReason.CONTENT_URI, null, null, null, 
+					ContentDescriptor.MembershipExpiryReason.Cols.ID);
+			while (cur.moveToNext()) {
+					cancel_list.add(cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipExpiryReason.Cols.NAME)));
+			}
+			cur.close();
+			
+			ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getActivity(),
+					android.R.layout.simple_spinner_item, cancel_list);
+			dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			cancel_reason.setAdapter(dataAdapter);
+			cur.close();
+			
+			builder.setView(alert_cancel_ms);
+			
+			
 			builder.setNegativeButton("Cancel", null);
 			builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					dialog.dismiss();
-					cancelMembership(membershipid);
+					//do vailidation.
+					ArrayList<String> validate = validateCancel();
+					if (!Boolean.valueOf(validate.get(0))) {
+						//highlight the issue!
+						updateView(validate);
+					}
+					//get input.
+					cancelMembership(getCancelInput(), MemberMembershipFragment.this.membershipid);
 				}});
 			
 			builder.show();
 			break;
 		}
+		case (R.id.text_cancel_date):{
+		    datePicker.show(this.getChildFragmentManager(), "datePicker");
+			break;
 		}
+		
+		}
+	}
+	
+	private void updateView(ArrayList<String> emptyFields) {
+		for(int i=1; i<emptyFields.size(); i+=1){
+			//get label, change colour.
+			TextView label = (TextView) alert_cancel_ms.findViewById(Integer.parseInt(emptyFields.get(i)));
+			label.setTextColor(Color.RED);
+		}
+	}
+	
+	private ArrayList<String> validateCancel() {
+		boolean is_valid = true;
+		ArrayList<String> validate = new ArrayList<String>();
+		
+		//we only need a date.
+		TextView date_view = (TextView) this.alert_cancel_ms.findViewById(R.id.text_cancel_date);
+		if (date_view.getText().toString().compareTo(this.getString(R.string.membership_expire_date)) == 0) {
+			is_valid = false;
+			validate.add(String.valueOf(R.id.text_cancel_date));
+		}
+		
+		validate.add(0, String.valueOf(is_valid));
+		return validate;
+	}
+	
+	private ArrayList<String> getCancelInput() {
+		ArrayList<String> input = new ArrayList<String>();
+		
+		TextView date_view = (TextView) this.alert_cancel_ms.findViewById(R.id.text_cancel_date);
+		input.add(date_view.getText().toString());
+		
+		Spinner cancel_reason = (Spinner) alert_cancel_ms.findViewById(R.id.spinner_cancel_reason);
+		input.add(cancel_reason.getItemAtPosition(cancel_reason.getSelectedItemPosition()).toString());
+		
+		EditText cancel_fee = (EditText) alert_cancel_ms.findViewById(R.id.input_cancel_fee);
+		if (cancel_fee.getText().toString().compareTo("") != 0) {
+			input.add(cancel_fee.getText().toString());
+		} else {
+			input.add(null);
+		}
+		
+		return input;
+	}
+
+	@Override
+	public void onDateSelect(String date, DatePickerFragment theDatePicker) {
+		TextView date_view = (TextView) alert_cancel_ms.findViewById(R.id.text_cancel_date);
+		date_view.setTextColor(this.getResources().getColor(R.color.android_blue));
+		date_view.setText(date);
 	}
 	
 }

@@ -15,6 +15,7 @@ import android.provider.BaseColumns;
  *    1 = drop table
  *    5 = DeletedRecords				126:
  *   10:								127 = MembershipSuspend
+ *   									128 = MembershipExpiryReason
  *   11 = TableIndex					130:
  *   12:								135:
  *   									140 = Visitor
@@ -143,6 +144,8 @@ public class ContentDescriptor {
 	     matcher.addURI(authority, RollCall.PATH, RollCall.PATH_TOKEN);
 	     matcher.addURI(authority, RollItem.PATH, RollItem.PATH_TOKEN);
 	     matcher.addURI(authority, RollItem.CREATE_ROLL_PATH, RollItem.CREATE_ROLL_TOKEN);
+	     
+	     matcher.addURI(authority, MembershipExpiryReason.PATH, MembershipExpiryReason.PATH_TOKEN);
 	     
 	     matcher.addURI(authority, DROPTABLE, TOKEN_DROPTABLE);
 	     
@@ -843,6 +846,7 @@ public class ContentDescriptor {
 	 		}
 	 	}
 	 	
+	 	//TODO: is this used?
 	 	public static class DeletedRecords {
 	 		
 	 		public static final String PATH = "DeletedRecords";
@@ -968,7 +972,8 @@ public class ContentDescriptor {
 	 		public static enum Values {
 	 			Booking(1), Class(2), Swipe(3),Membership(4) /*when adding memberships*/,
 	 					Member(5) /*when adding members/prospects*/,Image(6),
-	 					MembershipSuspend(7), MemberNotes(8), RollCall(9), RollItem(10);
+	 					MembershipSuspend(7), MemberNotes(8), RollCall(9), RollItem(10),
+	 					Idcard(11);
 	 			
 	 			private final int key;
 	 			
@@ -1053,6 +1058,23 @@ public class ContentDescriptor {
 	 			
 	 			//aggregate column name, not an actual column!:
 	 			public static final String TOTAL = "total";
+	 		}
+	 	}
+	 	
+	 	public static class MembershipExpiryReason {
+	 		public static final String NAME = "membership_expiry_reason";
+	 		public static final String PATH = "membership_expiry_reason";
+	 		public static final int PATH_TOKEN = 128;
+	 		
+	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
+	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.membership_expiry_reason";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.membership_expiry_reason";
+	 		
+	 		//don't need any triggers. we can't actually change any of this info from the device.
+	 		
+	 		public static class Cols implements BaseColumns {
+	 			public static final String ID = "expiry_reason_id";
+	 			public static final String NAME = "name";
 	 		}
 	 	}
 }

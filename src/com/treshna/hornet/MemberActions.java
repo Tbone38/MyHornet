@@ -248,25 +248,51 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 	public void onNewTag(String serial) {
 		ContentResolver contentResolver = ctx.getContentResolver();
 		Cursor cur;
-		String message;
+		String message = null;
 		
 		cur = contentResolver.query(ContentDescriptor.IdCard.CONTENT_URI, null, ContentDescriptor.IdCard.Cols.SERIAL+" = ?",
 				new String[] {serial}, null);
-		if (!cur.moveToFirst()) {
-			//tag not found in db. Tell them to swipe card at reception, then re-sync
-			//the phone.
-			//TODO:
-			message = "Tag not found in db, please swipe tag at reception, then re-sync device";
-			Log.v(TAG, message);
-		} else {
+		if (!cur.moveToFirst()) { //card not in db, add it.
+			cur.close();
+			cur = contentResolver.query(ContentDescriptor.FreeIds.CONTENT_URI, null, ContentDescriptor.FreeIds.Cols.TABLEID+" = ?",
+					new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Idcard.getKey())},null);
+			if (cur.moveToFirst()) {
+				cardid = cur.getString(cur.getColumnIndex(ContentDescriptor.FreeIds.Cols.ROWID));
+				cur.close();
+				
+				ContentValues values = new ContentValues();
+				values.put(ContentDescriptor.IdCard.Cols.CARDID, cardid);
+				values.put(ContentDescriptor.IdCard.Cols.SERIAL, serial);
+				Uri row = contentResolver.insert(ContentDescriptor.IdCard.CONTENT_URI, values);
+				String rowid = row.getLastPathSegment(); 
+				Log.v(TAG, "Adding "+rowid+" to PendingUploads");
+				contentResolver.delete(ContentDescriptor.FreeIds.CONTENT_URI, ContentDescriptor.FreeIds.Cols.ROWID+" = ? AND "+
+						ContentDescriptor.FreeIds.Cols.TABLEID+" = ?",new String[] {cardid, 
+						String.valueOf(ContentDescriptor.TableIndex.Values.Idcard.getKey())});
+				
+				//normally we'd use a trigger. but we haven't got a timestamp column, and I'm feeling lazy..
+				values = new ContentValues();
+				values.put(ContentDescriptor.PendingUploads.Cols.ROWID, rowid);
+				values.put(ContentDescriptor.PendingUploads.Cols.TABLEID, ContentDescriptor.TableIndex.Values.Idcard.getKey());
+				contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, values);
+				
+			} else {
+				cur.close();
+				message = "No Tag ID's available. Please resync the device.";
+				Log.v(TAG, message);
+			}
+			
+		} else { //card in db, get the id.
 			cardid = cur.getString(cur.getColumnIndex(ContentDescriptor.IdCard.Cols.CARDID));
 			cur.close();
-			
+		}
+		
+		if (cardid != null) {
 			cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols.CARDNO+" = ?",
 					new String[] {cardid}, null);
 			if (cur.getCount() > 0) {
 				//id is in use, what should I do?
-				message = "Tag already in use";
+				if (message == null) message = "Tag already in use";
 				Log.v(TAG, message);
 				cardid = null;
 			} else {
@@ -278,8 +304,8 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 				}
 				updateMember();
 			}
+			cur.close();
 		}
-		cur.close();
 		//TOAST!
 		Toast.makeText(ctx, message, Toast.LENGTH_LONG).show();
 		
@@ -297,6 +323,10 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 		values.put(ContentDescriptor.PendingUpdates.Cols.ROWID, mid);
 		
 		contentResolver.insert(ContentDescriptor.PendingUpdates.CONTENT_URI, values);
+		
+		Intent i = new Intent(ctx, HornetDBService.class);
+		i.putExtra(Services.Statics.KEY, Services.Statics.FREQUENT_SYNC);
+		ctx.startService(i);
 	}
 	
 	private void showPhoneWindow(ArrayList<String> phones) {

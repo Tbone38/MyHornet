@@ -85,10 +85,10 @@ public class SetupSimpleStartFragment extends Fragment implements OnClickListene
 		ArrayList<String> inputs = new ArrayList<String>();
 		
 		EditText email_address = (EditText) view.findViewById(R.id.setup_email_address);
-		inputs.add(email_address.getText().toString()); 									//0
+		inputs.add(email_address.getText().toString().replace(" ", "")); 					//0
 		
 		EditText organisation = (EditText) view.findViewById(R.id.setup_company_name);
-		inputs.add(organisation.getText().toString());										//1
+		inputs.add(organisation.getText().toString().replace(" ", "%20"));						//1
 		
 		return inputs;
 	}

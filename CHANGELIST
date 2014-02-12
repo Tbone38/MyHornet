@@ -1,5 +1,4 @@
         -KNOWN BUGS/TO FIX:
-                -fix Get Card for new cards.
                 -manual checkin might hard-crash if the door is null (why wasn't there any doors?)
                 -the booking swipe view pager doesn't invaildate cached fragments when the date is set.
                         This means that one of the (5) fragments may show the wrong date.
@@ -10,7 +9,7 @@
 				-Progress Box no longer works. needs to be added back in via a aSync Task for the db_syncing.
 					(had issues trying to attach to windows from the service thread, due to 'Context' complications.)
 
-	V116:
+	V118:
 		-DONE:
                	On first run, we prompt for an easy setup/install.
                		This easy setup gets there email address, gymname/organisational name, a username, & a location.
@@ -21,13 +20,15 @@
                             passed to a cental database on sms.treshna.com, which generates a password, and emails said email-address the password.
 							the username, password, db_name, and server are returned by the API
 							It's all passed through a JSON (flask) server (api.gymmaster.co.nz).
-						We also generate the actual Database.
-							this generation can be done prior, at which point the script will rename a free gymmaster db.
-								see ~api-gymmaster/free_db/ & ~api-gymmaster/scripts for more details.
-							the database bondfrontend.conf file can be found in ~api-gymmaster/config/<database name>/
-							the databases can be upgraded via the ./scripts/update_dbs.sh file
-						# DATABASE MAINTENANCE:
-							a number of scripts exists in the ~api-gymmaster/scripts directory for helping with this.
+					We also generate the actual Database.
+						this generation can be done prior, at which point the script will rename a free gymmaster db.
+							see ~api-gymmaster/free_db/ & ~api-gymmaster/scripts for more details.
+						the database bondfrontend.conf file can be found in ~api-gymmaster/config/<database name>/
+						the databases can be upgraded via the ./scripts/update_dbs.sh file
+						Fixed DB's should now be semi-secure. the GymMaster user is still super over all of the DB's though.
+							Any user with the gm_tableowner privellage will be super-user over all gymmaster dbs.
+					# DATABASE MAINTENANCE:
+						a number of scripts exists in the ~api-gymmaster/scripts directory for helping with this.
 						
                 upload the log-file after each sync to our central server,
     	            -we store the schema version, company_name, and te_username as well.
@@ -35,13 +36,25 @@
 					-it may want manual deletion, or a trigger that truncates data.
 						(because at the moment the logs are massive and fairly unhelpful).
                 Remove membership Button.
+                Remove member from class Button.
+				No longer able to clear database when changes are pending.
+                Fixed Get Card for new cards.
 
 		-TODO:
-                        Handle permissions/Roles for different staff, to limit what certain staff can see.
-                        the log-file needs a unique identifier so we know which device has the issues.
-                        Remove member from class Button.
-						KPI's.
+                Handle permissions/Roles for different staff, to limit what certain staff can see.
+                the log-file needs a unique identifier so we know which device has the issues.
+				KPI's.
+				FIX cancel membership.
+				TESTING:
+					Unit Testing,
+					UI Testing,
+					etc.
+				DB CHANGES:
+					Add Timestamp/created column to Idcard.
+					Add Android(Hornet?) specific door?
 
+	v116/117:
+		minor bug fixes/undocumented.
 	v115:
 		Added member Find Filters,
 		Added 'Add Notes' button on Member Details Page,

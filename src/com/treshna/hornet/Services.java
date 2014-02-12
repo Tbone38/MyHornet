@@ -132,19 +132,17 @@ public class Services {
 	    private int height = 0;
 
 	    public BitmapWorkerTask(ImageView imageView, int w, int h) {
-	        // Use a WeakReference to ensure the ImageView can be garbage collected
+
 	        imageViewReference = new WeakReference<ImageView>(imageView);
 	        width = w;
 	        height = h;
 	    }
 
-	    // Decode image in background.
 	    @Override
 	    protected Bitmap doInBackground(File... params) {
 	        return Services.decodeSampledBitmapFromFile(params[0], width, height);
 	    }
 
-	    // Once complete, see if ImageView is still around and set bitmap.
 	    @Override
 	    protected void onPostExecute(Bitmap bitmap) {
 	        if (imageViewReference != null && bitmap != null) {
@@ -456,7 +454,6 @@ public class Services {
 	
 	public static class Statics {
 		public static final int FREQUENT_SYNC = -1;
-		public static final int INFREQUENT_SYNC = -2;
 		public static final int SWIPE = 3;
 		public static final int FIRSTRUN = 10;
 		public static final int NEWDATABASE = 12;

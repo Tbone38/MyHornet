@@ -288,11 +288,9 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 				programme.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PNAME)));
 			} else {
 				cur.close();
-				System.out.print("\n\n**Membership Not Found**\n\n");
 				programme.setVisibility(View.GONE);
 			}
 		} else {
-			System.out.print("\n\n**Membership Null**\n\n");
 			TextView programme = (TextView) page.findViewById(R.id.bookingmembership);
 			programme.setVisibility(View.GONE);
 		}
@@ -304,9 +302,7 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 				String imgDir = getActivity().getExternalFilesDir(null)+"/0_"+memberID+".jpg"; //cursor.getColumnIndex(ContentDescriptor.Member.Cols.MID)
 				File imgFile = new File(imgDir);
 				ImageView imageView = (ImageView) page.findViewById(R.id.image);
-				//TextView imageText = (TextView) page.findViewById(R.id.imageText);
 				if (imgFile.exists() == true){
-					//imageText.setVisibility(View.INVISIBLE);
 					imageView.setVisibility(View.VISIBLE);
 					final BitmapFactory.Options options = new BitmapFactory.Options();
 				    options.inJustDecodeBounds = true;
@@ -319,9 +315,7 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 				    imageView.setImageBitmap(bm);
 				}
 				else {
-					//imageView.setClickable(true);
 					imageView.setVisibility(View.INVISIBLE);
-					
 				}
 	}
 

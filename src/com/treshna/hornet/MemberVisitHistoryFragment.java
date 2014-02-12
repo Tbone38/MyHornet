@@ -114,10 +114,9 @@ public class MemberVisitHistoryFragment extends Fragment implements TagFoundList
 		mActions.setupActions(view, memberID);
 		return view;
 	}
-	
+
 	@Override
 	public void onNewTag(String serial) {
 		mActions.onNewTag(serial);
-	}
-	
-	}
+	}	
+}

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    <TextView
+        android:id="@+id/text_cancel_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textColor="@color/android_blue"
+        android:text="@string/membership_expire_date"
+        android:padding="5dp"/>
+    
+    <TextView 
+        android:id="@+id/text_cancel_reason"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:text="@string/membership_expire_reason"
+        android:padding="5dp"/>
+    
+    <Spinner
+        android:id="@+id/spinner_cancel_reason"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    
+    <TextView
+        android:id="@+id/text_cancel_fee"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:text="@string/membership_cancel_fee"
+        android:padding="5dp" />
+    
+    <EditText 
+        android:id="@+id/input_cancel_fee"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal" />
+            
+    </LinearLayout>

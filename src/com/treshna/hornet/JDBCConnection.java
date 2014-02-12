@@ -522,7 +522,13 @@ public class JDBCConnection {
     	pStatement.setString(4, booking.get(ContentDescriptor.Booking.Cols.ARRIVAL));
     	pStatement.setString(5, booking.get(ContentDescriptor.Booking.Cols.STIME));
     	pStatement.setString(6, booking.get(ContentDescriptor.Booking.Cols.STIME));
-    	pStatement.setInt(7, Integer.parseInt(booking.get(ContentDescriptor.Booking.Cols.BOOKINGTYPE)));
+    	if (booking.get(ContentDescriptor.Booking.Cols.BOOKINGTYPE) == null || 
+    			booking.get(ContentDescriptor.Booking.Cols.BOOKINGTYPE).compareTo("null")==0) {
+    		pStatement.setNull(7, java.sql.Types.INTEGER);
+    	} else {
+    		pStatement.setInt(7, Integer.parseInt(booking.get(ContentDescriptor.Booking.Cols.BOOKINGTYPE)));
+    	}
+    	
     	pStatement.setString(8, booking.get(ContentDescriptor.Booking.Cols.FNAME));
     	pStatement.setString(9, booking.get(ContentDescriptor.Booking.Cols.SNAME));
     	pStatement.setInt(10, Integer.parseInt(booking.get(ContentDescriptor.Booking.Cols.RESULT)));
@@ -882,6 +888,50 @@ public class JDBCConnection {
     		pStatement.setInt(1, membershipid);
     		
     		return pStatement.executeUpdate();
+    }
+    
+    public int uploadIdCard(int cardid, String serial) throws SQLException {
+    	pStatement = con.prepareStatement("INSERT INTO idcard (id, serial) VALUES (?, ?);");
+    	pStatement.setInt(1, cardid);
+    	pStatement.setString(2, serial);
+    	
+    	return pStatement.executeUpdate();
+    }
+    
+    public ResultSet getExpiryReason() throws SQLException {
+    	pStatement = con.prepareStatement("SELECT * FROM membership_expiry_reason;");
+
+    	return pStatement.executeQuery();
+    }
+    
+    public int expireMembership(int membershipid, int memberid, int expiry_reason, java.sql.Date terminationDate) throws SQLException {
+    	pStatement = con.prepareStatement("update membership "
+    			+"set termination_date=tdate, cancel_reason = (SELECT name FROM membership_expiry_reason WHERE id=?), canceled_at=now()"
+    			+"where id=?");
+    	pStatement.setDate(1, terminationDate);
+    	pStatement.setInt(2, expiry_reason);
+    	pStatement.setInt(3, membershipid);
+    	
+    	pStatement.executeUpdate();
+
+        pStatement = con.prepareStatement("INSERT INTO membernotes (memberid, occurred, notes) VALUES"
+        		+"(?, now(),"
+        		+"'Membership Expired: ' || (SELECT name FROM membership_expiry_reason WHERE id=?));");
+        pStatement.setInt(1, memberid);
+        pStatement.setInt(2, expiry_reason);
+        
+        pStatement.executeUpdate();
+    
+        pStatement = con.prepareStatement("select add_cancelfee(?::money,?);");
+        pStatement.setString(1, "money");
+        pStatement.setInt(2, membershipid);
+        
+        pStatement.executeUpdate();
+    
+        pStatement = con.prepareStatement("select nightrun_membership(?);");
+        pStatement.setInt(1, membershipid);
+
+        return pStatement.executeUpdate();
     }
     
     public SQLWarning getWarnings() throws SQLException, NullPointerException {

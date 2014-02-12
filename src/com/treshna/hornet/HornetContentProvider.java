@@ -24,6 +24,7 @@ public class HornetContentProvider extends ContentProvider {
         return true;
     }
 		//getType isn't actually used?
+		//or is only used externally? e.g. other apps..
 	 @Override
 	 public String getType(Uri uri) {
 		 final int match = ContentDescriptor.URI_MATCHER.match(uri);
@@ -205,6 +206,11 @@ public class HornetContentProvider extends ContentProvider {
         	getContext().getContentResolver().notifyChange(uri, null);
         	return rows;
         }
+        case ContentDescriptor.MembershipExpiryReason.PATH_TOKEN:{
+        	int rows = db.delete(ContentDescriptor.MembershipExpiryReason.NAME, selection, selectionArgs);
+        	getContext().getContentResolver().notifyChange(uri, null);
+        	return rows;
+        }
         
         case ContentDescriptor.TOKEN_DROPTABLE:{ //special case, drops tables/deletes database.
         	FileHandler fh = new FileHandler(ctx);
@@ -380,6 +386,11 @@ public class HornetContentProvider extends ContentProvider {
             	long id = db.insert(ContentDescriptor.RollItem.NAME, null, values);
             	getContext().getContentResolver().notifyChange(uri, null);
             	return ContentDescriptor.RollItem.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
+            }
+            case ContentDescriptor.MembershipExpiryReason.PATH_TOKEN:{
+            	long id = db.insert(ContentDescriptor.MembershipExpiryReason.NAME, null, values);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return ContentDescriptor.MembershipExpiryReason.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
             }
             
             default: {
@@ -735,6 +746,11 @@ public class HornetContentProvider extends ContentProvider {
             			+" = m."+ContentDescriptor.Member.Cols.MID+")");
             	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
             }
+            case ContentDescriptor.MembershipExpiryReason.PATH_TOKEN:{
+            	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+            	builder.setTables(ContentDescriptor.MembershipExpiryReason.NAME);
+            	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+            }
             
             default: throw new UnsupportedOperationException("URI: " + uri + " not supported.");
         }
@@ -874,6 +890,11 @@ public class HornetContentProvider extends ContentProvider {
             }
             case ContentDescriptor.Company.PATH_TOKEN:{
             	int result = db.update(ContentDescriptor.Company.NAME, values, selection, selectionArgs);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return result;
+            }
+            case ContentDescriptor.MembershipExpiryReason.PATH_TOKEN:{
+            	int result = db.update(ContentDescriptor.MembershipExpiryReason.NAME, values, selection, selectionArgs);
             	getContext().getContentResolver().notifyChange(uri, null);
             	return result;
             }

@@ -9,11 +9,19 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".ClassDetails" >
 	
+    <ImageView
+        android:id="@+id/classMemberCancel"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/ic_action_cancel"
+        android:layout_alignParentRight="true"
+        android:contentDescription="@string/class_member_cancel" />
+    
     <CheckBox 
         android:id="@+id/classMemberCheckin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true" />   
+        android:layout_toLeftOf="@id/classMemberCancel" />   
         
     <TextView
         android:id="@+id/memberName"

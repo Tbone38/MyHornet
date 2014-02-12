@@ -7,6 +7,7 @@
   <string name="membership_startdate">Start Date</string>
   <string name="membership_length">Duration</string>
   <string name="membership_reason">Reason For Hold</string>
+  
   <string name="membership_default_startdate">Select Start Date</string>
   <string name="action_halt_membership">Membership Hold</string>
   <string-array name="membership_length_titles">
@@ -43,5 +44,12 @@
 	<string name="membership_amount_outstanding">Amount Outstanding</string>
 	<string name="membership_complete">Complete</string>
 	<string name="membership_complete_desc">Please Confirm the below Details are correct:</string>
+	
+	<!-- 			EXPIRE MEMBERSHIP		  -->
+	<string name="membership_expire_text">Expire %1$s</string>
+	<string name="membership_expire_reason">Reason </string>
+  	<string name="membership_cancel_fee">Cancelation Fee </string>
+  	<string name="membership_expire_date">Date</string>
+  	<string name="button_membership_expire">Expire</string>
 	
 </resources>

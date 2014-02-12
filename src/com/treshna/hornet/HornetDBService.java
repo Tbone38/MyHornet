@@ -133,16 +133,20 @@ public class HornetDBService extends Service {
 				visitorImages();
 			}
 			
+			uploadIdCard();
+			getIdCards();
+			
 			getMemberNoteID();
 			getMemberID();
 			getBookingID();
 			getMembershipID();
+			getIdCardID();
 			int sid_count = getSuspendID();
 			if (sid_count < 0) {
 				Services.showToast(getApplicationContext(), statusMessage, handler);
 			}
 			
-			//do uploads
+			//do uploads //ORDER MATTERS!
 			uploadMemberNotes();
 			uploadImage();
 			int classcount = uploadClass();
@@ -210,33 +214,6 @@ public class HornetDBService extends Service {
 			
  		   	break;
  	   } 
- 	   /****/
- 	   	case (Services.Statics.INFREQUENT_SYNC):{
- 	   		thread.is_networking = true;
- 	   		
- 	   		this_sync = System.currentTimeMillis();
-	   		last_sync = Long.parseLong(Services.getAppSettings(ctx, "last_infreq_sync")); 
- 	   		
- 	   		getMemberNoteID();
-			getMemberID();
-			getBookingID();
-			getMembershipID();
-			int sid_count = getSuspendID();
-			if (sid_count < 0) {
-				Services.showToast(getApplicationContext(), statusMessage, handler);
-			}
- 	   		
- 	   		uploadMemberNotes();
- 	   		
- 	   		getMemberNotes(last_sync);
- 	   		
- 	   		Services.setPreference(ctx, "last_infreq_sync", String.valueOf(this_sync));
- 	   		thread.is_networking = false;
- 	   		
- 	   		break;
- 	   	}
- 	   	
- 	   	
  	   case (Services.Statics.SWIPE):{
  		   statusMessage = null;
  		   thread.is_networking = true;
@@ -277,6 +254,7 @@ public class HornetDBService extends Service {
 		   int days = getOpenHours();
 		   getDoors();
 		   getConfig();
+		   getMembershipExpiryReasons();
 		   getProgrammes(0);
 		   
 		   int use_roll = Integer.parseInt(Services.getAppSettings(this.ctx, "use_roll"));
@@ -310,6 +288,7 @@ public class HornetDBService extends Service {
 		   }
 		   
 		   //id's
+		   getIdCardID();
 		   getMemberNoteID();
 		   getBookingID();
 		   int midcount = getMemberID();
@@ -1253,24 +1232,33 @@ public class HornetDBService extends Service {
     	Log.v(TAG, "Updating Bookings");
     	int result;
     	String lastSync;
+    	ArrayList<String> pending_bookings = new ArrayList<String>();
     	
     	result = 0;
     	lastSync = Services.getAppSettings(ctx, "b_lastsync");
     	
-    	//TODO: use pendingUpdates();
-    	cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.LASTUPDATE+" > ? " +
-    			"AND "+ContentDescriptor.Booking.Cols.RESULT+" != 0", //don't update empty bookings;
-    			new String[] {lastSync}, null);//get the bookings that have changed since last sync.
+    	cur = contentResolver.query(ContentDescriptor.PendingUpdates.CONTENT_URI, null, ContentDescriptor.PendingUpdates.Cols.TABLEID+" = ?",
+    			new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Booking.getKey())}, null);
     	
-    	if (cur.getCount()<= 0) { //no booking found for that
-    		cur.close();
-    		return 0;
+    	while (cur.moveToNext()){
+    		pending_bookings.add(cur.getString(cur.getColumnIndex(ContentDescriptor.PendingUpdates.Cols.ROWID)));
     	}
+    	cur.close();
+    	
     	if (!openConnection()) {
     		return -1; //connection failed;
     	}
     	
-    	while (cur.moveToNext()) {
+    	for (int i=0; i<pending_bookings.size(); i++)
+    	{
+    		cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.ID+" = ?",
+    				new String[] {pending_bookings.get(i)},null);
+    		if (!cur.moveToFirst()) {
+    			contentResolver.delete(ContentDescriptor.PendingUpdates.CONTENT_URI, ContentDescriptor.PendingUpdates.Cols.ROWID+" = ? AND "
+    					+ContentDescriptor.PendingUpdates.Cols.TABLEID+" = ?", new String[] {pending_bookings.get(i),
+    					String.valueOf(ContentDescriptor.TableIndex.Values.Booking.getKey())});
+    		}
+    	
     		int bookingid, resultstatus, bookingtypeid;
     		long lastupdate, checkin;
     		String notes;
@@ -1281,7 +1269,6 @@ public class HornetDBService extends Service {
     		lastupdate = cur.getLong(cur.getColumnIndex(ContentDescriptor.Booking.Cols.LASTUPDATE)); //TODO: change this to now();
     		checkin = cur.getLong(cur.getColumnIndex(ContentDescriptor.Booking.Cols.CHECKIN));
     		notes = cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.NOTES));
-    		//System.out.print("\n\nLast update for booking:"+bookingid+" was "+lastupdate);
     		Log.v(TAG, "Last update for booking:"+bookingid+" was "+lastupdate);
     		try {
     			result += connection.updateBookings(bookingid, resultstatus, notes, lastupdate, bookingtypeid, checkin);
@@ -1290,6 +1277,11 @@ public class HornetDBService extends Service {
     			statusMessage = e.getLocalizedMessage();
     			e.printStackTrace();
     		}
+    		cur.close();
+    		contentResolver.delete(ContentDescriptor.PendingUpdates.CONTENT_URI, ContentDescriptor.PendingUpdates.Cols.ROWID+" = ? AND "
+					+ContentDescriptor.PendingUpdates.Cols.TABLEID+" = ?", new String[] {pending_bookings.get(i),
+					String.valueOf(ContentDescriptor.TableIndex.Values.Booking.getKey())});
+    		
     	}
     	Log.v(TAG, "Updated "+result+" Booking!");
     	closeConnection();
@@ -2325,7 +2317,7 @@ public class HornetDBService extends Service {
     	if (!connected) {
 	    	try {
 	    		connection.openConnection();
-	    		connected = true;
+	    		connected = connection.isConnected();
 	    	} catch (SQLException e) {
 	    		statusMessage = e.getLocalizedMessage();
 	    		connected = false;
@@ -2537,6 +2529,54 @@ public class HornetDBService extends Service {
     	return result;
     }
     
+    private int getIdCardID() {
+    	Log.v(TAG, "Getting Idcard ID's");
+    	int result = 0;
+    	ResultSet rs;
+    	
+    	cur = contentResolver.query(ContentDescriptor.FreeIds.CONTENT_URI, null, ContentDescriptor.FreeIds.Cols.TABLEID+" = ?",
+    			new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Idcard.getKey())}, null);
+    	
+    	int free_count = cur.getCount();
+    	cur.close();
+    	
+    	cur = contentResolver.query(ContentDescriptor.IdCard.CONTENT_URI, null, ContentDescriptor.IdCard.Cols.CARDID+" <= 0", null, null);
+    	int needed_count = cur.getCount();
+    	cur.close();
+    	
+    	if (!openConnection()) {
+    		return -1;
+    	}
+    	
+    	for (int i=((15+needed_count)-free_count); i> 0; i--) {
+    		try {
+    			rs = connection.startStatementQuery("select nextval('idcard_id_seq');");
+    			rs.next();
+    			
+    			ContentValues values = new ContentValues();
+    			values.put(ContentDescriptor.FreeIds.Cols.ROWID, rs.getString("nextval"));
+    			values.put(ContentDescriptor.FreeIds.Cols.TABLEID, ContentDescriptor.TableIndex.Values.Idcard.getKey());
+    			
+    			contentResolver.insert(ContentDescriptor.FreeIds.CONTENT_URI, values);
+    			
+    			rs.close();
+    			connection.closeStatementQuery();
+    			
+    			result +=1;
+    		} catch (SQLException e) {
+    			statusMessage = e.getLocalizedMessage();
+    			e.printStackTrace();
+    			return -2;
+    		} catch (NullPointerException e) {
+    			return -3; //we haven't got a connection.
+    		}
+    	}
+    	
+    	closeConnection();
+    	
+    	return result;
+    }
+    
     private int getIdCards() {
     	Log.v(TAG, "Getting ID Cards");
     	int result = 0;
@@ -2553,6 +2593,10 @@ public class HornetDBService extends Service {
     		e.printStackTrace();
     		return -2;
     	}
+    	// presumably our connection was a success, in which case clear the idcard cache and re-add all the data.
+    	// this would be more efficient if the idcard table had a timestamp column.
+    	contentResolver.delete(ContentDescriptor.IdCard.CONTENT_URI, null, null);
+    	
     	try {
     		while (rs.next()) {
     			ContentValues values = new ContentValues();
@@ -2569,6 +2613,60 @@ public class HornetDBService extends Service {
     		return -3;
     	}
     	connection.closeConnection();
+    	
+    	return result;
+    }
+    
+    private int uploadIdCard() {
+    	Log.v(TAG, "inserting ID cards");
+    	int result = 0;
+    	ArrayList<String> rowid = new ArrayList<String>();
+    	
+    	cur = contentResolver.query(ContentDescriptor.PendingUploads.CONTENT_URI, null, ContentDescriptor.PendingUploads.Cols.TABLEID+" = ?",
+    			new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Idcard.getKey())}, null);
+    	while (cur.moveToNext()) {
+    		rowid.add(cur.getString(cur.getColumnIndex(ContentDescriptor.PendingUploads.Cols.ROWID)));
+    	}
+    	cur.close();
+    	
+    	Log.v(TAG, "Attempting to upload "+rowid.size()+" ID's");
+    	if (!openConnection()) {
+    		return -1;
+    	}
+    	
+    	for (int i=0; i<rowid.size(); i++) {
+    		Log.v(TAG, "Uploading: "+i+" Value: "+rowid.get(i));
+    		cur = contentResolver.query(ContentDescriptor.IdCard.CONTENT_URI, null, ContentDescriptor.IdCard.Cols._ID+" = ?",
+    				new String[] {rowid.get(i)}, null);
+    		if (!cur.moveToFirst()) {
+    			Log.v(TAG, "Card not found in ID table");
+    			cur.close();
+    			contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, ContentDescriptor.PendingUploads.Cols.ROWID+" = ? AND "
+    					+ContentDescriptor.PendingUploads.Cols.TABLEID+" = ?", new String[] {rowid.get(i), 
+    					String.valueOf(ContentDescriptor.TableIndex.Values.Idcard.getKey())});
+    			continue;
+    		}
+			
+    		try {
+	    		result += connection.uploadIdCard(cur.getInt(cur.getColumnIndex(ContentDescriptor.IdCard.Cols.CARDID)),
+	    				cur.getString(cur.getColumnIndex(ContentDescriptor.IdCard.Cols.SERIAL)));
+    		} catch (SQLException e) {
+    			Log.e(TAG, "ERROR OCCURED");;
+    			Log.e(TAG, e.getSQLState());
+    			if (e.getSQLState().contains("42710")) { //TODO:check that this works.
+    				contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, ContentDescriptor.PendingUploads.Cols.ROWID+" = ? AND "
+        					+ContentDescriptor.PendingUploads.Cols.TABLEID+" = ?", new String[] {rowid.get(i), 
+        					String.valueOf(ContentDescriptor.TableIndex.Values.Idcard.getKey())});
+    			}
+    		}
+    		cur.close();
+    		contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, ContentDescriptor.PendingUploads.Cols.ROWID+" = ? AND "
+					+ContentDescriptor.PendingUploads.Cols.TABLEID+" = ?", new String[] {rowid.get(i), 
+					String.valueOf(ContentDescriptor.TableIndex.Values.Idcard.getKey())});
+    		connection.closePreparedStatement();
+    	}
+    	
+    	closeConnection();
     	
     	return result;
     }
@@ -3688,6 +3786,39 @@ public class HornetDBService extends Service {
     	
     	closeConnection();
     	Log.d(TAG, "Finished upload.");
+    	return result;
+    }
+    
+    private int getMembershipExpiryReasons() {
+    	Log.d(TAG, "Getting Membership Expiry Reasons!");
+    	ResultSet rs;
+    	int result = 0;
+    	
+    	contentResolver.delete(ContentDescriptor.MembershipExpiryReason.CONTENT_URI, null, null);
+    	
+    	if (!openConnection()) {
+    		return -1;
+    	}
+    	
+    	try {
+    		rs = connection.getExpiryReason();
+    		while (rs.next()) {
+    			ContentValues values = new ContentValues();
+    			
+    			values.put(ContentDescriptor.MembershipExpiryReason.Cols.ID, rs.getString("id"));
+    			values.put(ContentDescriptor.MembershipExpiryReason.Cols.NAME, rs.getString("name"));
+    			
+    			contentResolver.insert(ContentDescriptor.MembershipExpiryReason.CONTENT_URI, values);
+    			result +=1;
+    		}
+    		rs.close();
+    	} catch (SQLException e) {
+    		statusMessage = e.getLocalizedMessage();
+    		Log.e(TAG, "EXPIRY ERROR: ",e);
+    		return -2;
+    	}
+    	
+    	closeConnection();
     	return result;
     }
 }

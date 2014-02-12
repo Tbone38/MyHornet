@@ -76,13 +76,13 @@ public class SetupSimpleEndFragment extends Fragment implements OnClickListener 
 		ArrayList<String> inputs = new ArrayList<String>();
 		
 		EditText username_input = (EditText) view.findViewById(R.id.setup_username);
-		inputs.add(username_input.getText().toString());						//position 0
+		inputs.add(username_input.getText().toString().replace(" ", "%20"));		//position 0
 		
 		EditText location_input = (EditText) view.findViewById(R.id.setup_country);
 		if (location_input.getText().toString().compareTo("")==0) {
 			inputs.add("NZ"); //default NZ;										//position 1
 		} else {
-			inputs.add(location_input.getText().toString());
+			inputs.add(location_input.getText().toString().replace(" ", "%20"));
 		}
 		
 		return inputs;

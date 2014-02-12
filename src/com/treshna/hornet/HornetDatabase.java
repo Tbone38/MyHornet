@@ -282,8 +282,6 @@ public class HornetDatabase extends SQLiteOpenHelper {
 				+MemberBalance.Cols.LASTUPDATE+" NUMERIC "
 				+");");
 		
-		//todo remove this:
-		//repopulateTable(db);
 		setupTableIndex(db);
 		
 		//SQL patches.
@@ -301,7 +299,7 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		
 		ContentValues values = new ContentValues();
 		for (int i=1; i <=ContentDescriptor.TableIndex.Values.getLength(); i +=1) {
-			values.put(ContentDescriptor.TableIndex.Cols._ID, i);
+			values.put(ContentDescriptor.TableIndex.Cols._ID, ContentDescriptor.TableIndex.Values.getValue(i).getKey());
 			values.put(ContentDescriptor.TableIndex.Cols.NAME, ContentDescriptor.TableIndex.Values.getValue(i).toString());
 			
 			db.insert(ContentDescriptor.TableIndex.NAME, null, values);
@@ -317,7 +315,7 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		
 		for (int version = (oldVersion+1); version <= newVersion; version++) { //old+1 because we're already at the old version.
 			if (version <= 89) {
-				/*Drop db and create db include the alters already, if we're baselining we can
+				/*Drop db and create db include the alters already, if we're base-lining we can
 				 * skip the rest of this switch case.
 				 */
 				dropTables(db);

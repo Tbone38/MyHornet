@@ -11,6 +11,7 @@ import com.treshna.hornet.ContentDescriptor.Image;
 import com.treshna.hornet.ContentDescriptor.Member;
 import com.treshna.hornet.ContentDescriptor.MemberNotes;
 import com.treshna.hornet.ContentDescriptor.Membership;
+import com.treshna.hornet.ContentDescriptor.MembershipExpiryReason;
 import com.treshna.hornet.ContentDescriptor.MembershipSuspend;
 import com.treshna.hornet.ContentDescriptor.PendingDeletes;
 import com.treshna.hornet.ContentDescriptor.PendingUpdates;
@@ -570,6 +571,17 @@ public class UpdateDatabase {
 					+ " VALUES (old."+Membership.Cols.MSID+", "+TableIndex.Values.Membership.getKey()+");"
 				+" END; ";
 		
+		//these fix a possible bug that was being caused by class membership.
+		public static final String SQL3 = "DELETE FROM "+PendingUpdates.NAME
+				+" WHERE "+PendingUpdates.Cols.TABLEID+" = "+TableIndex.Values.Booking.getKey()+";";
+		
+		public static final String SQL4 = "DELETE FROM "+PendingUploads.NAME
+				+" WHERE "+PendingUploads.Cols.TABLEID+" = "+TableIndex.Values.Booking.getKey()+";";
+		
+		public static final String SQL5 = "CREATE TABLE "+MembershipExpiryReason.NAME
+				+"("+MembershipExpiryReason.Cols.ID+" INTEGER PRIMARY KEY, "
+				+MembershipExpiryReason.Cols.NAME+" TEXT );";
+		
 		public static void patchNinetyFour(SQLiteDatabase db) {
 			db.beginTransaction();
 			try {
@@ -577,6 +589,12 @@ public class UpdateDatabase {
 				db.execSQL(UpdateDatabase.NinetyFour.SQL1);
 				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyFour.SQL2);
 				db.execSQL(UpdateDatabase.NinetyFour.SQL2);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyFour.SQL3);
+				db.execSQL(UpdateDatabase.NinetyFour.SQL3);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyFour.SQL4);
+				db.execSQL(UpdateDatabase.NinetyFour.SQL4);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyFour.SQL5);
+				db.execSQL(UpdateDatabase.NinetyFour.SQL5);
 				db.setTransactionSuccessful();
 			} finally {
 				db.endTransaction();
