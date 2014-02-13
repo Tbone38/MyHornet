@@ -582,6 +582,20 @@ public class UpdateDatabase {
 				+"("+MembershipExpiryReason.Cols.ID+" INTEGER PRIMARY KEY, "
 				+MembershipExpiryReason.Cols.NAME+" TEXT );";
 		
+		public static final String SQL6 = "ALTER TABLE "+Membership.NAME
+				+" ADD COLUMN "+Membership.Cols.CANCEL_REASON+" TEXT;";
+		
+		public static final String SQL7 = "ALTER TABLE "+Membership.NAME
+				+" ADD COLUMN "+Membership.Cols.TERMINATION_DATE+" DATE;"; 
+		
+		public static final String SQL8 = "CREATE TRIGGER "+Membership.Triggers.ON_UPDATE+" AFTER UPDATE ON "+Membership.NAME
+				+" FOR EACH ROW WHEN old."+Membership.Cols.MSID+" > 0 "
+				+"BEGIN "
+					+"INSERT OR REPLACE INTO "+PendingUpdates.NAME
+					+" ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
+					+" VALUES (new."+Membership.Cols._ID+", "+TableIndex.Values.Membership.getKey()+");"
+				+"END; ";
+		
 		public static void patchNinetyFour(SQLiteDatabase db) {
 			db.beginTransaction();
 			try {
@@ -595,6 +609,12 @@ public class UpdateDatabase {
 				db.execSQL(UpdateDatabase.NinetyFour.SQL4);
 				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyFour.SQL5);
 				db.execSQL(UpdateDatabase.NinetyFour.SQL5);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyFour.SQL6);
+				db.execSQL(UpdateDatabase.NinetyFour.SQL6);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyFour.SQL7);
+				db.execSQL(UpdateDatabase.NinetyFour.SQL7);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyFour.SQL8);
+				db.execSQL(UpdateDatabase.NinetyFour.SQL8);
 				db.setTransactionSuccessful();
 			} finally {
 				db.endTransaction();

@@ -12,22 +12,23 @@ import android.provider.BaseColumns;
  *  400 > < 500 = Other GymMaster tables (id-card).
  *  600 > < 700 = custom Tables (specific development).
  *  In use ID's:
- *    1 = drop table
- *    5 = DeletedRecords				126:
- *   10:								127 = MembershipSuspend
- *   									128 = MembershipExpiryReason
- *   11 = TableIndex					130:
- *   12:								135:
- *   									140 = Visitor
- *   									141 = Visitors/Programme/Membership query.
- *   13 = PendingUploads				16:
- *   14:								17 = PendingUpdates
- *   15 = PendingDownloads				18 = PendingDeletes
- *   20 = FreeIds						
- *   50:								111:
- *   55 = Company (unused)				112 = MemberNotes
- *   60:								113:
- *   61 = Payment Method				114 = MemberBalance
+ *    1 = drop table					111:
+ *    5 = DeletedRecords				112 = MemberNotes
+ *   10:								113:
+ *   									114 = MemberBalance
+ *   11 = TableIndex					
+ *   12:								
+ *   13 = PendingUploads				121 = CancellationFee
+ *   14:								
+ *   15 = PendingDownloads				
+ *   16:								126:
+ *   17 = PendingUpdates				127 = MembershipSuspend
+ *   18 = PendingDeletes				128 = MembershipExpiryReason
+ *   20 = FreeIds						130:
+ *   50:								135:
+ *   55 = Company (unused)				140 = Visitor
+ *   60:								141 = Visitors/Programme/Membership query.
+ *   61 = Payment Method				
  *   62:								150:
  *   63 = door							155:
  *   80:								160:
@@ -146,17 +147,15 @@ public class ContentDescriptor {
 	     matcher.addURI(authority, RollItem.CREATE_ROLL_PATH, RollItem.CREATE_ROLL_TOKEN);
 	     
 	     matcher.addURI(authority, MembershipExpiryReason.PATH, MembershipExpiryReason.PATH_TOKEN);
+	     matcher.addURI(authority, CancellationFee.PATH, CancellationFee.PATH_TOKEN);
 	     
 	     matcher.addURI(authority, DROPTABLE, TOKEN_DROPTABLE);
 	     
 	     return matcher;
 	 }
 	 	public static class Member {
-	        public static final String NAME = "member";
-	        /*
-	         * magic numbers follow, they're used only to reference
-	         * what the request is, for use with a switch case.
-	         */
+	        
+	 		public static final String NAME = "member";
 	        public static final String PATH = "Member";
 	        public static final int PATH_TOKEN = 100; 
 	        public static final String PATH_FOR_ID = "Member/*";
@@ -597,7 +596,11 @@ public class ContentDescriptor {
 	 			public static final String PRICE = "price";
 	 			public static final String SIGNUP = "signupfee";
 	 			public static final String CREATION = "creationdate";
-	 			public static final String DEVICESIGNUP = "devicesignup";  //TODO: add this
+	 			public static final String DEVICESIGNUP = "devicesignup";
+	 			
+	 			//ADDED in V118
+	 			public static final String TERMINATION_DATE = "termination_date";
+	 			public static final String CANCEL_REASON = "cancel_reason";
 	 		}
 	 	}
 	 	
@@ -929,7 +932,7 @@ public class ContentDescriptor {
 	 		}
 	 	}
 	 	
-	 	//TODO: move everything that uses ids to this table.
+	 	
 	 	//**************************************************
 	 	/* Currently we get and store ids from the Postgres database for use when we upload new items (members, memberships)
 	 	 * etc. These Id's are stored in there respective tables. However retrieving them is convulted. 
@@ -1075,6 +1078,22 @@ public class ContentDescriptor {
 	 		public static class Cols implements BaseColumns {
 	 			public static final String ID = "expiry_reason_id";
 	 			public static final String NAME = "name";
+	 		}
+	 	}
+	 	
+	 	//we temporarily store selected fees here while we wait on the upload.
+	 	public static class CancellationFee {
+	 		public static final String NAME = "cancellation_fee";
+	 		public static final String PATH = "cancellation_fee";
+	 		public static final int PATH_TOKEN = 121;
+	 		
+	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
+	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.cancellation_fee";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.cancellation_fee";
+	 		
+	 		public static class Cols implements BaseColumns {
+	 			public static final String MEMBERSHIPID = "membershipid";
+	 			public static final String FEE = "fee";
 	 		}
 	 	}
 }

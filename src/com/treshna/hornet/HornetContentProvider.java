@@ -1,6 +1,8 @@
 package com.treshna.hornet;
 
 
+import java.util.Locale;
+
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.Context;
@@ -211,6 +213,11 @@ public class HornetContentProvider extends ContentProvider {
         	getContext().getContentResolver().notifyChange(uri, null);
         	return rows;
         }
+        case ContentDescriptor.CancellationFee.PATH_TOKEN:{
+        	int rows = db.delete(ContentDescriptor.CancellationFee.NAME, selection, selectionArgs);
+        	getContext().getContentResolver().notifyChange(uri, null);
+        	return rows;
+        }
         
         case ContentDescriptor.TOKEN_DROPTABLE:{ //special case, drops tables/deletes database.
         	FileHandler fh = new FileHandler(ctx);
@@ -392,7 +399,11 @@ public class HornetContentProvider extends ContentProvider {
             	getContext().getContentResolver().notifyChange(uri, null);
             	return ContentDescriptor.MembershipExpiryReason.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
             }
-            
+            case ContentDescriptor.CancellationFee.PATH_TOKEN:{
+            	long id = db.insert(ContentDescriptor.CancellationFee.NAME, null, values);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return ContentDescriptor.CancellationFee.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
+            }
             default: {
                 throw new UnsupportedOperationException("URI: " + uri + " not supported.");
             }
@@ -751,6 +762,11 @@ public class HornetContentProvider extends ContentProvider {
             	builder.setTables(ContentDescriptor.MembershipExpiryReason.NAME);
             	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
             }
+            case ContentDescriptor.CancellationFee.PATH_TOKEN:{
+            	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+            	builder.setTables(ContentDescriptor.CancellationFee.NAME);
+            	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+            }
             
             default: throw new UnsupportedOperationException("URI: " + uri + " not supported.");
         }
@@ -895,6 +911,11 @@ public class HornetContentProvider extends ContentProvider {
             }
             case ContentDescriptor.MembershipExpiryReason.PATH_TOKEN:{
             	int result = db.update(ContentDescriptor.MembershipExpiryReason.NAME, values, selection, selectionArgs);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return result;
+            }
+            case ContentDescriptor.CancellationFee.PATH_TOKEN:{
+            	int result = db.update(ContentDescriptor.CancellationFee.NAME, values, selection, selectionArgs);
             	getContext().getContentResolver().notifyChange(uri, null);
             	return result;
             }

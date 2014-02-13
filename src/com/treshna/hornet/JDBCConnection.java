@@ -20,6 +20,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
+import android.content.ContentValues;
 import android.util.Log;
 
 /**
@@ -416,6 +417,8 @@ public class JDBCConnection {
     /**
      * updates tablename with the key/value pairs from the 3D array (0 is column name, 1 is value),
      * for the condition in the WHERE;
+     * 
+     * The values will need to have any casting/etc included..
      * 
      * @param values
      * @param tablename
@@ -904,34 +907,60 @@ public class JDBCConnection {
     	return pStatement.executeQuery();
     }
     
-    public int expireMembership(int membershipid, int memberid, int expiry_reason, java.sql.Date terminationDate) throws SQLException {
-    	pStatement = con.prepareStatement("update membership "
-    			+"set termination_date=tdate, cancel_reason = (SELECT name FROM membership_expiry_reason WHERE id=?), canceled_at=now()"
-    			+"where id=?");
-    	pStatement.setDate(1, terminationDate);
-    	pStatement.setInt(2, expiry_reason);
-    	pStatement.setInt(3, membershipid);
+        
+    /**
+     * @param values, membershipid
+     * @return 
+     * @throws SQLException
+     */
+    public int updateMembership(ContentValues values, int membershipid) throws SQLException {
+    	String update_query = "UPDATE membership SET (";
+    	String values_query = ") = (";
+    	String cancellation_fee = null;
+	
+		if (values.containsKey(ContentDescriptor.Membership.Cols.CANCEL_REASON)){
+			update_query = update_query+" "+ContentDescriptor.Membership.Cols.CANCEL_REASON+",";
+			values_query = values_query+" "+values.getAsString(ContentDescriptor.Membership.Cols.CANCEL_REASON)+",";
+			values.remove(ContentDescriptor.Membership.Cols.CANCEL_REASON);
+		}
+		if (values.containsKey(ContentDescriptor.Membership.Cols.TERMINATION_DATE)) {
+			update_query = update_query+" "+ContentDescriptor.Membership.Cols.TERMINATION_DATE+",";
+			values_query = values_query+" "+values.getAsString(ContentDescriptor.Membership.Cols.TERMINATION_DATE)+",";
+			values.remove(ContentDescriptor.Membership.Cols.TERMINATION_DATE); 
+		}
+		if (values.containsKey(ContentDescriptor.Membership.Cols.CARDNO)) {
+			update_query = update_query+" "+ContentDescriptor.Membership.Cols.CARDNO+",";
+			values_query = values_query+" "+values.getAsString(ContentDescriptor.Membership.Cols.CARDNO)+",";
+			values.remove(ContentDescriptor.Membership.Cols.CARDNO);
+		}
+		if (values.containsKey(ContentDescriptor.CancellationFee.Cols.FEE)) {
+			cancellation_fee = values.getAsString(ContentDescriptor.CancellationFee.Cols.FEE);
+			values.remove(ContentDescriptor.CancellationFee.Cols.FEE);
+		}
     	
-    	pStatement.executeUpdate();
-
-        pStatement = con.prepareStatement("INSERT INTO membernotes (memberid, occurred, notes) VALUES"
-        		+"(?, now(),"
-        		+"'Membership Expired: ' || (SELECT name FROM membership_expiry_reason WHERE id=?));");
-        pStatement.setInt(1, memberid);
-        pStatement.setInt(2, expiry_reason);
-        
-        pStatement.executeUpdate();
-    
-        pStatement = con.prepareStatement("select add_cancelfee(?::money,?);");
-        pStatement.setString(1, "money");
-        pStatement.setInt(2, membershipid);
-        
-        pStatement.executeUpdate();
-    
-        pStatement = con.prepareStatement("select nightrun_membership(?);");
-        pStatement.setInt(1, membershipid);
-
-        return pStatement.executeUpdate();
+		if (values.size() > 0) {
+			//we've still got variables we should probably throw an error. 
+		}
+		update_query = update_query.substring(0, (update_query.length()-1));
+		values_query = values_query.substring(0, (values_query.length()-1));
+		
+		update_query = update_query+values_query+") WHERE id = ?";
+		
+		pStatement = con.prepareStatement(update_query);
+		pStatement.setInt(1, membershipid);
+		pStatement.executeUpdate();
+		
+		if (cancellation_fee != null) {
+			pStatement = con.prepareStatement("select add_cancelfee(?::money,?);");
+	        pStatement.setString(1, cancellation_fee);
+	        pStatement.setInt(2, membershipid);
+	        pStatement.executeUpdate();
+		}
+		
+		pStatement = con.prepareStatement("select nightrun_membership(?);");
+		pStatement.setInt(1, membershipid);
+		
+    	return pStatement.executeUpdate();
     }
     
     public SQLWarning getWarnings() throws SQLException, NullPointerException {

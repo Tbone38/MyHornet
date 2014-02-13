@@ -3821,4 +3821,63 @@ public class HornetDBService extends Service {
     	closeConnection();
     	return result;
     }
+    
+    private int updateMembership() {
+    	int result = 0;
+    	ArrayList<String> pendingMemberships = new ArrayList<String>();
+    	
+    	cur = contentResolver.query(ContentDescriptor.PendingUpdates.CONTENT_URI, null, ContentDescriptor.PendingUpdates.Cols.TABLEID+" = ?",
+    			new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Membership.getKey())}, null);
+    	while (cur.moveToNext()) {
+    		pendingMemberships.add(cur.getString(cur.getColumnIndex(ContentDescriptor.PendingUpdates.Cols.ROWID)));
+    	}
+    	cur.close();
+    	
+    	if (!openConnection()) {
+    		return -1;
+    	}
+    	
+    	for (int i = 0; i <pendingMemberships.size(); i++) {
+    		int membershipid = -1;
+    		cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols._ID+" = ?", 
+    				new String[] {pendingMemberships.get(i)}, null);
+    		if (cur.moveToFirst()) {
+	    		membershipid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MSID));
+	    		ContentValues values = new ContentValues();
+	    		values.put(ContentDescriptor.Membership.Cols.CANCEL_REASON, 
+	    				cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.CANCEL_REASON)));
+	    		values.put(ContentDescriptor.Membership.Cols.TERMINATION_DATE, 
+	    				"'"+cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.TERMINATION_DATE))+"'::date");
+	    		
+				cur.close();
+				
+				cur = contentResolver.query(ContentDescriptor.CancellationFee.CONTENT_URI, null, ContentDescriptor.CancellationFee.Cols.MEMBERSHIPID+" = ?",
+						new String[] {pendingMemberships.get(membershipid)}, null);
+				if (cur.moveToFirst()) {
+					values.put(ContentDescriptor.CancellationFee.Cols.FEE, cur.getString(cur.getColumnIndex(ContentDescriptor.CancellationFee.Cols.FEE)));
+				}
+				
+				try {
+					connection.updateMembership(values, membershipid);
+					result+=1;
+				} catch (SQLException e) {
+					statusMessage = e.getLocalizedMessage();
+					e.printStackTrace();
+					return -1;
+				}
+    		}
+    		cur.close();
+    		
+    		contentResolver.delete(ContentDescriptor.PendingUpdates.CONTENT_URI, ContentDescriptor.PendingUpdates.Cols.ROWID+" = ? AND "
+    				+ContentDescriptor.PendingUpdates.Cols.TABLEID+" = ? ", new String[] {pendingMemberships.get(i),
+    				String.valueOf(ContentDescriptor.TableIndex.Values.Membership.getKey())});
+    		
+    		contentResolver.delete(ContentDescriptor.CancellationFee.CONTENT_URI, ContentDescriptor.CancellationFee.Cols.MEMBERSHIPID+" = ?",
+    				new String[] {String.valueOf(membershipid)});
+    	}
+    	
+    	closeConnection();
+    	
+    	return result;
+    }
 }

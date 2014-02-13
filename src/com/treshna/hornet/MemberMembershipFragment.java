@@ -9,6 +9,7 @@ import com.treshna.hornet.DatePickerFragment.DatePickerSelectListener;
 
 import android.app.AlertDialog;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -128,10 +129,32 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 	private void cancelMembership(ArrayList<String> inputs, int membershipid) {
 		/*contentResolver.delete(ContentDescriptor.Membership.CONTENT_URI, ContentDescriptor.Membership.Cols.MSID+" = ?",
 				new String[] {String.valueOf(membershipid)});*/
-		//TODO: we need to hide/grey-out expired memberships.
-		//			we need a way to check the membership status?
-		// 		we need somewhere to insert this input to.
-		//probably need more columns on our membership table.
+		//TODO: we need to provide feedback to let the user know it was successful. 
+				//i.e. hide/grey-out expired memberships.
+		ContentValues values = new ContentValues();
+		values.put(ContentDescriptor.Membership.Cols.CANCEL_REASON, inputs.get(1));
+		values.put(ContentDescriptor.Membership.Cols.TERMINATION_DATE, inputs.get(0));
+		
+		contentResolver.update(ContentDescriptor.Membership.CONTENT_URI, values, ContentDescriptor.Membership.Cols.MSID+" = ?", 
+				new String[] {String.valueOf(membershipid)});
+		
+		if (inputs.get(2) != null) {
+			values = new ContentValues();
+			values.put(ContentDescriptor.CancellationFee.Cols.FEE, inputs.get(2));
+			values.put(ContentDescriptor.CancellationFee.Cols.MEMBERSHIPID, membershipid);
+			
+			cur = contentResolver.query(ContentDescriptor.CancellationFee.CONTENT_URI, null, ContentDescriptor.CancellationFee.Cols.MEMBERSHIPID+" = ?",
+					new String[] {String.valueOf(membershipid)}, null);
+			if (cur.moveToFirst()) {
+				cur.close();
+				contentResolver.update(ContentDescriptor.CancellationFee.CONTENT_URI, values, //check triggers.
+						ContentDescriptor.CancellationFee.Cols.MEMBERSHIPID+" = ?", new String[] {String.valueOf(membershipid)});
+			} else {
+				cur.close();
+				contentResolver.insert(ContentDescriptor.CancellationFee.CONTENT_URI, values);
+			}
+		}
+		
 		setupView();
 	}
 
@@ -232,16 +255,16 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 		ArrayList<String> input = new ArrayList<String>();
 		
 		TextView date_view = (TextView) this.alert_cancel_ms.findViewById(R.id.text_cancel_date);
-		input.add(date_view.getText().toString());
+		input.add(date_view.getText().toString());														//0
 		
 		Spinner cancel_reason = (Spinner) alert_cancel_ms.findViewById(R.id.spinner_cancel_reason);
-		input.add(cancel_reason.getItemAtPosition(cancel_reason.getSelectedItemPosition()).toString());
+		input.add(cancel_reason.getItemAtPosition(cancel_reason.getSelectedItemPosition()).toString());	//1
 		
 		EditText cancel_fee = (EditText) alert_cancel_ms.findViewById(R.id.input_cancel_fee);
 		if (cancel_fee.getText().toString().compareTo("") != 0) {
-			input.add(cancel_fee.getText().toString());
+			input.add(cancel_fee.getText().toString());													//2
 		} else {
-			input.add(null);
+			input.add(null);																			//2
 		}
 		
 		return input;
