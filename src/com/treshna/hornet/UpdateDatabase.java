@@ -4,6 +4,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.treshna.hornet.ContentDescriptor.Booking;
+import com.treshna.hornet.ContentDescriptor.CancellationFee;
 import com.treshna.hornet.ContentDescriptor.Class;
 import com.treshna.hornet.ContentDescriptor.Company;
 import com.treshna.hornet.ContentDescriptor.FreeIds;
@@ -586,15 +587,23 @@ public class UpdateDatabase {
 				+" ADD COLUMN "+Membership.Cols.CANCEL_REASON+" TEXT;";
 		
 		public static final String SQL7 = "ALTER TABLE "+Membership.NAME
-				+" ADD COLUMN "+Membership.Cols.TERMINATION_DATE+" DATE;"; 
+				+" ADD COLUMN "+Membership.Cols.TERMINATION_DATE+" DATE;";
 		
-		public static final String SQL8 = "CREATE TRIGGER "+Membership.Triggers.ON_UPDATE+" AFTER UPDATE ON "+Membership.NAME
-				+" FOR EACH ROW WHEN old."+Membership.Cols.MSID+" > 0 "
+		public static final String SQL8 = "ALTER TABLE "+Membership.NAME
+				+" ADD COLUMN "+Membership.Cols.STATE+" TEXT;";
+		
+		public static final String SQL9 = "CREATE TRIGGER "+Membership.Triggers.ON_UPDATE+" BEFORE UPDATE ON "+Membership.NAME
+				+" FOR EACH ROW WHEN new."+Membership.Cols.MSID+" > 0 AND (" //list all the possible columns that can change
+					+"new."+Membership.Cols.CANCEL_REASON+" != old."+Membership.Cols.CANCEL_REASON+" OR "
+					+"new."+Membership.Cols.TERMINATION_DATE+" != old."+Membership.Cols.TERMINATION_DATE+") "
 				+"BEGIN "
 					+"INSERT OR REPLACE INTO "+PendingUpdates.NAME
-					+" ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
+					+" ("+PendingUpdates.Cols.ROWID+", "+PendingUpdates.Cols.TABLEID+")"
 					+" VALUES (new."+Membership.Cols._ID+", "+TableIndex.Values.Membership.getKey()+");"
 				+"END; ";
+		
+		public static final String SQL10 = "CREATE TABLE "+CancellationFee.NAME+" ( "+CancellationFee.Cols.MEMBERSHIPID+" INTEGER PRIMARY KEY, "
+				+CancellationFee.Cols.FEE+" TEXT );";
 		
 		public static void patchNinetyFour(SQLiteDatabase db) {
 			db.beginTransaction();
@@ -615,6 +624,10 @@ public class UpdateDatabase {
 				db.execSQL(UpdateDatabase.NinetyFour.SQL7);
 				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyFour.SQL8);
 				db.execSQL(UpdateDatabase.NinetyFour.SQL8);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyFour.SQL9);
+				db.execSQL(UpdateDatabase.NinetyFour.SQL9);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyFour.SQL10);
+				db.execSQL(UpdateDatabase.NinetyFour.SQL10);
 				db.setTransactionSuccessful();
 			} finally {
 				db.endTransaction();

@@ -1,13 +1,25 @@
-        -KNOWN BUGS/TO FIX:
-                -manual checkin might hard-crash if the door is null (why wasn't there any doors?)
-                -the booking swipe view pager doesn't invaildate cached fragments when the date is set.
-                        This means that one of the (5) fragments may show the wrong date.
-                -The database sync runs out of memory on large databases (e.g. YMCA db).
-                -Sometimes app needs to restart for the roll menu item to show up.
-                -Dates need to be handled better. Currently they're breaking on Dru's phone because the default format (Date().toString()) returns differently.
-                        Fix is to call SimpleDateFormat.format(Date()) instead of trying to parse the Date().toString().
-				-Progress Box no longer works. needs to be added back in via a aSync Task for the db_syncing.
-					(had issues trying to attach to windows from the service thread, due to 'Context' complications.)
+	FUTURE:
+    	SQLITE:
+            Make 1=1 replication of all the tables you're using. rather than only grabing certain columns.
+            This will make life MUCH easier.
+        TESTING:
+            Unit Testing,
+            UI Testing,
+            etc.
+        DB CHANGES:
+            Add Timestamp/created column to Idcard.
+            Add Android(Hornet?) specific door?
+		KNOWN BUGS/TO FIX:
+			Manual checkin might hard-crash if the door is null (why wasn't there any doors?)
+            The booking swipe view pager doesn't invaildate cached fragments when the date is set.
+            	This means that one of the (5) fragments may show the wrong date.
+            The database sync runs out of memory on large databases (e.g. YMCA db).
+            Sometimes app needs to restart for the roll menu item to show up.
+            Dates need to be handled better. Currently they're breaking on Dru's phone because the default format (Date().toString()) returns differently.
+            	Fix is to call SimpleDateFormat.format(Date()) instead of trying to parse the Date().toString().
+			Progress Box no longer works. needs to be added back in via a aSync Task for the db_syncing.
+				(had issues trying to attach to windows from the service thread, due to 'Context' complications.)
+			Update Recurssion. (updating the same rows every time they change).
 
 	V118:
 		-DONE:
@@ -45,13 +57,6 @@
                 the log-file needs a unique identifier so we know which device has the issues.
 				KPI's.
 				FIX cancel membership.
-				TESTING:
-					Unit Testing,
-					UI Testing,
-					etc.
-				DB CHANGES:
-					Add Timestamp/created column to Idcard.
-					Add Android(Hornet?) specific door?
 
 	v116/117:
 		minor bug fixes/undocumented.

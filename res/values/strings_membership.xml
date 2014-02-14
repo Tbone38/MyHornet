@@ -51,5 +51,6 @@
   	<string name="membership_cancel_fee">Cancelation Fee </string>
   	<string name="membership_expire_date">Date</string>
   	<string name="button_membership_expire">Expire</string>
+  	<string name="button_ok">OK</string>
 	
 </resources>

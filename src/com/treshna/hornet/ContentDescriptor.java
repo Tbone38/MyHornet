@@ -601,6 +601,7 @@ public class ContentDescriptor {
 	 			//ADDED in V118
 	 			public static final String TERMINATION_DATE = "termination_date";
 	 			public static final String CANCEL_REASON = "cancel_reason";
+	 			public static final String STATE = "state";
 	 		}
 	 	}
 	 	

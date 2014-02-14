@@ -482,8 +482,9 @@ public class JDBCConnection {
     public ResultSet getMembership(String lastsync, int ymca) throws SQLException, NullPointerException {
 	    	ResultSet rs = null;
 	    	String query ="SELECT membership.id, memberid, membership.startdate, membership.enddate, cardno, membership.notes, " +
-	    			"primarymembership, membership.lastupdate, " +
-	    			" membership.concession, programme.name, programme.id AS programmeid FROM membership LEFT JOIN programme ON (membership.programmeid = programme.id)" +
+	    			"primarymembership, membership.lastupdate,  membership_state(membership.*, programme.*) as state," +
+	    			" membership.concession, programme.name, programme.id AS programmeid, membership.termination_date, membership.cancel_reason"
+	    			+ " FROM membership LEFT JOIN programme ON (membership.programmeid = programme.id)" +
 	    			" WHERE membership.history = 'f' ";
 	    	if (ymca > 0) {
 	    		query = query + " AND memberid IN (SELECT DISTINCT memberid FROM membership "

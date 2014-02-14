@@ -10,6 +10,7 @@ import android.util.Log;
 import com.treshna.hornet.ContentDescriptor.Booking;
 import com.treshna.hornet.ContentDescriptor.BookingTime;
 import com.treshna.hornet.ContentDescriptor.Bookingtype;
+import com.treshna.hornet.ContentDescriptor.CancellationFee;
 import com.treshna.hornet.ContentDescriptor.Class;
 import com.treshna.hornet.ContentDescriptor.Company;
 import com.treshna.hornet.ContentDescriptor.Date;
@@ -21,6 +22,7 @@ import com.treshna.hornet.ContentDescriptor.Member;
 import com.treshna.hornet.ContentDescriptor.MemberBalance;
 import com.treshna.hornet.ContentDescriptor.MemberNotes;
 import com.treshna.hornet.ContentDescriptor.Membership;
+import com.treshna.hornet.ContentDescriptor.MembershipExpiryReason;
 import com.treshna.hornet.ContentDescriptor.MembershipSuspend;
 import com.treshna.hornet.ContentDescriptor.OpenTime;
 import com.treshna.hornet.ContentDescriptor.PaymentMethod;
@@ -408,6 +410,9 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		
 		db.execSQL("DROP TABLE IF EXISTS "+RollCall.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+RollItem.NAME);
+		
+		db.execSQL("DROP TABLE IF EXISTS "+MembershipExpiryReason.NAME);
+		db.execSQL("DROP TABLE IF EXISTS "+CancellationFee.NAME);
 	}
 	
 	private void repopulateTable(SQLiteDatabase db) {

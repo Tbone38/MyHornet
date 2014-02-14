@@ -28,9 +28,13 @@ import android.util.Log;
 
 import com.treshna.hornet.ContentDescriptor.Membership;
 
-/* TODO: consider refactoring this service out into:
- * 	Bookings, LastVisitors, Swipes, and Signups.
- * (to make it easier to work on since we're at 3k lines, and only getting bigger).
+/* TODO: refactor this service out into:
+ * 		- initial Getting/querying 
+ * 		- Uploading
+ * 		- Updating
+ * 		- Deleting
+ * 		
+ * Because we're at 4k lines.
  */
 
 public class HornetDBService extends Service {
@@ -126,6 +130,7 @@ public class HornetDBService extends Service {
 	 	   	
  	   		
  	   		setDate();
+ 	   		getPendingDownloads();
  	   		getPendingUpdates();
  	   		//get Visitors
  	   		boolean result = getLastVisitors();
@@ -147,6 +152,7 @@ public class HornetDBService extends Service {
 			}
 			
 			//do uploads //ORDER MATTERS!
+			updateMembership();
 			uploadMemberNotes();
 			uploadImage();
 			int classcount = uploadClass();
@@ -158,9 +164,6 @@ public class HornetDBService extends Service {
 			if (upload_sid_count < 0) {
 				Services.showToast(getApplicationContext(), statusMessage, handler);
 			}
-			
-			getPendingUpdates();
-			getPendingDownloads();
 			
 			//downloads!
 			getMember(last_sync);
@@ -608,12 +611,12 @@ public class HornetDBService extends Service {
 		query ="";
     	if (oldQuery != true){ 
         	query = "SELECT decode(substring(imagedata from 3),'base64'), memberid, lastupdate, description, is_profile, "
-					+"created, id FROM IMAGE where substring(imagedata,1,2) = '1|' and length(imagedata)>200"
+					+"created, id FROM IMAGE where substring(imagedata,1,2) = '1|'" //and length(imagedata)>200
 					+" AND memberid = '";
         
 		} else if (oldQuery == true) { //the table doesn't have description or is_profile
 			query = "SELECT decode(substring(imagedata from 3),'base64'), memberid, lastupdate, "
-					+"created, id FROM IMAGE where substring(imagedata,1,2) = '1|' and length(imagedata)>200"
+					+"created, id FROM IMAGE where substring(imagedata,1,2) = '1|'" //and length(imagedata)>200
 					+" AND memberid = '";
 		}
     	
@@ -1231,11 +1234,9 @@ public class HornetDBService extends Service {
     private int updateBookings(){
     	Log.v(TAG, "Updating Bookings");
     	int result;
-    	String lastSync;
     	ArrayList<String> pending_bookings = new ArrayList<String>();
     	
     	result = 0;
-    	lastSync = Services.getAppSettings(ctx, "b_lastsync");
     	
     	cur = contentResolver.query(ContentDescriptor.PendingUpdates.CONTENT_URI, null, ContentDescriptor.PendingUpdates.Cols.TABLEID+" = ?",
     			new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Booking.getKey())}, null);
@@ -1707,17 +1708,7 @@ public class HornetDBService extends Service {
     		rs = connection.getMembership(String.valueOf(last_sync), use_roll);
     			
     		while (rs.next()){
-    			ContentValues values = new ContentValues();
-    			
-    			values.put(ContentDescriptor.Membership.Cols.MID, rs.getString("memberid"));
-    			values.put(ContentDescriptor.Membership.Cols.MSID, rs.getString("id"));
-    			values.put(ContentDescriptor.Membership.Cols.CARDNO, rs.getString("cardno")); //this can be null
-    			values.put(ContentDescriptor.Membership.Cols.MSSTART, rs.getString("startdate"));
-    			values.put(ContentDescriptor.Membership.Cols.EXPIRERY, rs.getString("enddate"));
-    			values.put(ContentDescriptor.Membership.Cols.PNAME, rs.getString("name"));
-    			values.put(ContentDescriptor.Membership.Cols.VISITS, rs.getString("concession"));
-    			values.put(ContentDescriptor.Membership.Cols.LASTUPDATE, rs.getString("lastupdate"));
-    			values.put(ContentDescriptor.Membership.Cols.PID, rs.getString("programmeid"));
+    			ContentValues values = insertMembership(rs);
     			
     			cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols.MSID+" = ?",
     					new String[] {rs.getString("id")},null);
@@ -3161,6 +3152,23 @@ public class HornetDBService extends Service {
     	return result;
     }
     
+    private ContentValues insertMembership(ResultSet rs) throws SQLException {
+    	ContentValues values = new ContentValues();
+    	
+    	values.put(ContentDescriptor.Membership.Cols.MID, rs.getString("memberid"));
+		values.put(ContentDescriptor.Membership.Cols.MSID, rs.getString("id"));
+		values.put(ContentDescriptor.Membership.Cols.CARDNO, rs.getString("cardno")); //this can be null
+		values.put(ContentDescriptor.Membership.Cols.MSSTART, rs.getString("startdate"));
+		values.put(ContentDescriptor.Membership.Cols.EXPIRERY, rs.getString("enddate"));
+		values.put(ContentDescriptor.Membership.Cols.PNAME, rs.getString("name"));
+		values.put(ContentDescriptor.Membership.Cols.VISITS, rs.getString("concession"));
+		values.put(ContentDescriptor.Membership.Cols.LASTUPDATE, rs.getString("lastupdate"));
+		values.put(ContentDescriptor.Membership.Cols.PID, rs.getString("programmeid"));
+		values.put(ContentDescriptor.Membership.Cols.STATE, rs.getString("state"));
+    	
+		return values;
+    }
+    
     private ContentValues insertMember(ResultSet rs) throws SQLException {
     	ContentValues values = new ContentValues();
 		values.put(ContentDescriptor.Member.Cols.MID, rs.getString("id"));
@@ -3193,17 +3201,26 @@ public class HornetDBService extends Service {
 		return values;
     }
     
+    /**
+     * Pending downloads are rows that we know are out of sync with the master DB.
+     * we should always sync these first.
+     * used for adding member, expiring memberships.
+     */
     private int getPendingDownloads() {
     	Log.v(TAG, "Getting Pending Downloads");
     	int result = 0;
     	
     	ArrayList<String> member = new ArrayList<String>();
+    	ArrayList<String> membership = new ArrayList<String>();
     	
     	cur = contentResolver.query(ContentDescriptor.PendingDownloads.CONTENT_URI, null, null, null, null);
     	while (cur.moveToNext()){
     		if (cur.getInt(cur.getColumnIndex(ContentDescriptor.PendingDownloads.Cols.TABLEID)) == 
     				ContentDescriptor.TableIndex.Values.Member.getKey()) {
     			member.add(cur.getString(cur.getColumnIndex(ContentDescriptor.PendingDownloads.Cols.ROWID)));
+    		} else if (cur.getInt(cur.getColumnIndex(ContentDescriptor.PendingDownloads.Cols.TABLEID)) ==
+    				ContentDescriptor.TableIndex.Values.Membership.getKey()) {
+    			membership.add(cur.getString(cur.getColumnIndex(ContentDescriptor.PendingDownloads.Cols.ROWID)));
     		} else {
     			//put it somewhere else;
     		}
@@ -3236,8 +3253,36 @@ public class HornetDBService extends Service {
     		} catch (SQLException e) {
     			statusMessage = e.getLocalizedMessage();
     			e.printStackTrace();
-    			return -2;
     		}
+    		contentResolver.delete(ContentDescriptor.PendingDownloads.CONTENT_URI, ContentDescriptor.PendingDownloads.Cols.ROWID+" = ? AND "
+    				+ContentDescriptor.PendingDownloads.Cols.TABLEID+" = ?",new String[] {member.get(i),
+    				String.valueOf(ContentDescriptor.TableIndex.Values.Member.getKey())});
+    	}
+    	
+    	for (int i = 0; i < membership.size(); i++) {
+    		ResultSet rs;
+    		String query ="SELECT membership.id, memberid, membership.startdate, membership.enddate, cardno, membership.notes, " +
+	    			"primarymembership, membership.lastupdate, membership_state(membership.*, programme.*) as state," +
+	    			" membership.concession, programme.name, programme.id AS programmeid, membership.termination_date, membership.cancel_reason"
+	    			+ " FROM membership LEFT JOIN programme ON (membership.programmeid = programme.id)" +
+	    			" WHERE membership.id = "+membership.get(i)+" ;";
+    		
+    		try {
+    			rs = connection.startStatementQuery(query);
+    			if (rs.next()) {
+    				ContentValues values = insertMembership(rs);
+    				
+    				contentResolver.update(ContentDescriptor.Membership.CONTENT_URI, values, ContentDescriptor.Membership.Cols.MSID+" = ?",
+    						new String[] {membership.get(i)});
+    			}
+    			rs.close();
+    		} catch (SQLException e) {
+    			statusMessage = e.getLocalizedMessage();
+    			e.printStackTrace();
+    		}
+    		contentResolver.delete(ContentDescriptor.PendingDownloads.CONTENT_URI, ContentDescriptor.PendingDownloads.Cols.ROWID+" = ? AND "
+    				+ContentDescriptor.PendingDownloads.Cols.TABLEID+" = ?", new String[] {membership.get(i),
+    				String.valueOf(ContentDescriptor.TableIndex.Values.Membership.getKey())});
     	}
     	
     	closeConnection();
@@ -3245,11 +3290,9 @@ public class HornetDBService extends Service {
     	return result;
     }
     
-    /**
-     * Pending updates are rows that we know are out of sync with the master DB.
-     * we should always sync these first. Currently, it's used after a member has been signed up on the device.
-     * we then re-download that members details, as we miss some of the default data during the signup.
-     */
+    //Pending Updates are updates/changes we need to push.
+    //TODO: make this a centralised function. it should call the individual update functions, rather than running
+    //		multiple seperate functions that check for pending-updates.
     private int getPendingUpdates() {
     	Log.v(TAG, "Getting Pending Updates");
     	int result = 0;
@@ -3822,6 +3865,7 @@ public class HornetDBService extends Service {
     	return result;
     }
     
+    //TODO make this function called from the pending updates function.
     private int updateMembership() {
     	int result = 0;
     	ArrayList<String> pendingMemberships = new ArrayList<String>();
@@ -3848,11 +3892,11 @@ public class HornetDBService extends Service {
 	    				cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.CANCEL_REASON)));
 	    		values.put(ContentDescriptor.Membership.Cols.TERMINATION_DATE, 
 	    				"'"+cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.TERMINATION_DATE))+"'::date");
-	    		
+	    		Log.e(TAG, "termination_date:"+values.getAsString(ContentDescriptor.Membership.Cols.TERMINATION_DATE));
 				cur.close();
 				
 				cur = contentResolver.query(ContentDescriptor.CancellationFee.CONTENT_URI, null, ContentDescriptor.CancellationFee.Cols.MEMBERSHIPID+" = ?",
-						new String[] {pendingMemberships.get(membershipid)}, null);
+						new String[] {String.valueOf(membershipid)}, null);
 				if (cur.moveToFirst()) {
 					values.put(ContentDescriptor.CancellationFee.Cols.FEE, cur.getString(cur.getColumnIndex(ContentDescriptor.CancellationFee.Cols.FEE)));
 				}
@@ -3860,6 +3904,11 @@ public class HornetDBService extends Service {
 				try {
 					connection.updateMembership(values, membershipid);
 					result+=1;
+					
+					values = new ContentValues();
+					values.put(ContentDescriptor.PendingDownloads.Cols.ROWID, membershipid);
+					values.put(ContentDescriptor.PendingDownloads.Cols.TABLEID, ContentDescriptor.TableIndex.Values.Membership.getKey());
+					contentResolver.insert(ContentDescriptor.PendingDownloads.CONTENT_URI, values);
 				} catch (SQLException e) {
 					statusMessage = e.getLocalizedMessage();
 					e.printStackTrace();
@@ -3874,6 +3923,8 @@ public class HornetDBService extends Service {
     		
     		contentResolver.delete(ContentDescriptor.CancellationFee.CONTENT_URI, ContentDescriptor.CancellationFee.Cols.MEMBERSHIPID+" = ?",
     				new String[] {String.valueOf(membershipid)});
+    		
+    		
     	}
     	
     	closeConnection();
