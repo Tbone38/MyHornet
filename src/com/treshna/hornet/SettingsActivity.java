@@ -129,6 +129,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		getPreferenceScreen().addPreference(clear);
 		Preference sync = createClearSync();
 		getPreferenceScreen().addPreference(sync);
+		
 		// Bind the summaries of EditText/List/Dialog/Ringtone preferences to
 		// their values. When their values change, their summaries are updated
 		// to reflect the new value, per the Android Design guidelines.
@@ -356,6 +357,12 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		PreferenceCategory debug = new PreferenceCategory(this);
 		debug.setTitle("Debug Options");
 		getPreferenceScreen().addPreference(debug);
+		
+		Preference version = new Preference(this);
+		version.setTitle(this.getString(R.string.pref_current_version));
+		version.setSelectable(false);
+		debug.addPreference(version);
+		
 		// progress on
 		CheckBoxPreference progress = new CheckBoxPreference(this);
 		progress.setKey("progress");
