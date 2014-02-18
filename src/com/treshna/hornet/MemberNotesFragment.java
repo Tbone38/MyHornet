@@ -241,14 +241,19 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 		
 		cur = contentResolver.query(ContentDescriptor.FreeIds.CONTENT_URI, null, ContentDescriptor.FreeIds.Cols.TABLEID+" = "
 				+ContentDescriptor.TableIndex.Values.MemberNotes.getKey(), null, null);
-		if (!cur.moveToFirst()) {
-			values.put(ContentDescriptor.MemberNotes.Cols.MNID, 0);
-		} else {
-			values.put(ContentDescriptor.MemberNotes.Cols.MNID, 
-					cur.getInt(cur.getColumnIndex(ContentDescriptor.FreeIds.Cols.ROWID)));
+		int mnid = 0;
+		if (cur.moveToFirst()) {
+			mnid = cur.getInt(cur.getColumnIndex(ContentDescriptor.FreeIds.Cols.ROWID));
 		}
+		values.put(ContentDescriptor.MemberNotes.Cols.MNID, mnid);
 		contentResolver.insert(ContentDescriptor.MemberNotes.CONTENT_URI, values);
 		cur.close();
+		
+		if (mnid > 0) {
+			contentResolver.delete(ContentDescriptor.FreeIds.CONTENT_URI, ContentDescriptor.FreeIds.Cols.ROWID+" = ? AND "
+					+ContentDescriptor.FreeIds.Cols.TABLEID+" = ?", new String[] {String.valueOf(mnid),
+					String.valueOf(ContentDescriptor.TableIndex.Values.MemberNotes.getKey())});
+		}
 		
 		EditText note_view = (EditText) view.findViewById(R.id.addnote);
 		note_view.setText("");

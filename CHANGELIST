@@ -1,7 +1,7 @@
 	FUTURE:
     	SQLITE:
             Make 1=1 replication of all the tables you're using. rather than only grabing certain columns.
-            This will make life MUCH easier.
+            will this make life much easier?
         TESTING:
             Unit Testing,
             UI Testing,
@@ -51,12 +51,14 @@
                 Remove member from class Button.
 				No longer able to clear database when changes are pending.
                 Fixed Get Card for new cards.
+				Added cancel membership.
 
 		-TODO:
                 Handle permissions/Roles for different staff, to limit what certain staff can see.
                 the log-file needs a unique identifier so we know which device has the issues.
 				KPI's.
-				FIX cancel membership.
+				Fix Dates (dd MMM yyyy)
+				Add Member Booking Page (that shows just that members up-coming bookings.)
 
 	v116/117:
 		minor bug fixes/undocumented.

@@ -33,7 +33,7 @@ public class DatePickerFragment extends DialogFragment
 		
 		if (date == null || !(date instanceof String) || date.isEmpty()) {
 			SimpleDateFormat format = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
-			date = Services.dateFormat(format.format(new Date()), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd"); 
+			date = Services.dateFormat(format.format(new Date()), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");
 		}
 		//ensure's 0's are in the correct place.
 		Log.v(TAG, date);
@@ -60,7 +60,7 @@ public class DatePickerFragment extends DialogFragment
 		cal.set(year, month, day);
 		
 		
-		SimpleDateFormat format = new SimpleDateFormat("yyyy MM dd", Locale.US);
+		SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy", Locale.US);
 		returnValue = format.format(cal.getTime());
 		mCallback.onDateSelect(returnValue, this);
 	}

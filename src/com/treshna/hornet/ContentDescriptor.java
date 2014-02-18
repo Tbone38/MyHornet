@@ -602,6 +602,7 @@ public class ContentDescriptor {
 	 			public static final String TERMINATION_DATE = "termination_date";
 	 			public static final String CANCEL_REASON = "cancel_reason";
 	 			public static final String STATE = "state";
+	 			public static final String HISTORY = "history";
 	 		}
 	 	}
 	 	

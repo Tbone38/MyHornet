@@ -64,7 +64,7 @@ public class GalleryViewAdapter extends SimpleCursorAdapter implements OnClickLi
 			cur = contentResolver.query(ContentDescriptor.Image.CONTENT_URI, null, selection, null, null);
 			if (cur.getCount() <= 0) break;
 			cur.moveToFirst();
-			String date = Services.dateFormat(cur.getString(2), "dd MMM yy hh:mm:ss aa", "yyyy-MM-dd");
+			String date = Services.dateFormat(cur.getString(2), "dd MMM yy hh:mm:ss aa", "dd MMM yyyy");
 			String message = "Image Taken: "+date+ "\nImage Description: "+cur.getString(3);
 				Toast.makeText(context, message, Toast.LENGTH_LONG).show();
 			break;	

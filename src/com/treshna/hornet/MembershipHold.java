@@ -84,9 +84,9 @@ public class MembershipHold extends ActionBarActivity implements OnClickListener
 		TextView startdate = (TextView) this.findViewById(R.id.startdate);
 		
 		if (datevalue != null) {
-			startdate.setText(Services.dateFormat(datevalue, "yyyy MM dd", "dd MMM yyyy"));
+			startdate.setText(datevalue);
 		} else {
-			startdate.setText(Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "dd MMM yyyy"));
+			startdate.setText(Services.DateToString(new Date()));
 		}
 		
 		startdate.setTag(Services.dateFormat(new Date().toString(),
@@ -228,6 +228,7 @@ public class MembershipHold extends ActionBarActivity implements OnClickListener
 		TextView startdate = (TextView) this.findViewById(R.id.startdate);
 		values.put(ContentDescriptor.MembershipSuspend.Cols.STARTDATE,
 				Services.dateFormat(startdate.getText().toString(), "dd MMM yyyy", "yyyMMdd"));
+
 		Log.v(TAG, "Selected Startdate:"+startdate.getText().toString());
 		Spinner duration = (Spinner) this.findViewById(R.id.hold_duration);
 		String selection = String.valueOf(duration.getSelectedItem());

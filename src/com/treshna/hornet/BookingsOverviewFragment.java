@@ -92,6 +92,7 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
     	selectedDate = Services.getAppSettings(getActivity(), "bookings_date");
     	if (Integer.parseInt(selectedDate) == -1) {
     		selectedDate = Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");
+    		//selectedDate = Services.DateToString(new Date());
     	}
         updateDate();
        
@@ -109,6 +110,7 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
 	private void updateDate(){
 		if (mMonth != null && mDay != null && mYear != null) {
 			mMonth.setText(Services.dateFormat(selectedDate, "yyyyMMdd", "MMM"));
+			//mDay.setText(Services.dateFormat(selectedDate, "yyyyMMdd", "dd"));
 			mDay.setText(Services.dateFormat(selectedDate, "yyyyMMdd", "dd"));
 			mYear.setText(Services.dateFormat(selectedDate, "yyyyMMdd", "yyyy"));
 		}
@@ -627,7 +629,7 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
 	@Override
 	public void onDateSelect(String date, DatePickerFragment theDatePicker) {
 		selectedDate = date;
-		selectedDate = Services.dateFormat(selectedDate, "yyyy MM dd", "yyyyMMdd");
+		selectedDate = Services.dateFormat(selectedDate, "dd MMM yyyy", "yyyyMMdd");
 		Services.setPreference(getActivity(), "bookings_date", selectedDate);
 		updateDate();
 		getList(mInflater);

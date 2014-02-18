@@ -39,11 +39,34 @@ public class Services {
 	private static Context theCtx;
 	private static final String TAG = "Services";
 	
-	/*
+	
+	/** Always returns date format as "dd MMM yyyy"
+	 * 
+	 */
+	public static String DateToString(Date date) {
+		SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy", Locale.US);
+		return format.format(date);
+	}
+	
+	/**
+	 * Returns Date based on string format or null
+	 */
+	public static Date StringToDate(String datestring, String dateformat) {
+		SimpleDateFormat format = new SimpleDateFormat(dateformat, Locale.US);
+		Date date;
+		try {
+			date = format.parse(datestring);
+		} catch (ParseException e) {
+			Log.e(TAG, "Error Parsing Date:", e);
+			date = null;
+		}
+		return date;
+	}
+	
+	/**
 	 *  This function changes the format of a dateString. It requires the dateString, 
 	 *  the Layout of the string (e.g "yyyy-MM-dd"), and the requested output layout. 
 	 */
-
 	public static String dateFormat(String dateString, String inputLayout, String outputLayout){
 		if (dateString == null || inputLayout == null || outputLayout == null ) return null;
 		SimpleDateFormat input = new SimpleDateFormat(inputLayout, Locale.US);
@@ -52,6 +75,7 @@ public class Services {
 			date = input.parse(dateString);
 		} catch (ParseException e) {
 			Log.e(TAG, "Error Parsing Date:", e);
+			//this should return the original date.
 			return null;
 		}
 		SimpleDateFormat output = new SimpleDateFormat(outputLayout, Locale.US);
@@ -479,6 +503,8 @@ public class Services {
 		public static final String ERROR_MSHOLD1 = "ERROR: Membership hold/free time dates are invalid. "
 				+ "Dates of free time and holds must overlap an existing membership dates.";
 		public static final String ERROR_MSHOLD2 = "ERROR: This member is already suspended from";
+		public static final String ERROR_MSHOLD3 = "ERROR: Membership hold/free time date is invalid. "
+				+ "It must start after an existing membership, not before it. ";
 		
 		public static enum FragmentType {
 			MembershipAdd(1), MembershipComplete(2), MemberDetails(3), MemberGallery(4),

@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ServiceCompat;
 import android.util.Log;
 
 import com.treshna.hornet.ContentDescriptor.Membership;
@@ -115,11 +116,15 @@ public class HornetDBService extends Service {
      * UI..
      */
     public void startNetworking(int currentcall, Bundle bundle){
+    	String first_sync = Services.getAppSettings(ctx, "first_sync");
+    	if (first_sync.compareTo("-1")==0 && currentCall == Services.Statics.FREQUENT_SYNC) {
+    		currentCall = Services.Statics.FIRSTRUN;
+    	}
     	switch (currentCall){
  	   	case (Services.Statics.FREQUENT_SYNC): { //this should be run frequently
  	   		
  	   		thread.is_networking = true;
- 	   		String first_sync = Services.getAppSettings(ctx, "first_sync");
+ 	   		
 			if (first_sync.compareTo("-1")==0) {
 				SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy", Locale.US);
 				Services.setPreference(ctx, "first_sync", format.format(new Date()));
@@ -242,7 +247,6 @@ public class HornetDBService extends Service {
  	   case (Services.Statics.FIRSTRUN):{ //this should be run nightly/weekly
  		  thread.is_networking = true;
 
- 		  String first_sync = Services.getAppSettings(ctx, "first_sync");
  		  if (first_sync.compareTo("-1")==0) {
  			  SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy", Locale.US);
  			  Services.setPreference(ctx, "first_sync", format.format(new Date()));
@@ -2488,6 +2492,10 @@ public class HornetDBService extends Service {
     			statusMessage = e.getLocalizedMessage();
     			e.printStackTrace();
     			
+    			/* Realistically if we're hitting any of these, 
+    			 * we can probably delete the membership hold as well.
+    			 * As it'll never get uploaded or used.
+    			 */
     			if (statusMessage.compareTo(Services.Statics.ERROR_MSHOLD1) ==0) {
     				contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, 
     	    				ContentDescriptor.PendingUploads.Cols.TABLEID+" = ? AND "
@@ -2503,6 +2511,13 @@ public class HornetDBService extends Service {
     	    				new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.MembershipSuspend.getKey()),
     	    				String.valueOf(rows.get(i))});
     				Services.showToast(ctx, "Member already on Hold.", handler);
+    				continue;
+    			} else if (statusMessage.contains(Services.Statics.ERROR_MSHOLD3)) {
+    				contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, 
+    	    				ContentDescriptor.PendingUploads.Cols.TABLEID+" = ? AND "
+    	    				+ContentDescriptor.PendingUploads.Cols.ROWID+" = ?", 
+    	    				new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.MembershipSuspend.getKey()),
+    	    				String.valueOf(rows.get(i))});
     				continue;
     			} else {
     				return -3;
@@ -2999,7 +3014,7 @@ public class HornetDBService extends Service {
     	cur.close();
     	
     	cur = contentResolver.query(ContentDescriptor.MemberNotes.CONTENT_URI, null, 
-    			ContentDescriptor.MemberNotes.Cols.MNID+" = 0", null, null);
+    			ContentDescriptor.MemberNotes.Cols.MNID+" <= 0", null, null);
     	int req_count = cur.getCount();
     	cur.close();
     	
@@ -3014,7 +3029,7 @@ public class HornetDBService extends Service {
     				values.put(ContentDescriptor.MemberNotes.Cols.MNID, rs.getString("nextval"));
     			
     				cur = contentResolver.query(ContentDescriptor.MemberNotes.CONTENT_URI, null, 
-    						ContentDescriptor.MemberNotes.Cols.MNID+" = 0", null, null);
+    						ContentDescriptor.MemberNotes.Cols.MNID+" <= 0", null, null);
     				cur.moveToFirst();
     				int rowid = cur.getInt(cur.getColumnIndex(ContentDescriptor.MemberNotes.Cols._ID));
     				cur.close();
@@ -3165,6 +3180,7 @@ public class HornetDBService extends Service {
 		values.put(ContentDescriptor.Membership.Cols.LASTUPDATE, rs.getString("lastupdate"));
 		values.put(ContentDescriptor.Membership.Cols.PID, rs.getString("programmeid"));
 		values.put(ContentDescriptor.Membership.Cols.STATE, rs.getString("state"));
+		values.put(ContentDescriptor.Membership.Cols.HISTORY, rs.getString("history"));
     	
 		return values;
     }
@@ -3263,7 +3279,8 @@ public class HornetDBService extends Service {
     		ResultSet rs;
     		String query ="SELECT membership.id, memberid, membership.startdate, membership.enddate, cardno, membership.notes, " +
 	    			"primarymembership, membership.lastupdate, membership_state(membership.*, programme.*) as state," +
-	    			" membership.concession, programme.name, programme.id AS programmeid, membership.termination_date, membership.cancel_reason"
+	    			" membership.concession, programme.name, programme.id AS programmeid, membership.termination_date, membership.cancel_reason, "
+	    			+ " membership.history "
 	    			+ " FROM membership LEFT JOIN programme ON (membership.programmeid = programme.id)" +
 	    			" WHERE membership.id = "+membership.get(i)+" ;";
     		
@@ -3867,6 +3884,7 @@ public class HornetDBService extends Service {
     
     //TODO make this function called from the pending updates function.
     private int updateMembership() {
+    	Log.d(TAG, "Updating Memberships");
     	int result = 0;
     	ArrayList<String> pendingMemberships = new ArrayList<String>();
     	
@@ -3880,19 +3898,21 @@ public class HornetDBService extends Service {
     	if (!openConnection()) {
     		return -1;
     	}
-    	
+    	Log.d(TAG, pendingMemberships.size()+" Pending Membership(s)");
     	for (int i = 0; i <pendingMemberships.size(); i++) {
     		int membershipid = -1;
+    		ContentValues values = new ContentValues();
+    		
     		cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols._ID+" = ?", 
     				new String[] {pendingMemberships.get(i)}, null);
     		if (cur.moveToFirst()) {
 	    		membershipid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MSID));
-	    		ContentValues values = new ContentValues();
+	    		
 	    		values.put(ContentDescriptor.Membership.Cols.CANCEL_REASON, 
 	    				cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.CANCEL_REASON)));
 	    		values.put(ContentDescriptor.Membership.Cols.TERMINATION_DATE, 
 	    				"'"+cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.TERMINATION_DATE))+"'::date");
-	    		Log.e(TAG, "termination_date:"+values.getAsString(ContentDescriptor.Membership.Cols.TERMINATION_DATE));
+	    		Log.d(TAG, "termination_date:"+values.getAsString(ContentDescriptor.Membership.Cols.TERMINATION_DATE));
 				cur.close();
 				
 				cur = contentResolver.query(ContentDescriptor.CancellationFee.CONTENT_URI, null, ContentDescriptor.CancellationFee.Cols.MEMBERSHIPID+" = ?",
@@ -3924,7 +3944,10 @@ public class HornetDBService extends Service {
     		contentResolver.delete(ContentDescriptor.CancellationFee.CONTENT_URI, ContentDescriptor.CancellationFee.Cols.MEMBERSHIPID+" = ?",
     				new String[] {String.valueOf(membershipid)});
     		
-    		
+    		values = new ContentValues();
+    		values.put(ContentDescriptor.Membership.Cols.DEVICESIGNUP, "f");
+    		contentResolver.update(ContentDescriptor.Membership.CONTENT_URI, values, ContentDescriptor.Membership.Cols.MSID+" = ?",
+    				new String[] {String.valueOf(membershipid)});
     	}
     	
     	closeConnection();

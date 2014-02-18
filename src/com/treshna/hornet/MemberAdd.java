@@ -392,6 +392,7 @@ public class MemberAdd extends NFCActivity implements OnClickListener, DatePicke
 		//get date of birth
 		TextView dob = (TextView) this.findViewById(R.id.member_dob_text);
 		inputData.add(Services.dateFormat(dob.getText().toString(), "dd MMM yyyy", "dd/MM/yyyy"));
+		//inputData.add(dob.getText().toString());
 		
 		RadioGroup rgroup = (RadioGroup) this.findViewById(R.id.memberGender);
 		int id = rgroup.getCheckedRadioButtonId();
@@ -482,7 +483,7 @@ public class MemberAdd extends NFCActivity implements OnClickListener, DatePicke
 	
 	private void setText(String date) {
 		TextView dob = (TextView) this.findViewById(R.id.member_dob_text);
-		dob.setText(Services.dateFormat(date, "yyyy MM dd", "dd MMM yyyy"));
+		dob.setText(date);
 	}
 
 	@Override

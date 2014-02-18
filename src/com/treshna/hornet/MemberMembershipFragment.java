@@ -1,7 +1,9 @@
 package com.treshna.hornet;
 
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -80,9 +82,10 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 		return this.mActions;
 	}
 	
+	//This needs to filter by active memberships.
 	private View setupView() {
 		cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, 
-				ContentDescriptor.Membership.Cols.MID+" = ?", new String[] {memberID}, null);
+				ContentDescriptor.Membership.Cols.MID+" = ? AND "+ContentDescriptor.Membership.Cols.HISTORY+" = 'f'", new String[] {memberID}, null);
 		
 		LinearLayout mslist = (LinearLayout) view.findViewById(R.id.member_ms_list);
 		mslist.removeAllViews();
@@ -132,11 +135,10 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 	
 	private void cancelMembership(ArrayList<String> inputs, int membershipid) {
 		
-		//TODO: we need to provide feedback to let the user know it was successful. 
-				//i.e. hide/grey-out expired memberships.
 		ContentValues values = new ContentValues();
 		values.put(ContentDescriptor.Membership.Cols.CANCEL_REASON, inputs.get(1));
 		values.put(ContentDescriptor.Membership.Cols.TERMINATION_DATE, inputs.get(0));
+		values.put(ContentDescriptor.Membership.Cols.DEVICESIGNUP, "t");
 		Log.d(TAG, "termination_date:"+inputs.get(0));
 		
 		contentResolver.update(ContentDescriptor.Membership.CONTENT_URI, values, ContentDescriptor.Membership.Cols.MSID+" = ?", 
@@ -159,6 +161,34 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 			}
 		}
 		
+		cur = contentResolver.query(ContentDescriptor.FreeIds.CONTENT_URI, null, ContentDescriptor.FreeIds.Cols.TABLEID+" = ?",
+				new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.MemberNotes.getKey())}, null);
+		int mnid = -1;
+		if (cur.moveToFirst()) {
+			mnid = cur.getInt(cur.getColumnIndex(ContentDescriptor.FreeIds.Cols.ROWID));
+		}
+		cur.close();
+		
+		String note ="Membership Expired: "+inputs.get(1); 
+		SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy", Locale.US);
+		
+		values = new ContentValues();
+		values.put(ContentDescriptor.MemberNotes.Cols.DEVICESIGNUP, "t");
+		values.put(ContentDescriptor.MemberNotes.Cols.MID, memberID);
+		values.put(ContentDescriptor.MemberNotes.Cols.OCCURRED, format.format(new Date()));
+		values.put(ContentDescriptor.MemberNotes.Cols.NOTES, note);
+		values.put(ContentDescriptor.MemberNotes.Cols.MNID, mnid);
+		
+		contentResolver.insert(ContentDescriptor.MemberNotes.CONTENT_URI, values);
+		 
+		if (mnid > 0) {
+			contentResolver.delete(ContentDescriptor.FreeIds.CONTENT_URI, ContentDescriptor.FreeIds.Cols.ROWID+" = ? AND "
+					+ContentDescriptor.FreeIds.Cols.TABLEID+" = ?", new String[] {String.valueOf(mnid),
+					String.valueOf(ContentDescriptor.TableIndex.Values.MemberNotes.getKey())});
+		}
+		
+		//TODO: we need to provide feedback to let the user know it was successful. 
+		//i.e. hide/grey-out expired memberships.
 		setupView();
 	}
 
@@ -281,6 +311,7 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 		TextView date_view = (TextView) alert_cancel_ms.findViewById(R.id.text_cancel_date);
 		date_view.setTextColor(this.getResources().getColor(R.color.android_blue));
 		date_view.setText(Services.dateFormat(date, "yyyy MM dd", "dd MMM yyyy"));
+		//date_view.setText(date);
 	}
 	
 }

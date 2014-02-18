@@ -40,6 +40,7 @@ public class BookingsSlideFragment extends Fragment {
         selectedDate = Services.getAppSettings(getActivity(), "bookings_date");
     	if (Integer.parseInt(selectedDate) == -1) {
     		selectedDate = Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");
+    		//selectedDate = Services.DateToString(new Date());
     	}
     	hasOverview = this.getArguments().getBoolean("hasOverview");
     }

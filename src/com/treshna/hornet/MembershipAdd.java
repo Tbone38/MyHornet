@@ -213,6 +213,7 @@ public class MembershipAdd extends Fragment implements OnClickListener, DatePick
 						 TextView startdate = (TextView) page.findViewById(R.id.membershipsdate);
 						 startdate.setText(Services.dateFormat(start.toString(), "EEE MMM dd HH:mm:ss zzz yyyy", 
 								 "dd MMM yyyy"));
+						 //startdate.setText(Services.DateToString(start));
 						 
 						 TextView enddate = (TextView) page.findViewById(R.id.membershipedate);
 						 //Log.w(TAG, "Length IS:"+mLength);
@@ -221,6 +222,8 @@ public class MembershipAdd extends Fragment implements OnClickListener, DatePick
 									 "dd MMM yyyy"));
 							 enddate.setTag(Services.dateFormat(end.toString(),
 									 "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd"));
+							 //enddate.setText(Services.DateToString(end));
+							 //enddate.setTag(Services.DateToString(end));
 						 } else {
 							 enddate.setText(getActivity().getString(R.string.membership_add_enddate));
 						 }
@@ -242,6 +245,7 @@ public class MembershipAdd extends Fragment implements OnClickListener, DatePick
 		TextView startdate = (TextView) page.findViewById(R.id.membershipsdate);
 		startdate.setTag(Services.dateFormat(new Date().toString(),
 				"EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd"));
+		//startdate.setTag(Services.DateToString(new Date()));
 		startdate.setClickable(true);
 		startdate.setOnClickListener(this);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -253,6 +257,7 @@ public class MembershipAdd extends Fragment implements OnClickListener, DatePick
 		TextView enddate = (TextView) page.findViewById(R.id.membershipedate);
 		enddate.setTag(Services.dateFormat(new Date().toString(), 
 				"EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd"));
+		//enddate.setTag(Services.DateToString(new Date()));
 		enddate.setClickable(true);
 		enddate.setOnClickListener(this);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -471,17 +476,17 @@ public class MembershipAdd extends Fragment implements OnClickListener, DatePick
 		
 		if (sDatePicker == theDatePicker) {
 			sdate = date;
-			sdate = Services.dateFormat(sdate, "yyyy MM dd", "dd MMM yyyy");
+			//sdate = Services.dateFormat(sdate, "yyyy MM dd", "dd MMM yyyy");
 		}
 		
 		if (eDatePicker == theDatePicker) {
 			edate = date;
-			edate = Services.dateFormat(edate, "yyyy MM dd", "dd MMM yyyy");
+			//edate = Services.dateFormat(edate, "yyyy MM dd", "dd MMM yyyy");
 		}
 		
 		if (pDatePicker == theDatePicker) {
 			pdate = date;
-			pdate = Services.dateFormat(pdate, "yyyy MM dd", "dd MMM yyyy");
+			//pdate = Services.dateFormat(pdate, "yyyy MM dd", "dd MMM yyyy");
 		}
 		setupDates();
 		

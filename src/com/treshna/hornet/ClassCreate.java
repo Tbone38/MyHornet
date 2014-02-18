@@ -65,11 +65,12 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 		
 		setdate = (LinearLayout) this.findViewById(R.id.button_class_date);	
 		setdate.setTag(Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd"));
+		//setdate.setTag(Services.DateToString(new Date()));
 		setdate.setClickable(true);
 		setdate.setOnClickListener(this);
 		if (datevalue != null) {
 			date = (TextView) this.findViewById(R.id.classDate);
-			date.setText(Services.dateFormat(datevalue, "yyyy MM dd", "dd MMM yyyy"));
+			date.setText(datevalue);
 		}
 		
 		setstarttime = (LinearLayout) this.findViewById(R.id.button_start_time);

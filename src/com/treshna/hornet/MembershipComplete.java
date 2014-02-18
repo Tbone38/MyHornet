@@ -226,8 +226,10 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 		values.put(ContentDescriptor.Membership.Cols.PGID, input.get(1));
 		values.put(ContentDescriptor.Membership.Cols.PID, input.get(2));
 		values.put(ContentDescriptor.Membership.Cols.MSSTART, Services.dateFormat(input.get(3), "dd MMM yyyy", "yyyy-MM-dd"));
+		
 		if (input.get(4) != null) {
 			values.put(ContentDescriptor.Membership.Cols.EXPIRERY, Services.dateFormat(input.get(4), "dd MMM yyyy", "yyyy-MM-dd"));
+			
 		}
 		values.put(ContentDescriptor.Membership.Cols.PRICE, input.get(5));
 		//payment-date?

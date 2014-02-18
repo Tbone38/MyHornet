@@ -592,17 +592,20 @@ public class UpdateDatabase {
 		public static final String SQL8 = "ALTER TABLE "+Membership.NAME
 				+" ADD COLUMN "+Membership.Cols.STATE+" TEXT;";
 		
-		public static final String SQL9 = "CREATE TRIGGER "+Membership.Triggers.ON_UPDATE+" BEFORE UPDATE ON "+Membership.NAME
-				+" FOR EACH ROW WHEN new."+Membership.Cols.MSID+" > 0 AND (" //list all the possible columns that can change
+		public static final String SQL9 = "ALTER TABLE "+Membership.NAME
+				+" ADD COLUMN "+Membership.Cols.HISTORY+" TEXT DEFAULT 'f';";
+		
+		public static final String SQL10 = "CREATE TRIGGER "+Membership.Triggers.ON_UPDATE+" BEFORE UPDATE ON "+Membership.NAME
+				+" FOR EACH ROW WHEN new."+Membership.Cols.DEVICESIGNUP+" = 't' "/*AND (" //list all the possible columns that can change
 					+"new."+Membership.Cols.CANCEL_REASON+" != old."+Membership.Cols.CANCEL_REASON+" OR "
-					+"new."+Membership.Cols.TERMINATION_DATE+" != old."+Membership.Cols.TERMINATION_DATE+") "
+					+"new."+Membership.Cols.TERMINATION_DATE+" != old."+Membership.Cols.TERMINATION_DATE+") "*/
 				+"BEGIN "
 					+"INSERT OR REPLACE INTO "+PendingUpdates.NAME
 					+" ("+PendingUpdates.Cols.ROWID+", "+PendingUpdates.Cols.TABLEID+")"
 					+" VALUES (new."+Membership.Cols._ID+", "+TableIndex.Values.Membership.getKey()+");"
 				+"END; ";
 		
-		public static final String SQL10 = "CREATE TABLE "+CancellationFee.NAME+" ( "+CancellationFee.Cols.MEMBERSHIPID+" INTEGER PRIMARY KEY, "
+		public static final String SQL11 = "CREATE TABLE "+CancellationFee.NAME+" ( "+CancellationFee.Cols.MEMBERSHIPID+" INTEGER PRIMARY KEY, "
 				+CancellationFee.Cols.FEE+" TEXT );";
 		
 		public static void patchNinetyFour(SQLiteDatabase db) {
@@ -628,6 +631,8 @@ public class UpdateDatabase {
 				db.execSQL(UpdateDatabase.NinetyFour.SQL9);
 				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyFour.SQL10);
 				db.execSQL(UpdateDatabase.NinetyFour.SQL10);
+				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyFour.SQL11);
+				db.execSQL(UpdateDatabase.NinetyFour.SQL11);
 				db.setTransactionSuccessful();
 			} finally {
 				db.endTransaction();

@@ -64,13 +64,14 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		 String startid = getArguments().getString(Services.Statics.KEY);
 		 if (getArguments().getString(Services.Statics.DATE)!= null) {
 			 curdate = getArguments().getString(Services.Statics.DATE);
-			 curdate = Services.dateFormat(curdate, "yyyyMMdd", "dd MMM yyyy");
+			 //curdate = Services.dateFormat(curdate, "yyyyMMdd", "dd MMM yyyy");
 		 }
 		 
 		 contentResolver = getActivity().getContentResolver();
 		 page = inflater.inflate(R.layout.booking_add, container, false);
 		 if (curdate == null) {
 			 curdate = Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "dd MMM yyyy");
+			 //curdate = Services.DateToString(new Date());
 		 }
 		 setupView(startid);
 		 return page;
@@ -98,8 +99,9 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 			date.setBackgroundDrawable(getResources().getDrawable(R.drawable.button));
 		}
 		date.setClickable(true);
-		date.setText(curdate);
-		date.setTag(Services.dateFormat(curdate, "dd MMM yyyy", "yyyyMMdd"));
+		date.setText(Services.dateFormat(curdate, "yyyyMMdd", "dd MMM yyyy"));
+		//date.setTag(Services.dateFormat(curdate, "dd MMM yyyy", "yyyyMMdd"));
+		date.setTag(curdate);
 		
 		date.setOnClickListener(this);
 		
@@ -522,6 +524,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 			return -6;
 		}
 		arrival = Services.dateFormat(input.get(1), "dd MMM yyyy", "yyyyMMdd");
+		//arrival = input.get(1);
 		
 		//Check if the timeslots are available before attempting to insert bookings.
 		for (int i=stimeid;i<etimeid;i +=1) {

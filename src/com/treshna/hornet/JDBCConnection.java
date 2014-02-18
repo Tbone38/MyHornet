@@ -483,16 +483,19 @@ public class JDBCConnection {
 	    	ResultSet rs = null;
 	    	String query ="SELECT membership.id, memberid, membership.startdate, membership.enddate, cardno, membership.notes, " +
 	    			"primarymembership, membership.lastupdate,  membership_state(membership.*, programme.*) as state," +
-	    			" membership.concession, programme.name, programme.id AS programmeid, membership.termination_date, membership.cancel_reason"
+	    			" membership.concession, programme.name, programme.id AS programmeid, membership.termination_date, membership.cancel_reason,"
+	    			+ " membership.history"
 	    			+ " FROM membership LEFT JOIN programme ON (membership.programmeid = programme.id)" +
-	    			" WHERE membership.history = 'f' ";
+	    			" WHERE 1=1 ";
 	    	if (ymca > 0) {
-	    		query = query + " AND memberid IN (SELECT DISTINCT memberid FROM membership "
+	    		query = query + "AND memberid IN (SELECT DISTINCT memberid FROM membership "
 	    				+ "WHERE programmeid IN (SELECT id FROM programme WHERE history = false "
 	    				+ "AND programmegroupid = 0) GROUP BY memberid) ";
 	    	}
 	    	if (lastsync != null) {
 	    		query = query + "AND membership.lastupdate > ?::TIMESTAMP WITHOUT TIME ZONE ;";
+	    	} else {
+	    		query = query + "AND membership.history = 'f'";
 	    	}
 	    	//ADD YMCA HANDLING.
 	  
@@ -921,7 +924,7 @@ public class JDBCConnection {
 	
 		if (values.containsKey(ContentDescriptor.Membership.Cols.CANCEL_REASON)){
 			update_query = update_query+" "+ContentDescriptor.Membership.Cols.CANCEL_REASON+",";
-			values_query = values_query+" "+values.getAsString(ContentDescriptor.Membership.Cols.CANCEL_REASON)+",";
+			values_query = values_query+" '"+values.getAsString(ContentDescriptor.Membership.Cols.CANCEL_REASON)+"',";
 			values.remove(ContentDescriptor.Membership.Cols.CANCEL_REASON);
 		}
 		if (values.containsKey(ContentDescriptor.Membership.Cols.TERMINATION_DATE)) {
@@ -949,6 +952,7 @@ public class JDBCConnection {
 		
 		pStatement = con.prepareStatement(update_query);
 		pStatement.setInt(1, membershipid);
+		Log.w(TAG, pStatement.toString());
 		pStatement.executeUpdate();
 		
 		if (cancellation_fee != null) {
@@ -961,7 +965,9 @@ public class JDBCConnection {
 		pStatement = con.prepareStatement("select nightrun_membership(?);");
 		pStatement.setInt(1, membershipid);
 		
-    	return pStatement.executeUpdate();
+    	ResultSet rs = pStatement.executeQuery();
+    	rs.close();
+    	return 1; // ?
     }
     
     public SQLWarning getWarnings() throws SQLException, NullPointerException {
