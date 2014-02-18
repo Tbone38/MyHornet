@@ -2,6 +2,7 @@ package com.treshna.hornet;
 
 
 import java.util.ArrayList;
+
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.SharedPreferences;
@@ -10,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -49,6 +51,9 @@ public class SetupSimpleStartFragment extends Fragment implements OnClickListene
 		
 		TextView button_cancel = (TextView) view.findViewById(R.id.button_simple_cancel);
 		button_cancel.setOnClickListener(this);
+		
+		TextView hint = (TextView) view.findViewById(R.id.setup_simple_hint);
+		hint.setText(Html.fromHtml(this.getString(R.string.setup_simple_hint)));
 		
 		return view;
 	}

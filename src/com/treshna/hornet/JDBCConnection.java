@@ -407,7 +407,7 @@ public class JDBCConnection {
 	    	
 	    	if (lastupdate != null) {
 	    		pStatement.setString(1, Services.dateFormat(new Date(Long.parseLong(lastupdate)).toString(),
-	    				"EEE MMM dd HH:mm:ss zzz yyyy", "dd-MM-yyyy HH:mm:ss"));
+	    				"EEE MMM dd HH:mm:ss zzz yyyy", "dd-MMM-yyyy HH:mm:ss"));
 	    	}
 	    	
 	    	rs = pStatement.executeQuery();
@@ -665,7 +665,7 @@ public class JDBCConnection {
 	    	pStatement = con.prepareStatement("INSERT INTO membership_suspend (id, startdate, howlong, reason, "
 	    			+ "memberid, freeze_fees, enddate) VALUES (?, ?::DATE, ?::INTERVAL, ?, ?, ?, (?::date + ?::interval)::date);");
 	    	pStatement.setInt(1, Integer.decode(sid));
-	    	pStatement.setString(2, Services.dateFormat(startdate, "yyyyMMdd", "yyyy-MM-dd"));
+	    	pStatement.setString(2, Services.dateFormat(startdate, "yyyyMMdd", "yyyy-MMM-dd"));
 	    	pStatement.setString(3, duration);
 	    	pStatement.setString(4, reason);
 	    	pStatement.setInt(5, Integer.decode(mid));
@@ -674,7 +674,7 @@ public class JDBCConnection {
 	    	} else {
 	    		pStatement.setBoolean(6, false);
 	    	}
-	    	pStatement.setString(7, Services.dateFormat(startdate, "yyyyMMdd", "yyyy-MM-dd"));
+	    	pStatement.setString(7, Services.dateFormat(startdate, "yyyyMMdd", "yyyy-MMM-dd"));
 	    	pStatement.setString(8, duration);
 	    	
 	    	return pStatement.executeUpdate();

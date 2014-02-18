@@ -5,12 +5,13 @@
     android:background="@color/white"
     android:orientation="vertical" >
     <TextView
-        android:id="@+id/setup_simple_hint"
+        android:id="@+id/setup_simple_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="5dp"
         android:textSize="18sp"
-        android:text="@string/setup_simple_hint" />
+        android:text="@string/setup_simple_text" />
+    
     <TextView
         android:id="@+id/setup_simple_email_text"
         android:layout_width="match_parent"
@@ -42,7 +43,13 @@
         android:inputType="textCapWords"
         android:padding="5dp"
         android:layout_marginLeft="3dp"/>
-    
+    <TextView
+        android:id="@+id/setup_simple_hint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:textSize="14sp"
+        android:text="@string/setup_simple_hint" />
     <LinearLayout
         android:id="@+id/button_row"
         android:layout_width="match_parent"

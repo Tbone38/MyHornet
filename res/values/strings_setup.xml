@@ -4,7 +4,9 @@
         \n\nPlease select one of the setup procedures:</string>
     <string name="simple_setup">Simple Setup</string>
     <string name="advanced_setup">Advanced Setup</string>
-    <string name="setup_simple_hint">Please Enter your details below</string>
+    <string name="setup_simple_text">Please Enter your details below</string>
+    <string name="setup_simple_hint"> <![CDATA[<b>Note:</b>]]> this will generate a gymmaster database for you, if you\'re an existing client,
+        or already have a gymmaster database please use the advanced setup.</string>
     <string name="simple_email">Your Email:</string>
     <string name="simple_company_name">Your Company Name:</string>
     <string name="simple_page2_hint">Please fill in your details below to complete the setup</string>

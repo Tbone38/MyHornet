@@ -44,12 +44,12 @@ public class HornetDatabase extends SQLiteOpenHelper {
 	
 	 public static final String DATABASE_NAME="hornet.db";
 	 private static final int DATABASE_VERSION = 94;
-	 //private Context theContext;
+	 private Context theContext;
 	 //^^may be required for toasts etc at some point.
 	 
 	 public HornetDatabase (Context context) {
 		 super(context, DATABASE_NAME, null, DATABASE_VERSION);
-		 //this.theContext = context;
+		 this.theContext = context;
 	 }
 
 	@Override
@@ -311,6 +311,11 @@ public class HornetDatabase extends SQLiteOpenHelper {
 	
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		Services.setPreference(this.theContext, "last_freq_sync", "0");
+		Services.setPreference(this.theContext, "lastsync", "0");
+		Services.setPreference(this.theContext, "b_lastsync", "0");
+		Services.setPreference(this.theContext, "first_sync", "-1"); //force a full download the next time we sync.
+		
 		Log.w(HornetDatabase.class.getName(),
 				"Upgrading database from version " + oldVersion + " to "
 						+ newVersion );
