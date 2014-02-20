@@ -19,7 +19,9 @@
             	Fix is to call SimpleDateFormat.format(Date()) instead of trying to parse the Date().toString().
 			Progress Box no longer works. needs to be added back in via a aSync Task for the db_syncing.
 				(had issues trying to attach to windows from the service thread, due to 'Context' complications.)
-			Update Recurssion. (updating the same rows every time they change).
+			Update Recurssion. (updating the same rows every time they change). (occurs in bookings.)
+			Updating version seems to loose Resources & doors. ?
+			
 
 	V118:
 		-DONE:
@@ -59,6 +61,7 @@
 				KPI's.
 				Fix Dates (dd MMM yyyy)
 				Add Member Booking Page (that shows just that members up-coming bookings.)
+				get password encryption working.
 
 	v116/117:
 		minor bug fixes/undocumented.

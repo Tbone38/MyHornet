@@ -24,7 +24,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.support.v4.app.ServiceCompat;
 import android.util.Log;
 
 import com.treshna.hornet.ContentDescriptor.Membership;

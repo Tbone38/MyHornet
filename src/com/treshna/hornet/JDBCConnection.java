@@ -362,7 +362,7 @@ public class JDBCConnection {
 			+"member.email AS memail, member.notes AS mnotes, member.status, member.cardno, member.gender, "
 			+"emergencyname, emergencyhome, emergencywork, emergencycell, emergencyrelationship, "
 			+"medication, medicationdosage, medicationbystaff, medicalconditions "
-			+ "FROM member"
+			+ "FROM member WHERE status != 3"
 			;
     
     public ResultSet getMembers(String lastupdate) throws SQLException, NullPointerException {
@@ -370,7 +370,7 @@ public class JDBCConnection {
 	    	ResultSet rs = null;
 	    	String query = membersQuery;
 	    	if (lastupdate != null) {
-	    		query = query + " WHERE status != 3 AND lastupdate > ?::TIMESTAMP WITHOUT TIME ZONE";
+	    		query = query + " AND lastupdate > ?::TIMESTAMP WITHOUT TIME ZONE";
 	    	}
 	    	pStatement = con.prepareStatement(query);
 	    	
@@ -399,9 +399,9 @@ public class JDBCConnection {
 	    	String query = YMCAMembersQuery;
 	    	query = query + " WHERE id IN (SELECT DISTINCT memberid FROM membership "
 					+ "WHERE programmeid IN (SELECT id FROM programme WHERE history = false "
-					+ "AND programmegroupid = 0) GROUP BY memberid) ";
+					+ "AND programmegroupid = 0) GROUP BY memberid) AND status != 3";
 	    	if (lastupdate != null) {
-	    		query = query + " AND status != 3 AND lastupdate > ?::TIMESTAMP WITHOUT TIME ZONE";
+	    		query = query + " AND lastupdate > ?::TIMESTAMP WITHOUT TIME ZONE";
 	    	}
 	    	pStatement = con.prepareStatement(query);
 	    	

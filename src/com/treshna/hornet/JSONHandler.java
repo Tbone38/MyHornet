@@ -1,10 +1,13 @@
 package com.treshna.hornet;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -12,8 +15,11 @@ import java.util.Arrays;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+import javax.crypto.CipherOutputStream;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.http.HttpEntity;
@@ -30,6 +36,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 
 public class JSONHandler {
@@ -38,6 +45,7 @@ public class JSONHandler {
 	
 	private static final String TAG = "JSONHandler";
 	
+	private static byte[] iv;
 	private Context ctx;
 	private int errorcode = -1;
 	private String errormsg = null;
@@ -70,6 +78,42 @@ public class JSONHandler {
 		String status;
 		errorcode = -1;
 		errormsg = null;
+		//2a780e78620070e1c37f321065bb6a845fd1371cd5ed3d457cf2c83bb4b9a0c0 	//ZLuImr
+		//16b1392fa1c881843097531a35388b68e30058b76e17c5920798da3ce8da348f 	//ZfqmRe
+		//7C6D5B646F8F6D5D8E89076210880CEF 									//VsM2GO
+		//String encrypt_string = "c3ab8ab87d7907aae91f6bcc9dbc4321";
+		/*byte[] encrypt, decrypt;
+		encrypt = Services.hexStringToByteArray(encrypt_string);
+		Log.e(TAG, Arrays.toString(encrypt));
+		iv = Arrays.copyOfRange(encrypt, 0, 16);
+		Log.e(TAG, "IV:"+Services.bytesToHex(iv));
+		byte [] encrypt_password = Arrays.copyOfRange(encrypt, 16, encrypt.length);
+		decrypt = decrypt(encrypt_password, iv);
+		try {
+		Log.e(TAG, "DECRYPT_PASSWORD: "+new String(decrypt, "UTF-8")+"\n UNCRYPT_PASSWORD: 'ZfqmRe'");
+		} catch (Exception e) {e.printStackTrace();};
+		
+		if (encrypt != null) {
+			return false;
+		}
+		
+		byte[] encrypt, decrypt;
+		encrypt = this.encrypt("VsM2GO");
+		Log.w(TAG, "ENCRYPT:"+Services.bytesToHex(encrypt));
+		decrypt = this.decrypt(encrypt);
+		try {
+		Log.w(TAG, new String(decrypt, "UTF-8")); } catch (Exception e) {};
+		
+		encrypt = Services.hexStringToByteArray(encrypt_string);
+		Log.e(TAG, Arrays.toString(encrypt));
+		decrypt = decrypt(encrypt);
+		try {
+		Log.e(TAG, "DECRYPT_PASSWORD: "+new String(decrypt, "UTF-8")+"\n UNCRYPT_PASSWORD: 'VsM2G0'");
+		} catch (Exception e) {};
+		
+		if (encrypt != null) {
+			return false;
+		}*/
 		
 		result = getJSON(url);
 		if (result == null){
@@ -111,12 +155,19 @@ public class JSONHandler {
 	}
 	
 	public boolean updateUser(String email, String username, String countrycode) {
+		byte[] encrypt, decrypt;		
+		/*encrypt = encrypt(" ");
+		try {
+		Log.e(TAG, "TEST STRING ENCRYPTED: "+new String(encrypt, "UTF-8"));
+		} catch (Exception e) {e.printStackTrace();};*/
+
 		username = username.replace(" ", "%20");
 		String url = HOST+"/updateuser?email="+email+"&username="+username+"&country="+countrycode;
 		JSONObject result;
 		String status;
 		errorcode = -1;
 		errormsg = null;
+		
 		
 		result = getJSON(url);
 		try {
@@ -145,8 +196,17 @@ public class JSONHandler {
 				dbname = result.getString("db_name");
 				user = result.getString("username");
 				password = result.getString("uncrypt_password");
-				//Log.d(TAG, "uncrypt_password: "+password);
-				//Log.d(TAG, "decrypted:"+decrypt(password));
+				//String encrypt_string = result.getString("encrypt_password");
+				//encrypt = Services.hexStringToByteArray(encrypt_string);
+				//iv = Arrays.copyOfRange(encrypt, 0, 16);
+				//Log.e(TAG, "IV:"+Services.bytesToHex(iv));
+				//byte [] encrypt_password = Arrays.copyOfRange(encrypt, 16, encrypt.length);
+				 
+				/*Log.e(TAG, "ENCRYPT_PASSWORD:"+Services.bytesToHex(encrypt));
+				decrypt = decrypt(encrypt); //, iv
+				try {
+				Log.e(TAG, "DECRYPT_PASSWORD: "+new String(decrypt, "UTF-8")+"\n UNCRYPT_PASSWORD: "+password);
+				} catch (Exception e) {e.printStackTrace();};*/
 			} catch (JSONException e) {
 				//we should have emailed config details to the users email address.
 				//if they run into issues (i.e. end up here) then refer them to the email?
@@ -275,81 +335,112 @@ public class JSONHandler {
 	
 	private SecretKeySpec generatekey() {
 		SecretKeySpec key = null;
-		try {
-			String passphrase = "correcthorsebatterystaple";
-			MessageDigest digest = MessageDigest.getInstance("MD5");
-			digest.update(passphrase.getBytes());
-			byte[] result = digest.digest();
-			Log.d(TAG, "passphrase:"+Arrays.toString(result));
+		//try {
+			//String passphrase = "serialbatteryostrichscreen";
+			String hex_pass = "19307f3f9253417201e4ef8183136320";
+			//MessageDigest digest = MessageDigest.getInstance("MD5");
+			//digest.update(passphrase.getBytes());
+			//byte[] result = digest.digest();
+			byte[] result = Services.hexStringToByteArray(hex_pass);
+			Log.e(TAG, Arrays.toString(result));
+			key = new SecretKeySpec(result, "AES"); //0, 16,
 			
-			key = new SecretKeySpec(result, 0, 16, "AES");
-		} catch (NoSuchAlgorithmException e) {
+		/*} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 			return null;
-		} 
+		} */
 		
 		return key;
 	}
 	
-	public String encrypt(String input) {
-		String output;
-		try {	
-			SecretKeySpec key = generatekey();
-			Cipher aes = Cipher.getInstance("AES/ECB/PKCS7Padding");
-			aes.init(Cipher.ENCRYPT_MODE, key);
-			byte[] ciphertext = aes.doFinal(input.getBytes());
-			output = new String(ciphertext);
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-			return null;
-		} catch (NoSuchPaddingException e) {
-			e.printStackTrace();
-			return null;
-		} catch (InvalidKeyException e) {
-			e.printStackTrace();
-			return null;
-		} catch (IllegalBlockSizeException e) {
-			e.printStackTrace();
-			return null;
-		} catch (BadPaddingException e) {
-			e.printStackTrace();
-			return null;
-		}
-		return output;
-	}
-	
-	public String decrypt(String input) {
-		String output = null;
-		byte[] inputs = Services.hexStringToByteArray(input);
-		//THIS MIGHT BE BROKEN DUE TO SIGNED-NESS ?
-		Log.d(TAG, Arrays.toString(inputs));
-		
+	/**
+	* This encryption/decryption code doesn't match outputs with the Python code.
+	* It needs fixed.
+	**/
+	public byte[] encrypt(String input) {
+		byte[] encryptedBytes;
 		try {
 			SecretKeySpec key = generatekey();
-			
-			Cipher aes = Cipher.getInstance("AES/ECB/NoPadding"); //PKCS5Padding
-			aes.init(Cipher.DECRYPT_MODE, key);
-			output = new String(aes.doFinal(inputs), "ASCII");
-		} catch (NoSuchAlgorithmException e) {
+			//Cipher encryptCipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+			Cipher encryptCipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+		    encryptCipher.init(Cipher.ENCRYPT_MODE, key);
+		    iv = encryptCipher.getIV();
+		    // Encrypt
+		    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		    CipherOutputStream cipherOutputStream = new CipherOutputStream(outputStream, encryptCipher);
+		    cipherOutputStream.write(input.getBytes());
+		    cipherOutputStream.flush();
+		    cipherOutputStream.close();
+		    encryptedBytes = outputStream.toByteArray();
+		    outputStream.close();
+		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
 		} catch (NoSuchPaddingException e) {
 			e.printStackTrace();
 			return null;
-		} catch (BadPaddingException e) {
+		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 			return null;
 		} catch (InvalidKeyException e) {
 			e.printStackTrace();
 			return null;
-		} catch (IllegalBlockSizeException e) {
+		}
+		
+		return encryptedBytes;
+	}
+	
+	/**
+	* This encryption/decryption code doesn't match outputs with the Python code.
+	* It needs fixed.
+	**/
+	public byte[] decrypt(byte[] encryptedBytes) { //, byte[] iv
+		String output = null;
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		try {
+		
+			SecretKeySpec key = generatekey();
+			
+			//Cipher decryptCipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+			//IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
+		    //decryptCipher.init(Cipher.DECRYPT_MODE, key, ivParameterSpec);
+			Cipher decryptCipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+			decryptCipher.init(Cipher.DECRYPT_MODE, key);
+			
+		    outputStream = new ByteArrayOutputStream();
+		    ByteArrayInputStream inStream = new ByteArrayInputStream(encryptedBytes);
+		    CipherInputStream cipherInputStream = new CipherInputStream(inStream, decryptCipher);
+		    byte[] buf = new byte[1024];
+			int bytesRead;
+		    while ((bytesRead = cipherInputStream.read(buf)) >= 0) {
+		        outputStream.write(buf, 0, bytesRead);
+		    }
+		    
+		    output = new String(outputStream.toByteArray(), "UTF-8");
+		    Log.d(TAG, output);
+		    cipherInputStream.close();
+		    inStream.close();		    
+		} catch (InvalidKeyException e) {
 			e.printStackTrace();
 			return null;
-		}catch (UnsupportedEncodingException e) {
+		} catch (IOException e) {
+			e.printStackTrace();
+			//Log.e(TAG,e.getCause().toString());
+			Log.e(TAG,e.getMessage());
+			return null;
+		} /*catch (InvalidAlgorithmParameterException e) {
+			e.printStackTrace();
+			return null;
+		}*/ catch (NoSuchPaddingException e) {
+			e.printStackTrace();
+			return null;
+		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 			return null;
 		}
-		return output;
+		
+		//return output;
+		return outputStream.toByteArray();
 	}
 	
 	private JSONObject postJSON(String url, JSONObject post) {
