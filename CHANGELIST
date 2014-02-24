@@ -62,6 +62,9 @@
 				Fix Dates (dd MMM yyyy)
 				Add Member Booking Page (that shows just that members up-coming bookings.)
 				get password encryption working.
+				Save default-selected trainer for bookings.
+				Format/Default time to 12hr.
+				Booking view showing multiple days for selected resource.
 
 	v116/117:
 		minor bug fixes/undocumented.

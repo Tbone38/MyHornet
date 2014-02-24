@@ -131,6 +131,7 @@ public class MainActivity extends NFCActivity {
 	@Override
 	public void onBackPressed() {
 		//this needs some minor tweaks. consider adding a queue.
+		//also: this is disgusting. MAKE IT LOOK NICE.
 		if (cFragment instanceof BookingsListSuperFragment) {
 			BookingsListSuperFragment f = (BookingsListSuperFragment) cFragment;
 			if (f.getCurrentFragment() instanceof BookingsOverviewFragment) {

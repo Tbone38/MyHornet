@@ -50,6 +50,7 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
         mLoader = getLoaderManager();
         mResolver = this.getActivity().getContentResolver();
         selectedDate = this.getArguments().getString("bookings_date");
+        selectedResource = Integer.parseInt(Services.getAppSettings(getActivity(), "resourcelist"));
     	if (Integer.parseInt(selectedDate) == -1) {
     		selectedDate = Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");
     		//selectedDate = Services.DateToString(new Date());
