@@ -65,6 +65,7 @@
 				Save default-selected trainer for bookings.
 				Format/Default time to 12hr.
 				Booking view showing multiple days for selected resource.
+				check that balance/notes are only being downloaded as often as needed.
 
 	v116/117:
 		minor bug fixes/undocumented.

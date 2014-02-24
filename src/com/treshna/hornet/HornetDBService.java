@@ -3113,14 +3113,14 @@ public class HornetDBService extends Service {
     private int getMemberBalance(long last_update) {
     	Log.d(TAG, "Getting Member Balance");
     	int result = 0;
-    	final long TWELEVEHOURS = 43200000;
+    	final long TWENTYFOURHOURS = 86400000;
     	if (!openConnection()) {
     		return -1;
     	}
     	cur = contentResolver.query(ContentDescriptor.Member.URI_JOIN_BALANCE, new String[] {"m."
     	+ContentDescriptor.Member.Cols.MID}, "("+ContentDescriptor.MemberBalance.Cols.LASTUPDATE+" <= ? OR "
     	+ContentDescriptor.MemberBalance.Cols.LASTUPDATE+" IS NULL )",
-    	new String[] {new Date(last_sync+TWELEVEHOURS).toString()}, null);
+    	new String[] {String.valueOf(new Date(last_sync-TWENTYFOURHOURS).getTime())}, null);
     	
     	ArrayList<String> idlist = new ArrayList<String>();
     	while (cur.moveToNext()) {
