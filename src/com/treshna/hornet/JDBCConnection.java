@@ -362,13 +362,13 @@ public class JDBCConnection {
 			+"member.email AS memail, member.notes AS mnotes, member.status, member.cardno, member.gender, "
 			+"emergencyname, emergencyhome, emergencywork, emergencycell, emergencyrelationship, "
 			+"medication, medicationdosage, medicationbystaff, medicalconditions "
-			+ "FROM member WHERE status != 3"
+			+ "FROM member"
 			;
     
     public ResultSet getMembers(String lastupdate) throws SQLException, NullPointerException {
 
 	    	ResultSet rs = null;
-	    	String query = membersQuery;
+	    	String query = membersQuery+" WHERE status != 3";
 	    	if (lastupdate != null) {
 	    		query = query + " AND lastupdate > ?::TIMESTAMP WITHOUT TIME ZONE";
 	    	}
@@ -736,7 +736,8 @@ public class JDBCConnection {
      */
     public int uploadMembership(int memberId, int membershipId, int programmeId, int programmeGroupId, 
     		String startDate, String endDate, int cardNo, String signupFee, String price) throws SQLException, NullPointerException {
-	    	
+	    	//dru said leave firstpayment blank, the software should fix it it's self.
+    		//firstpayment
 	    	pStatement = con.prepareStatement("INSERT INTO membership (id, programmeid, programmegroupid, memberid, startdate, "
 	    			+ "enddate, cardno, notes, signupfee, paymentdue) VALUES (?, ?, ?, ?, ?::date, ?::date, ?, 'Membership Added Via Android',"
 	    			+ " ?::money, ?::money);");
@@ -758,14 +759,14 @@ public class JDBCConnection {
 	    	pStatement.executeUpdate();
 	    	this.closePreparedStatement();
 	    	
-	    	
-	    	pStatement = con.prepareStatement("INSERT INTO payment (paymentmethodid, memberid, membershipid, amount, "
+	    	//I don't think we need this.
+	    	/*pStatement = con.prepareStatement("INSERT INTO payment (paymentmethodid, memberid, membershipid, amount, "
 	    			+ "note, finished) VALUES (11, ?, ?, '0.00'::money, 'Membership Added via Android', 't');");
 	    	pStatement.setInt(1, memberId);
 	    	pStatement.setInt(2, membershipId);
 	    	
 	    	pStatement.executeUpdate();
-	    	this.closePreparedStatement();
+	    	this.closePreparedStatement();*/
 	    	
 	    	pStatement = con.prepareStatement("UPDATE membership SET (completed) = ('t') WHERE id = ?");
 	    	pStatement.setInt(1, membershipId);
@@ -968,6 +969,26 @@ public class JDBCConnection {
     	ResultSet rs = pStatement.executeQuery();
     	rs.close();
     	return 1; // ?
+    }
+    
+    /**
+     * 
+     * @param todate, highest date.
+     * @param fromdate, lowest date.
+     * @param programmegroup, set to -1 for default.
+     * @param companyid, set to -1 for default.
+     * @return
+     * @throws SQLException
+     */
+    public ResultSet getKPIs(String todate, String fromdate, int programmegroup, int companyid) throws SQLException {
+    	//TODO: we need to check the cache first. if no values available, we run the stats collate function.
+    	pStatement = con.prepareStatement("SELECT * FROM statscollate(?::date, ?::date, ?, ?);");
+    	pStatement.setString(1, todate);
+    	pStatement.setString(2, fromdate);
+    	pStatement.setInt(3, programmegroup);
+    	pStatement.setInt(4, companyid);
+    	
+    	return pStatement.executeQuery();
     }
     
     public SQLWarning getWarnings() throws SQLException, NullPointerException {

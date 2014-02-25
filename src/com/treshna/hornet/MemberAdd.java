@@ -48,14 +48,14 @@ public class MemberAdd extends NFCActivity implements OnClickListener, DatePicke
 
 		TextView accept = (TextView) this.findViewById(R.id.buttonAccept);
 		TextView cancel = (TextView) this.findViewById(R.id.buttonCancel);
-		TextView clear = (TextView) this.findViewById(R.id.buttonClear);
+		//TextView clear = (TextView) this.findViewById(R.id.buttonClear);
 		//click-handling
 		accept.setClickable(true);
 		accept.setOnClickListener(this);
 		cancel.setClickable(true);
 		cancel.setOnClickListener(this);
-		clear.setClickable(true);
-		clear.setOnClickListener(this);
+		/*clear.setClickable(true);
+		clear.setOnClickListener(this);*/
 		
 		LinearLayout buttondob = (LinearLayout) this.findViewById(R.id.button_member_dob);
 		buttondob.setOnClickListener(this);
@@ -159,12 +159,17 @@ public class MemberAdd extends NFCActivity implements OnClickListener, DatePicke
 				//InsertMember member = above line
 				clearForm();
 				
-				ArrayList<String> tag = new ArrayList<String>();
+				/*ArrayList<String> tag = new ArrayList<String>();
 				tag.add(memberid);
-				tag.add(null);
-				Intent i = new Intent(this, EmptyActivity.class);
+				tag.add(null);*
+				Intent i = new Intent(this, EmptyActivity.class);*
 				i.putExtra(Services.Statics.KEY, Services.Statics.FragmentType.MemberDetails.getKey());
-				i.putStringArrayListExtra(VisitorsViewAdapter.EXTRA_ID, tag);
+				i.putStringArrayListExtra(VisitorsViewAdapter.EXTRA_ID, tag);*/
+				
+				Intent i = new Intent(this, EmptyActivity.class);
+				i.putExtra(Services.Statics.KEY, Services.Statics.FragmentType.MemberAddTag.getKey());
+				i.putExtra(Services.Statics.MID, Integer.parseInt(memberid));
+				
 				this.startActivity(i);
 				this.finish();
 				
@@ -176,9 +181,9 @@ public class MemberAdd extends NFCActivity implements OnClickListener, DatePicke
 		case (R.id.buttonCancel):
 			NavUtils.navigateUpFromSameTask(this);
 			break;
-		case (R.id.buttonClear):
+	/*case (R.id.buttonClear):
 			clearForm();
-			break;
+			break;*/
 		case (R.id.button_member_dob):{
 			//Bundle bdl = new Bundle(1);
 			//mDatePicker.setArguments(bdl);

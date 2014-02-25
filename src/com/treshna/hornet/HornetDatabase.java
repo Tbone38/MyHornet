@@ -292,7 +292,7 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		db.execSQL(UpdateDatabase.NinetyTwo.SQL);
 		UpdateDatabase.NinetyThree.patchNinetyThree(db);
 		UpdateDatabase.NinetyFour.patchNinetyFour(db);
-		//db.execSQL("pragma full_column_names=ON;"); //TODO: will this break stuff?*/
+		UpdateDatabase.NinetyFive.patchNinetyFive(db);
 	}
 	
 	private void setupTableIndex(SQLiteDatabase db) {
@@ -355,6 +355,10 @@ public class HornetDatabase extends SQLiteOpenHelper {
 			}
 			case (94):{
 				UpdateDatabase.NinetyFour.patchNinetyFour(db);
+				break;
+			}
+			case (95):{
+				UpdateDatabase.NinetyFive.patchNinetyFive(db);
 				break;
 			}
 			}

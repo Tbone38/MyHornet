@@ -515,7 +515,7 @@ public class Services {
 		
 		public static enum FragmentType {
 			MembershipAdd(1), MembershipComplete(2), MemberDetails(3), MemberGallery(4),
-			RollList(5), RollItemList(6);
+			RollList(5), RollItemList(6), MemberAddTag(7), KPIs(8);
 			
 			private final int key;
 			

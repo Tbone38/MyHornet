@@ -2,10 +2,12 @@ package com.treshna.hornet;
 
 import java.io.File;
 import java.util.Date;
-
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -19,7 +21,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.treshna.hornet.BookingPage.TagFoundListener;
 
 	//TODO: more null handling
@@ -62,6 +63,7 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 		setupLayout();
 	}
 	
+	@SuppressLint("NewApi")
 	private View setupLayout() {
 		Uri uri = Uri.withAppendedPath(ContentDescriptor.Image.IMAGE_JOIN_MEMBER_URI,
 				memberID);
@@ -92,6 +94,14 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 			Services.loadBitmap(imgFile,img, 500, 450);
 		    img.setClickable(true);
 		    img.setOnClickListener(this);
+		} else {
+			Drawable imgDrawable = getActivity().getResources().getDrawable(R.drawable.nophotogrey);
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+				img.setBackground(imgDrawable);
+			} else {
+				img.setBackgroundDrawable(imgDrawable);
+			}
+			
 		}
 	    
 		String happiness = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.HAPPINESS));

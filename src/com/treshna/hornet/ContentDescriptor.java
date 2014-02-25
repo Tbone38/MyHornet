@@ -26,7 +26,8 @@ import android.provider.BaseColumns;
  *   18 = PendingDeletes				128 = MembershipExpiryReason
  *   20 = FreeIds						130:
  *   50:								135:
- *   55 = Company (unused)				140 = Visitor
+ *   55 = Company (unused)
+ *   56 = KPI's							140 = Visitor
  *   60:								141 = Visitors/Programme/Membership query.
  *   61 = Payment Method				
  *   62:								150:
@@ -148,6 +149,7 @@ public class ContentDescriptor {
 	     
 	     matcher.addURI(authority, MembershipExpiryReason.PATH, MembershipExpiryReason.PATH_TOKEN);
 	     matcher.addURI(authority, CancellationFee.PATH, CancellationFee.PATH_TOKEN);
+	     matcher.addURI(authority, KPI.PATH, KPI.PATH_TOKEN);
 	     
 	     matcher.addURI(authority, DROPTABLE, TOKEN_DROPTABLE);
 	     
@@ -830,6 +832,7 @@ public class ContentDescriptor {
 	 			public static final String OCCURRED = "occurred";
 	 			public static final String NOTES = "notes";
 	 			public static final String DEVICESIGNUP = "devicesignup";
+	 			public static final String UPDATEUSER = "update_user_name";
 	 		}
 	 	}
 	 	
@@ -1097,5 +1100,23 @@ public class ContentDescriptor {
 	 			public static final String MEMBERSHIPID = "membershipid";
 	 			public static final String FEE = "fee";
 	 		}
+	 	}
+	 	
+	 	public static class KPI {
+	 		public static final String NAME = "key_performance_index";
+	 		public static final String PATH = "key_performance_index";
+	 		public static final int PATH_TOKEN =  56;
+	 		
+	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
+	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.key_performance_index";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.key_performance_index";
+	 		
+	 		public static class Cols implements BaseColumns {
+	 			public static final String METRIC = "metric";
+	 			public static final String VALUE = "value";
+	 			public static final String LASTUPDATE = "lastupdate";
+	 			//what other columns do we need ?
+	 		}
+	 		
 	 	}
 }

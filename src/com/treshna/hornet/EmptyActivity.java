@@ -66,6 +66,10 @@ public class EmptyActivity extends NFCActivity{
 			int rollid = intent.getIntExtra(Services.Statics.ROLLID, -1);
 			bdl = new Bundle(1);
 			bdl.putInt(Services.Statics.ROLLID, rollid);
+		} else if (view == Services.Statics.FragmentType.MemberAddTag.getKey()) {
+			int memberid = intent.getIntExtra(Services.Statics.MID, -1);
+			bdl = new Bundle(1);
+			bdl.putInt(Services.Statics.MID, memberid);
 		}
 		
 		setFragment(view, bdl);
@@ -125,6 +129,25 @@ public class EmptyActivity extends NFCActivity{
 		else if (view == Services.Statics.FragmentType.RollItemList.getKey()) {
 			f = new RollItemListFragment();
 			f.setArguments(bdl);
+		}
+		else if (view == Services.Statics.FragmentType.MemberAddTag.getKey()) {
+			f = new MemberAddTagFragment();
+			f.setArguments(bdl);
+			tagFoundListener = (TagFoundListener) f;
+			if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1){
+				
+				pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+				mTechLists = new String[][] { new String[] {NfcA.class.getName()}};
+				IntentFilter tag = new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
+			    try {
+			        tag.addDataType("*/*");
+			    } catch (MalformedMimeTypeException e) {
+			    	//ignore, it's probably not critical.
+			    }
+			    intentFiltersArray = new IntentFilter[] {tag};
+			}
+		} else if (view == Services.Statics.FragmentType.KPIs.getKey()) {
+			f = new KeyPerformanceIndexFragment();
 		}
 		
 		else { //default!

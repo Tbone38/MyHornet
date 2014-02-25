@@ -156,14 +156,14 @@ public class HornetDBService extends Service {
 			}
 			
 			//do uploads //ORDER MATTERS!
+			uploadMember();
+			uploadMembership();
 			updateMembership();
 			uploadMemberNotes();
 			uploadImage();
+			uploadBookings();
 			int classcount = uploadClass();
 			Log.d(TAG, "Uploaded "+classcount+" Classes");
-			uploadBookings();
-			uploadMember();
-			uploadMembership();
 			int upload_sid_count = uploadSuspends();
 			if (upload_sid_count < 0) {
 				Services.showToast(getApplicationContext(), statusMessage, handler);
@@ -2853,10 +2853,12 @@ public class HornetDBService extends Service {
     					String.valueOf(pendingRows.get(i))});
     			continue;
     		}
+    		int msid= 0;
     		try {
     			//will this be OK with nulls?
+    			 msid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MSID)); 
 	    		result = result + connection.uploadMembership(cur.getInt(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MID)),
-	    				cur.getInt(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MSID)),
+	    				msid,
 	    				cur.getInt(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PID)),
 	    				cur.getInt(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PGID)),
 	    				cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MSSTART)),
@@ -2867,7 +2869,14 @@ public class HornetDBService extends Service {
     		} catch (SQLException e) {
     			statusMessage = e.getLocalizedMessage();
     			e.printStackTrace();
-    			return -2;
+    			//return -2;
+    			contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, ContentDescriptor.PendingUploads.Cols.TABLEID
+    					+"= ? AND "+ContentDescriptor.PendingUploads.Cols.ROWID+" = ?", 
+    					new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Membership.getKey()),
+    					String.valueOf(pendingRows.get(i))});
+    			contentResolver.delete(ContentDescriptor.Membership.CONTENT_URI, ContentDescriptor.Membership.Cols.MSID+" = ?", 
+    					new String[] {String.valueOf(msid)}); //may as well delete our bad membership too.
+    			continue;
     		}
     		cur.close();
     		
@@ -2967,6 +2976,7 @@ public class HornetDBService extends Service {
     			values.put(ContentDescriptor.MemberNotes.Cols.MID, rs.getString("memberid"));
     			values.put(ContentDescriptor.MemberNotes.Cols.NOTES, rs.getString("notes"));
     			values.put(ContentDescriptor.MemberNotes.Cols.OCCURRED, rs.getString("occurred"));
+    			values.put(ContentDescriptor.MemberNotes.Cols.UPDATEUSER, rs.getString("update_user_name"));
     			
     			cur = contentResolver.query(ContentDescriptor.MemberNotes.CONTENT_URI, null, 
     					ContentDescriptor.MemberNotes.Cols.MNID+" = ?", new String[] {rs.getString("id")}, null);
@@ -3906,6 +3916,12 @@ public class HornetDBService extends Service {
     				new String[] {pendingMemberships.get(i)}, null);
     		if (cur.moveToFirst()) {
 	    		membershipid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MSID));
+	    		
+	    		if (cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.TERMINATION_DATE)) == null) {
+	    			contentResolver.delete(ContentDescriptor.PendingUpdates.CONTENT_URI, ContentDescriptor.PendingUpdates.Cols.ROWID+" = ? AND "
+	        				+ContentDescriptor.PendingUpdates.Cols.TABLEID+" = ? ", new String[] {pendingMemberships.get(i),
+	        				String.valueOf(ContentDescriptor.TableIndex.Values.Membership.getKey())});
+	    		}
 	    		
 	    		values.put(ContentDescriptor.Membership.Cols.CANCEL_REASON, 
 	    				cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.CANCEL_REASON)));

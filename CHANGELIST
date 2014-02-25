@@ -1,3 +1,6 @@
+KEY:
+	** means push update out as soon as bug/feature is fixed/implemented.	
+
 	FUTURE:
     	SQLITE:
             Make 1=1 replication of all the tables you're using. rather than only grabing certain columns.
@@ -24,8 +27,10 @@
 	
 	v119:
 		-Done:
+				Altered the add Member process.
 
 		-TODO:
+				Check Membership paymentdate is working when add memberships.**
 				Handle permissions/Roles for different staff, to limit what certain staff can see.
                 the log-file needs a unique identifier so we know which device has the issues.
                 KPI's.

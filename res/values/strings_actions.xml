@@ -10,4 +10,5 @@
 	<string name="action_manual_checkin">Manual Check-In</string>
 	<string name="action_gallery">Gallery</string>
 	<string name="action_tag">Get Card</string>
+	<string name="action_kpi">KPIs</string>
 </resources>

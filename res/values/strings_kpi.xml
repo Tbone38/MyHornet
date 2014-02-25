@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="kpi_heading">Key Performace Index</string>
+	<string name="kpi_metric">Metric</string>
+	<string name="kpi_value">Value</string>
+	<string name="button_kpi_get">Update KPI</string>
+</resources>

@@ -48,7 +48,7 @@ public class MembershipAdd extends Fragment implements OnClickListener, DatePick
 	private EditText mSignup;
 	private String memberid;
 	private int groupid;
-	private long mLength;
+	private static long mLength;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -266,7 +266,8 @@ public class MembershipAdd extends Fragment implements OnClickListener, DatePick
 			enddate.setBackgroundDrawable(getResources().getDrawable(R.drawable.button));
 		}
 		
-		/*TextView paymentdate = (TextView) page.findViewById(R.id.membershippaymentdate);
+		/* Why was this removed?
+		TextView paymentdate = (TextView) page.findViewById(R.id.membershippaymentdate);
 		paymentdate.setTag(Services.dateFormat(new Date().toString(), 
 				"EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd"));
 		paymentdate.setClickable(true);
@@ -288,12 +289,24 @@ public class MembershipAdd extends Fragment implements OnClickListener, DatePick
 	}
 	
 	private void setupDates(){
+		TextView enddate = (TextView) page.findViewById(R.id.membershipedate);
+		TextView startdate = (TextView) page.findViewById(R.id.membershipsdate);
 		if (sdate != null) {
-			TextView startdate = (TextView) page.findViewById(R.id.membershipsdate);
 			startdate.setText(sdate);
+			 if ( mLength > 0) {
+				 Date start, end;
+				 start = Services.StringToDate(sdate, "dd MMM yyyy");
+				 end = new Date((start.getTime()+(mLength*1000)));
+				 enddate.setText(Services.dateFormat(end.toString(), "EEE MMM dd HH:mm:ss zzz yyyy",
+						 "dd MMM yyyy"));
+				 enddate.setTag(Services.dateFormat(end.toString(),
+						 "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd"));
+			 } else {
+				 enddate.setText(getActivity().getString(R.string.membership_add_enddate));
+			 }
 		}
 		if (edate != null) {
-			TextView enddate = (TextView) page.findViewById(R.id.membershipedate);
+			
 			enddate.setText(edate);
 		}
 		/*if (pdate != null) {

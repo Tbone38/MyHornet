@@ -65,7 +65,7 @@ public class NFCActivity extends ActionBarActivity {
 	public final String getID(Tag tag){
     	StringBuilder sb = new StringBuilder();
        	for (byte b : tag.getId()) {
-       		sb.append(String.format("%02X", b));
+       		sb.append(String.format(Locale.US,"%02X", b));
        	}
        	//System.out.println("**TAG ID: "+sb.toString());
        	String cardID = null;

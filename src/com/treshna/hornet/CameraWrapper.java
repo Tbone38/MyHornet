@@ -53,7 +53,6 @@ public class CameraWrapper extends Activity {
 		this.startActivityForResult(camera, PICTURE_RESULT);
 	}
 	
-	@SuppressLint("SimpleDateFormat")
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == PICTURE_RESULT) {
             if (resultCode == Activity.RESULT_OK) {

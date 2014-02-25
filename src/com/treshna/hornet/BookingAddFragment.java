@@ -270,14 +270,16 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		Spinner resourcespinner = (Spinner) page.findViewById(R.id.bookingResourceS);
 		cur = contentResolver.query(ContentDescriptor.Resource.CONTENT_URI, null, null, null, null);
 		String rid = Services.getAppSettings(getActivity(), "resourcelist");
+		int i = 0;
 		ArrayList<String> resourcelist = new ArrayList<String>();
 		int selectedResource = 0;
 		while (cur.moveToNext()) {
 			resourcelist.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Resource.Cols.NAME)));
 			if (cur.getInt(cur.getColumnIndex(ContentDescriptor.Resource.Cols.ID)) == Integer.parseInt(rid)) {
-				selectedResource = cur.getPosition();
+				//selectedResource = cur.getPosition();
+				selectedResource = i;
 			}
-			
+			i++;
 		}
 		ArrayAdapter<String> resourceAdapter = new ArrayAdapter<String>(ctx,
 				android.R.layout.simple_spinner_item, resourcelist);

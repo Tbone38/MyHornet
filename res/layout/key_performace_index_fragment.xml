@@ -1,0 +1,80 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" 
+    android:id="@+id/pageLayout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="7dp"
+    tools:context=".MemberDetails" >  
+	<TextView
+	    android:id="@+id/kpi_H"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:textSize="24sp"
+	    android:text="@string/kpi_heading"
+	    android:textIsSelectable="false"
+	    android:padding="5dp"
+		android:paddingBottom="1dp" />
+
+	<LinearLayout
+	    android:id="@+id/visit_list_headings"
+	    android:layout_width="match_parent"
+	    android:layout_height="30dp"
+	    android:layout_below="@id/kpi_H"
+	    android:orientation="horizontal" >
+
+	    <View
+	        android:layout_width="10dp"
+	        android:layout_height="wrap_content"
+	        />
+	    <TextView
+	        android:id="@+id/list_heading_metric"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_weight=".8"
+	        android:textSize="17sp"
+	        android:text="@string/kpi_metric"
+	        android:paddingLeft="10dp" />
+	    <TextView 
+	        android:id="@+id/list_heading_value"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:textSize="17sp"
+	        android:text="@string/kpi_value"/>
+	</LinearLayout>
+    <LinearLayout
+        android:id="@+id/kpi_list"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_below="@id/visit_list_headings"
+        android:orientation="vertical"
+        android:padding="4dp" >
+    </LinearLayout>
+    <RelativeLayout 
+        android:id="@+id/buttonRow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/kpi_list"
+        android:gravity="center"
+         >
+        <TextView 
+            android:id="@+id/button_get_kpi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:text="@string/button_kpi_get"
+            android:textSize="18sp"
+            android:padding="7dp"
+            android:background="@drawable/button_large"/>
+        <View 
+            android:id="@+id/underline_button_kpi"
+            android:layout_width="wrap_content"
+            android:layout_height="2dp"
+            android:layout_alignLeft="@id/button_get_kpi"
+            android:layout_alignRight="@id/button_get_kpi"
+            android:background="@color/button_underline_grey"
+            android:layout_below="@id/button_get_kpi"/>
+    </RelativeLayout>
+        
+</RelativeLayout>

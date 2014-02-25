@@ -9,6 +9,7 @@ import com.treshna.hornet.ContentDescriptor.Class;
 import com.treshna.hornet.ContentDescriptor.Company;
 import com.treshna.hornet.ContentDescriptor.FreeIds;
 import com.treshna.hornet.ContentDescriptor.Image;
+import com.treshna.hornet.ContentDescriptor.KPI;
 import com.treshna.hornet.ContentDescriptor.Member;
 import com.treshna.hornet.ContentDescriptor.MemberNotes;
 import com.treshna.hornet.ContentDescriptor.Membership;
@@ -633,6 +634,26 @@ public class UpdateDatabase {
 				db.execSQL(UpdateDatabase.NinetyFour.SQL10);
 				Log.w(HornetDatabase.class.getName(), "\n"+UpdateDatabase.NinetyFour.SQL11);
 				db.execSQL(UpdateDatabase.NinetyFour.SQL11);
+				db.setTransactionSuccessful();
+			} finally {
+				db.endTransaction();
+			}
+		}
+	}
+	
+	public static class NinetyFive {
+		private static String SQL1 = "ALTER TABLE "+MemberNotes.NAME+" ADD COLUMN "+MemberNotes.Cols.UPDATEUSER+" TEXT;";
+		
+		private static String SQL2 = "CREATE TABLE "+KPI.NAME+" ("+KPI.Cols._ID+" INTEGER PRIMARY KEY NOT NULL,"
+				+KPI.Cols.METRIC+" TEXT, "+KPI.Cols.VALUE+" TEXT, "+KPI.Cols.LASTUPDATE+" NUMERIC );";
+		
+		public static void patchNinetyFive(SQLiteDatabase db) {
+			db.beginTransaction();
+			try {
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL1);
+				db.execSQL(SQL1);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL2);
+				db.execSQL(SQL2);
 				db.setTransactionSuccessful();
 			} finally {
 				db.endTransaction();

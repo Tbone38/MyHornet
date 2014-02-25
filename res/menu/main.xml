@@ -18,10 +18,15 @@
      <item
         android:id="@+id/action_halt"
         android:orderInCategory="500"
-        android:title="@string/action_halt"/>    
+        android:title="@string/action_halt"/>
+     <item
+        android:id="@+id/action_kpi"
+        android:orderInCategory="600"
+        android:title="@string/action_kpi"
+        android:showAsAction="never" />    
      <item
         android:id="@+id/action_settings"
-        android:orderInCategory="600"
+        android:orderInCategory="700"
         android:title="@string/action_settings"
         android:showAsAction="never" />   
 </menu>

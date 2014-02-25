@@ -95,10 +95,11 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 			emergencyhome.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMERGENCYHOME)));
 			
 		} else {
+			emergencyHeading.setVisibility(View.GONE);
 			LinearLayout emergencyDetails = (LinearLayout) view.findViewById(R.id.emergencyContactDetails);
 			emergencyDetails.setVisibility(View.GONE);
-			ImageView expand_collapse = (ImageView) view.findViewById(R.id.emergency_expand_collapse);
-			expand_collapse.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_action_expand));
+			/*ImageView expand_collapse = (ImageView) view.findViewById(R.id.emergency_expand_collapse);
+			expand_collapse.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_action_expand));*/
 		}
 		
 		return view;
@@ -138,10 +139,11 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 			mDosage.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.MEDICALDOSAGE)));
 			
 		} else {
+			medicalHeading.setVisibility(View.GONE);
 			LinearLayout medicalDetails = (LinearLayout) view.findViewById(R.id.medicalDetails);
 			medicalDetails.setVisibility(View.GONE);
-			ImageView expand_collapse = (ImageView) view.findViewById(R.id.medical_expand_collapse);
-			expand_collapse.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_action_expand));
+			/*ImageView expand_collapse = (ImageView) view.findViewById(R.id.medical_expand_collapse);
+			expand_collapse.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_action_expand));*/
 		}
 		cur.close();
 		
@@ -171,6 +173,14 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 			notesT.setTextSize(18);
 			notesT.setLayoutParams(llparams);
 			notesGroup.addView(notesT);
+			
+			TextView notesdetails = new TextView(getActivity());
+			notesdetails.setPadding(10, 0, 0, 0);
+			notesdetails.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.MemberNotes.Cols.OCCURRED))
+					+"   by "+cur.getString(cur.getColumnIndex(ContentDescriptor.MemberNotes.Cols.UPDATEUSER)));
+			notesdetails.setTextSize(14);
+			notesdetails.setLayoutParams(llparams);
+			notesGroup.addView(notesdetails);
 		}
 		cur.close();
 		
@@ -189,10 +199,11 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 				|| (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.TASK1)).compareTo("null") == 0)
 				|| (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.TASK1)).length() == 0)){
 			
+			taskHeading.setVisibility(View.GONE);
 			LinearLayout tasks = (LinearLayout) view.findViewById(R.id.membertasks);
 			tasks.setVisibility(View.GONE);
-			ImageView expand_collapse = (ImageView) view.findViewById(R.id.tasks_expand_collapse);
-			expand_collapse.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_action_expand));
+			/*ImageView expand_collapse = (ImageView) view.findViewById(R.id.tasks_expand_collapse);
+			expand_collapse.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_action_expand));*/
 			
 		} else {
 			LinearLayout tasksGroup = (LinearLayout) view.findViewById(R.id.membertasks);
