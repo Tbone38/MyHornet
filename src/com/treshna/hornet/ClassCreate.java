@@ -171,7 +171,13 @@ public class ClassCreate extends NFCActivity implements OnClickListener, DatePic
 	    	Intent intent = new Intent(this, MemberAdd.class);
 	    	startActivity(intent);
 	    	return true;
-	    }	    
+	    }
+	    case (R.id.action_kpi):{
+	    	Intent i = new Intent(this, EmptyActivity.class);
+	    	i.putExtra(Services.Statics.KEY, Services.Statics.FragmentType.KPIs.getKey());
+	    	startActivity(i);
+	    	return true;
+	    }
 	    default:
 	    	return super.onOptionsItemSelected(item);
 	    }

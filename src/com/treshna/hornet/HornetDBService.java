@@ -2,6 +2,7 @@ package com.treshna.hornet;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -60,18 +61,28 @@ public class HornetDBService extends Service {
 	public IBinder onBind(Intent intent) {
 		return null;
 	}
+	
+	private void setup(Context context) {
+		SharedPreferences preferences;
+		if (context == null) {
+			preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+			ctx = getApplicationContext();
+		} else {
+			preferences = PreferenceManager.getDefaultSharedPreferences(context);
+			ctx = context;
+		}
+		connection = new JDBCConnection(preferences.getString("address", "-1"),preferences.getString("port", "-1"),
+				 preferences.getString("database", "-1"), preferences.getString("username", "-1"),
+				 preferences.getString("password", "-1"));
+	   contentResolver = ctx.getContentResolver(); //this.getContentResolver();
+	   
+	}
 	@Override  
 	public int onStartCommand(final Intent intent, int flags, int startId) {  //final ?
 	   handler = new Handler();
-	   
 
-	   SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-	   //TODO: NULL HANDLING AT ALL QUERIES.
-	   connection = new JDBCConnection(preferences.getString("address", "-1"),preferences.getString("port", "-1"),
-				 preferences.getString("database", "-1"), preferences.getString("username", "-1"),
-				 preferences.getString("password", "-1"));
-	   contentResolver = this.getContentResolver();
-	   ctx = getApplicationContext();
+	   setup(null);
+	   
 	   logger = new FileHandler(ctx);
 	   logger.clearLog();
 	   currentCall = intent.getIntExtra(Services.Statics.KEY, -1);
@@ -3969,4 +3980,59 @@ public class HornetDBService extends Service {
     	
     	return result;
     }
+    
+    
+    //ideally we want to run this function on demand.
+    //and only on demand. that way we can hide the data from users who shouldn't have access to it.
+    public int getKPIs(Context context) {
+    	setup(context);
+    	ResultSet rs = null;
+    	int result = 0;
+    	final String IGNORE1 = "Membership Retention (renewed ";
+    	final String IGNORE2 = "Members who have not visited in period";
+    	
+    	if (!openConnection()) {
+    		Log.e(TAG, "no Connection");
+    		return -1;
+    	}
+    	//for the time being, lets delete all metrics when we sync.
+    	contentResolver.delete(ContentDescriptor.KPI.CONTENT_URI, null, null);
+    	
+    	try {
+    		ContentValues values;
+    		rs = connection.getKPIs();
+    		while (rs.next()) {
+    			
+    			values = new ContentValues();
+    			if (rs.getString("metric").contains(IGNORE1) || rs.getString("metric").contains(IGNORE2)) {//|| rs.getString("metric").compareTo(IGNORE2) == 0) {
+    				continue;
+    			}
+    			values.put(ContentDescriptor.KPI.Cols.METRIC, rs.getString("metric"));
+    			values.put(ContentDescriptor.KPI.Cols.VALUE, rs.getString("value"));
+    			values.put(ContentDescriptor.KPI.Cols.LASTUPDATE, new Date().getTime());
+    			
+    			cur = contentResolver.query(ContentDescriptor.KPI.CONTENT_URI, null, ContentDescriptor.KPI.Cols.METRIC+" = ?",
+    					new String[] {rs.getString("metric")}, null);
+    			if (cur.moveToFirst()) {
+    				cur.close();
+    				contentResolver.update(ContentDescriptor.KPI.CONTENT_URI, values, ContentDescriptor.KPI.Cols.METRIC+" = ?",
+    						new String[] {rs.getString("metric")});
+    			} else {
+    				cur.close();
+    				contentResolver.insert(ContentDescriptor.KPI.CONTENT_URI, values);
+    			}
+    			result +=1;
+    			Log.d(TAG, "result:"+result);
+    		}
+    		
+    	} catch (SQLException e) {
+    		e.printStackTrace();
+    		return -1;
+    	}
+    	
+    	closeConnection();
+    	
+    	return result;
+    }
+    
 }

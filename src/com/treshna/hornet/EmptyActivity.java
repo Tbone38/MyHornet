@@ -252,6 +252,12 @@ public class EmptyActivity extends NFCActivity{
 	    	startActivity(i);
 	    	return true;
 	    }
+	    case (R.id.action_kpi):{
+	    	Intent i = new Intent(this, EmptyActivity.class);
+	    	i.putExtra(Services.Statics.KEY, Services.Statics.FragmentType.KPIs.getKey());
+	    	startActivity(i);
+	    	return true;
+	    }
 	    default:
 	    	return super.onOptionsItemSelected(item);
 	    }

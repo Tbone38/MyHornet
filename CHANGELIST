@@ -28,12 +28,12 @@ KEY:
 	v119:
 		-Done:
 				Altered the add Member process.
+                KPI's.
 
 		-TODO:
 				Check Membership paymentdate is working when add memberships.**
 				Handle permissions/Roles for different staff, to limit what certain staff can see.
                 the log-file needs a unique identifier so we know which device has the issues.
-                KPI's.
                 Fix Dates (dd MMM yyyy)
                 Add Member Booking Page (that shows just that members up-coming bookings.)
                 get password encryption working.

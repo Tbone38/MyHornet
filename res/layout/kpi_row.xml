@@ -4,22 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/booking_resource_background"
+    android:padding="4dp"
     tools:context=".MemberVisitHistory"
     android:orientation="horizontal" >
-	<View
-	    android:id="@+id/kpi_colour_block"
-	    android:layout_width="5dp"
-	    android:layout_height="30dp"
-	    android:background="@color/visitors_green"
-	    android:visibility="visible"
-	    android:layout_marginTop="2dp"
-	    android:layout_marginBottom="2dp"/>
-	
 	<TextView 
 	    android:id="@+id/kpi_metric"
 	    android:layout_width="0dp"
-	    android:layout_height="match_parent"
-	    android:layout_weight=".8"
+	    android:layout_height="wrap_content"
+	    android:layout_weight="1"
 	    android:textSize="14sp"
 	    android:gravity="left"
 	    android:paddingTop="3dp"/>
@@ -28,7 +20,7 @@
 	    android:id="@+id/kpi_value"
 	    android:layout_width="0dp"
 	    android:layout_height="match_parent"
-	    android:layout_weight="1"
+	    android:layout_weight=".4"
 	    android:textSize="14sp"
 	    android:gravity="left"
 	    android:paddingLeft="5dp"

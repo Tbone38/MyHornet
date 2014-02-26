@@ -971,22 +971,8 @@ public class JDBCConnection {
     	return 1; // ?
     }
     
-    /**
-     * 
-     * @param todate, highest date.
-     * @param fromdate, lowest date.
-     * @param programmegroup, set to -1 for default.
-     * @param companyid, set to -1 for default.
-     * @return
-     * @throws SQLException
-     */
-    public ResultSet getKPIs(String todate, String fromdate, int programmegroup, int companyid) throws SQLException {
-    	//TODO: we need to check the cache first. if no values available, we run the stats collate function.
-    	pStatement = con.prepareStatement("SELECT * FROM statscollate(?::date, ?::date, ?, ?);");
-    	pStatement.setString(1, todate);
-    	pStatement.setString(2, fromdate);
-    	pStatement.setInt(3, programmegroup);
-    	pStatement.setInt(4, companyid);
+    public ResultSet getKPIs() throws SQLException {
+    	pStatement = con.prepareStatement("SELECT * FROM hornet_kpi();");
     	
     	return pStatement.executeQuery();
     }
