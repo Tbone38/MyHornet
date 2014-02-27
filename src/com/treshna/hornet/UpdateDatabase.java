@@ -647,6 +647,12 @@ public class UpdateDatabase {
 		private static String SQL2 = "CREATE TABLE "+KPI.NAME+" ("+KPI.Cols._ID+" INTEGER PRIMARY KEY NOT NULL,"
 				+KPI.Cols.METRIC+" TEXT, "+KPI.Cols.VALUE+" TEXT, "+KPI.Cols.LASTUPDATE+" NUMERIC );";
 		
+		private static String SQL3 = "ALTER TABLE "+Membership.NAME+" ADD COLUMN "+Membership.Cols.PAYMENTDUE+" TEXT;";
+		
+		private static String SQL4 = "ALTER TABLE "+Membership.NAME+" ADD COLUMN "+Membership.Cols.NEXTPAYMENT+" TEXT;";
+		
+		private static String SQL5 = "ALTER TABLE "+Membership.NAME+" ADD COLUMN "+Membership.Cols.FIRSTPAYMENT+" TEXT;";
+		
 		public static void patchNinetyFive(SQLiteDatabase db) {
 			db.beginTransaction();
 			try {
@@ -654,6 +660,12 @@ public class UpdateDatabase {
 				db.execSQL(SQL1);
 				Log.w(HornetDatabase.class.getName(), "\n"+SQL2);
 				db.execSQL(SQL2);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL3);
+				db.execSQL(SQL3);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL4);
+				db.execSQL(SQL4);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL5);
+				db.execSQL(SQL5);
 				db.setTransactionSuccessful();
 			} finally {
 				db.endTransaction();

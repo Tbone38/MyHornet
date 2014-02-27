@@ -28,19 +28,25 @@ KEY:
 	v119:
 		-Done:
 				Altered the add Member process.
-                KPI's.
+                KPI's (--requires v320).
+                Save default-selected trainer for bookings.
+				OnClick Membership shows additional information.
 
 		-TODO:
-				Check Membership paymentdate is working when add memberships.**
 				Handle permissions/Roles for different staff, to limit what certain staff can see.
                 the log-file needs a unique identifier so we know which device has the issues.
                 Fix Dates (dd MMM yyyy)
                 Add Member Booking Page (that shows just that members up-coming bookings.)
                 get password encryption working.
-                Save default-selected trainer for bookings.
                 Format/Default time to 12hr.
                 Booking view showing multiple days for selected resource.
                 check that balance/notes are only being downloaded as often as needed.
+				Payment Method Handling:
+					-We'll need an async task/progress box to display while we do JSON stuff with the api.server...
+					-When we add a member we'll be returned a link. link will take us to payment details site.
+					-Upon return from browser/website we run another json-sync to check for success.
+					-this should occur from the member.finance fragment
+				Populate Member Finance Details.
 
 	V118:
 		-DONE:

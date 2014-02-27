@@ -196,7 +196,6 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 			    
 	    LinearLayout finance = (LinearLayout) view.findViewById(R.id.button_member_navigation_finance);
 	    finance.setOnClickListener(this);
-	    finance.setVisibility(View.GONE);
 	    
 	    LinearLayout bookings = (LinearLayout) view.findViewById(R.id.button_member_navigation_booking);
 	    bookings.setOnClickListener(this);
@@ -289,6 +288,14 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 			String date = Services.dateFormat(cur.getString(2), "dd MMM yy hh:mm:ss aa", "yyyy-MM-dd");
 			String message = "Image Taken: "+date+ "\nImage Description: "+cur.getString(3);
 				Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+			break;
+		}
+		case (R.id.button_member_navigation_finance):{
+			Fragment f = new MemberFinanceFragment();
+			Bundle bdl = new Bundle(1);
+			bdl.putString(Services.Statics.MID, memberID);
+			f.setArguments(bdl);
+			selectedFragment = R.id.button_member_navigation_finance;
 			break;
 		}
 		}

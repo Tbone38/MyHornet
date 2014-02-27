@@ -93,13 +93,16 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 		while (cur.moveToNext()) {
 			//Log.e(TAG, "Inflater is:"+mInflater.toString());
 			RelativeLayout membershipRow = (RelativeLayout) mInflater.inflate(R.layout.member_membership_row, null);
+			membershipRow.setClickable(true);
+			membershipRow.setTag(cur.getInt(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MSID)));
+			membershipRow.setOnClickListener(this);
 			
 			ImageView icon = (ImageView) membershipRow.findViewById(R.id.member_membership_drawable);
 			icon.setColorFilter(Services.ColorFilterGenerator.setColourGrey());
 			
 			ImageView cancel_membership = (ImageView) membershipRow.findViewById(R.id.member_membership_cancel);
 			cancel_membership.setTag(cur.getInt(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MSID)));
-			cancel_membership.setColorFilter(Services.ColorFilterGenerator.setColourRed());
+			//cancel_membership.setColorFilter(Services.ColorFilterGenerator.setColourRed());
 			cancel_membership.setClickable(true);
 			cancel_membership.setOnClickListener(this);
 			
@@ -257,9 +260,57 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 				dialog.dismiss();
 				cancelMembership(getCancelInput(), MemberMembershipFragment.this.membershipid);
 			}
+			break;
 		}
 		case (R.id.button_cancel_text):{
 			dialog.dismiss();
+			break;
+		}
+		case (R.id.member_membership_row):{
+			//show an alert with billing info for the membership...
+			int membershipid = Integer.parseInt(v.getTag().toString());
+			String[] columns = {ContentDescriptor.Membership.Cols.STATE+" AS 'Membership State:'", 
+					ContentDescriptor.Membership.Cols.SIGNUP+" AS 'Signup Fee:'", 
+					ContentDescriptor.Membership.Cols.FIRSTPAYMENT+" AS 'First Payment:'",
+					ContentDescriptor.Membership.Cols.PAYMENTDUE+" AS 'Payment Due:'",
+					ContentDescriptor.Membership.Cols.NEXTPAYMENT+" AS 'Next Payment:'",
+					ContentDescriptor.Membership.Cols.PNAME};
+			Cursor cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, columns, ContentDescriptor.Membership.Cols.MSID+" = ?",
+					new String[] {String.valueOf(membershipid)}, null);
+			if (!cur.moveToFirst()) {
+				break;
+			}
+			AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+			alert.setTitle(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PNAME)))
+			.setPositiveButton("OK", null);
+			
+			LayoutInflater inflater = getActivity().getLayoutInflater();
+			LinearLayout list = (LinearLayout) inflater.inflate(R.layout.alert_membership_details, null);
+			
+			for (int i=0; i <cur.getColumnCount(); i++) {
+				LinearLayout row = (LinearLayout) inflater.inflate(R.layout.membership_details_row, null);
+				if (i%2==0) {
+					row.setBackgroundColor(Color.TRANSPARENT);
+				}
+				TextView key = (TextView) row.findViewById(R.id.membership_key);
+				key.setText(cur.getColumnName(i));
+				
+				TextView value = (TextView) row.findViewById(R.id.membership_value);
+				if (!cur.isNull(i)) {
+					value.setText(cur.getString(i));
+				}
+				if (cur.getColumnName(i).compareTo(ContentDescriptor.Membership.Cols.PNAME)!=0) {
+					list.addView(row);
+				}
+			}
+			alert.setView(list);
+			/*alert.setMessage("Signup Fee: "+cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.SIGNUP))+"\n"
+					+"First Payment: "+cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.FIRSTPAYMENT))+"\n"
+					+"Payment Due: "+cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PAYMENTDUE))+"\n"
+					+"Next Payment: "+cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.NEXTPAYMENT)));*/
+			
+			alert.show();
+			break;
 		}
 		}
 	}
@@ -310,8 +361,8 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 	public void onDateSelect(String date, DatePickerFragment theDatePicker) {
 		TextView date_view = (TextView) alert_cancel_ms.findViewById(R.id.text_cancel_date);
 		date_view.setTextColor(this.getResources().getColor(R.color.android_blue));
-		date_view.setText(Services.dateFormat(date, "yyyy MM dd", "dd MMM yyyy"));
-		//date_view.setText(date);
+		//date_view.setText(Services.dateFormat(date, "yyyy MM dd", "dd MMM yyyy"));
+		date_view.setText(date);
 	}
 	
 }

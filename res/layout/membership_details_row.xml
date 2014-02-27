@@ -1,0 +1,27 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/alert_membership_details_row"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/booking_resource_background"
+    android:padding="4dp"
+    android:orientation="horizontal" >
+	<TextView 
+	    android:id="@+id/membership_key"
+	    android:layout_width="0dp"
+	    android:layout_height="wrap_content"
+	    android:layout_weight="1"
+	    android:textSize="14sp"
+	    android:gravity="left"
+	    android:paddingTop="3dp"/>
+	
+	<TextView
+	    android:id="@+id/membership_value"
+	    android:layout_width="0dp"
+	    android:layout_height="match_parent"
+	    android:layout_weight=".4"
+	    android:textSize="14sp"
+	    android:gravity="left"
+	    android:paddingLeft="5dp"
+	    android:paddingTop="3dp" />
+	</LinearLayout>

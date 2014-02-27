@@ -483,8 +483,10 @@ public class JDBCConnection {
 	    	ResultSet rs = null;
 	    	String query ="SELECT membership.id, memberid, membership.startdate, membership.enddate, cardno, membership.notes, " +
 	    			"primarymembership, membership.lastupdate,  membership_state(membership.*, programme.*) as state," +
-	    			" membership.concession, programme.name, programme.id AS programmeid, membership.termination_date, membership.cancel_reason,"
-	    			+ " membership.history"
+	    			" membership.concession, programme.name, programme.id AS programmeid, membership.termination_date, "
+	    			+ "select_column('membership','cancel_reason', membership.*) AS cancel_reason,"
+	    			+ " membership.history, membership.signupfee, membership.paymentdue, membership.nextpayment,"
+	    			+ " membership.firstpayment"
 	    			+ " FROM membership LEFT JOIN programme ON (membership.programmeid = programme.id)" +
 	    			" WHERE 1=1 ";
 	    	if (ymca > 0) {
@@ -972,9 +974,36 @@ public class JDBCConnection {
     }
     
     public ResultSet getKPIs() throws SQLException {
-    	pStatement = con.prepareStatement("SELECT * FROM hornet_kpi();");
+    	boolean kpi_available = false;
+    	try {
+    		pStatement = con.prepareStatement("SELECT * FROM checkversion_atleast(320);"); //320
+    		ResultSet rs = pStatement.executeQuery();
+    		rs.next();
+    		if (rs.getInt(1)==0) {
+    			kpi_available = true;
+    		} 
+    	} catch (SQLException e) {
+    		Log.e(TAG, "ERROR",e);
+    	}
     	
-    	return pStatement.executeQuery();
+    	if (kpi_available) {
+    		pStatement = con.prepareStatement("SELECT * FROM hornet_kpi();");
+    		return pStatement.executeQuery();
+    	} else {
+    		return null;
+    	}
+    }
+    
+    public ResultSet getFinance() throws SQLException {
+    	/*select max(debitjournal.lastupdate), max(debit), count(*) 
+    	FROM debitjournal  
+    		LEFT JOIN payment_against ON (payment_against.debitjournalid=debitjournal.id AND payment_against.amount <> '0'::money)
+    		LEFT JOIN payment ON (payment.id=payment_against.paymentid AND payment.amount <> '0'::money)
+    	WHERE debitjournal.memberid = 9 AND occurred <= now() 
+    	GROUP BY debitjournal.id ORDER BY debitjournal.id;
+    	*/
+    	
+    	return null;
     }
     
     public SQLWarning getWarnings() throws SQLException, NullPointerException {

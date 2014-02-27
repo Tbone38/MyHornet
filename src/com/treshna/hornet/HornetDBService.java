@@ -2345,6 +2345,10 @@ public class HornetDBService extends Service {
     	connection.closeConnection();
     }
     
+    public String getStatus() {
+    	return this.statusMessage;
+    }
+    
     private int getSuspendID(){
     	Log.v(TAG, "Getting Suspend IDs");
     	int result = 0; 
@@ -3201,6 +3205,10 @@ public class HornetDBService extends Service {
 		values.put(ContentDescriptor.Membership.Cols.PID, rs.getString("programmeid"));
 		values.put(ContentDescriptor.Membership.Cols.STATE, rs.getString("state"));
 		values.put(ContentDescriptor.Membership.Cols.HISTORY, rs.getString("history"));
+		values.put(ContentDescriptor.Membership.Cols.SIGNUP, rs.getString("signupfee"));
+		values.put(ContentDescriptor.Membership.Cols.PAYMENTDUE, rs.getString("paymentdue"));
+		values.put(ContentDescriptor.Membership.Cols.NEXTPAYMENT, rs.getString("nextpayment"));
+		values.put(ContentDescriptor.Membership.Cols.FIRSTPAYMENT, rs.getString("firstpayment"));
     	
 		return values;
     }
@@ -3300,7 +3308,7 @@ public class HornetDBService extends Service {
     		String query ="SELECT membership.id, memberid, membership.startdate, membership.enddate, cardno, membership.notes, " +
 	    			"primarymembership, membership.lastupdate, membership_state(membership.*, programme.*) as state," +
 	    			" membership.concession, programme.name, programme.id AS programmeid, membership.termination_date, membership.cancel_reason, "
-	    			+ " membership.history "
+	    			+ " membership.history, membership.signupfee, membership.paymentdue, membership.nextpayment, membership.firstpayment "
 	    			+ " FROM membership LEFT JOIN programme ON (membership.programmeid = programme.id)" +
 	    			" WHERE membership.id = "+membership.get(i)+" ;";
     		
@@ -4001,6 +4009,10 @@ public class HornetDBService extends Service {
     	try {
     		ContentValues values;
     		rs = connection.getKPIs();
+    		if (rs == null) {
+    			statusMessage = "KPI's not available in this version of GymMaster. Please update to Version 320.";
+    			return 0;
+    		}
     		while (rs.next()) {
     			
     			values = new ContentValues();
@@ -4022,12 +4034,11 @@ public class HornetDBService extends Service {
     				contentResolver.insert(ContentDescriptor.KPI.CONTENT_URI, values);
     			}
     			result +=1;
-    			Log.d(TAG, "result:"+result);
     		}
     		
     	} catch (SQLException e) {
     		e.printStackTrace();
-    		return -1;
+    		return -2;
     	}
     	
     	closeConnection();

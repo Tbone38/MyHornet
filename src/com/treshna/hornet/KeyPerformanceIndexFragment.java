@@ -1,6 +1,7 @@
 package com.treshna.hornet;
 
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.database.Cursor;
@@ -123,7 +124,11 @@ public class KeyPerformanceIndexFragment extends Fragment implements OnClickList
 			if (success) {
 				updateList();
 			} else {
-				//show an error.
+				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+				builder.setTitle("Error Occurred")
+				.setMessage(sync.getStatus())
+				.setPositiveButton("OK", null)
+				.show();
 			}
 	    }
 	 }

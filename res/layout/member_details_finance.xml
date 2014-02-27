@@ -1,0 +1,81 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" 
+    android:id="@+id/pageLayout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="7dp"
+    tools:context=".MemberDetails" >  
+	<TextView
+	    android:id="@+id/member_finance_H"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:textSize="24sp"
+	    android:text="@string/member_finance"
+	    android:textIsSelectable="false"
+	    android:padding="5dp"
+		android:paddingBottom="1dp" />
+	<LinearLayout
+	    android:id="@+id/button_add_billing"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:orientation="vertical"
+	    android:layout_below="@id/member_finance_H"
+	    android:gravity="center"
+	    android:layout_centerHorizontal="true" >
+	    <TextView 
+	        android:id="@+id/button_add_billing_text"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/finance_setup_billing"
+	        android:textSize="18sp"
+	        android:padding="7dp"
+	        android:background="@drawable/button_large_accept"
+	        android:clickable="true"/>
+	    
+	    <View
+	        android:layout_width="match_parent"
+	        android:layout_height="2dp"
+	        android:background="@color/button_underline_green" />
+	</LinearLayout>
+	<LinearLayout 
+	    android:id="@+id/finance_list_headings"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal"
+	    android:layout_below="@id/button_add_billing">
+	    <View
+	        android:layout_width="10dp"
+	        android:layout_height="wrap_content"
+	        />
+	    <TextView
+	        android:id="@+id/list_heading_date"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:textSize="17sp"
+	        android:text=""
+	        android:paddingLeft="10dp" />
+	    <TextView
+	        android:id="@+id/list_heading_time"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_weight=".4"
+	        android:textSize="17sp"
+	        android:text="" />
+	</LinearLayout>
+    <LinearLayout
+        android:id="@+id/finance_history_list"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_below="@id/finance_list_headings"
+        android:orientation="vertical"
+        android:padding="4dp" >
+        
+    </LinearLayout>	
+   	<include 
+	    layout="@layout/member_details_actions"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@id/finance_history_list"/>
+</RelativeLayout>

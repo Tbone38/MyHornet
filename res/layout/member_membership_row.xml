@@ -23,7 +23,7 @@
 		    android:layout_width="28dp"
 		    android:layout_height="28dp"
 		    android:padding="2dp"
-		    android:src="@drawable/ic_action_cancel"
+		    android:src="@drawable/ic_action_discard"
 		    android:layout_alignParentRight="true" />
 		<TextView 
 		    android:id="@+id/member_membership_title"

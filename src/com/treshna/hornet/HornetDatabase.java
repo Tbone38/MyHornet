@@ -18,6 +18,7 @@ import com.treshna.hornet.ContentDescriptor.Door;
 import com.treshna.hornet.ContentDescriptor.FreeIds;
 import com.treshna.hornet.ContentDescriptor.IdCard;
 import com.treshna.hornet.ContentDescriptor.Image;
+import com.treshna.hornet.ContentDescriptor.KPI;
 import com.treshna.hornet.ContentDescriptor.Member;
 import com.treshna.hornet.ContentDescriptor.MemberBalance;
 import com.treshna.hornet.ContentDescriptor.MemberNotes;
@@ -422,6 +423,7 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		
 		db.execSQL("DROP TABLE IF EXISTS "+MembershipExpiryReason.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+CancellationFee.NAME);
+		db.execSQL("DROP TABLE IF EXISTS "+KPI.NAME);
 	}
 	
 	private void repopulateTable(SQLiteDatabase db) {

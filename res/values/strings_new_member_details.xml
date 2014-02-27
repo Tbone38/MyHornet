@@ -33,4 +33,7 @@
  <string name="hint_tasks_expand">expand/collapse tasks icon</string>
  
  <string name="label_parent_name">Parent\'s Name</string>
+ 
+ <string name="member_finance">Finance &amp; Billing</string>
+ <string name="finance_setup_billing">Setup Billing</string>
 </resources>

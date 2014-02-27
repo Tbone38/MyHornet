@@ -605,6 +605,11 @@ public class ContentDescriptor {
 	 			public static final String CANCEL_REASON = "cancel_reason";
 	 			public static final String STATE = "state";
 	 			public static final String HISTORY = "history";
+	 			
+	 			//ADDED in V119
+	 			public static final String PAYMENTDUE = "paymentdue";
+	 			public static final String NEXTPAYMENT = "nextpayment";
+	 			public static final String FIRSTPAYMENT = "firstpayment";
 	 		}
 	 	}
 	 	
