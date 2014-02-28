@@ -138,6 +138,7 @@ public class ClassMemberListAdapter extends SimpleCursorAdapter implements Compo
 				values.put(ContentDescriptor.Booking.Cols.RESULT, 20);
 			}
 			
+			values.put(ContentDescriptor.Booking.Cols.DEVICESIGNUP, "t");
 			values.put(ContentDescriptor.Booking.Cols.CHECKIN, new Date().getTime());
 		} else { //unchecked, remove checkin time.
 			values = new ContentValues();
@@ -183,6 +184,7 @@ public class ClassMemberListAdapter extends SimpleCursorAdapter implements Compo
 					
 					ContentValues values = new ContentValues();
 					values.put(ContentDescriptor.Booking.Cols.RESULT, 5);
+					values.put(ContentDescriptor.Booking.Cols.DEVICESIGNUP, "t");
 					
 					contentResolver.update(ContentDescriptor.Booking.CONTENT_URI, values, ContentDescriptor.Booking.Cols.BID+" = ?",
 							new String[] {deleteid});

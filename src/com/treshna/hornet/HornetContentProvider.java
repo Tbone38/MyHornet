@@ -223,6 +223,16 @@ public class HornetContentProvider extends ContentProvider {
         	getContext().getContentResolver().notifyChange(uri, null);
         	return rows;
         }
+        case ContentDescriptor.MemberFinance.PATH_TOKEN:{
+        	int rows = db.delete(ContentDescriptor.MemberFinance.NAME, selection, selectionArgs);
+        	getContext().getContentResolver().notifyChange(uri, null);
+        	return rows;
+        }
+        case ContentDescriptor.BillingHistory.PATH_TOKEN:{
+        	int rows = db.delete(ContentDescriptor.BillingHistory.NAME, selection, selectionArgs);
+        	getContext().getContentResolver().notifyChange(uri, null);
+        	return rows;
+        }
         
         case ContentDescriptor.TOKEN_DROPTABLE:{ //special case, drops tables/deletes database.
         	FileHandler fh = new FileHandler(ctx);
@@ -413,6 +423,16 @@ public class HornetContentProvider extends ContentProvider {
             	long id = db.insert(ContentDescriptor.KPI.NAME, null, values);
             	getContext().getContentResolver().notifyChange(uri, null);
             	return ContentDescriptor.KPI.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
+            }
+            case ContentDescriptor.MemberFinance.PATH_TOKEN:{
+            	long id = db.insert(ContentDescriptor.MemberFinance.NAME, null, values);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return ContentDescriptor.MemberFinance.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
+            }
+            case ContentDescriptor.BillingHistory.PATH_TOKEN:{
+            	long id = db.insert(ContentDescriptor.BillingHistory.NAME, null, values);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return ContentDescriptor.BillingHistory.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
             }
             default: {
                 throw new UnsupportedOperationException("URI: " + uri + " not supported.");
@@ -782,6 +802,16 @@ public class HornetContentProvider extends ContentProvider {
             	builder.setTables(ContentDescriptor.KPI.NAME);
             	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
             }
+            case ContentDescriptor.MemberFinance.PATH_TOKEN:{
+            	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+            	builder.setTables(ContentDescriptor.MemberFinance.NAME);
+            	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+            }
+            case ContentDescriptor.BillingHistory.PATH_TOKEN:{
+            	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+            	builder.setTables(ContentDescriptor.BillingHistory.NAME);
+            	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+            }
             
             default: throw new UnsupportedOperationException("URI: " + uri + " not supported.");
         }
@@ -936,6 +966,16 @@ public class HornetContentProvider extends ContentProvider {
             }
             case ContentDescriptor.KPI.PATH_TOKEN:{
             	int result = db.update(ContentDescriptor.KPI.NAME, values, selection, selectionArgs);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return result;
+            }
+            case ContentDescriptor.MemberFinance.PATH_TOKEN:{
+            	int result = db.update(ContentDescriptor.MemberFinance.NAME, values, selection, selectionArgs);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return result;
+            }
+            case ContentDescriptor.BillingHistory.PATH_TOKEN:{
+            	int result = db.update(ContentDescriptor.BillingHistory.NAME, values, selection, selectionArgs);
             	getContext().getContentResolver().notifyChange(uri, null);
             	return result;
             }

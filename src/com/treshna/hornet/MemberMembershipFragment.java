@@ -7,13 +7,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import com.treshna.hornet.BookingPage.TagFoundListener;
-import com.treshna.hornet.DatePickerFragment.DatePickerSelectListener;
-
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.DialogInterface;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -28,8 +24,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.treshna.hornet.BookingPage.TagFoundListener;
+import com.treshna.hornet.DatePickerFragment.DatePickerSelectListener;
 
 
 public class MemberMembershipFragment extends Fragment implements TagFoundListener, OnClickListener, DatePickerSelectListener {
@@ -285,7 +285,8 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 			.setPositiveButton("OK", null);
 			
 			LayoutInflater inflater = getActivity().getLayoutInflater();
-			LinearLayout list = (LinearLayout) inflater.inflate(R.layout.alert_membership_details, null);
+			ScrollView listwrapper = (ScrollView) inflater.inflate(R.layout.alert_membership_details, null);
+			LinearLayout list = (LinearLayout) listwrapper.findViewById(R.id.alert_membership_details);
 			
 			for (int i=0; i <cur.getColumnCount(); i++) {
 				LinearLayout row = (LinearLayout) inflater.inflate(R.layout.membership_details_row, null);
@@ -303,12 +304,7 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 					list.addView(row);
 				}
 			}
-			alert.setView(list);
-			/*alert.setMessage("Signup Fee: "+cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.SIGNUP))+"\n"
-					+"First Payment: "+cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.FIRSTPAYMENT))+"\n"
-					+"Payment Due: "+cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PAYMENTDUE))+"\n"
-					+"Next Payment: "+cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.NEXTPAYMENT)));*/
-			
+			alert.setView(listwrapper);
 			alert.show();
 			break;
 		}

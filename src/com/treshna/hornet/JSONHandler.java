@@ -49,6 +49,7 @@ public class JSONHandler {
 	private Context ctx;
 	private int errorcode = -1;
 	private String errormsg = null;
+	private String signup_url = null;
 	
 	public JSONHandler(Context context) {
 		
@@ -152,6 +153,10 @@ public class JSONHandler {
 	
 	public int getErrorCode(){
 		return this.errorcode;
+	}
+	//used for returning urls.
+	public String getURL() {
+		return this.signup_url;
 	}
 	
 	public boolean updateUser(String email, String username, String countrycode) {
@@ -291,6 +296,11 @@ public class JSONHandler {
 		String url = HOST+"/setpassword?suername="+username;
 		response = getJSON(url);
 		
+		if (response == null) {
+			errormsg = "Server not responding.";
+			errorcode = JSONError.NORESPONSE.getKey();
+			return false;
+		}
 		
 		return false;
 	}
@@ -331,6 +341,53 @@ public class JSONHandler {
     	
     	return true;
     }
+	
+	/* is the api url going to be our website or theirs? i.e. do I need to point it to one of our sites and just pass in the te_...,
+	 * etc, or do I need to point it to there website?
+	 */
+	public int AddMemberBillingType(int memberid, String api, String te_username, String te_password) {
+		int result = 0;
+		String status = "";
+		this.signup_url = "api.gymmaster.co.nz/notavailable";
+		JSONObject response;
+		String url = api+"?memberid="+memberid+"&te_username="+te_username+"&te_password="+te_password;
+		
+		response = getJSON(url);
+		
+		if (response == null) {
+			errormsg = "Server not responding.";
+			errorcode = JSONError.NORESPONSE.getKey();
+			return 0;
+		}
+		
+		try {
+			status = response.getString("status");
+		} catch (JSONException e) {
+			status = "error";
+			errormsg = "Server not responding";
+			errorcode = JSONError.NORESPONSE.getKey();
+		}
+		
+		if (status.compareTo("error")==0) {
+			if (errormsg == null) {
+				try {
+					errormsg = response.getString("error");
+					errorcode = response.getInt("errorcode");
+				} catch (JSONException e) {
+					errormsg = "Server not responding";
+					errorcode = JSONError.NORESPONSE.getKey();
+				}
+			}
+		} else {
+			//we extract the URL we want to for signing up the member,
+			//we then send the user to that url.
+			// after wards we check if our signup was a success. (via the api again?)
+			this.signup_url = "api.gymmaster.co.nz/notavailable";
+			result +=1;
+		}
+		
+		return result;
+	}
 	
 	
 	private SecretKeySpec generatekey() {

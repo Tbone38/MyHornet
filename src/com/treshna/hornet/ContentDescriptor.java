@@ -16,8 +16,8 @@ import android.provider.BaseColumns;
  *    5 = DeletedRecords				112 = MemberNotes
  *   10:								113:
  *   									114 = MemberBalance
- *   11 = TableIndex					
- *   12:								
+ *   11 = TableIndex					116 = MemberFinance
+ *   12:								117 = Billing_history
  *   13 = PendingUploads				121 = CancellationFee
  *   14:								
  *   15 = PendingDownloads				
@@ -150,6 +150,8 @@ public class ContentDescriptor {
 	     matcher.addURI(authority, MembershipExpiryReason.PATH, MembershipExpiryReason.PATH_TOKEN);
 	     matcher.addURI(authority, CancellationFee.PATH, CancellationFee.PATH_TOKEN);
 	     matcher.addURI(authority, KPI.PATH, KPI.PATH_TOKEN);
+	     matcher.addURI(authority, MemberFinance.PATH, MemberFinance.PATH_TOKEN);
+	     matcher.addURI(authority, BillingHistory.PATH, BillingHistory.PATH_TOKEN);
 	     
 	     matcher.addURI(authority, DROPTABLE, TOKEN_DROPTABLE);
 	     
@@ -519,6 +521,8 @@ public class ContentDescriptor {
 	 			public static final String TE_USERNAME = "te_username";
 	 			public static final String SCHEMAVERSION = "schemaversion";
 	 			public static final String LASTUPDATE = "lastupdate";
+	 			public static final String TE_PASSWORD = "te_password";
+	 			public static final String WEB_URL = "web_url";
 	 		}
 	 	}
 	 	// for creating member ships ?
@@ -1123,5 +1127,49 @@ public class ContentDescriptor {
 	 			//what other columns do we need ?
 	 		}
 	 		
+	 	}
+	 	
+	 	public static class MemberFinance {
+	 		public static final String NAME = "member_finance";
+	 		public static final String PATH = "member_finance";
+	 		public static final int PATH_TOKEN = 116;
+	 		
+	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
+	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.member_finance";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.member_finance";
+	 		
+	 		public static class Cols implements BaseColumns {
+	 			public static final String ROWID = "rowid"; //this is either payment.id or debitjournal.id
+	 			public static final String MEMBERID = "memberid";
+	 			public static final String MEMBERSHIPID = "membershipid";
+	 			public static final String OCCURRED = "occurred";
+	 			public static final String CREATED = "created";
+	 			public static final String LASTUPDATE = "lastupdate";
+	 			public static final String CREDIT = "credit";
+	 			public static final String DEBIT = "debit";
+	 			public static final String ORIGIN = "origin";
+	 			public static final String NOTE  = "note";
+	 		}
+	 	}
+	 	
+	 	public static class BillingHistory {
+	 		public static final String NAME = "billing_history";
+	 		public static final String PATH = "billing_history";
+	 		public static final int PATH_TOKEN = 117;
+	 		
+	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
+	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.billing_history";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.billing_history";
+	 		
+	 		public static class Cols implements BaseColumns {
+	 			public static final String ID = "id";
+	 			public static final String MEMBERID = "memberid";
+	 			public static final String FAILED = "failed";
+	 			public static final String AMOUNT = "amount";
+	 			public static final String STATUS = "status";
+	 			public static final String LASTUPDATE = "lastupdate";
+	 			public static final String NOTE = "note";
+	 			public static final String DDEXPORTID = "dd_export_id";
+	 		}
 	 	}
 }

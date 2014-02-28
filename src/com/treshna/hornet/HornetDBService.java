@@ -206,6 +206,7 @@ public class HornetDBService extends Service {
 			
 			getMemberNotes(last_sync);
 			getMemberBalance(last_sync);
+			getFinancialDetails(last_sync);
 			
 			//do bookings!
 			updateBookings(); 
@@ -322,6 +323,7 @@ public class HornetDBService extends Service {
 		   int mscount = getMembership(-1);
 		   getMembershipSuspends(-1);
 		   getMemberBalance(-1);
+		   getFinancialDetails(0);
 		   getBookings();
 		   memberImages();
 		   getClasses(-1);
@@ -1284,7 +1286,7 @@ public class HornetDBService extends Service {
     		lastupdate = cur.getLong(cur.getColumnIndex(ContentDescriptor.Booking.Cols.LASTUPDATE)); //TODO: change this to now();
     		checkin = cur.getLong(cur.getColumnIndex(ContentDescriptor.Booking.Cols.CHECKIN));
     		notes = cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.NOTES));
-    		Log.v(TAG, "Last update for booking:"+bookingid+" was "+lastupdate);
+    		//Log.v(TAG, "Last update for booking:"+bookingid+" was "+lastupdate);
     		try {
     			result += connection.updateBookings(bookingid, resultstatus, notes, lastupdate, bookingtypeid, checkin);
     			connection.closePreparedStatement();
@@ -1296,6 +1298,11 @@ public class HornetDBService extends Service {
     		contentResolver.delete(ContentDescriptor.PendingUpdates.CONTENT_URI, ContentDescriptor.PendingUpdates.Cols.ROWID+" = ? AND "
 					+ContentDescriptor.PendingUpdates.Cols.TABLEID+" = ?", new String[] {pending_bookings.get(i),
 					String.valueOf(ContentDescriptor.TableIndex.Values.Booking.getKey())});
+    		
+    		ContentValues values = new ContentValues();
+    		values.put(ContentDescriptor.Booking.Cols.DEVICESIGNUP, "f");
+    		contentResolver.update(ContentDescriptor.Booking.CONTENT_URI, values, ContentDescriptor.Booking.Cols.BID+" = ?", new String[] 
+    				{String.valueOf(bookingid)});
     		
     	}
     	Log.v(TAG, "Updated "+result+" Booking!");
@@ -1667,8 +1674,9 @@ public class HornetDBService extends Service {
     	if (!openConnection()) {
     		return -1; //connection failed;
     	}
+    	int use_roll = Integer.parseInt(Services.getAppSettings(this.ctx, "use_roll"));
     	try {
-    		int use_roll = Integer.parseInt(Services.getAppSettings(this.ctx, "use_roll"));
+    		
     		if (last_sync == -1) {
     			if (use_roll > 0) {
     				rs = connection.getYMCAMembers(null);
@@ -1684,7 +1692,7 @@ public class HornetDBService extends Service {
     		}
     		while (rs.next()) {
     			ContentValues values = new ContentValues();
-    			values = insertMember(rs);
+    			values = insertMember(rs, use_roll);
     			
     			cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, "m."+ContentDescriptor.Member.Cols.MID+" = ?",
     					new String[] {rs.getString("id")}, null);
@@ -3213,7 +3221,7 @@ public class HornetDBService extends Service {
 		return values;
     }
     
-    private ContentValues insertMember(ResultSet rs) throws SQLException {
+    private ContentValues insertMember(ResultSet rs, int use_roll) throws SQLException {
     	ContentValues values = new ContentValues();
 		values.put(ContentDescriptor.Member.Cols.MID, rs.getString("id"));
 		values.put(ContentDescriptor.Member.Cols.FNAME, rs.getString("firstname"));
@@ -3237,7 +3245,6 @@ public class HornetDBService extends Service {
 		values.put(ContentDescriptor.Member.Cols.MEDICATION, rs.getString("medication"));
 		values.put(ContentDescriptor.Member.Cols.MEDICATIONBYSTAFF, rs.getString("medicationbystaff"));
 		
-		int use_roll = Integer.parseInt(Services.getAppSettings(this.ctx, "use_roll"));
 		if (use_roll > 0) {
 			values.put(ContentDescriptor.Member.Cols.PARENTNAME, rs.getString("parentname"));
 		}
@@ -3275,10 +3282,11 @@ public class HornetDBService extends Service {
     		return -1;
     	}
     	
+    	int use_roll = Integer.parseInt(Services.getAppSettings(this.ctx, "use_roll"));
     	for (int i = 0; i < member.size(); i++) {
     		String query;
 
-    		int use_roll = Integer.parseInt(Services.getAppSettings(this.ctx, "use_roll"));
+    		
     		if (use_roll > 0) {
     			query = connection.YMCAMembersQuery+" WHERE id = "+member.get(i)+";";
     					
@@ -3289,7 +3297,7 @@ public class HornetDBService extends Service {
     		try {
     			rs = connection.startStatementQuery(query);
     			if (rs.next()) {
-    				ContentValues values = insertMember(rs);
+    				ContentValues values = insertMember(rs, use_roll);
     				
     				contentResolver.update(ContentDescriptor.Member.CONTENT_URI, values, ContentDescriptor.Member.Cols.MID+" = ?",
         						new String[] {rs.getString("id")});
@@ -3790,6 +3798,8 @@ public class HornetDBService extends Service {
     			values.put(ContentDescriptor.Company.Cols.NAME, rs.getString("name"));
     			values.put(ContentDescriptor.Company.Cols.TE_USERNAME, rs.getString("te_username"));
     			values.put(ContentDescriptor.Company.Cols.SCHEMAVERSION, rs.getString("schemaversion"));
+    			values.put(ContentDescriptor.Company.Cols.TE_PASSWORD, rs.getString("te_password"));
+    			values.put(ContentDescriptor.Company.Cols.WEB_URL, rs.getString("web_url"));
     			values.put(ContentDescriptor.Company.Cols.LASTUPDATE, new Date().getTime());
     			
     			cur = contentResolver.query(ContentDescriptor.Company.CONTENT_URI, null, ContentDescriptor.Company.Cols.NAME+" = ?",
@@ -4037,6 +4047,54 @@ public class HornetDBService extends Service {
     		}
     		
     	} catch (SQLException e) {
+    		e.printStackTrace();
+    		return -2;
+    	}
+    	
+    	closeConnection();
+    	
+    	return result;
+    }
+    
+    private int getFinancialDetails(long lastupdate) {
+    	Log.d(TAG, "Getting Financial Details!");
+    	int result = 0;
+    	ResultSet rs;
+    	
+    	if (!openConnection()) {
+    		return -1;
+    	}
+    	
+    	try {
+    		rs = connection.getFinance(lastupdate);
+    		while (rs.next()) {
+    			ContentValues values = new ContentValues();
+    			
+    			values.put(ContentDescriptor.MemberFinance.Cols.ROWID, rs.getInt("id"));
+    			values.put(ContentDescriptor.MemberFinance.Cols.MEMBERID, rs.getInt("memberid"));
+    			values.put(ContentDescriptor.MemberFinance.Cols.MEMBERSHIPID, rs.getInt("membershipid"));
+    			values.put(ContentDescriptor.MemberFinance.Cols.CREDIT, rs.getString("credit"));
+    			values.put(ContentDescriptor.MemberFinance.Cols.DEBIT, rs.getString("debit"));
+    			values.put(ContentDescriptor.MemberFinance.Cols.NOTE, rs.getString("note"));
+    			values.put(ContentDescriptor.MemberFinance.Cols.ORIGIN, rs.getString("origin"));
+    			values.put(ContentDescriptor.MemberFinance.Cols.OCCURRED, rs.getString("occurred"));
+    			values.put(ContentDescriptor.MemberFinance.Cols.LASTUPDATE, rs.getDouble("lastupdate"));
+    			values.put(ContentDescriptor.MemberFinance.Cols.CREATED, rs.getDouble("created"));
+    			
+    			cur = contentResolver.query(ContentDescriptor.MemberFinance.CONTENT_URI, null, ContentDescriptor.MemberFinance.Cols.ROWID+" = ?",
+    					new String[] {rs.getString("id")}, null);
+    			if (cur.moveToFirst()) {
+    				int id = cur.getInt(cur.getColumnIndex(ContentDescriptor.MemberFinance.Cols._ID));
+    				cur.close();
+    				contentResolver.update(ContentDescriptor.MemberFinance.CONTENT_URI, values, ContentDescriptor.MemberFinance.Cols._ID+" = ?",
+    						new String[] {String.valueOf(id)});
+    			} else {
+    				cur.close();
+    				contentResolver.insert(ContentDescriptor.MemberFinance.CONTENT_URI, values);
+    			}
+    		}
+    	} catch (SQLException e) {
+    		statusMessage = e.getLocalizedMessage();
     		e.printStackTrace();
     		return -2;
     	}

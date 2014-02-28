@@ -3,6 +3,7 @@ package com.treshna.hornet;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.treshna.hornet.ContentDescriptor.BillingHistory;
 import com.treshna.hornet.ContentDescriptor.Booking;
 import com.treshna.hornet.ContentDescriptor.CancellationFee;
 import com.treshna.hornet.ContentDescriptor.Class;
@@ -11,6 +12,7 @@ import com.treshna.hornet.ContentDescriptor.FreeIds;
 import com.treshna.hornet.ContentDescriptor.Image;
 import com.treshna.hornet.ContentDescriptor.KPI;
 import com.treshna.hornet.ContentDescriptor.Member;
+import com.treshna.hornet.ContentDescriptor.MemberFinance;
 import com.treshna.hornet.ContentDescriptor.MemberNotes;
 import com.treshna.hornet.ContentDescriptor.Membership;
 import com.treshna.hornet.ContentDescriptor.MembershipExpiryReason;
@@ -232,7 +234,7 @@ public class UpdateDatabase {
 				+" END; ";
 		
 		public static final String SQL29 ="CREATE TRIGGER "+Booking.Triggers.ON_UPDATE+" AFTER UPDATE ON "+Booking.NAME
-				+" FOR EACH ROW WHEN new."+Booking.Cols.BID+" > 0 "
+				+" FOR EACH ROW WHEN new."+Booking.Cols.BID+" > 0 AND new."+Booking.Cols.DEVICESIGNUP+" = 't'"
 						//do we need to check for actual changes, 
 						//or just assume that the update clause changed relevant info?
 						//AND new.<column> != old.<column> ?
@@ -653,6 +655,37 @@ public class UpdateDatabase {
 		
 		private static String SQL5 = "ALTER TABLE "+Membership.NAME+" ADD COLUMN "+Membership.Cols.FIRSTPAYMENT+" TEXT;";
 		
+		private static String SQL6 = "ALTER TABLE "+Company.NAME+" ADD COLUMN "+Company.Cols.TE_PASSWORD+" TEXT;";
+		
+		private static String SQL7 = "ALTER TABLE "+Company.NAME+" ADD COLUMN "+Company.Cols.WEB_URL+" TEXT DEFAULT "
+				+ "'api.gymmaster.co.nz';";
+		
+		private static String SQL8 = "CREATE TABLE "+MemberFinance.NAME+" ("+MemberFinance.Cols._ID+" INTEGER PRIMARY KEY NOT NULL,"
+				+MemberFinance.Cols.ROWID+" INTEGER, "
+				+MemberFinance.Cols.MEMBERID+" INTEGER NOT NULL, "+MemberFinance.Cols.MEMBERSHIPID+" INTEGER, "
+				+MemberFinance.Cols.OCCURRED+" TEXT, "+MemberFinance.Cols.CREDIT+" TEXT, "
+				+MemberFinance.Cols.DEBIT+" TEXT, "+MemberFinance.Cols.CREATED+" TEXT, " //this is a double?
+				+MemberFinance.Cols.LASTUPDATE+" TEXT, "+MemberFinance.Cols.ORIGIN+" TEXT, "
+				+MemberFinance.Cols.NOTE+" TEXT"
+				+");";
+		
+		private static final String SQL9 = "DROP TRIGGER IF EXISTS "+Booking.Triggers.ON_UPDATE+";";
+		
+		private static final String SQL10 ="CREATE TRIGGER "+Booking.Triggers.ON_UPDATE+" AFTER UPDATE ON "+Booking.NAME
+				+" FOR EACH ROW WHEN new."+Booking.Cols.BID+" > 0 AND new."+Booking.Cols.DEVICESIGNUP+" = 't'"
+				+" BEGIN "
+					+"INSERT OR REPLACE INTO "+PendingUpdates.NAME
+					+" ("+PendingUpdates.Cols.ROWID+", "+PendingUpdates.Cols.TABLEID+")"
+					+" VALUES (new."+Booking.Cols.ID+", "+TableIndex.Values.Booking.getKey()+");"
+				+"END;";
+		
+		private static final String SQL11 = "CREATE TABLE "+BillingHistory.NAME+" ("+BillingHistory.Cols.ID+" INTEGER PRIMARY KEY,"
+				+BillingHistory.Cols.MEMBERID+" INTEGER, "+BillingHistory.Cols.DDEXPORTID+" INTEGER, "
+				+BillingHistory.Cols.FAILED+" BOOLEAN, "+BillingHistory.Cols.AMOUNT+" TEXT,"
+				+BillingHistory.Cols.NOTE+" TEXT, "+BillingHistory.Cols.STATUS+" TEXT, "
+				+BillingHistory.Cols.LASTUPDATE+" TEXT "
+				+");";
+		
 		public static void patchNinetyFive(SQLiteDatabase db) {
 			db.beginTransaction();
 			try {
@@ -666,6 +699,18 @@ public class UpdateDatabase {
 				db.execSQL(SQL4);
 				Log.w(HornetDatabase.class.getName(), "\n"+SQL5);
 				db.execSQL(SQL5);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL6);
+				db.execSQL(SQL6);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL7);
+				db.execSQL(SQL7);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL8);
+				db.execSQL(SQL8);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL9);
+				db.execSQL(SQL9);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL10);
+				db.execSQL(SQL10);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL11);
+				db.execSQL(SQL11);
 				db.setTransactionSuccessful();
 			} finally {
 				db.endTransaction();

@@ -31,6 +31,7 @@ KEY:
                 KPI's (--requires v320).
                 Save default-selected trainer for bookings.
 				OnClick Membership shows additional information.
+				Member Finance Details.
 
 		-TODO:
 				Handle permissions/Roles for different staff, to limit what certain staff can see.
@@ -41,12 +42,12 @@ KEY:
                 Format/Default time to 12hr.
                 Booking view showing multiple days for selected resource.
                 check that balance/notes are only being downloaded as often as needed.
-				Payment Method Handling:
+PRIORITY #1			Payment Method Handling:
 					-We'll need an async task/progress box to display while we do JSON stuff with the api.server...
 					-When we add a member we'll be returned a link. link will take us to payment details site.
 					-Upon return from browser/website we run another json-sync to check for success.
 					-this should occur from the member.finance fragment
-				Populate Member Finance Details.
+					-default should be to redirect to a blank "Coming Soon!" website.
 
 	V118:
 		-DONE:

@@ -186,6 +186,7 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 						if (oldbookingtypeid != newbookingtypeid) {
 							ContentValues values = new ContentValues();
 							values.put(ContentDescriptor.Booking.Cols.BOOKINGTYPE, newbookingtypeid);
+							values.put(ContentDescriptor.Booking.Cols.DEVICESIGNUP, "t");
 							contentResolver.update(ContentDescriptor.Booking.CONTENT_URI, values, ContentDescriptor.Booking.Cols.BID+" = "+bookingID, null);
 						}
 					}
@@ -333,6 +334,7 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 					ContentValues values = new ContentValues();
 					values.put(ContentDescriptor.Booking.Cols.RESULT, 5);
 					values.put(ContentDescriptor.Booking.Cols.LASTUPDATE, new Date().getTime());
+					values.put(ContentDescriptor.Booking.Cols.DEVICESIGNUP, "t");
 					
 					contentResolver.update(ContentDescriptor.Booking.CONTENT_URI, values, 
 							ContentDescriptor.Booking.Cols.BID+" = ?", new String[] {bookingID});
@@ -361,6 +363,7 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 					values.put(ContentDescriptor.Booking.Cols.RESULT, 20);
 					values.put(ContentDescriptor.Booking.Cols.LASTUPDATE, new Date().getTime());
 					values.put(ContentDescriptor.Booking.Cols.CHECKIN, new Date().getTime());
+					values.put(ContentDescriptor.Booking.Cols.DEVICESIGNUP, "t");
 					
 					contentResolver.update(ContentDescriptor.Booking.CONTENT_URI, values, 
 							ContentDescriptor.Booking.Cols.BID+" = ?", new String[] {bookingID});
@@ -383,6 +386,7 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 					ContentValues values = new ContentValues();
 					values.put(ContentDescriptor.Booking.Cols.RESULT, 15);
 					values.put(ContentDescriptor.Booking.Cols.LASTUPDATE, new Date().getTime());
+					values.put(ContentDescriptor.Booking.Cols.DEVICESIGNUP, "t");
 					
 					contentResolver.update(ContentDescriptor.Booking.CONTENT_URI, values, 
 							ContentDescriptor.Booking.Cols.BID+" = ?", new String[] {bookingID});

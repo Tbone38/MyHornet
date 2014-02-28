@@ -276,9 +276,9 @@ public class JDBCConnection {
     
     
     public ResultSet getCompanyConfig() throws SQLException, NullPointerException {
-
+    		//TODO: web_url te_password
 	    	ResultSet rs = null;
-	    	pStatement = con.prepareStatement("select name, te_username, schemaversion FROM company_config, config LIMIT 1;");
+	    	pStatement = con.prepareStatement("select name, te_username, schemaversion, te_password, web_url FROM company_config, config LIMIT 1;");
 	    	rs = pStatement.executeQuery();
 	    	return rs;
     }
@@ -757,18 +757,8 @@ public class JDBCConnection {
 	    	pStatement.setString(8, signupFee);
 	    	pStatement.setString(9, price);
 	    	
-	    	
 	    	pStatement.executeUpdate();
 	    	this.closePreparedStatement();
-	    	
-	    	//I don't think we need this.
-	    	/*pStatement = con.prepareStatement("INSERT INTO payment (paymentmethodid, memberid, membershipid, amount, "
-	    			+ "note, finished) VALUES (11, ?, ?, '0.00'::money, 'Membership Added via Android', 't');");
-	    	pStatement.setInt(1, memberId);
-	    	pStatement.setInt(2, membershipId);
-	    	
-	    	pStatement.executeUpdate();
-	    	this.closePreparedStatement();*/
 	    	
 	    	pStatement = con.prepareStatement("UPDATE membership SET (completed) = ('t') WHERE id = ?");
 	    	pStatement.setInt(1, membershipId);
@@ -994,16 +984,93 @@ public class JDBCConnection {
     	}
     }
     
-    public ResultSet getFinance() throws SQLException {
-    	/*select max(debitjournal.lastupdate), max(debit), count(*) 
-    	FROM debitjournal  
-    		LEFT JOIN payment_against ON (payment_against.debitjournalid=debitjournal.id AND payment_against.amount <> '0'::money)
-    		LEFT JOIN payment ON (payment.id=payment_against.paymentid AND payment.amount <> '0'::money)
-    	WHERE debitjournal.memberid = 9 AND occurred <= now() 
-    	GROUP BY debitjournal.id ORDER BY debitjournal.id;
-    	*/
+    public ResultSet getFinance(long lastupdate) throws SQLException {
+    	//this query isn't right.
+    	/*String query = "SELECT debitjournal.memberid AS memberid, debitjournal.occurred, payment.paymentdate as paymentdate, debit,"
+    			+ " payment_against.amount AS credit, paid, debitjournal.note, paymentmethod.name, payment.amount AS paymentamount"
+    			+ " FROM debitjournal"
+    			+ " LEFT JOIN payment_against ON (payment_against.debitjournalid=debitjournal.id AND payment_against.amount <> '0'::money)"
+    			+ " LEFT JOIN payment ON (payment.id=payment_against.paymentid AND payment.amount <> '0'::money)"
+    			+ " LEFT JOIN sale ON (sale.id = debitjournal.saleid)"
+    			+ " LEFT JOIN paymentmethod ON (payment.paymentmethodid = paymentmethod.id)"
+    			+ " WHERE debitjournal.debit IS NOT NULL AND coalesce(sale.finished, TRUE)"
+    			+ " AND (ongoingcharge = false OR debitjournal.occurred::date BETWEEN '2014-01-01'::DATE AND current_date)"
+    			+ " AND debitjournal.memberid IS NOT NULL"
+    			+ " UNION"
+    			
+    			+ " SELECT memberid, payment.paymentdate AS occurred, paymentdate, NULL as debit, amount AS credit, true as paid,"
+    			+ " payment.note, paymentmethod.name, amount AS paymentamount"
+    			+ " FROM payment LEFT JOIN paymentmethod ON (payment.paymentmethodid = paymentmethod.id)"
+    			+ " WHERE COALESCE((SELECT sum(payment_against.amount) FROM payment_against WHERE paymentid=payment.id), '0'::money) <> amount"
+    			+ " AND paymentdate BETWEEN '2014-01-01'::DATE AND current_date"
+    			+ " AND memberid IS NOT NULL"
+    			+ " UNION"
+    			
+    			+ " SELECT memberid, paymentdate, paymentdate, NULL as debit, amount AS credit, true as paid,"
+    			+ " payment.note||' not assigned' as note, paymentmethod.name, amount AS paymentamount"
+    			+ " FROM payment LEFT JOIN paymentmethod ON (payment.paymentmethodid = paymentmethod.id)"
+    			+ " WHERE (select sum(payment_against.amount) FROM payment_against "
+    				+ "WHERE paymentid=payment.id AND debitjournalid is null) = amount"
+    			+ "AND paymentdate BETWEEN '2014-01-01'::DATE AND current_date"
+    			+ "AND memberid IS NOT NULL"
+    			+ "ORDER BY memberid,paymentdate, occurred ASC;";*/
     	
-    	return null;
+    	String query = "SELECT payment.id AS id, payment.memberid AS memberid, payment.membershipid AS membershipid,"
+    			+ " EXTRACT(epoch FROM payment.paymentdate) AS occurred,"
+    			+ " extract(epoch FROM payment.created) AS created,"
+    			+ " EXTRACT(epoch FROM payment.lastupdate) AS lastupdate, payment.amount AS credit, NULL as debit, (case"
+    			+ " when dd_export_memberid is not null then 'DD Pay'"
+    			+ " when webpayment then 'Web Payment'"
+    			+ " when autopayment then 'Auto Added'"
+    			+ " when deposit then 'Deposit'"
+    			+ " else 'Payment' end) as origin,"
+    			+ " paymentmethod.name as note"
+    			+ " FROM payment LEFT JOIN debitjournal ON (debitjournal.id = journalid)"
+    			+ " LEFT JOIN paymentmethod ON (paymentmethod.id = paymentmethodid)"
+    			+ " LEFT JOIN member ON (payment.memberid = member.id)"
+    			+ " WHERE (amount != '0'::money or dd_export_memberid is not null)"
+    			+ " AND payment.memberid IS NOT NULL"
+    			+ " AND member.status != 3"
+    			+ " AND paymentdate BETWEEN ?::DATE AND current_date"
+
+    			+ " UNION"
+
+    			+ " SELECT debitjournal.id AS id, debitjournal.memberid, debitjournal.membershipid,"
+    			+ " extract(epoch FROM debitjournal.occurred) AS occurred, "
+    			+ " extract(epoch FROM debitjournal.created) as created, EXTRACT(epoch FROM debitjournal.lastupdate) AS lastupdate,"
+    			+ " NULL AS credit, debitjournal.debit AS debit,"
+    			+ " debitjournal.origin AS origin, debitjournal.note AS note"
+    			+ " FROM debitjournal LEFT JOIN programme_addon on"
+    			+ " (addonid = programme_addon.id)"
+    			+ " LEFT JOIN member ON (member.id = debitjournal.memberid)"
+    			+ " WHERE occurred BETWEEN ?::DATE AND current_date"
+    			+ " AND debitjournal.memberid IS NOT NULL"
+    			+ " AND member.status != 3"
+    			+ " ORDER BY memberid, occurred DESC;";
+
+    	Date startdate = new Date(lastupdate);;
+    	
+    	if (lastupdate <= 20) {
+    		//set our Date to a year a go.
+    		Calendar cal = Calendar.getInstance();
+    		cal.add(Calendar.YEAR, -1);
+    		startdate = cal.getTime();
+    	}
+    	
+    	pStatement = con.prepareStatement(query);
+    	pStatement.setString(1, Services.DateToString(startdate));
+    	pStatement.setString(2, Services.DateToString(startdate));
+    	
+    	return pStatement.executeQuery();
+    }
+    
+    public ResultSet getBillingHistory(long lastupdate) throws SQLException {
+    	pStatement = con.prepareStatement("SELECT id, memberid, dd_exportid, amount, failed, status, note, lastupdate"
+    			+ "FROM dd_export_member LEFT JOIN member ON (dd_export_member.memberid = member.id) WHERE created >= ?"
+    			+ " AND member.status != 3;");
+    	pStatement.setTimestamp(1, new Timestamp(lastupdate));
+    	
+    	return pStatement.executeQuery();
     }
     
     public SQLWarning getWarnings() throws SQLException, NullPointerException {

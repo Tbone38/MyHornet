@@ -296,6 +296,7 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 			bdl.putString(Services.Statics.MID, memberID);
 			f.setArguments(bdl);
 			selectedFragment = R.id.button_member_navigation_finance;
+			setupFragment(f);
 			break;
 		}
 		}
