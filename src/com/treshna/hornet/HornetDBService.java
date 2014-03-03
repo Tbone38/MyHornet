@@ -207,6 +207,7 @@ public class HornetDBService extends Service {
 			getMemberNotes(last_sync);
 			getMemberBalance(last_sync);
 			getFinancialDetails(last_sync);
+			getBillingHistory(last_sync);
 			
 			//do bookings!
 			updateBookings(); 
@@ -324,6 +325,7 @@ public class HornetDBService extends Service {
 		   getMembershipSuspends(-1);
 		   getMemberBalance(-1);
 		   getFinancialDetails(0);
+		   getBillingHistory(0);
 		   getBookings();
 		   memberImages();
 		   getClasses(-1);
@@ -4077,9 +4079,17 @@ public class HornetDBService extends Service {
     			values.put(ContentDescriptor.MemberFinance.Cols.DEBIT, rs.getString("debit"));
     			values.put(ContentDescriptor.MemberFinance.Cols.NOTE, rs.getString("note"));
     			values.put(ContentDescriptor.MemberFinance.Cols.ORIGIN, rs.getString("origin"));
-    			values.put(ContentDescriptor.MemberFinance.Cols.OCCURRED, rs.getString("occurred"));
-    			values.put(ContentDescriptor.MemberFinance.Cols.LASTUPDATE, rs.getDouble("lastupdate"));
-    			values.put(ContentDescriptor.MemberFinance.Cols.CREATED, rs.getDouble("created"));
+    			Double occurred, row_lastupdate, created;
+    			occurred = rs.getDouble("occurred");
+    			occurred = (occurred*1000);
+    			row_lastupdate = rs.getDouble("lastupdate");
+    			row_lastupdate = (row_lastupdate*1000);
+    			created = rs.getDouble("created");
+    			created = (created*1000);
+    			values.put(ContentDescriptor.MemberFinance.Cols.OCCURRED, occurred);
+    			values.put(ContentDescriptor.MemberFinance.Cols.LASTUPDATE, row_lastupdate);
+    			values.put(ContentDescriptor.MemberFinance.Cols.CREATED, created);
+    			values.put(ContentDescriptor.MemberFinance.Cols.DD_EXPORT_MEMBERID, rs.getInt("dd_export_memberid"));
     			
     			cur = contentResolver.query(ContentDescriptor.MemberFinance.CONTENT_URI, null, ContentDescriptor.MemberFinance.Cols.ROWID+" = ?",
     					new String[] {rs.getString("id")}, null);
@@ -4101,6 +4111,59 @@ public class HornetDBService extends Service {
     	
     	closeConnection();
     	
+    	return result;
+    }
+    
+    private int getBillingHistory(long lastupdate) {
+    	int result = 0;
+    	ResultSet rs;
+    	ContentValues values;
+    	
+    	if (!openConnection()) {
+    		return -1;
+    	}
+    	
+    	try {
+    		rs = connection.getBillingHistory(lastupdate);
+    		
+			while (rs.next()) {
+				values = new ContentValues();
+				
+				values.put(ContentDescriptor.BillingHistory.Cols.ID, rs.getInt("id"));
+				values.put(ContentDescriptor.BillingHistory.Cols.MEMBERID, rs.getInt("memberid"));
+				values.put(ContentDescriptor.BillingHistory.Cols.DDEXPORTID, rs.getInt("dd_exportid"));
+				values.put(ContentDescriptor.BillingHistory.Cols.FAILED, rs.getString("failed"));
+				values.put(ContentDescriptor.BillingHistory.Cols.AMOUNT, rs.getString("amount"));
+				values.put(ContentDescriptor.BillingHistory.Cols.STATUS, rs.getString("status"));
+				values.put(ContentDescriptor.BillingHistory.Cols.NOTE, rs.getString("note"));
+				values.put(ContentDescriptor.BillingHistory.Cols.PROCESSDATE, rs.getString("processdate"));
+				Double processdate, row_lastupdate;
+				row_lastupdate = rs.getDouble("lastupdate");
+				row_lastupdate = (row_lastupdate*1000);
+				processdate = rs.getDouble("processdate");
+				processdate = (processdate*1000);
+				values.put(ContentDescriptor.BillingHistory.Cols.PROCESSDATE, processdate);
+				values.put(ContentDescriptor.BillingHistory.Cols.LASTUPDATE, row_lastupdate);
+				
+				cur = contentResolver.query(ContentDescriptor.BillingHistory.CONTENT_URI, null, ContentDescriptor.BillingHistory.Cols.ID+" = ?",
+						new String[] {String.valueOf(rs.getInt("id"))}, null);
+				if (cur.moveToNext()) {
+					cur.close();
+					contentResolver.update(ContentDescriptor.BillingHistory.CONTENT_URI, values, ContentDescriptor.BillingHistory.Cols.ID+" = ?",
+							new String[] {String.valueOf(rs.getInt("id"))});
+				} else {
+					cur.close();
+					contentResolver.insert(ContentDescriptor.BillingHistory.CONTENT_URI, values);
+				}
+				result +=1;
+			} 
+    	} catch (SQLException e) {
+    		statusMessage = e.getLocalizedMessage();
+    		e.printStackTrace();
+    		return -2;
+    	}
+    	
+    	closeConnection();
     	return result;
     }
     

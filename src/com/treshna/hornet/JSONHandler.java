@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
@@ -34,6 +35,7 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Base64;
@@ -50,6 +52,11 @@ public class JSONHandler {
 	private int errorcode = -1;
 	private String errormsg = null;
 	private String signup_url = null;
+	private String session_token = null;
+	private static final String GYMLOGIN = "/gymlogin";
+	private static final String CREATEDDACCT = "/createddaccount";
+	private static final String EDITEZIDEBITDETAILS = "/editezdebitdetails";
+	private static final String CHECKDDSTATUS = "/checkddstatus";
 	
 	public JSONHandler(Context context) {
 		
@@ -342,53 +349,207 @@ public class JSONHandler {
     	return true;
     }
 	
-	/* is the api url going to be our website or theirs? i.e. do I need to point it to one of our sites and just pass in the te_...,
-	 * etc, or do I need to point it to there website?
-	 */
-	public int AddMemberBillingType(int memberid, String api, String te_username, String te_password) {
-		int result = 0;
+	public boolean DDLogin(String api, String te_username, String te_password) {
+		Log.d(TAG, "DD Login");
+		boolean result = false;
 		String status = "";
 		this.signup_url = "api.gymmaster.co.nz/notavailable";
-		JSONObject response;
-		String url = api+"?memberid="+memberid+"&te_username="+te_username+"&te_password="+te_password;
+		JSONObject response, post;
 		
-		response = getJSON(url);
+		api = "http://192.168.2.132:5000"; //TODO: un-hard-code this.
+				
+		String url = api+GYMLOGIN;
+		post = new JSONObject();
+		try {
+			post.put("username", te_username);
+			post.put("password", te_password);
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return result;
+		}
+		
+		response = postJSON(url, post);
 		
 		if (response == null) {
 			errormsg = "Server not responding.";
 			errorcode = JSONError.NORESPONSE.getKey();
-			return 0;
+			return result;
 		}
+		Log.d(TAG, response.toString());
 		
 		try {
-			status = response.getString("status");
+			status = response.getString("validlogin");
 		} catch (JSONException e) {
-			status = "error";
+			status = "false";
 			errormsg = "Server not responding";
 			errorcode = JSONError.NORESPONSE.getKey();
 		}
 		
-		if (status.compareTo("error")==0) {
-			if (errormsg == null) {
-				try {
-					errormsg = response.getString("error");
-					errorcode = response.getInt("errorcode");
-				} catch (JSONException e) {
-					errormsg = "Server not responding";
-					errorcode = JSONError.NORESPONSE.getKey();
-				}
-			}
+		if (status.compareTo("false")==0) {		
+			errormsg = "Bad Login credentials."; //TODO: we'll need to resync the te_username & te_password
+			errorcode = JSONError.BADRETRIEVE.getKey();
 		} else {
-			//we extract the URL we want to for signing up the member,
-			//we then send the user to that url.
-			// after wards we check if our signup was a success. (via the api again?)
-			this.signup_url = "api.gymmaster.co.nz/notavailable";
-			result +=1;
+			try {
+				this.session_token = response.getString("session");
+				result = true;
+			} catch (JSONException e) {
+				errormsg = "Could not retrieve Session, please try again later.";
+				errorcode = JSONError.BADRETRIEVE.getKey();
+			}
+			
 		}
 		
 		return result;
 	}
 	
+	public boolean DDAdd(int memberid, String api) {
+		Log.d(TAG, "DD Add");
+		boolean result = false;
+		String status = "";
+		JSONObject response, post;
+		
+		api = "http://192.168.2.132:5000"; //TODO: un-hard-code this.
+		
+		String url = api+CREATEDDACCT;
+		
+		post = new JSONObject();
+		try {
+			post.put("userid", memberid);
+			post.put("session", this.session_token);
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return result;
+		}
+		
+		response = this.postJSON(url, post);
+		
+		if (response == null) {
+			errormsg = "Server not responding.";
+			errorcode = JSONError.NORESPONSE.getKey();
+			return result;
+		}
+		
+		try {
+			status = response.getString("result");
+		} catch (JSONException e) {
+			status = "failure";
+			errormsg = "Server not responding";
+			errorcode = JSONError.NORESPONSE.getKey();
+		}
+		
+		if (status.compareTo("failure")==0) {		
+			try {
+				errormsg = response.getString("message");
+				if (errormsg.contains("There is already a customer")) result = true;
+			} catch (JSONException e) {
+				errormsg = "No Response";
+			}
+			errorcode = JSONError.INVALIDINPUT.getKey();
+		} else {
+			try {
+				this.session_token = response.getString("session");
+				result = true;
+			} catch (JSONException e) {
+				errormsg = "Missing Session";
+				errorcode = JSONError.INTERNALCON.getKey();
+			}
+		}
+		if (result) {
+			result = DDdetails(memberid, api);
+		}
+		
+		return result;
+	}
+	
+	private boolean DDdetails(int memberid, String api) {
+		Log.d(TAG, "DD Details");
+		boolean result = false;
+		JSONObject response, post;
+		String url = api+EDITEZIDEBITDETAILS;
+		
+		post = new JSONObject();
+		try {
+			post.put("userid", memberid);
+			post.put("session", this.session_token);
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return result;
+		}
+		
+		response = this.postJSON(url, post);
+		
+		if (response == null) {
+			errormsg = "Server not responding.";
+			errorcode = JSONError.NORESPONSE.getKey();
+			return result;
+		}
+		
+		try {
+			this.signup_url = response.getString("editurl");
+			this.session_token = response.getString("session");
+			result = true;
+		} catch (JSONException e) {
+			e.printStackTrace();
+			errormsg = "Could not get response";
+			errorcode = JSONError.BADRETRIEVE.getKey();
+		}
+		
+		return result;
+	}
+	
+	public String get_session() {
+		return this.session_token;
+	}
+	
+	public boolean DDcheckStatus(int memberid, String api, String session) {
+		boolean result = false;
+		String status = "";
+		JSONObject response, post;
+		
+		api = "http://192.168.2.132:5000"; //TODO: un-hard-code this.
+		String url = api+CREATEDDACCT;
+		
+		post = new JSONObject();
+		try {
+			post.put("userid", memberid);
+			post.put("session", session);
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return result;
+		}
+		
+		response = this.postJSON(url, post);
+		
+		if (response == null) {
+			errormsg = "Server not responding.";
+			errorcode = JSONError.NORESPONSE.getKey();
+			return result;
+		}
+		
+		try {
+			status = response.getString("ddstatus");
+		} catch (JSONException e) {
+			status = "bad";
+			errormsg = "Server not responding";
+			errorcode = JSONError.NORESPONSE.getKey();
+		}
+		
+		if (status.compareTo("bad")==0) {		
+			try {
+				errormsg = response.getString("message");
+			} catch (JSONException e) {
+				errormsg = "No Response";
+			}
+			errorcode = JSONError.INVALIDINPUT.getKey();
+		} else {
+			try {
+				result = true;
+				this.session_token = response.getString("session");
+			} catch (JSONException e) {/*probably doesn't matter.*/}
+		}
+		
+		return result;
+	}
 	
 	private SecretKeySpec generatekey() {
 		SecretKeySpec key = null;
@@ -504,8 +665,10 @@ public class JSONHandler {
 		StringEntity se;
 		HttpPost httpPost;
 		httpPost = new HttpPost(url);
+		
 		httpPost.setHeader("Accept", "application/json");
 		httpPost.setHeader("Content-type", "application/json");
+		httpPost.setHeader("host", url);
 		
 		Log.d("JSON Parser", "Posting " + post.toString());
 		try {
@@ -517,7 +680,7 @@ public class JSONHandler {
 			e.printStackTrace();
 			return null;
 		}
-		return JSONResponse(null, httpPost);
+		return JSONResponse(null, httpPost, true);
 	}
 	
 	private JSONObject getJSON(String url) {
@@ -527,10 +690,10 @@ public class JSONHandler {
 		httpGet.setHeader("Accept", "application/json");
 		httpGet.setHeader("Content-type", "application/json");
 		
-		return JSONResponse(httpGet, null);
+		return JSONResponse(httpGet, null, false);
 	}
 
-	private JSONObject JSONResponse(HttpGet httpGet, HttpPost httpPost) {
+	private JSONObject JSONResponse(HttpGet httpGet, HttpPost httpPost, boolean is_post) {
 		InputStream io = null;
 		JSONObject jObj = null;
 		String json = "";
@@ -541,9 +704,10 @@ public class JSONHandler {
 			HttpResponse httpResponse;
 			HttpEntity httpEntity;
 			
-			if (httpGet != null) {
+			if (!is_post) {
 				httpResponse = httpClient.execute(httpGet);
-			} else if (httpPost != null) {
+			} else if (is_post) {
+				//Log.d(TAG, Arrays.toString(httpPost.getAllHeaders()));
 				httpResponse = httpClient.execute(httpPost);
 			} else {
 				httpResponse = null;

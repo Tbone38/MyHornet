@@ -666,7 +666,7 @@ public class UpdateDatabase {
 				+MemberFinance.Cols.OCCURRED+" TEXT, "+MemberFinance.Cols.CREDIT+" TEXT, "
 				+MemberFinance.Cols.DEBIT+" TEXT, "+MemberFinance.Cols.CREATED+" TEXT, " //this is a double?
 				+MemberFinance.Cols.LASTUPDATE+" TEXT, "+MemberFinance.Cols.ORIGIN+" TEXT, "
-				+MemberFinance.Cols.NOTE+" TEXT"
+				+MemberFinance.Cols.NOTE+" TEXT, "+MemberFinance.Cols.DD_EXPORT_MEMBERID+" INTEGER "
 				+");";
 		
 		private static final String SQL9 = "DROP TRIGGER IF EXISTS "+Booking.Triggers.ON_UPDATE+";";
@@ -683,7 +683,7 @@ public class UpdateDatabase {
 				+BillingHistory.Cols.MEMBERID+" INTEGER, "+BillingHistory.Cols.DDEXPORTID+" INTEGER, "
 				+BillingHistory.Cols.FAILED+" BOOLEAN, "+BillingHistory.Cols.AMOUNT+" TEXT,"
 				+BillingHistory.Cols.NOTE+" TEXT, "+BillingHistory.Cols.STATUS+" TEXT, "
-				+BillingHistory.Cols.LASTUPDATE+" TEXT "
+				+BillingHistory.Cols.LASTUPDATE+" TEXT, "+BillingHistory.Cols.PROCESSDATE+" TEXT "
 				+");";
 		
 		public static void patchNinetyFive(SQLiteDatabase db) {

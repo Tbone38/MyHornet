@@ -1149,6 +1149,7 @@ public class ContentDescriptor {
 	 			public static final String DEBIT = "debit";
 	 			public static final String ORIGIN = "origin";
 	 			public static final String NOTE  = "note";
+	 			public static final String DD_EXPORT_MEMBERID = "dd_export_memberid";
 	 		}
 	 	}
 	 	
@@ -1170,6 +1171,7 @@ public class ContentDescriptor {
 	 			public static final String LASTUPDATE = "lastupdate";
 	 			public static final String NOTE = "note";
 	 			public static final String DDEXPORTID = "dd_export_id";
+	 			public static final String PROCESSDATE = "processdate";
 	 		}
 	 	}
 }

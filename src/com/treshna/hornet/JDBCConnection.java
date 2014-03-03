@@ -1024,7 +1024,8 @@ public class JDBCConnection {
     			+ " when autopayment then 'Auto Added'"
     			+ " when deposit then 'Deposit'"
     			+ " else 'Payment' end) as origin,"
-    			+ " paymentmethod.name as note"
+    			+ " paymentmethod.name as note,"
+    			+ " dd_export_memberid"
     			+ " FROM payment LEFT JOIN debitjournal ON (debitjournal.id = journalid)"
     			+ " LEFT JOIN paymentmethod ON (paymentmethod.id = paymentmethodid)"
     			+ " LEFT JOIN member ON (payment.memberid = member.id)"
@@ -1039,7 +1040,8 @@ public class JDBCConnection {
     			+ " extract(epoch FROM debitjournal.occurred) AS occurred, "
     			+ " extract(epoch FROM debitjournal.created) as created, EXTRACT(epoch FROM debitjournal.lastupdate) AS lastupdate,"
     			+ " NULL AS credit, debitjournal.debit AS debit,"
-    			+ " debitjournal.origin AS origin, debitjournal.note AS note"
+    			+ " debitjournal.origin AS origin, debitjournal.note AS note,"
+    			+ " NULL as dd_export_memberid"
     			+ " FROM debitjournal LEFT JOIN programme_addon on"
     			+ " (addonid = programme_addon.id)"
     			+ " LEFT JOIN member ON (member.id = debitjournal.memberid)"
@@ -1048,7 +1050,7 @@ public class JDBCConnection {
     			+ " AND member.status != 3"
     			+ " ORDER BY memberid, occurred DESC;";
 
-    	Date startdate = new Date(lastupdate);;
+    	Date startdate = new Date(lastupdate);
     	
     	if (lastupdate <= 20) {
     		//set our Date to a year a go.
@@ -1065,8 +1067,12 @@ public class JDBCConnection {
     }
     
     public ResultSet getBillingHistory(long lastupdate) throws SQLException {
-    	pStatement = con.prepareStatement("SELECT id, memberid, dd_exportid, amount, failed, status, note, lastupdate"
-    			+ "FROM dd_export_member LEFT JOIN member ON (dd_export_member.memberid = member.id) WHERE created >= ?"
+    	
+    	pStatement = con.prepareStatement("SELECT dd_export_member.id, memberid, dd_exportid, amount, failed, dd_export_member.status, note,"
+    			+ " EXTRACT(epoch FROM dd_export_member.lastupdate) AS lastupdate, EXTRACT(epoch FROM at) AS processdate"
+    			+ " FROM dd_export_member LEFT JOIN member ON (dd_export_member.memberid = member.id)"
+    			+ " LEFT JOIN dd_export ON (dd_export.id = dd_export_member.dd_exportid)"
+    			+ " WHERE dd_export_member.created >= ?"
     			+ " AND member.status != 3;");
     	pStatement.setTimestamp(1, new Timestamp(lastupdate));
     	
