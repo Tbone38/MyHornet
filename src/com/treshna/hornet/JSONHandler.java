@@ -341,8 +341,9 @@ public class JSONHandler {
 			return false;
 		}
     	result = this.postJSON(url, post);
-    	
-    	Log.d(TAG, result.toString());
+    	if (result != null) {
+    		Log.d(TAG, result.toString());
+    	}
     	
     	//filehandler.deleteFile("db_sync.log"); 
     	
@@ -356,7 +357,7 @@ public class JSONHandler {
 		this.signup_url = "api.gymmaster.co.nz/notavailable";
 		JSONObject response, post;
 		
-		api = "http://192.168.2.132:5000"; //TODO: un-hard-code this.
+		api = "http://gmbooking-demo.gymmaster.co.nz"; //TODO: un-hard-code this.
 				
 		String url = api+GYMLOGIN;
 		post = new JSONObject();
@@ -408,7 +409,7 @@ public class JSONHandler {
 		String status = "";
 		JSONObject response, post;
 		
-		api = "http://192.168.2.132:5000"; //TODO: un-hard-code this.
+		api = "http://gmbooking-demo.gymmaster.co.nz"; //TODO: un-hard-code this.
 		
 		String url = api+CREATEDDACCT;
 		
@@ -506,7 +507,8 @@ public class JSONHandler {
 		String status = "";
 		JSONObject response, post;
 		
-		api = "http://192.168.2.132:5000"; //TODO: un-hard-code this.
+		//doesn't work.
+		api = "http://gmbooking-demo.gymmaster.co.nz"; //TODO: un-hard-code this.
 		String url = api+CREATEDDACCT;
 		
 		post = new JSONObject();
@@ -668,9 +670,9 @@ public class JSONHandler {
 		
 		httpPost.setHeader("Accept", "application/json");
 		httpPost.setHeader("Content-type", "application/json");
-		httpPost.setHeader("host", url);
 		
-		Log.d("JSON Parser", "Posting " + post.toString());
+		
+		Log.d("JSON Parser", "Posting " + post.toString()+" To "+url);
 		try {
 			se = new StringEntity(post.toString(), "UTF-8");
 			se.setContentType("application/json; charset=UTF-8");
@@ -750,6 +752,7 @@ public class JSONHandler {
 	
 		// try parse the string to a JSON object
 		try {
+			Log.d(TAG, json);
 			jObj = new JSONObject(json);
 		} catch (JSONException e) {
 			Log.e("JSON Parser",
