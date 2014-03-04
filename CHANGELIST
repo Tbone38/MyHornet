@@ -1,8 +1,8 @@
 KEY:
-	** means push update out as soon as bug/feature is fixed/implemented.	
+    ** means push update out as soon as bug/feature is fixed/implemented.   
 
-	FUTURE:
-    	SQLITE:
+    FUTURE:
+        SQLITE:
             Make 1=1 replication of all the tables you're using. rather than only grabing certain columns.
             will this make life much easier?
         TESTING:
@@ -12,36 +12,36 @@ KEY:
         DB CHANGES:
             Add Timestamp/created column to Idcard.
             Add Android(Hornet?) specific door?
-		KNOWN BUGS/TO FIX:
-			Manual checkin might hard-crash if the door is null (why wasn't there any doors?)
+        KNOWN BUGS/TO FIX:
+            Manual checkin might hard-crash if the door is null (why wasn't there any doors?)
             The booking swipe view pager doesn't invaildate cached fragments when the date is set.
-            	This means that some of the (5) fragments may show the wrong date.
+                This means that some of the (5) fragments may show the wrong date.
             The database sync runs out of memory on large databases (e.g. YMCA db).
             Sometimes app needs to restart for the roll menu item to show up.
             Dates need to be handled better. Currently they're breaking on Dru's phone because the default format (Date().toString()) returns differently.
-            	Fix is to call SimpleDateFormat.format(Date()) instead of trying to parse the Date().toString().
-			Progress Box no longer works. needs to be added back in via a aSync Task for the db_syncing.
-				(had issues trying to attach to windows from the service thread, due to 'Context' complications.)
-			Update Recurssion. (updating the same rows every time they change). (occurs in bookings.)
-			Updating version seems to loose Resources & doors. ?
-	
-	v119:
-		-Done:
-				Altered the add Member process.
+                Fix is to call SimpleDateFormat.format(Date()) instead of trying to parse the Date().toString().
+            Progress Box no longer works. needs to be added back in via a aSync Task for the db_syncing.
+                (had issues trying to attach to windows from the service thread, due to 'Context' complications.)
+            Update Recurssion. (updating the same rows every time they change). (occurs in bookings.)
+            Updating version seems to loose Resources & doors. ?
+    
+    v119:
+        -Done:
+                Altered the add Member process.
                 KPI's (--requires v320).
                 Save default-selected trainer for bookings.
-				OnClick Membership shows additional information.
-				Member Finance Details.
-				Payment Method Handling:
-					-We'll need an async task/progress box to display while we do JSON stuff with the api.server...
-					-When we add a member we'll be returned a link. link will take us to payment details site.
-					-Upon return from browser/website we run another json-sync to check for success. (FIX THIS).
-					-this should occur from the member.finance fragment
-					-default should be to redirect to a blank "Coming Soon!" website.
-				Member Billing Details (dd_export_member) this is slightly(?) different from the members finances??
+                OnClick Membership shows additional information.
+                Member Finance Details.
+                Payment Method Handling:
+                    async task/progress box to display while we do JSON stuff with the API
+                    When we edit a member we'll be returned a link. link will take us to payment details site.
+                    this occurs from the member.finance fragment
+					Works for Ezidebit.
+                Member Billing Details (dd_export_member) this is slightly(?) different from the members finances??
+				Modified the member_holds to match gymmaster exactly.
 
-		-TODO:
-				Handle permissions/Roles for different staff, to limit what certain staff can see.
+        -TODO:
+                Handle permissions/Roles for different staff, to limit what certain staff can see.
                 the log-file needs a unique identifier so we know which device has the issues.
                 Fix Dates (dd MMM yyyy)
                 Add Member Booking Page (that shows just that members up-coming bookings.)
@@ -49,58 +49,58 @@ KEY:
                 Format/Default time to 12hr. (?)
                 Booking view showing multiple days for selected resource.
                 check that balance/notes are only being downloaded as often as needed.
+				get DD working for bluepay..?
 
-	V118:
-		-DONE:
-               	On first run, we prompt for an easy setup/install.
-               		This easy setup gets there email address, gymname/organisational name, a username, & a location.
-                    	the username needs to be unique.
-						the email address needs to be unique.	
-                        	is the username used for the web-address (username.SERVERLOCATION.gymmaster.co.nz)?
-							the username is used for the database name (g_<USERNAME>)
-                            passed to a cental database on sms.treshna.com, which generates a password, and emails said email-address the password.
-							the username, password, db_name, and server are returned by the API
-							It's all passed through a JSON (flask) server (api.gymmaster.co.nz).
-					We also generate the actual Database.
-						this generation can be done prior, at which point the script will rename a free gymmaster db.
-							see ~api-gymmaster/free_db/ & ~api-gymmaster/scripts for more details.
-						the database bondfrontend.conf file can be found in ~api-gymmaster/config/<database name>/
-						the databases can be upgraded via the ./scripts/update_dbs.sh file
-						Fixed DB's should now be semi-secure. the GymMaster user is still super over all of the DB's though.
-							Any user with the gm_tableowner privellage will be super-user over all gymmaster dbs.
-					# DATABASE MAINTENANCE:
-						a number of scripts exists in the ~api-gymmaster/scripts directory for helping with this.
-						
+    V118:
+        On first run, we prompt for an easy setup/install.
+            This easy setup gets there email address, gymname/organisational name, a username, & a location.
+                the username needs to be unique.
+                    the email address needs to be unique.   
+                        is the username used for the web-address (username.SERVERLOCATION.gymmaster.co.nz)?
+                        the username is used for the database name (g_<USERNAME>)
+                        passed to a cental database on sms.treshna.com, which generates a password, and emails said email-address the password.
+                        the username, password, db_name, and server are returned by the API
+                        It's all passed through a JSON (flask) server (api.gymmaster.co.nz).
+                We also generate the actual Database.
+                    this generation can be done prior, at which point the script will rename a free gymmaster db.
+                        see ~api-gymmaster/free_db/ & ~api-gymmaster/scripts for more details.
+                    the database bondfrontend.conf file can be found in ~api-gymmaster/config/<database name>/
+                    the databases can be upgraded via the ./scripts/update_dbs.sh file
+                    Fixed DB's should now be semi-secure. the GymMaster user is still super over all of the DB's though.
+                        Any user with the gm_tableowner privellage will be super-user over all gymmaster dbs.
+                #DATABASE MAINTENANCE:
+                    a number of scripts exists in the ~api-gymmaster/scripts directory for helping with this.
+                        
                 upload the log-file after each sync to our central server,
-    	            -we store the schema version, company_name, and te_username as well.
-					-the log file will only contain warnings and errors.
-					-it may want manual deletion, or a trigger that truncates data.
-						(because at the moment the logs are massive and fairly unhelpful).
+                    -we store the schema version, company_name, and te_username as well.
+                    -the log file will only contain warnings and errors.
+                    -it may want manual deletion, or a trigger that truncates data.
+                        (because at the moment the logs are massive and fairly unhelpful).
                 Remove membership Button.
                 Remove member from class Button.
-				No longer able to clear database when changes are pending.
+                No longer able to clear database when changes are pending.
                 Fixed Get Card for new cards.
-				Added cancel membership.
+                Added cancel membership.
 
-	v116/117:
-		minor bug fixes/undocumented.
-	v115:
-		Added member Find Filters,
-		Added 'Add Notes' button on Member Details Page,
-		Added PendingDeletes table (no code uses it atm, because you can't delete from the app).
-		Added Visit History Page,
-		Added Programme Group to Find Filter,
-		Save Filter settings permanently.
-		Added Medical details to member notes page.
-		Cancel booking returns to the booking screen after OKAY button pressed
-		Remove tasks icons from last visitor.
-		Fix crash when click on home button from Empty activity and member ship hold (bad parent activity in manifest)
-		Added emergency contact access details to member notes page.
-		Fixed the Date table, it now dynamically fills in days 1 month in advance as needed.
-		Moved Free ID's into a seperate table using the TableIDs as reference.
-		Added triggers on tables for insertion/update.
-		Added Booking Day swipe (SEE KNOWN BUGS)
-		Added parentname (YMCA)
-		Added Roll Call feature, automatically generates a roll off of the members by there membership.
-		Roll Call feature uses filter as default membership for generating rolls (and syncs back from db).
-		sync Warnings/Errors are logged to a file called 'log.file';
+    v116/117:
+        minor bug fixes/undocumented.
+    v115:
+        Added member Find Filters,
+        Added 'Add Notes' button on Member Details Page,
+        Added PendingDeletes table (no code uses it atm, because you can't delete from the app).
+        Added Visit History Page,
+        Added Programme Group to Find Filter,
+        Save Filter settings permanently.
+        Added Medical details to member notes page.
+        Cancel booking returns to the booking screen after OKAY button pressed
+        Remove tasks icons from last visitor.
+        Fix crash when click on home button from Empty activity and member ship hold (bad parent activity in manifest)
+        Added emergency contact access details to member notes page.
+        Fixed the Date table, it now dynamically fills in days 1 month in advance as needed.
+        Moved Free ID's into a seperate table using the TableIDs as reference.
+        Added triggers on tables for insertion/update.
+        Added Booking Day swipe (SEE KNOWN BUGS)
+        Added parentname (YMCA)
+        Added Roll Call feature, automatically generates a roll off of the members by there membership.
+        Roll Call feature uses filter as default membership for generating rolls (and syncs back from db).
+        sync Warnings/Errors are logged to a file called 'log.file';

@@ -686,6 +686,22 @@ public class UpdateDatabase {
 				+BillingHistory.Cols.LASTUPDATE+" TEXT, "+BillingHistory.Cols.PROCESSDATE+" TEXT "
 				+");";
 		
+		private static final String SQL12 = "ALTER TABLE "+MembershipSuspend.NAME+" ADD COLUMN "+MembershipSuspend.Cols.SUSPENDCOST+" TEXT DEFAULT '$ 0.00';";
+		
+		private static final String SQL13 = "ALTER TABLE "+MembershipSuspend.NAME+" ADD COLUMN "+MembershipSuspend.Cols.ONEOFFFEE+" TEXT DEFAULT '$ 0.00';";
+		
+		private static final String SQL14 = "ALTER TABLE "+MembershipSuspend.NAME+" ADD COLUMN "+MembershipSuspend.Cols.ALLOWENTRY+" BOOLEAN DEFAULT 't';";
+		
+		private static final String SQL15 = "ALTER TABLE "+MembershipSuspend.NAME+" ADD COLUMN "+MembershipSuspend.Cols.EXTEND_MEMBERSHIP+" BOOLEAN DEFAULT 't';";
+		
+		private static final String SQL16 = "ALTER TABLE "+MembershipSuspend.NAME+" ADD COLUMN "+MembershipSuspend.Cols.PROMOTION+" BOOLEAN DEFAULT 'f';";
+		
+		private static final String SQL17 = "ALTER TABLE "+MembershipSuspend.NAME+" ADD COLUMN "+MembershipSuspend.Cols.FULLCOST+" BOOLEAN DEFAULT 'f';";
+		
+		private static final String SQL18 = "ALTER TABLE "+MembershipSuspend.NAME+" ADD COLUMN "+MembershipSuspend.Cols.HOLDFEE+" TEXT;";
+		
+		private static final String SQL19 = "ALTER TABLE "+MembershipSuspend.NAME+" ADD COLUMN "+MembershipSuspend.Cols.PRORATA+" BOOLEAN DEFAULT 't';";
+		
 		public static void patchNinetyFive(SQLiteDatabase db) {
 			db.beginTransaction();
 			try {
@@ -711,6 +727,22 @@ public class UpdateDatabase {
 				db.execSQL(SQL10);
 				Log.w(HornetDatabase.class.getName(), "\n"+SQL11);
 				db.execSQL(SQL11);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL12);
+				db.execSQL(SQL12);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL13);
+				db.execSQL(SQL13);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL14);
+				db.execSQL(SQL14);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL15);
+				db.execSQL(SQL15);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL16);
+				db.execSQL(SQL16);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL17);
+				db.execSQL(SQL17);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL18);
+				db.execSQL(SQL18);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL19);
+				db.execSQL(SQL19);
 				db.setTransactionSuccessful();
 			} finally {
 				db.endTransaction();

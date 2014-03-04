@@ -2447,6 +2447,14 @@ public class HornetDBService extends Service {
     			values.put(ContentDescriptor.MembershipSuspend.Cols.LENGTH, rs.getString("howlong"));
     			values.put(ContentDescriptor.MembershipSuspend.Cols.REASON, rs.getString("reason"));
     			values.put(ContentDescriptor.MembershipSuspend.Cols.ENDDATE, rs.getString("edate"));
+    			values.put(ContentDescriptor.MembershipSuspend.Cols.SUSPENDCOST, rs.getString("suspendcost"));
+    			values.put(ContentDescriptor.MembershipSuspend.Cols.ONEOFFFEE, rs.getString("oneofffee"));
+    			values.put(ContentDescriptor.MembershipSuspend.Cols.ALLOWENTRY, rs.getString("allowentry"));
+    			values.put(ContentDescriptor.MembershipSuspend.Cols.EXTEND_MEMBERSHIP, rs.getString("extend_membership"));
+    			values.put(ContentDescriptor.MembershipSuspend.Cols.PROMOTION, rs.getString("promotion"));
+    			values.put(ContentDescriptor.MembershipSuspend.Cols.FULLCOST, rs.getString("fullcost"));
+    			values.put(ContentDescriptor.MembershipSuspend.Cols.PRORATA, rs.getString("prorata"));
+    			values.put(ContentDescriptor.MembershipSuspend.Cols.FREEZE, rs.getString("freeze_fees"));
     			
     			cur = contentResolver.query(ContentDescriptor.MembershipSuspend.CONTENT_URI, null, 
     					ContentDescriptor.MembershipSuspend.Cols.SID+" = ?", new String[] {rs.getString("id")}, null);
@@ -2500,7 +2508,8 @@ public class HornetDBService extends Service {
 	    				String.valueOf(rows.get(i))});
     			continue;
     		}
-    		String mid, msid, sid, reason, start, duration, freeze;
+    		String mid, msid, sid, reason, start, duration, freeze, 
+    		suspendcost, oneofffee, allowentry, extend_membership, promotion, fullcost, holdfee, prorata;
   
     		mid = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.MID));
    			msid = null;
@@ -2510,8 +2519,18 @@ public class HornetDBService extends Service {
     		duration = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.LENGTH));
     		freeze = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.FREEZE));
     		
+    		suspendcost = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.SUSPENDCOST));
+    		oneofffee = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.ONEOFFFEE));
+    		allowentry = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.ALLOWENTRY));
+    		extend_membership = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.EXTEND_MEMBERSHIP));
+    		promotion = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.PROMOTION));
+    		fullcost = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.FULLCOST));
+    		holdfee = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.HOLDFEE));
+    		prorata = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.PRORATA));
+    		
     		try {
-    			connection.uploadSuspend(sid, mid, msid, start, duration, reason, freeze);
+    			connection.uploadSuspend(sid, mid, msid, start, duration, reason, freeze,
+    					suspendcost, oneofffee, allowentry, extend_membership, promotion, fullcost, holdfee, prorata);
     		} catch (SQLException e) {
     			statusMessage = e.getLocalizedMessage();
     			e.printStackTrace();

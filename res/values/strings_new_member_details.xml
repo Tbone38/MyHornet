@@ -36,5 +36,6 @@
  
  <string name="member_finance">Finance</string>
  <string name="member_billing">Billing</string>
- <string name="finance_setup_billing">Setup/Edit Billing</string>
+ <string name="finance_setup_billing">Add/Edit Billing</string>
+ <string name="heading_member_hold">Member Holds</string>
 </resources>

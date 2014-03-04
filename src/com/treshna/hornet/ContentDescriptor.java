@@ -764,6 +764,16 @@ public class ContentDescriptor {
 	 			public static final String FREEZE = "freeze_fees";
 	 			public static final String ENDDATE = "enddate";
 	 			public static final String DEVICESIGNUP = "devicesignup";
+	 			
+	 			//Added v119.
+	 			public static final String SUSPENDCOST = "suspendcost";
+	 			public static final String ONEOFFFEE = "oneofffee";
+	 			public static final String ALLOWENTRY = "allowentry";
+	 			public static final String EXTEND_MEMBERSHIP = "extend_membership";
+	 			public static final String PROMOTION = "promotion";
+	 			public static final String FULLCOST = "fullcost";
+	 			public static final String HOLDFEE = "holdfee";	
+	 			public static final String PRORATA = "prorata";
 	 		}
 	 	}
 	 	

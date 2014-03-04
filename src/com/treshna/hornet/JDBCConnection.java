@@ -650,7 +650,10 @@ public class JDBCConnection {
     
     public ResultSet getSuspends(long last_sync) throws SQLException , NullPointerException{
 	    	pStatement = con.prepareStatement("SELECT membership_suspend.id, memberid, membership_suspend.startdate,"
-	    			+ "howlong, membership_suspend.reason, (startdate+howlong)::date AS edate "
+	    			+ "howlong, membership_suspend.reason, CASE WHEN enddate IS NULL THEN (startdate+howlong)::date "
+	    			+ "ELSE enddate END AS edate, "
+	    			+ "suspendcost, oneofffee, allowentry, extend_membership, freeze_fees, "
+	    			+ "promotion, fullcost, holdfee, prorata "
 	    			+ "FROM membership_suspend LEFT JOIN member ON "
 	    			+ "(membership_suspend.memberid = member.id) "
 	    			+ "WHERE member.status != 3 AND membership_suspend.created >= ?::TIMESTAMP WITHOUT TIME ZONE;");
@@ -661,23 +664,32 @@ public class JDBCConnection {
 	    	return pStatement.executeQuery();
     }
     
+    //TODO: include more in this.
     public int uploadSuspend(String sid, String mid, String msid, String startdate, String duration, 
-    		String reason, String freeze) throws SQLException, NullPointerException {
+    		String reason, String freeze, String suspendcost, String oneofffee, String allowentry, String extend_membership,
+    		String promotion, String fullcost, String holdfee, String prorata) throws SQLException, NullPointerException {
 	    	
 	    	pStatement = con.prepareStatement("INSERT INTO membership_suspend (id, startdate, howlong, reason, "
-	    			+ "memberid, freeze_fees, enddate) VALUES (?, ?::DATE, ?::INTERVAL, ?, ?, ?, (?::date + ?::interval)::date);");
+	    			+ "memberid, freeze_fees, enddate, suspendcost, oneofffee, allowentry, "
+	    			+ "extend_membership, promotion, fullcost, holdfee, prorata) "
+	    			+ "VALUES (?, ?::DATE, ?::INTERVAL, ?, ?, ?::BOOLEAN, (?::date + ?::interval)::date, ?::money, ?::money,"
+	    			+ "?::BOOLEAN, ?::BOOLEAN, ?::BOOLEAN, ?::BOOLEAN, ?, ?::BOOLEAN);");
 	    	pStatement.setInt(1, Integer.decode(sid));
 	    	pStatement.setString(2, Services.dateFormat(startdate, "yyyyMMdd", "yyyy-MMM-dd"));
 	    	pStatement.setString(3, duration);
 	    	pStatement.setString(4, reason);
 	    	pStatement.setInt(5, Integer.decode(mid));
-	    	if (Integer.decode(freeze) == 1) {
-	    		pStatement.setBoolean(6, true);
-	    	} else {
-	    		pStatement.setBoolean(6, false);
-	    	}
+    		pStatement.setString(6, freeze);
 	    	pStatement.setString(7, Services.dateFormat(startdate, "yyyyMMdd", "yyyy-MMM-dd"));
 	    	pStatement.setString(8, duration);
+	    	pStatement.setString(9, suspendcost);
+	    	pStatement.setString(10, oneofffee);
+	    	pStatement.setString(11, allowentry);
+	    	pStatement.setString(12, extend_membership);
+	    	pStatement.setString(13, promotion);
+	    	pStatement.setString(14, fullcost);
+	    	pStatement.setString(15, holdfee);
+	    	pStatement.setString(16, prorata);
 	    	
 	    	return pStatement.executeUpdate();
 	    	
@@ -731,14 +743,14 @@ public class JDBCConnection {
     }
     
     /**
-     * This functions needs to upload memberships, and add a $0.00 payment for the
-     * membership on the same day as the membership was created. 
+     * This functions needs to upload memberships,
      * @return
      * @throws SQLException
      */
     public int uploadMembership(int memberId, int membershipId, int programmeId, int programmeGroupId, 
     		String startDate, String endDate, int cardNo, String signupFee, String price) throws SQLException, NullPointerException {
-	    	//dru said leave firstpayment blank, the software should fix it it's self.
+	    	//dru said leave firstpayment blank, nightrun should fix it.
+    		//however we get weird behaviour from the default/demo programmes.
     		//firstpayment
 	    	pStatement = con.prepareStatement("INSERT INTO membership (id, programmeid, programmegroupid, memberid, startdate, "
 	    			+ "enddate, cardno, notes, signupfee, paymentdue) VALUES (?, ?, ?, ?, ?::date, ?::date, ?, 'Membership Added Via Android',"
@@ -799,8 +811,15 @@ public class JDBCConnection {
 	    	
 	    	pStatement = con.prepareStatement("SELECT membernotes.* FROM membernotes LEFT JOIN member ON ("
 	    			+ "membernotes.memberid = member.id) WHERE member.status != 3 AND membernotes.occurred >= ?::date;");
-	    	pStatement.setString(1, Services.dateFormat(new Date(lastupdate).toString(),
-					"EEE MMM dd HH:mm:ss zzz yyyy", "dd-MM-yyyy"));
+	    	if (lastupdate < 20) {
+	    		Calendar cal = Calendar.getInstance();
+	    		cal.add(Calendar.YEAR, -1);
+	    		pStatement.setString(1, Services.DateToString(cal.getTime()));
+	    	} else {
+	    		pStatement.setString(1, Services.dateFormat(new Date(lastupdate).toString(),
+						"EEE MMM dd HH:mm:ss zzz yyyy", "dd-MM-yyyy"));
+	    	}
+	    	
 	    	rs = pStatement.executeQuery();
 	    	
 	    	return rs;
@@ -965,8 +984,8 @@ public class JDBCConnection {
     
     public ResultSet getKPIs() throws SQLException {
     	boolean kpi_available = false;
-    	try {
-    		pStatement = con.prepareStatement("SELECT * FROM checkversion_atleast(320);"); //320
+    	try {									//currently set to 319 for demo-ing purposes.
+    		pStatement = con.prepareStatement("SELECT * FROM checkversion_atleast(319);"); //THIS needs to be 320
     		ResultSet rs = pStatement.executeQuery();
     		rs.next();
     		if (rs.getInt(1)==0) {
@@ -985,36 +1004,7 @@ public class JDBCConnection {
     }
     
     public ResultSet getFinance(long lastupdate) throws SQLException {
-    	//this query isn't right.
-    	/*String query = "SELECT debitjournal.memberid AS memberid, debitjournal.occurred, payment.paymentdate as paymentdate, debit,"
-    			+ " payment_against.amount AS credit, paid, debitjournal.note, paymentmethod.name, payment.amount AS paymentamount"
-    			+ " FROM debitjournal"
-    			+ " LEFT JOIN payment_against ON (payment_against.debitjournalid=debitjournal.id AND payment_against.amount <> '0'::money)"
-    			+ " LEFT JOIN payment ON (payment.id=payment_against.paymentid AND payment.amount <> '0'::money)"
-    			+ " LEFT JOIN sale ON (sale.id = debitjournal.saleid)"
-    			+ " LEFT JOIN paymentmethod ON (payment.paymentmethodid = paymentmethod.id)"
-    			+ " WHERE debitjournal.debit IS NOT NULL AND coalesce(sale.finished, TRUE)"
-    			+ " AND (ongoingcharge = false OR debitjournal.occurred::date BETWEEN '2014-01-01'::DATE AND current_date)"
-    			+ " AND debitjournal.memberid IS NOT NULL"
-    			+ " UNION"
-    			
-    			+ " SELECT memberid, payment.paymentdate AS occurred, paymentdate, NULL as debit, amount AS credit, true as paid,"
-    			+ " payment.note, paymentmethod.name, amount AS paymentamount"
-    			+ " FROM payment LEFT JOIN paymentmethod ON (payment.paymentmethodid = paymentmethod.id)"
-    			+ " WHERE COALESCE((SELECT sum(payment_against.amount) FROM payment_against WHERE paymentid=payment.id), '0'::money) <> amount"
-    			+ " AND paymentdate BETWEEN '2014-01-01'::DATE AND current_date"
-    			+ " AND memberid IS NOT NULL"
-    			+ " UNION"
-    			
-    			+ " SELECT memberid, paymentdate, paymentdate, NULL as debit, amount AS credit, true as paid,"
-    			+ " payment.note||' not assigned' as note, paymentmethod.name, amount AS paymentamount"
-    			+ " FROM payment LEFT JOIN paymentmethod ON (payment.paymentmethodid = paymentmethod.id)"
-    			+ " WHERE (select sum(payment_against.amount) FROM payment_against "
-    				+ "WHERE paymentid=payment.id AND debitjournalid is null) = amount"
-    			+ "AND paymentdate BETWEEN '2014-01-01'::DATE AND current_date"
-    			+ "AND memberid IS NOT NULL"
-    			+ "ORDER BY memberid,paymentdate, occurred ASC;";*/
-    	
+    	//what our members have payed.
     	String query = "SELECT payment.id AS id, payment.memberid AS memberid, payment.membershipid AS membershipid,"
     			+ " EXTRACT(epoch FROM payment.paymentdate) AS occurred,"
     			+ " extract(epoch FROM payment.created) AS created,"
@@ -1035,7 +1025,7 @@ public class JDBCConnection {
     			+ " AND paymentdate BETWEEN ?::DATE AND current_date"
 
     			+ " UNION"
-
+    			//what our members owed
     			+ " SELECT debitjournal.id AS id, debitjournal.memberid, debitjournal.membershipid,"
     			+ " extract(epoch FROM debitjournal.occurred) AS occurred, "
     			+ " extract(epoch FROM debitjournal.created) as created, EXTRACT(epoch FROM debitjournal.lastupdate) AS lastupdate,"

@@ -38,10 +38,8 @@ public class MembershipAdd extends Fragment implements OnClickListener, DatePick
 	
 	DatePickerFragment sDatePicker;
 	DatePickerFragment eDatePicker;
-	DatePickerFragment pDatePicker;
 	private String sdate = null;
 	private String edate = null;
-	private String pdate = null;
 	private String currentPrice = null;
 	private String currentSignup = null;
 	private EditText mPrice;
@@ -61,8 +59,6 @@ public class MembershipAdd extends Fragment implements OnClickListener, DatePick
 		 sDatePicker.setDatePickerSelectListener(this);
 		 eDatePicker = new DatePickerFragment();
 		 eDatePicker.setDatePickerSelectListener(this);
-		 pDatePicker = new DatePickerFragment();
-		 pDatePicker.setDatePickerSelectListener(this);
 		 
 		 //get memberID.
 		 memberid = this.getArguments().getString(Services.Statics.MID);
@@ -266,18 +262,6 @@ public class MembershipAdd extends Fragment implements OnClickListener, DatePick
 			enddate.setBackgroundDrawable(getResources().getDrawable(R.drawable.button));
 		}
 		
-		/* Why was this removed?
-		TextView paymentdate = (TextView) page.findViewById(R.id.membershippaymentdate);
-		paymentdate.setTag(Services.dateFormat(new Date().toString(), 
-				"EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd"));
-		paymentdate.setClickable(true);
-		paymentdate.setOnClickListener(this);
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-			paymentdate.setBackground(getResources().getDrawable(R.drawable.button));
-		} else {
-			paymentdate.setBackgroundDrawable(getResources().getDrawable(R.drawable.button));
-		}*/
-		
 		
 		LinearLayout accept = (LinearLayout) page.findViewById(R.id.acceptbutton);
 		accept.setOnClickListener(this);
@@ -309,10 +293,6 @@ public class MembershipAdd extends Fragment implements OnClickListener, DatePick
 			
 			enddate.setText(edate);
 		}
-		/*if (pdate != null) {
-			TextView paymentdate = (TextView) page.findViewById(R.id.membershippaymentdate);
-			paymentdate.setText(pdate);
-		}*/
 	}
 	
 	@Override
@@ -336,15 +316,6 @@ public class MembershipAdd extends Fragment implements OnClickListener, DatePick
 		    eDatePicker.show(this.getChildFragmentManager(), "datePicker");
 		    break;
 		}
-		/*case (R.id.membershippaymentdate):{
-			Bundle bdl;
-			bdl = new Bundle(1);
-			bdl.putString(Services.Statics.KEY, (String) v.getTag());
-			
-			pDatePicker.setArguments(bdl);
-		    pDatePicker.show(this.getChildFragmentManager(), "datePicker");
-		    break;
-		}*/
 		case (R.id.acceptbutton):{
 			ArrayList<String> emptyviews = validate();
 			boolean is_valid = Boolean.parseBoolean(emptyviews.get(0));
@@ -415,19 +386,6 @@ public class MembershipAdd extends Fragment implements OnClickListener, DatePick
 			}
 		}
 		
-		/*TextView paymentdate = (TextView) page.findViewById(R.id.membershippaymentdate);
-		Log.v(TAG, paymentdate.getText().toString());
-		Log.v(TAG, this.getString(R.string.membership_add_paymentdate));
-		if (paymentdate.getText().toString().compareTo(this.getString(R.string.membership_add_paymentdate)) == 0) {
-			is_valid = false;
-			emptyviews.add(String.valueOf(R.id.membershippaymentdate));
-		 // do all the crazy gymmaster payment checking here.
-		}
-		else {
-			paymentdate.setTextColor(Color.BLACK);
-		}*/
-		
-		
 		emptyviews.add(0, String.valueOf(is_valid));
 		return emptyviews;
 	}
@@ -464,9 +422,7 @@ public class MembershipAdd extends Fragment implements OnClickListener, DatePick
 		EditText price = (EditText) page.findViewById(R.id.membershipprice);
 		input.add(5, price.getText().toString());
 		
-		/*TextView paymentdate = (TextView) page.findViewById(R.id.membershippaymentdate);
-		input.add(6, paymentdate.getText().toString());*/
-		input.add(6, null);
+		input.add(6, null); //payment date used to be here.
 		
 		EditText signupfee = (EditText) page.findViewById(R.id.membershipsignupfee);
 		input.add(7, signupfee.getText().toString());
@@ -497,10 +453,6 @@ public class MembershipAdd extends Fragment implements OnClickListener, DatePick
 			//edate = Services.dateFormat(edate, "yyyy MM dd", "dd MMM yyyy");
 		}
 		
-		if (pDatePicker == theDatePicker) {
-			pdate = date;
-			//pdate = Services.dateFormat(pdate, "yyyy MM dd", "dd MMM yyyy");
-		}
 		setupDates();
 		
 	}

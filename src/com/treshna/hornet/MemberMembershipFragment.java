@@ -127,6 +127,46 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 			mslist.addView(membershipRow);
 		}
 		cur.close();
+		
+		LinearLayout holdlist = (LinearLayout) view.findViewById(R.id.member_hold_list);
+		holdlist.removeAllViews();
+		
+		cur = contentResolver.query(ContentDescriptor.MembershipSuspend.CONTENT_URI, null, ContentDescriptor.MembershipSuspend.Cols.MID+" = ?",
+				new String[] {memberID}, null);
+		
+		if (cur.getCount() <= 0) {
+			TextView heading = (TextView) view.findViewById(R.id.memberHoldH);
+			heading.setVisibility(View.GONE);
+		}
+		while (cur.moveToNext()) {
+			//what should our row look like?
+			LinearLayout row = (LinearLayout) mInflater.inflate(R.layout.member_finance_row, null);
+			
+			if (cur.getPosition()%2==0) {
+				row.setBackgroundColor(Color.WHITE);
+			}
+			
+			TextView sdate_view = (TextView) row.findViewById(R.id.finance_row_occurred);
+			String sdate = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.STARTDATE));
+			Date thedate = Services.StringToDate(sdate, "yyyyMMdd");
+			if (thedate != null) sdate_view.setText(Services.DateToString(thedate));
+			else sdate_view.setText(sdate);
+			
+			TextView note_view = (TextView) row.findViewById(R.id.finance_row_note);
+			note_view.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.REASON)));
+			
+			TextView edate_view = (TextView) row.findViewById(R.id.finance_row_amount);
+			String edate = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.ENDDATE));
+			thedate = Services.StringToDate(edate, "yyyy-MM-dd");
+			if (thedate != null) edate_view.setText(Services.DateToString(thedate));
+			else edate_view.setText(edate);
+			
+			View colour_block = (View) row.findViewById(R.id.finance_colour_block);
+			colour_block.setBackgroundColor(getResources().getColor(R.color.android_blue));
+			
+			holdlist.addView(row);
+		}
+		
 		mActions.setupActions(view, memberID);
 		return view;
 	}

@@ -671,7 +671,6 @@ public class JSONHandler {
 		httpPost.setHeader("Accept", "application/json");
 		httpPost.setHeader("Content-type", "application/json");
 		
-		
 		Log.d("JSON Parser", "Posting " + post.toString()+" To "+url);
 		try {
 			se = new StringEntity(post.toString(), "UTF-8");

@@ -1,7 +1,9 @@
 package com.treshna.hornet;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
@@ -15,12 +17,17 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.RadioGroup;
+import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -29,24 +36,27 @@ import android.widget.ToggleButton;
  * TODO: 	- populate spinner #2.			-DONE
  * 			- date widget					-DONE
  * 			- handle switch					-DONE
- * 			- populate/handle spinner #1	-SKIPPED
  * 
  * @author callum
  *
  */
 
-public class MembershipHold extends ActionBarActivity implements OnClickListener, DatePickerFragment.DatePickerSelectListener {
+public class MembershipHold extends ActionBarActivity implements OnClickListener, DatePickerFragment.DatePickerSelectListener,
+		OnCheckedChangeListener{
 	
 	private String datevalue;
 	DatePickerFragment datePicker;
 	private String mMemberId;
 	private String mMembershipId = null;
-	private static final String TAG = "MembershipHold";	
+	private static final String TAG = "MembershipHold";
+	private EditText input;
+	private String currentPrice;
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.membership_hold);
+		//setContentView(R.layout.membership_hold);
+		setContentView(R.layout.new_membership_hold);
 		ActionBar actionBar = getSupportActionBar();
 	    actionBar.setDisplayHomeAsUpEnabled(true);
 		
@@ -66,7 +76,8 @@ public class MembershipHold extends ActionBarActivity implements OnClickListener
 	@SuppressLint("NewApi")
 	private void setupView(){		
 		setupDate();
-		
+		setupRadios();
+			
 		TextView accept, cancel;
 		
 		accept = (TextView) this.findViewById(R.id.buttonaccept);
@@ -78,6 +89,45 @@ public class MembershipHold extends ActionBarActivity implements OnClickListener
 		cancel.setClickable(true);
 		cancel.setOnClickListener(this);
 		
+	}
+	
+	private void setupRadios() {
+		RadioGroup holdfees = (RadioGroup) this.findViewById(R.id.holdfee);
+		holdfees.setOnCheckedChangeListener(this);
+		
+		input = (EditText) this.findViewById(R.id.hold_fee_input);
+		input.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void afterTextChanged(Editable s) {
+				if(!s.toString().equals(currentPrice)){
+					input.removeTextChangedListener(this);
+					String replaceable = String.format(Locale.US,"[%s,.]", 
+							NumberFormat.getCurrencyInstance(Locale.US).getCurrency().getSymbol());
+					String cleanString = s.toString().replaceAll(replaceable, "");
+					
+				    double parsed = 0d;
+				    try {
+				    	parsed = Double.parseDouble(cleanString);
+				    } catch ( NumberFormatException e) {
+				    	//happens when the string is empty sometimes.
+				    	parsed = 0d;
+				    }
+				    String formated = NumberFormat.getCurrencyInstance(Locale.US).format((parsed/100));
+
+				    currentPrice = formated;
+				    input.setText(formated);
+				    input.setSelection(formated.length());
+				    input.addTextChangedListener(this);
+				}
+			}
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {}
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before,
+					int count) {}
+		});
+		input.setText("0.00");
 	}
 	
 	private void setupDate(){
@@ -219,18 +269,61 @@ public class MembershipHold extends ActionBarActivity implements OnClickListener
 	 * 
 	 */
 	private void submit() {
-		
+
 		ContentValues values = new ContentValues();
-		
+
 		values.put(ContentDescriptor.MembershipSuspend.Cols.MID, mMemberId);
-		
-		ToggleButton gifttime = (ToggleButton) this.findViewById(R.id.gifttime);
-		if (gifttime.isChecked()) {
-			values.put(ContentDescriptor.MembershipSuspend.Cols.FREEZE, 1);
-		} else {
-			values.put(ContentDescriptor.MembershipSuspend.Cols.FREEZE, 0);
+		String holdfee = null;
+		String allow_entry, prorata;
+		RadioGroup rg = (RadioGroup) this.findViewById(R.id.holdfee);
+		int selectedRadio = rg.getCheckedRadioButtonId();
+		switch (selectedRadio){
+		case (R.id.holdfee_free_time):{
+			values.put(ContentDescriptor.MembershipSuspend.Cols.ALLOWENTRY, "t");
+			values.put(ContentDescriptor.MembershipSuspend.Cols.EXTEND_MEMBERSHIP, "t");
+			values.put(ContentDescriptor.MembershipSuspend.Cols.FREEZE, "t");
+			values.put(ContentDescriptor.MembershipSuspend.Cols.PROMOTION, "t");
+			holdfee = null;
+			break;
+		} case (R.id.holdfee_free):{
+			holdfee = "FREE";
+			break;
+		} case (R.id.holdfee_fullcost):{
+			holdfee = "FULLCOST";
+			break;
+		} case (R.id.holdfee_ongoingfee):{
+			holdfee = "ONGOINGFEE";
+			break;
+		} case (R.id.holdfee_setupcost):{
+			holdfee = "SETUPFEE";
+			break;
 		}
-		
+		}
+
+		if (holdfee != null && (holdfee.contains("SETUPFEE")|| holdfee.contains("ONGOINGFEE"))) {
+			if (holdfee.contains("SETUPFEE")) {
+				input = (EditText) this.findViewById(R.id.hold_fee_input);
+				values.put(ContentDescriptor.MembershipSuspend.Cols.ONEOFFFEE, input.getEditableText().toString());
+			} else {
+				values.put(ContentDescriptor.MembershipSuspend.Cols.SUSPENDCOST, input.getEditableText().toString());
+			}
+		}
+
+		if (holdfee != null) {
+			CheckBox entry_check = (CheckBox) this.findViewById(R.id.hold_endonreturn);
+			if (entry_check.isChecked()) allow_entry = "t";
+			else allow_entry = "f";
+			
+			CheckBox prorata_check = (CheckBox) this.findViewById(R.id.hold_prorata);
+			if (prorata_check.isChecked()) prorata = "t";
+			else prorata = "f";
+			
+			values.put(ContentDescriptor.MembershipSuspend.Cols.ALLOWENTRY, allow_entry);
+			values.put(ContentDescriptor.MembershipSuspend.Cols.PRORATA, prorata);
+			values.put(ContentDescriptor.MembershipSuspend.Cols.HOLDFEE, holdfee);
+			values.put(ContentDescriptor.MembershipSuspend.Cols.FREEZE, "f");
+		}
+
 		TextView startdate = (TextView) this.findViewById(R.id.startdate);
 		values.put(ContentDescriptor.MembershipSuspend.Cols.STARTDATE,
 				Services.dateFormat(startdate.getText().toString(), "dd MMM yyyy", "yyyMMdd"));
@@ -240,13 +333,12 @@ public class MembershipHold extends ActionBarActivity implements OnClickListener
 		String selection = String.valueOf(duration.getSelectedItem());
 		Log.v(TAG, "Selected Duration: "+selection);
 		values.put(ContentDescriptor.MembershipSuspend.Cols.LENGTH, selection);
-		
+
 		EditText reason = (EditText) this.findViewById(R.id.hold_reason);
 		values.put(ContentDescriptor.MembershipSuspend.Cols.REASON, reason.getEditableText().toString());
-		
+
 		ContentResolver contentResolver = this.getContentResolver();
-		/*Cursor cur = contentResolver.query(ContentDescriptor.MembershipSuspend.CONTENT_URI, null, ContentDescriptor.MembershipSuspend.Cols.MID+" = 0",
-				null, null);*/
+
 		Cursor cur = contentResolver.query(ContentDescriptor.FreeIds.CONTENT_URI, null, ContentDescriptor.FreeIds.Cols.TABLEID+" = "
 				+ContentDescriptor.TableIndex.Values.MembershipSuspend.getKey(), null, null);
 		int sid;
@@ -259,12 +351,17 @@ public class MembershipHold extends ActionBarActivity implements OnClickListener
 		values.put(ContentDescriptor.MembershipSuspend.Cols.SID, sid);
 		values.put(ContentDescriptor.MembershipSuspend.Cols.DEVICESIGNUP, "t");
 		contentResolver.insert(ContentDescriptor.MembershipSuspend.CONTENT_URI, values);
+		
+		contentResolver.delete(ContentDescriptor.FreeIds.CONTENT_URI, ContentDescriptor.FreeIds.Cols.TABLEID+" = ? AND "
+				+ContentDescriptor.FreeIds.Cols.ROWID+" =  ?", new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.MembershipSuspend.getKey()),
+				String.valueOf(sid)});
+		
 		//success! we should que an upload then leave the page.
 		Intent suspend = new Intent(this, HornetDBService.class);
 		suspend.putExtra(Services.Statics.KEY, Services.Statics.FREQUENT_SYNC);
 	 	this.startService(suspend);
 	 	Log.v(TAG, "Started Membership Suspend Update");
-	 	//toast ?
+
 		this.finish();
 	}
 	
@@ -307,6 +404,40 @@ public class MembershipHold extends ActionBarActivity implements OnClickListener
 	public void onDateSelect(String date, DatePickerFragment theDatePicker) {
 		datevalue = date;
 		setupDate();
+	}
+
+
+
+	@Override
+	public void onCheckedChanged(RadioGroup group, int checkedId) {
+		TextView input_heading = (TextView) this.findViewById(R.id.hold_fee_input_H);
+		EditText input = (EditText) this.findViewById(R.id.hold_fee_input);
+		
+		switch(checkedId){
+		case (R.id.holdfee_ongoingfee):{
+			input_heading.setText(getResources().getString(R.string.hold_fee_ongoing));
+			input_heading.setVisibility(View.VISIBLE);
+			
+			input.setVisibility(View.VISIBLE);
+			break;
+		}
+		case (R.id.holdfee_setupcost):{
+			input_heading.setText(getResources().getString(R.string.hold_fee_initial));
+			input_heading.setVisibility(View.VISIBLE);
+			
+			input.setVisibility(View.VISIBLE);
+			break;
+		}
+		default:{
+			input_heading.setText("");
+			input_heading.setVisibility(View.GONE);
+			input.getEditableText().clear();
+			input.setVisibility(View.GONE);
+			
+			break;
+		}
+		}
+		
 	}
 
 }

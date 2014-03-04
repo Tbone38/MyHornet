@@ -7,6 +7,23 @@
   <string name="membership_startdate">Start Date</string>
   <string name="membership_length">Duration</string>
   <string name="membership_reason">Reason For Hold</string>
+  <string name="membership_holdfee">Hold Fee</string>
+  <string name="holdfee_free">Free</string>
+  <string name="holdfee_free_hint">Membership is Free through the period.</string>
+  <string name="holdfee_free_time">Free Time</string>
+  <string name="holdfee_free_time_hint">Extends the membership by adding free time.</string>
+  <string name="holdfee_fullcost">Full Cost</string>
+  <string name="holdfee_fullcost_hint">Membership Fee continues to be deducted at normal Rate.</string>
+  <string name="holdfee_setupcost">Setup Cost</string>
+  <string name="holdfee_setupcost_hint">A one off admin fee is charged for putting membership on hold.</string>
+  <string name="holdfee_ongoingfee">Ongoing Fee</string>
+  <string name="holdfee_ongoingfee_hint">A customised recurring fee occurs. i.e. $5 per week. The payment frequency will be the same as what is set on the membership.</string>
+  <string name="hold_endonreturn">End hold on members return</string>
+  <string name="hold_endonreturn_hint">When a member returns to the gym and swipes their card, their memebership will automatically be unfrozen.</string>
+  <string name="hold_prorata">Prorata Membership Fees</string>
+  <string name="hold_prorata_hint">Suspends that exists between billing periods get the memberships fees adjusted down the daily value of the membership.</string>
+  <string name="hold_fee_initial">Initial Setup Fee</string>
+  <string name="hold_fee_ongoing">Ongoing Fee Charged</string>
   
   <string name="membership_default_startdate">Select Start Date</string>
   <string name="action_halt_membership">Membership Hold</string>

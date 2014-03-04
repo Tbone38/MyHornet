@@ -59,6 +59,9 @@ public class Services {
 		} catch (ParseException e) {
 			Log.e(TAG, "Error Parsing Date:", e);
 			date = null;
+		} catch (NullPointerException e) {
+			Log.e(TAG, "Error Parsing Date:", e);
+			date = null;
 		}
 		return date;
 	}
