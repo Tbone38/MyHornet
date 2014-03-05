@@ -392,7 +392,7 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 		
 		EditText nameView = (EditText) checkinWindow.findViewById(R.id.manual_checkin_name);
 		nameView.setText(name);
-		
+
 		ArrayList<String> doorlist = new ArrayList<String>();
 		cur = contentResolver.query(ContentDescriptor.Door.CONTENT_URI, null, null, null, null);
 		while (cur.moveToNext()) {
@@ -406,8 +406,8 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 		doorspinner.setAdapter(doorAdapter);
 		
 		ArrayList<String> membershiplist = new ArrayList<String>();
-		cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols.MID+" = ?",
-				new String[] {mid}, null);
+		cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols.MID+" = ? AND "
+				+ContentDescriptor.Membership.Cols.HISTORY+" = 'f'", new String[] {mid}, null);
 		while (cur.moveToNext()) {
 			//Log.v(TAG, "membership:"+cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PNAME)));
 			membershiplist.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PNAME)));

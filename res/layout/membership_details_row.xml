@@ -10,7 +10,7 @@
 	    android:id="@+id/membership_key"
 	    android:layout_width="0dp"
 	    android:layout_height="wrap_content"
-	    android:layout_weight="1"
+	    android:layout_weight=".75"
 	    android:textSize="14sp"
 	    android:gravity="left"
 	    android:paddingTop="3dp"/>
@@ -19,9 +19,10 @@
 	    android:id="@+id/membership_value"
 	    android:layout_width="0dp"
 	    android:layout_height="wrap_content"
-	    android:layout_weight=".4"
+	    android:layout_weight="1"
 	    android:textSize="14sp"
 	    android:gravity="left"
+	    android:textAlignment="viewEnd"
 	    android:paddingLeft="5dp"
 	    android:paddingTop="3dp" />
 	</LinearLayout>

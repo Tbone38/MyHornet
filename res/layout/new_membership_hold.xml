@@ -135,30 +135,33 @@
 	 	    android:background="@drawable/button" />
 	 	
 	 	<TextView
-	 	    android:id="@+id/hold_durationL"
+	 	    android:id="@+id/hold_enddateL"
 	 	    android:layout_width="wrap_content"
 	 	    android:layout_height="wrap_content"
 	 	    android:layout_below="@id/startdate"
 	 	    android:gravity="center"
 	 	    android:textSize="16sp"
-	 	    android:text="@string/membership_length"
+	 	    android:text="@string/membership_enddate"
 	 	    android:padding="5dp" 
 	 	    android:layout_margin="3dp"/>
 	 	
-	 	<Spinner 
-	 	    android:id="@+id/hold_duration"
+	 	<TextView 
+	 	    android:id="@+id/hold_enddate"
 	 	    android:layout_width="wrap_content"
 	 	    android:layout_height="wrap_content"
-	 	    android:layout_below="@id/hold_durationL"
-	 	    android:padding="5dp" 
+	 	    android:layout_below="@id/hold_enddateL"
+	 	    android:gravity="center_vertical"
+	 	    android:textSize="18sp"
+	 	    android:text="@string/membership_default_enddate"
+	 	    android:padding="5dp"
 	 	    android:layout_margin="3dp"
-	 	    android:entries="@array/membership_length_titles" />
+	 	    android:background="@drawable/button" />
 	 	
 	 	<TextView 
 	 	    android:id="@+id/hold_reasonL"
 	 	    android:layout_width="wrap_content"
 	 	    android:layout_height="wrap_content"
-	 	    android:layout_below="@id/hold_duration"
+	 	    android:layout_below="@id/hold_enddate"
 	 	    android:gravity="center"
 	 	    android:textSize="16sp"
 	 	    android:text="@string/membership_reason"

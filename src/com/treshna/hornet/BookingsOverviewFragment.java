@@ -153,8 +153,8 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
 				resourcename.setText(resource.get(i)[1]);
 				
 				cur = contentResolver.query(ContentDescriptor.BookingTime.CONTENT_URI, null, "bt."+ContentDescriptor.BookingTime.Cols.RID+" = ? AND bt."
-						+ContentDescriptor.BookingTime.Cols.ARRIVAL+" = ?", new String[] {resource.get(i)[0],
-						selectedDate}, null);
+						+ContentDescriptor.BookingTime.Cols.ARRIVAL+" = ? AND "+ContentDescriptor.Booking.Cols.PARENTID+" = 0", 
+						new String[] {resource.get(i)[0], selectedDate}, null);
 				ArrayList<int[]> bookingtimes = new ArrayList<int[]>();
 				
 				while (cur.moveToNext()){

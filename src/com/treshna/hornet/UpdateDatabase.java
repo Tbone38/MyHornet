@@ -20,6 +20,7 @@ import com.treshna.hornet.ContentDescriptor.MembershipSuspend;
 import com.treshna.hornet.ContentDescriptor.PendingDeletes;
 import com.treshna.hornet.ContentDescriptor.PendingUpdates;
 import com.treshna.hornet.ContentDescriptor.PendingUploads;
+import com.treshna.hornet.ContentDescriptor.Programme;
 import com.treshna.hornet.ContentDescriptor.RollCall;
 import com.treshna.hornet.ContentDescriptor.RollItem;
 import com.treshna.hornet.ContentDescriptor.TableIndex;
@@ -655,12 +656,14 @@ public class UpdateDatabase {
 		
 		private static String SQL5 = "ALTER TABLE "+Membership.NAME+" ADD COLUMN "+Membership.Cols.FIRSTPAYMENT+" TEXT;";
 		
-		private static String SQL6 = "ALTER TABLE "+Company.NAME+" ADD COLUMN "+Company.Cols.TE_PASSWORD+" TEXT;";
+		private static String SQL6 = "ALTER TABLE "+Membership.NAME+" ADD COLUMN "+Membership.Cols.UPFRONT+" TEXT;";
 		
-		private static String SQL7 = "ALTER TABLE "+Company.NAME+" ADD COLUMN "+Company.Cols.WEB_URL+" TEXT DEFAULT "
+		private static String SQL7 = "ALTER TABLE "+Company.NAME+" ADD COLUMN "+Company.Cols.TE_PASSWORD+" TEXT;";
+		
+		private static String SQL8 = "ALTER TABLE "+Company.NAME+" ADD COLUMN "+Company.Cols.WEB_URL+" TEXT DEFAULT "
 				+ "'api.gymmaster.co.nz';";
 		
-		private static String SQL8 = "CREATE TABLE "+MemberFinance.NAME+" ("+MemberFinance.Cols._ID+" INTEGER PRIMARY KEY NOT NULL,"
+		private static String SQL9 = "CREATE TABLE "+MemberFinance.NAME+" ("+MemberFinance.Cols._ID+" INTEGER PRIMARY KEY NOT NULL,"
 				+MemberFinance.Cols.ROWID+" INTEGER, "
 				+MemberFinance.Cols.MEMBERID+" INTEGER NOT NULL, "+MemberFinance.Cols.MEMBERSHIPID+" INTEGER, "
 				+MemberFinance.Cols.OCCURRED+" TEXT, "+MemberFinance.Cols.CREDIT+" TEXT, "
@@ -669,9 +672,9 @@ public class UpdateDatabase {
 				+MemberFinance.Cols.NOTE+" TEXT, "+MemberFinance.Cols.DD_EXPORT_MEMBERID+" INTEGER "
 				+");";
 		
-		private static final String SQL9 = "DROP TRIGGER IF EXISTS "+Booking.Triggers.ON_UPDATE+";";
+		private static final String SQL10 = "DROP TRIGGER IF EXISTS "+Booking.Triggers.ON_UPDATE+";";
 		
-		private static final String SQL10 ="CREATE TRIGGER "+Booking.Triggers.ON_UPDATE+" AFTER UPDATE ON "+Booking.NAME
+		private static final String SQL11 ="CREATE TRIGGER "+Booking.Triggers.ON_UPDATE+" AFTER UPDATE ON "+Booking.NAME
 				+" FOR EACH ROW WHEN new."+Booking.Cols.BID+" > 0 AND new."+Booking.Cols.DEVICESIGNUP+" = 't'"
 				+" BEGIN "
 					+"INSERT OR REPLACE INTO "+PendingUpdates.NAME
@@ -679,28 +682,44 @@ public class UpdateDatabase {
 					+" VALUES (new."+Booking.Cols.ID+", "+TableIndex.Values.Booking.getKey()+");"
 				+"END;";
 		
-		private static final String SQL11 = "CREATE TABLE "+BillingHistory.NAME+" ("+BillingHistory.Cols.ID+" INTEGER PRIMARY KEY,"
+		private static final String SQL12 = "CREATE TABLE "+BillingHistory.NAME+" ("+BillingHistory.Cols.ID+" INTEGER PRIMARY KEY,"
 				+BillingHistory.Cols.MEMBERID+" INTEGER, "+BillingHistory.Cols.DDEXPORTID+" INTEGER, "
 				+BillingHistory.Cols.FAILED+" BOOLEAN, "+BillingHistory.Cols.AMOUNT+" TEXT,"
 				+BillingHistory.Cols.NOTE+" TEXT, "+BillingHistory.Cols.STATUS+" TEXT, "
 				+BillingHistory.Cols.LASTUPDATE+" TEXT, "+BillingHistory.Cols.PROCESSDATE+" TEXT "
 				+");";
 		
-		private static final String SQL12 = "ALTER TABLE "+MembershipSuspend.NAME+" ADD COLUMN "+MembershipSuspend.Cols.SUSPENDCOST+" TEXT DEFAULT '$ 0.00';";
+		private static final String SQL13 = "ALTER TABLE "+MembershipSuspend.NAME+" ADD COLUMN "+MembershipSuspend.Cols.SUSPENDCOST+" TEXT DEFAULT '$ 0.00';";
 		
-		private static final String SQL13 = "ALTER TABLE "+MembershipSuspend.NAME+" ADD COLUMN "+MembershipSuspend.Cols.ONEOFFFEE+" TEXT DEFAULT '$ 0.00';";
+		private static final String SQL14 = "ALTER TABLE "+MembershipSuspend.NAME+" ADD COLUMN "+MembershipSuspend.Cols.ONEOFFFEE+" TEXT DEFAULT '$ 0.00';";
 		
-		private static final String SQL14 = "ALTER TABLE "+MembershipSuspend.NAME+" ADD COLUMN "+MembershipSuspend.Cols.ALLOWENTRY+" BOOLEAN DEFAULT 't';";
+		private static final String SQL15 = "ALTER TABLE "+MembershipSuspend.NAME+" ADD COLUMN "+MembershipSuspend.Cols.ALLOWENTRY+" BOOLEAN DEFAULT 't';";
 		
-		private static final String SQL15 = "ALTER TABLE "+MembershipSuspend.NAME+" ADD COLUMN "+MembershipSuspend.Cols.EXTEND_MEMBERSHIP+" BOOLEAN DEFAULT 't';";
+		private static final String SQL16 = "ALTER TABLE "+MembershipSuspend.NAME+" ADD COLUMN "+MembershipSuspend.Cols.EXTEND_MEMBERSHIP+" BOOLEAN DEFAULT 't';";
 		
-		private static final String SQL16 = "ALTER TABLE "+MembershipSuspend.NAME+" ADD COLUMN "+MembershipSuspend.Cols.PROMOTION+" BOOLEAN DEFAULT 'f';";
+		private static final String SQL17 = "ALTER TABLE "+MembershipSuspend.NAME+" ADD COLUMN "+MembershipSuspend.Cols.PROMOTION+" BOOLEAN DEFAULT 'f';";
 		
-		private static final String SQL17 = "ALTER TABLE "+MembershipSuspend.NAME+" ADD COLUMN "+MembershipSuspend.Cols.FULLCOST+" BOOLEAN DEFAULT 'f';";
+		private static final String SQL18 = "ALTER TABLE "+MembershipSuspend.NAME+" ADD COLUMN "+MembershipSuspend.Cols.FULLCOST+" BOOLEAN DEFAULT 'f';";
 		
-		private static final String SQL18 = "ALTER TABLE "+MembershipSuspend.NAME+" ADD COLUMN "+MembershipSuspend.Cols.HOLDFEE+" TEXT;";
+		private static final String SQL19 = "ALTER TABLE "+MembershipSuspend.NAME+" ADD COLUMN "+MembershipSuspend.Cols.HOLDFEE+" TEXT;";
 		
-		private static final String SQL19 = "ALTER TABLE "+MembershipSuspend.NAME+" ADD COLUMN "+MembershipSuspend.Cols.PRORATA+" BOOLEAN DEFAULT 't';";
+		private static final String SQL20 = "ALTER TABLE "+MembershipSuspend.NAME+" ADD COLUMN "+MembershipSuspend.Cols.PRORATA+" BOOLEAN DEFAULT 't';";
+
+		private static final String SQL21 = "ALTER TABLE "+Programme.NAME+" ADD COLUMN "+Programme.Cols.CONCESSION+" TEXT;";
+		
+		private static final String SQL22 = "CREATE TRIGGER "+MembershipSuspend.Triggers.ON_UPDATE+" AFTER UPDATE ON "+MembershipSuspend.NAME
+				+" FOR EACH ROW WHEN new."+MembershipSuspend.Cols.DEVICESIGNUP+" = 't' AND new."+MembershipSuspend.Cols.SID+" > 0"
+				+" BEGIN "
+					+" INSERT OR REPLACE INTO "+PendingUpdates.NAME
+					+" ("+PendingUpdates.Cols.ROWID+", "+PendingUpdates.Cols.TABLEID+")"
+					+" VALUES (new."+MembershipSuspend.Cols._ID+", "+TableIndex.Values.MembershipSuspend.getKey()+");"
+				+"END;";
+		
+		private static final String SQL23 = "ALTER TABLE "+Member.NAME+" ADD COLUMN "+Member.Cols.COUNTRY+" TEXT;";
+		
+		private static final String SQL24 = "ALTER TABLE "+Member.NAME+" ADD COLUMN "+Member.Cols.BILLINGACTIVE+" BOOLEAN DEFAULT 'f';";
+		
+		private static final String SQL25 = "ALTER TABLE "+Member.NAME+" ADD COLUMN "+Member.Cols.DD_EXPORT_FORMATID+" INTEGER;";
 		
 		public static void patchNinetyFive(SQLiteDatabase db) {
 			db.beginTransaction();
@@ -743,6 +762,18 @@ public class UpdateDatabase {
 				db.execSQL(SQL18);
 				Log.w(HornetDatabase.class.getName(), "\n"+SQL19);
 				db.execSQL(SQL19);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL20);
+				db.execSQL(SQL20);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL21);
+				db.execSQL(SQL21);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL22);
+				db.execSQL(SQL22);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL23);
+				db.execSQL(SQL23);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL24);
+				db.execSQL(SQL24);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL25);
+				db.execSQL(SQL25);
 				db.setTransactionSuccessful();
 			} finally {
 				db.endTransaction();

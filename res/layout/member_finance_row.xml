@@ -37,9 +37,18 @@
 	    android:paddingTop="3dp"
 	    android:paddingLeft="3dp"
 	    />
-	
 	<TextView
-	    android:id="@+id/finance_row_amount"
+	    android:id="@+id/finance_row_amount1"
+	    android:layout_width="0dp"
+	    android:layout_height="wrap_content"
+	    android:layout_weight=".4"
+	    android:textSize="14sp"
+	    android:gravity="right|center_vertical"
+	    android:paddingLeft="5dp"
+	    android:paddingTop="3dp"
+	    />
+	<TextView
+	    android:id="@+id/finance_row_amount2"
 	    android:layout_width="0dp"
 	    android:layout_height="wrap_content"
 	    android:layout_weight=".4"

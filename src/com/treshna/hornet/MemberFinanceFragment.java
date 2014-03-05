@@ -104,9 +104,11 @@ public class MemberFinanceFragment extends Fragment implements TagFoundListener,
 			TextView note_view = (TextView) row.findViewById(R.id.finance_row_note);
 			note_view.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.BillingHistory.Cols.NOTE)));
 			
-			TextView amount_view = (TextView) row.findViewById(R.id.finance_row_amount);
-			amount_view.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.BillingHistory.Cols.AMOUNT)));
+			TextView amount_view2 = (TextView) row.findViewById(R.id.finance_row_amount2);
+			amount_view2.setVisibility(View.GONE);
 			
+			TextView amount_view = (TextView) row.findViewById(R.id.finance_row_amount1);
+			amount_view.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.BillingHistory.Cols.AMOUNT)));
 			View colour_block = (View) row.findViewById(R.id.finance_colour_block);
 			if (cur.getString(cur.getColumnIndex(ContentDescriptor.BillingHistory.Cols.FAILED)).compareTo("f")==0) {
 				colour_block.setBackgroundColor(getActivity().getResources().getColor(R.color.visitors_green));
@@ -148,13 +150,14 @@ public class MemberFinanceFragment extends Fragment implements TagFoundListener,
 			TextView note_view = (TextView) row.findViewById(R.id.finance_row_note);
 			note_view.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.MemberFinance.Cols.NOTE)));
 			
-			TextView amount_view = (TextView) row.findViewById(R.id.finance_row_amount);
 			View colour_block = (View) row.findViewById(R.id.finance_colour_block);
 			if (cur.isNull(cur.getColumnIndex(ContentDescriptor.MemberFinance.Cols.DEBIT))) {
 				colour_block.setBackgroundColor(getActivity().getResources().getColor(R.color.visitors_green));
+				TextView amount_view = (TextView) row.findViewById(R.id.finance_row_amount1);
 				amount_view.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.MemberFinance.Cols.CREDIT)));
 			} else {
 				colour_block.setBackgroundColor(getActivity().getResources().getColor(R.color.visitors_red));
+				TextView amount_view = (TextView) row.findViewById(R.id.finance_row_amount2);
 				amount_view.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.MemberFinance.Cols.DEBIT)));
 			}
 			

@@ -57,10 +57,10 @@ public class Services {
 		try {
 			date = format.parse(datestring);
 		} catch (ParseException e) {
-			Log.e(TAG, "Error Parsing Date:", e);
+			//Log.e(TAG, "Error Parsing Date:", e);
 			date = null;
 		} catch (NullPointerException e) {
-			Log.e(TAG, "Error Parsing Date:", e);
+			//Log.e(TAG, "Error Parsing Date:", e);
 			date = null;
 		}
 		return date;
@@ -77,7 +77,7 @@ public class Services {
 		try {
 			date = input.parse(dateString);
 		} catch (ParseException e) {
-			Log.e(TAG, "Error Parsing Date:", e);
+			//Log.e(TAG, "Error Parsing Date:", e);
 			//this should return the original date.
 			return null;
 		}

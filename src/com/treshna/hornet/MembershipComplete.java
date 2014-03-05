@@ -55,12 +55,14 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 
 
 	private View setupView() {
-		//TODO
+
 		EditText programmeName = (EditText) page.findViewById(R.id.membership_programme_name);
 		cur = contentResolver.query(ContentDescriptor.Programme.CONTENT_URI, null, ContentDescriptor.Programme.Cols.PID+" = ?",
 				new String[] {results.get(2)}, null);
+		String price_desc = null;
 		if (cur.moveToFirst()) {
 			programmeName.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Programme.Cols.NAME)));
+			price_desc = cur.getString(cur.getColumnIndex(ContentDescriptor.Programme.Cols.PRICE_DESC));
 		}
 		cur.close();
 		
@@ -88,7 +90,11 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 		membershipSignup.setText(results.get(7));
 		
 		EditText membershipPrice = (EditText) page.findViewById(R.id.membership_price);
-		membershipPrice.setText(results.get(5));
+		if (price_desc != null) {
+			membershipPrice.setText(results.get(5)+" "+price_desc);
+		} else {
+			membershipPrice.setText(results.get(5));
+		}
 		
 		memberid = results.get(0);
 		cur.close();

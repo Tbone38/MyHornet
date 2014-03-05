@@ -5,6 +5,8 @@
   <string name="membership_gifttime_no">No</string>
   <string name="membership_gifttime_description">Can the member use the gym through the period?</string>
   <string name="membership_startdate">Start Date</string>
+  <string name="membership_enddate">End Date</string>
+  <string name="membership_default_enddate">Select End Date</string>
   <string name="membership_length">Duration</string>
   <string name="membership_reason">Reason For Hold</string>
   <string name="membership_holdfee">Hold Fee</string>
@@ -38,7 +40,7 @@
   
   <!-- 				ADD MEMBERSHIP 				-->
   	<string name="membership_add">Add Membership</string>
-  	<string name="membership_add_group_type">Membership Group Type</string>
+  	<string name="membership_add_group_type">Membership Group</string>
   	<string name="membership_add_type">Membership Type</string>
 	<string name="membership_add_to">to</string>
 	<string name="membership_add_startdate">Start Date</string>
@@ -48,7 +50,7 @@
 	<string name="membership_add_payment_date">First Payment Date</string>
 	<string name="membership_add_signup_fee">Signup Fee</string>
 	<string name="membership_add_actions">Actions</string>
-	<string name="membership_add_tag">Add Tag</string>
+	<string name="membership_add_tag">Assign Tag</string>
 	<string name="membership_add_photo">Add Photo</string>
 	<string name="membership_add_complete">Save &amp; Continue</string>
 	

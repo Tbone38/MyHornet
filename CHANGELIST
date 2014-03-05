@@ -29,6 +29,7 @@ KEY:
         -Done:
                 Altered the add Member process.
                 KPI's (--requires v320).
+				Crazy New SELECT_FUNCTION (--requires v320).
                 Save default-selected trainer for bookings.
                 OnClick Membership shows additional information.
                 Member Finance Details.
@@ -39,6 +40,7 @@ KEY:
 					Works for Ezidebit.
                 Member Billing Details (dd_export_member) this is slightly(?) different from the members finances??
 				Modified the member_holds to match gymmaster exactly.
+				Edit Member Hold.
 
         -TODO:
                 Handle permissions/Roles for different staff, to limit what certain staff can see.
@@ -50,6 +52,10 @@ KEY:
                 Booking view showing multiple days for selected resource.
                 check that balance/notes are only being downloaded as often as needed.
 				get DD working for bluepay..?
+				Cancel Member Hold.
+				Booking List behaviour seems weird. LOOK INTO WHY/FIX IT.
+				Change Member Notes to Member details/add new features.
+				Move Biling Details to seperate window.
 
     V118:
         On first run, we prompt for an easy setup/install.

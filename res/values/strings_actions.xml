@@ -9,6 +9,6 @@
 	<string name="action_add_membership">Add Membership</string>
 	<string name="action_manual_checkin">Manual Check-In</string>
 	<string name="action_gallery">Gallery</string>
-	<string name="action_tag">Get Card</string>
+	<string name="action_tag">Assign Tag</string>
 	<string name="action_kpi">KPIs</string>
 </resources>

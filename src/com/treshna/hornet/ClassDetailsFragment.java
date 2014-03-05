@@ -278,7 +278,6 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 				return;
 			}
 			
-			
 			AutoCompleteTextView findmember;
 			findmember = (AutoCompleteTextView) ((View) view.getParent()).findViewById(R.id.classAddMember);
 			
@@ -286,6 +285,9 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 			membername = findmember.getEditableText().toString();
 			
 			Log.v(TAG, "Got member with name: "+membername);
+			if (membername.compareTo("")==0 || membername.compareTo(" ")==0) {
+				return;
+			}
 			
 			contentResolver = getActivity().getContentResolver();
 			
@@ -296,21 +298,22 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 				Log.v(TAG, "no members found by that name");
 			} else if (cur.getCount() >= 2) {
 				// 2 or more members returned with that name, what should I do?
-				Log.v(TAG, "2 or more members found with that name");
+				Log.e(TAG, "2 or more members found with that name");
 			}
 			String memberid;
-			cur.moveToFirst();
-			firstname = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.FNAME));
-			lastname = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.SNAME));
-			memberid = cur.getString(1); //changing this will break things!
-			/*for (int i = 0; i<cur.getColumnCount(); i +=1) {
-				Log.v(TAG, cur.getColumnName(i)+": "+cur.getString(i));
-			}*/
-			Log.v(TAG, "MEMBERID: "+memberid);
-			cur.close();
-			// show pop-up to select membership ?
-			// if no memberships exist then complain?
-			showAlert(memberid, firstname, lastname);
+			if (cur.moveToFirst()) {
+				firstname = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.FNAME));
+				lastname = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.SNAME));
+				memberid = cur.getString(1); //changing this will break things!
+				/*for (int i = 0; i<cur.getColumnCount(); i +=1) {
+					Log.v(TAG, cur.getColumnName(i)+": "+cur.getString(i));
+				}*/
+				Log.v(TAG, "MEMBERID: "+memberid);
+				cur.close();
+				// show pop-up to select membership ?
+				// if no memberships exist then complain?
+				showAlert(memberid, firstname, lastname);
+			}
 			
 			break;
 		}
@@ -326,8 +329,8 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 		final RadioGroup rg = (RadioGroup) layout.findViewById(R.id.alertrg);
 		
 		
-		cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols.MID+" = ?",
-				new String[] {memberid}, null);
+		cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols.MID+" = ? AND "
+				+ContentDescriptor.Membership.Cols.HISTORY+" = 'f'", new String[] {memberid}, null);
 		
 		while (cur.moveToNext()) {
 			if (cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PNAME)) != null 
@@ -344,7 +347,7 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
         builder.setPositiveButton("Select", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
-            	
+
             	String selectedMSID = null;
             	if (rg.getChildCount()<=0) {
             		//no memberships found for this member, ignore and continue?
@@ -353,7 +356,7 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
             		Toast.makeText(getActivity(), "Cannot add Booking without membership", Toast.LENGTH_LONG).show();
             		dialog.dismiss();
             	} else if (rg.getChildCount() > 0) {
-	            	
+
 	            	int cid = rg.getCheckedRadioButtonId();     	
 	            	RadioButton rb = (RadioButton) rg.findViewById(cid);
 	            	String selectedMS = (String) rb.getText();
@@ -361,10 +364,7 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 	            	//System.out.print("\n\nSelected Membership with ID:"+selectedMSID);
 	            	Log.v(TAG, "Selected Membership: "+selectedMS+" with ID"+selectedMSID);
 	            	startTransaction(selectedMSID, memberid, firstname, surname);
-            	}
-            	
-	           
-            }
+            	}}
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
         	@Override

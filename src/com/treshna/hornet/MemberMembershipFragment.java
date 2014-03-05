@@ -10,6 +10,7 @@ import java.util.Locale;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -139,7 +140,6 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 			heading.setVisibility(View.GONE);
 		}
 		while (cur.moveToNext()) {
-			//what should our row look like?
 			LinearLayout row = (LinearLayout) mInflater.inflate(R.layout.member_finance_row, null);
 			
 			if (cur.getPosition()%2==0) {
@@ -148,21 +148,34 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 			
 			TextView sdate_view = (TextView) row.findViewById(R.id.finance_row_occurred);
 			String sdate = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.STARTDATE));
-			Date thedate = Services.StringToDate(sdate, "yyyyMMdd");
-			if (thedate != null) sdate_view.setText(Services.DateToString(thedate));
-			else sdate_view.setText(sdate);
+			Date thesdate = Services.StringToDate(sdate, "yyyyMMdd");
+			if (thesdate != null) sdate = Services.DateToString(thesdate);
+			sdate_view.setText(sdate);
 			
 			TextView note_view = (TextView) row.findViewById(R.id.finance_row_note);
 			note_view.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.REASON)));
 			
-			TextView edate_view = (TextView) row.findViewById(R.id.finance_row_amount);
+			TextView edate_view = (TextView) row.findViewById(R.id.finance_row_amount1);
+			TextView amount_view = (TextView) row.findViewById(R.id.finance_row_amount2);
+			amount_view.setVisibility(View.GONE);
 			String edate = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.ENDDATE));
-			thedate = Services.StringToDate(edate, "yyyy-MM-dd");
-			if (thedate != null) edate_view.setText(Services.DateToString(thedate));
-			else edate_view.setText(edate);
+			Date theedate = Services.StringToDate(edate, "yyyy-MM-dd");			
+			if (theedate != null) edate =Services.DateToString(theedate);
+			edate_view.setText(edate);
 			
 			View colour_block = (View) row.findViewById(R.id.finance_colour_block);
 			colour_block.setBackgroundColor(getResources().getColor(R.color.android_blue));
+			
+			if (Services.StringToDate(sdate, "dd MMM yyyy").getTime() <= new Date().getTime()
+					&& Services.StringToDate(edate, "dd MMM yyyy").getTime() >= new Date().getTime()) {
+				//this is our active hold..
+				//we want to edit/cancel it.
+				row.setId(R.id.holdfee);
+				row.setClickable(true);
+				row.setOnClickListener(this);
+				int rowid = cur.getInt(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.SID));
+				row.setTag(rowid);
+			}
 			
 			holdlist.addView(row);
 		}
@@ -314,6 +327,8 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 					ContentDescriptor.Membership.Cols.FIRSTPAYMENT+" AS 'First Payment:'",
 					ContentDescriptor.Membership.Cols.PAYMENTDUE+" AS 'Payment Due:'",
 					ContentDescriptor.Membership.Cols.NEXTPAYMENT+" AS 'Next Payment:'",
+					ContentDescriptor.Membership.Cols.UPFRONT+" AS 'Upfront Fee:'",
+					ContentDescriptor.Membership.Cols.VISITS+" AS 'Concession Count:'",
 					ContentDescriptor.Membership.Cols.PNAME};
 			Cursor cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, columns, ContentDescriptor.Membership.Cols.MSID+" = ?",
 					new String[] {String.valueOf(membershipid)}, null);
@@ -330,6 +345,7 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 			
 			for (int i=0; i <cur.getColumnCount(); i++) {
 				LinearLayout row = (LinearLayout) inflater.inflate(R.layout.membership_details_row, null);
+				boolean add_row = true;
 				if (i%2==0) {
 					row.setBackgroundColor(Color.TRANSPARENT);
 				}
@@ -340,12 +356,43 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 				if (!cur.isNull(i)) {
 					value.setText(cur.getString(i));
 				}
-				if (cur.getColumnName(i).compareTo(ContentDescriptor.Membership.Cols.PNAME)!=0) {
+				
+				if (cur.getColumnName(i).compareTo("Concession Count:")==0) {
+					Cursor cur2 = contentResolver.query(ContentDescriptor.Programme.CONTENT_URI, new String[] {ContentDescriptor.Programme.Cols.CONCESSION},
+							ContentDescriptor.Programme.Cols.NAME+" = ?", new String[] 
+									{cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PNAME))}, null);
+					if (cur2.moveToFirst()) {
+						if (!cur2.isNull(0) && cur2.getInt(0)> 0) {
+							value.setText(cur.getString(i)+"/"+cur2.getInt(0));
+						} else {
+							add_row = false;
+						}
+					} else {
+						add_row = false;
+					}
+					cur2.close();
+				}
+
+				if (cur.getColumnName(i).compareTo(ContentDescriptor.Membership.Cols.PNAME)==0) {
+					add_row = false;
+				}
+				if (add_row) {
 					list.addView(row);
 				}
 			}
 			alert.setView(listwrapper);
 			alert.show();
+			break;
+		}
+		case (R.id.holdfee):{
+			int suspendid = 0;
+			if (v.getTag() instanceof Integer) {
+				suspendid = (Integer) v.getTag();
+			}
+			Intent i = new Intent(getActivity(), MembershipHold.class);
+			i.putExtra(ContentDescriptor.MembershipSuspend.Cols.SID, suspendid);
+			i.putExtra(Services.Statics.KEY, memberID);
+			getActivity().startActivity(i);
 			break;
 		}
 		}

@@ -256,6 +256,11 @@ public class ContentDescriptor {
 	 			
 	 			//YMCA SPECIFIC
 	 			public static final String PARENTNAME = "parentname"; //default this to empty.
+	 			
+	 			//Added in V119
+	 			public static final String COUNTRY = "addresscountry";
+	 			public static final String BILLINGACTIVE = "billingactive";
+	 			public static final String DD_EXPORT_FORMATID = "dd_export_formatid";
 	        }
 	        
 	        public static class OldCols {
@@ -558,6 +563,7 @@ public class ContentDescriptor {
 	 			public static final String NOTE = "pricenotes";
 	 			public static final String LASTUPDATE = "lastupdate";
 	 			public static final String PRICE_DESC ="price_desc";
+	 			public static final String CONCESSION = "concession";
 	 		}
 	 	}
 	 	
@@ -614,6 +620,7 @@ public class ContentDescriptor {
 	 			public static final String PAYMENTDUE = "paymentdue";
 	 			public static final String NEXTPAYMENT = "nextpayment";
 	 			public static final String FIRSTPAYMENT = "firstpayment";
+	 			public static final String UPFRONT = "upfront";
 	 		}
 	 	}
 	 	
@@ -748,6 +755,7 @@ public class ContentDescriptor {
 	 		public static class Triggers {
 	 			public static final String ON_INSERT = "suspend_insert";
 	 			public static final String ON_UPDATE_SID = "suspendid_update";
+	 			public static final String ON_UPDATE = "suspend_update";
 	 			public static final String ON_DELETE = "suspend_delete"; //unused
 	 		}
 	 		//referenced here for historical reasons.

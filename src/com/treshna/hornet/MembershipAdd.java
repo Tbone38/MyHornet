@@ -145,7 +145,7 @@ public class MembershipAdd extends Fragment implements OnClickListener, DatePick
 
 		
 		Spinner membershipgroup = (Spinner) page.findViewById(R.id.membershipgrouptype);
-		cur = contentResolver.query(ContentDescriptor.Programme.GROUP_URI, null, null, null, null);
+		cur = contentResolver.query(ContentDescriptor.Programme.GROUP_URI, null, null, null, ContentDescriptor.Programme.Cols.PID);
 		ArrayList<String> membershipgroups = new ArrayList<String>();
 		while (cur.moveToNext()) {
 			membershipgroups.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Programme.Cols.GNAME)));

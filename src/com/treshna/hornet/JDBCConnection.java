@@ -361,7 +361,8 @@ public class JDBCConnection {
 			+"member.phonehome AS mphhome, member.phonework AS mphwork, member.phonecell AS mphcell, "
 			+"member.email AS memail, member.notes AS mnotes, member.status, member.cardno, member.gender, "
 			+"emergencyname, emergencyhome, emergencywork, emergencycell, emergencyrelationship, "
-			+"medication, medicationdosage, medicationbystaff, medicalconditions "
+			+"medication, medicationdosage, medicationbystaff, medicalconditions, "
+			+ "dob, addressstreet, addresssuburb, addresscity, addressareacode, addresscountry, billingactive, dd_export_formatid "
 			+ "FROM member"
 			;
     
@@ -389,7 +390,8 @@ public class JDBCConnection {
 			+"member.phonehome AS mphhome, member.phonework AS mphwork, member.phonecell AS mphcell, "
 			+"member.email AS memail, member.notes AS mnotes, member.status, member.cardno, member.gender, "
 			+"emergencyname, emergencyhome, emergencywork, emergencycell, emergencyrelationship, "
-			+"medication, medicationdosage, medicationbystaff, medicalconditions, parentname "
+			+"medication, medicationdosage, medicationbystaff, medicalconditions, parentname, "
+			+ "dob, addressstreet, addresssuburb, addresscity, addressareacode, addresscountry, billingactive, dd_export_formatid "
 			+ "FROM member"
 			; 
     
@@ -444,6 +446,7 @@ public class JDBCConnection {
 					value = value+", ";
 				}
 			}
+	    	
 	    	String query = set+value+where;
 	    	pStatement = con.prepareStatement(query);
 	    	return pStatement.executeUpdate();
@@ -486,7 +489,7 @@ public class JDBCConnection {
 	    			" membership.concession, programme.name, programme.id AS programmeid, membership.termination_date, "
 	    			+ "select_column('membership','cancel_reason', membership.*) AS cancel_reason,"
 	    			+ " membership.history, membership.signupfee, membership.paymentdue, membership.nextpayment,"
-	    			+ " membership.firstpayment"
+	    			+ " membership.firstpayment, membership.upfront"
 	    			+ " FROM membership LEFT JOIN programme ON (membership.programmeid = programme.id)" +
 	    			" WHERE 1=1 ";
 	    	if (ymca > 0) {
@@ -521,9 +524,9 @@ public class JDBCConnection {
     public int uploadBookings(Map<String, String> booking) throws SQLException, NullPointerException {
     	//ResultSet rs = null;
     	pStatement = con.prepareStatement("INSERT INTO booking (id, memberid, resourceid, arrival, startid, starttime, "
-    			+"bookingtypeid, firstname, surname, result, membershipid, notes, endtime, endid, lastupdate) " +
+    			+"bookingtypeid, firstname, surname, result, membershipid, notes, endtime, endid, lastupdate, parentid, classid) " +
     			"VALUES (?,?,?,?::DATE,?::TIME WITHOUT TIME ZONE,?::TIME WITHOUT TIME ZONE,?,?,?,?, ?, ?, " +
-    			"(?::TIME WITHOUT TIME ZONE), (?::TIME WITHOUT TIME ZONE - ?::TIME WITHOUT TIME ZONE), ?);");    	
+    			"(?::TIME WITHOUT TIME ZONE), (?::TIME WITHOUT TIME ZONE - ?::TIME WITHOUT TIME ZONE), ?, ?, ?);");    	
     	
     	pStatement.setInt(1, Integer.parseInt(booking.get(ContentDescriptor.Booking.Cols.BID)));
     	pStatement.setInt(2, Integer.parseInt(booking.get(ContentDescriptor.Booking.Cols.MID)));
@@ -556,6 +559,9 @@ public class JDBCConnection {
     	pStatement.setString(15, booking.get(ContentDescriptor.Booking.Cols.OFFSET));
     	//todo last-updated
     	pStatement.setDate(16, new java.sql.Date(Long.valueOf(booking.get(ContentDescriptor.Booking.Cols.LASTUPDATE))));
+    	
+    	pStatement.setInt(17, Integer.parseInt(booking.get(ContentDescriptor.Booking.Cols.PARENTID)));
+    	pStatement.setInt(18, Integer.parseInt(booking.get(ContentDescriptor.Booking.Cols.CLASSID)));
     	
     	Log.v(TAG, "Upload Bookings Query:"+pStatement.toString());
     	return pStatement.executeUpdate();
@@ -664,31 +670,36 @@ public class JDBCConnection {
 	    	return pStatement.executeQuery();
     }
     
-    //TODO: include more in this.
-    public int uploadSuspend(String sid, String mid, String msid, String startdate, String duration, 
+    public int uploadSuspend(String sid, String mid, String msid, String startdate, String enddate, 
     		String reason, String freeze, String suspendcost, String oneofffee, String allowentry, String extend_membership,
     		String promotion, String fullcost, String holdfee, String prorata) throws SQLException, NullPointerException {
 	    	
 	    	pStatement = con.prepareStatement("INSERT INTO membership_suspend (id, startdate, howlong, reason, "
 	    			+ "memberid, freeze_fees, enddate, suspendcost, oneofffee, allowentry, "
 	    			+ "extend_membership, promotion, fullcost, holdfee, prorata) "
-	    			+ "VALUES (?, ?::DATE, ?::INTERVAL, ?, ?, ?::BOOLEAN, (?::date + ?::interval)::date, ?::money, ?::money,"
+	    			+ "VALUES (?, ?::DATE, AGE(?::DATE, ?::DATE)::INTERVAL, ?, ?, ?::BOOLEAN, ?::date, ?::money, ?::money,"
 	    			+ "?::BOOLEAN, ?::BOOLEAN, ?::BOOLEAN, ?::BOOLEAN, ?, ?::BOOLEAN);");
 	    	pStatement.setInt(1, Integer.decode(sid));
-	    	pStatement.setString(2, Services.dateFormat(startdate, "yyyyMMdd", "yyyy-MMM-dd"));
-	    	pStatement.setString(3, duration);
-	    	pStatement.setString(4, reason);
-	    	pStatement.setInt(5, Integer.decode(mid));
-    		pStatement.setString(6, freeze);
-	    	pStatement.setString(7, Services.dateFormat(startdate, "yyyyMMdd", "yyyy-MMM-dd"));
-	    	pStatement.setString(8, duration);
+	    	//pStatement.setString(2, Services.dateFormat(startdate, "yyyyMMdd", "yyyy-MMM-dd"));
+	    	pStatement.setString(2, startdate);
+	    	pStatement.setString(3, enddate);
+	    	pStatement.setString(4, startdate);
+	    	pStatement.setString(5, reason);
+	    	pStatement.setInt(6, Integer.decode(mid));
+    		pStatement.setString(7, freeze);
+	    	//pStatement.setString(7, Services.dateFormat(startdate, "yyyyMMdd", "yyyy-MMM-dd"));
+    		pStatement.setString(8, enddate);
 	    	pStatement.setString(9, suspendcost);
 	    	pStatement.setString(10, oneofffee);
 	    	pStatement.setString(11, allowentry);
 	    	pStatement.setString(12, extend_membership);
 	    	pStatement.setString(13, promotion);
 	    	pStatement.setString(14, fullcost);
-	    	pStatement.setString(15, holdfee);
+	    	if (holdfee == null) {
+	    		pStatement.setNull(15, java.sql.Types.VARCHAR);
+	    	} else {
+	    		pStatement.setString(15, holdfee);
+	    	}
 	    	pStatement.setString(16, prorata);
 	    	
 	    	return pStatement.executeUpdate();
@@ -701,6 +712,40 @@ public class JDBCConnection {
 	    	pStatement.setInt(2, Integer.decode(msid));
 	    	
 	    	return pStatement.executeUpdate();*/
+    }
+    
+    public int updateSuspend(int memberid, String startdate, String enddate, String reason, String freeze_fees, String suspendcost,
+    		String oneofffee, String allowentry, String extend_membership, String promotion, String fullcost, String holdfee,
+    		String prorata, int sid) throws SQLException {
+    	
+    	pStatement = con.prepareStatement("UPDATE membership_suspend SET (memberid, startdate, enddate, howlong, "
+    			+ "reason, freeze_fees, suspendcost, oneofffee, allowentry, extend_membership, promotion, fullcost, "
+    			+ "holdfee, prorata) = (?, ?::DATE, ?::DATE, AGE(?::DATE, ?::DATE)::INTERVAL, ?, ?::BOOLEAN,"
+    			+ "?::MONEY, ?::MONEY, ?::BOOLEAN, ?::BOOLEAN, ?::BOOLEAN, ?::BOOLEAN, ?, ?::BOOLEAN) WHERE "
+    			+ "id = ?;");
+    	pStatement.setInt(1, memberid);
+    	pStatement.setString(2, startdate);
+    	pStatement.setString(3, enddate);
+    	pStatement.setString(4, enddate);
+    	pStatement.setString(5, startdate);
+    	pStatement.setString(6, reason);
+    	pStatement.setString(7, freeze_fees);
+    	pStatement.setString(8, suspendcost);
+    	pStatement.setString(9, oneofffee);
+    	pStatement.setString(10, allowentry);
+    	pStatement.setString(11, extend_membership);
+    	pStatement.setString(12, promotion);
+    	pStatement.setString(13, fullcost);
+    	if (holdfee != null) {
+    		pStatement.setString(14, holdfee);
+    	} else {
+    		pStatement.setNull(14, java.sql.Types.LONGVARCHAR);
+    	}
+    	pStatement.setString(15, prorata);
+    	
+    	pStatement.setInt(16, sid);
+    	
+    	return pStatement.executeUpdate();
     }
     
     public ResultSet getIdCards() throws SQLException, NullPointerException {
@@ -726,7 +771,9 @@ public class JDBCConnection {
     public ResultSet getProgrammes(String lastupdate) throws SQLException, NullPointerException {
 	    	ResultSet rs;
 	    	String query = "SELECT p.id AS pid, programmegroupid, p.name, pg.name AS groupname, startdate, enddate, "
-	    			+ "amount, date_part('epoch', mlength::interval) as mlength, signupfee, notes, lastupdate, price_desc(NULL, p.id) AS price_desc FROM programme p LEFT JOIN programmegroup pg ON "
+	    			+ "amount, date_part('epoch', mlength::interval) as mlength, signupfee, notes, lastupdate, price_desc(NULL, p.id) AS price_desc,"
+	    			+ " concession "
+	    			+ "FROM programme p LEFT JOIN programmegroup pg ON "
 	    			+ "(p.programmegroupid = pg.id)"
 	    			+ "WHERE history = 'f' ";
 	    	if (lastupdate != null) {

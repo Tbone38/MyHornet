@@ -1211,6 +1211,8 @@ public class HornetDBService extends Service {
 			Log.v(TAG, "Last-Update:"+lastupdate.getTime());
 			
 			values.put(ContentDescriptor.Booking.Cols.LASTUPDATE, String.valueOf(cur.getLong(cur.getColumnIndex(ContentDescriptor.Booking.Cols.LASTUPDATE))));
+			values.put(ContentDescriptor.Booking.Cols.PARENTID, cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.PARENTID)));
+			values.put(ContentDescriptor.Booking.Cols.CLASSID, cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.CLASSID)));
 			
 			//below values can be null?
 			if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Booking.Cols.MSID)))
@@ -1397,16 +1399,8 @@ public class HornetDBService extends Service {
 	    		val.put(ContentDescriptor.Booking.Cols.MSID, rs.getString("membershipid"));
 	    		val.put(ContentDescriptor.Booking.Cols.RID, rs.getString("resourceid"));
 	    		val.put(ContentDescriptor.Booking.Cols.ARRIVAL, Integer.decode(date));
-	    		
 	    		val.put(ContentDescriptor.Booking.Cols.CLASSID, rs.getInt("classid"));
-	    		if (rs.wasNull()) {
-	    			val.remove(ContentDescriptor.Booking.Cols.CLASSID);
-	    		}
 	    		val.put(ContentDescriptor.Booking.Cols.PARENTID, rs.getInt("parentid"));
-	    		if (rs.wasNull()) {
-	    			has_parent = false;
-	    			val.remove(ContentDescriptor.Booking.Cols.PARENTID);
-	    		}
 	    		
 	    		/** 
 	    		 * last-update is equal to the last sync time, as using the database's last-update time can
@@ -2442,11 +2436,15 @@ public class HornetDBService extends Service {
     			ContentValues values = new ContentValues();
     			values.put(ContentDescriptor.MembershipSuspend.Cols.SID, rs.getString("id"));
     			values.put(ContentDescriptor.MembershipSuspend.Cols.MID, rs.getString("memberid"));
-    			values.put(ContentDescriptor.MembershipSuspend.Cols.STARTDATE, Services.dateFormat(
-    					rs.getString("startdate"), "yyyy-MM-dd", "yyyMMdd"));
+    			/*values.put(ContentDescriptor.MembershipSuspend.Cols.STARTDATE, Services.dateFormat(
+    					rs.getString("startdate"), "yyyy-MM-dd", "yyyMMdd"));*/
+    			values.put(ContentDescriptor.MembershipSuspend.Cols.STARTDATE, 
+    					Services.DateToString(new Date(rs.getDate("startdate").getTime())));
     			values.put(ContentDescriptor.MembershipSuspend.Cols.LENGTH, rs.getString("howlong"));
     			values.put(ContentDescriptor.MembershipSuspend.Cols.REASON, rs.getString("reason"));
-    			values.put(ContentDescriptor.MembershipSuspend.Cols.ENDDATE, rs.getString("edate"));
+    			//values.put(ContentDescriptor.MembershipSuspend.Cols.ENDDATE, rs.getString("edate"));
+    			values.put(ContentDescriptor.MembershipSuspend.Cols.ENDDATE, 
+    					Services.DateToString(new Date(rs.getDate("edate").getTime())));
     			values.put(ContentDescriptor.MembershipSuspend.Cols.SUSPENDCOST, rs.getString("suspendcost"));
     			values.put(ContentDescriptor.MembershipSuspend.Cols.ONEOFFFEE, rs.getString("oneofffee"));
     			values.put(ContentDescriptor.MembershipSuspend.Cols.ALLOWENTRY, rs.getString("allowentry"));
@@ -2455,6 +2453,7 @@ public class HornetDBService extends Service {
     			values.put(ContentDescriptor.MembershipSuspend.Cols.FULLCOST, rs.getString("fullcost"));
     			values.put(ContentDescriptor.MembershipSuspend.Cols.PRORATA, rs.getString("prorata"));
     			values.put(ContentDescriptor.MembershipSuspend.Cols.FREEZE, rs.getString("freeze_fees"));
+    			values.put(ContentDescriptor.MembershipSuspend.Cols.HOLDFEE, rs.getString("holdfee"));
     			
     			cur = contentResolver.query(ContentDescriptor.MembershipSuspend.CONTENT_URI, null, 
     					ContentDescriptor.MembershipSuspend.Cols.SID+" = ?", new String[] {rs.getString("id")}, null);
@@ -2508,28 +2507,29 @@ public class HornetDBService extends Service {
 	    				String.valueOf(rows.get(i))});
     			continue;
     		}
-    		String mid, msid, sid, reason, start, duration, freeze, 
-    		suspendcost, oneofffee, allowentry, extend_membership, promotion, fullcost, holdfee, prorata;
+    		String mid, msid, sid, reason, start, freeze, end, 
+    		suspendcost, oneofffee, allowentry, extend_membership, promotion, fullcost, holdfee = null, prorata;
   
     		mid = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.MID));
    			msid = null;
     		sid = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.SID));
     		reason = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.REASON));
     		start = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.STARTDATE));
-    		duration = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.LENGTH));
     		freeze = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.FREEZE));
-    		
+    		end = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.ENDDATE));
     		suspendcost = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.SUSPENDCOST));
     		oneofffee = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.ONEOFFFEE));
     		allowentry = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.ALLOWENTRY));
     		extend_membership = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.EXTEND_MEMBERSHIP));
     		promotion = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.PROMOTION));
     		fullcost = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.FULLCOST));
-    		holdfee = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.HOLDFEE));
+    		if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.HOLDFEE))) {
+    			holdfee = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.HOLDFEE));
+    		} 
     		prorata = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.PRORATA));
     		
     		try {
-    			connection.uploadSuspend(sid, mid, msid, start, duration, reason, freeze,
+    			connection.uploadSuspend(sid, mid, msid, start, end, reason, freeze,
     					suspendcost, oneofffee, allowentry, extend_membership, promotion, fullcost, holdfee, prorata);
     		} catch (SQLException e) {
     			statusMessage = e.getLocalizedMessage();
@@ -2573,9 +2573,50 @@ public class HornetDBService extends Service {
     				new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.MembershipSuspend.getKey()),
     				String.valueOf(rows.get(i))});
     	}
-    	
     	closeConnection();
     	return result;
+    }
+    
+    private int updateSuspend(String rowid) {
+    	int result = 0;
+    	
+    	cur = contentResolver.query(ContentDescriptor.MembershipSuspend.CONTENT_URI, null, ContentDescriptor.MembershipSuspend.Cols._ID+" = ?",
+    			new String[] {rowid}, null);
+    	if (!cur.moveToFirst()) {
+    		return 0;
+    	}
+    	String mid, sid, reason, start, freeze, end, 
+		suspendcost, oneofffee, allowentry, extend_membership, promotion, fullcost, holdfee = null, prorata;
+    	mid = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.MID));
+		sid = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.SID));
+		reason = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.REASON));
+		start = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.STARTDATE));
+		freeze = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.FREEZE));
+		end = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.ENDDATE));
+		suspendcost = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.SUSPENDCOST));
+		oneofffee = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.ONEOFFFEE));
+		allowentry = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.ALLOWENTRY));
+		extend_membership = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.EXTEND_MEMBERSHIP));
+		promotion = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.PROMOTION));
+		fullcost = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.FULLCOST));
+		if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.HOLDFEE))) {
+			holdfee = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.HOLDFEE));
+		} 
+		prorata = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.PRORATA));
+		
+		
+		
+		try {
+			connection.updateSuspend(Integer.parseInt(mid), start, end, reason, freeze, suspendcost, 
+					oneofffee, allowentry, extend_membership, promotion, fullcost, holdfee, prorata, Integer.parseInt(sid));
+			result +=1;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			statusMessage = e.getLocalizedMessage();
+			return -1;
+		}
+		
+		return result;
     }
     
     private int getIdCardID() {
@@ -2785,6 +2826,7 @@ public class HornetDBService extends Service {
     			values.put(ContentDescriptor.Programme.Cols.NOTE, rs.getString("notes"));
     			values.put(ContentDescriptor.Programme.Cols.LASTUPDATE, rs.getString("lastupdate"));
     			values.put(ContentDescriptor.Programme.Cols.PRICE_DESC, rs.getString("price_desc"));
+    			values.put(ContentDescriptor.Programme.Cols.CONCESSION, rs.getString("concession"));
     			
     			cur = contentResolver.query(ContentDescriptor.Programme.CONTENT_URI, null, ContentDescriptor.Programme.Cols.PID+" = ?",
     					new String[] {rs.getString("pid")}, null);
@@ -3238,6 +3280,7 @@ public class HornetDBService extends Service {
 		values.put(ContentDescriptor.Membership.Cols.PAYMENTDUE, rs.getString("paymentdue"));
 		values.put(ContentDescriptor.Membership.Cols.NEXTPAYMENT, rs.getString("nextpayment"));
 		values.put(ContentDescriptor.Membership.Cols.FIRSTPAYMENT, rs.getString("firstpayment"));
+		values.put(ContentDescriptor.Membership.Cols.UPFRONT, rs.getString("upfront"));
     	
 		return values;
     }
@@ -3265,6 +3308,19 @@ public class HornetDBService extends Service {
 		values.put(ContentDescriptor.Member.Cols.MEDICALDOSAGE, rs.getString("medicationdosage"));
 		values.put(ContentDescriptor.Member.Cols.MEDICATION, rs.getString("medication"));
 		values.put(ContentDescriptor.Member.Cols.MEDICATIONBYSTAFF, rs.getString("medicationbystaff"));
+		java.sql.Date dob = rs.getDate("dob");
+		if (dob != null) {
+			Date _dob = new Date(dob.getTime());
+			String __dob = Services.DateToString(_dob);
+			values.put(ContentDescriptor.Member.Cols.DOB, __dob);
+		}
+		values.put(ContentDescriptor.Member.Cols.STREET, rs.getString("addressstreet"));
+		values.put(ContentDescriptor.Member.Cols.SUBURB, rs.getString("addresssuburb"));
+		values.put(ContentDescriptor.Member.Cols.CITY, rs.getString("addresscity"));
+		values.put(ContentDescriptor.Member.Cols.POSTAL, rs.getString("addressareacode"));
+		values.put(ContentDescriptor.Member.Cols.COUNTRY, rs.getString("addresscountry"));
+		values.put(ContentDescriptor.Member.Cols.BILLINGACTIVE, rs.getString("billingactive"));
+		values.put(ContentDescriptor.Member.Cols.DD_EXPORT_FORMATID, rs.getInt("dd_export_formatid"));
 		
 		if (use_roll > 0) {
 			values.put(ContentDescriptor.Member.Cols.PARENTNAME, rs.getString("parentname"));
@@ -3337,7 +3393,8 @@ public class HornetDBService extends Service {
     		String query ="SELECT membership.id, memberid, membership.startdate, membership.enddate, cardno, membership.notes, " +
 	    			"primarymembership, membership.lastupdate, membership_state(membership.*, programme.*) as state," +
 	    			" membership.concession, programme.name, programme.id AS programmeid, membership.termination_date, membership.cancel_reason, "
-	    			+ " membership.history, membership.signupfee, membership.paymentdue, membership.nextpayment, membership.firstpayment "
+	    			+ " membership.history, membership.signupfee, membership.paymentdue, membership.nextpayment, membership.firstpayment,"
+	    			+ " membership.upfront"
 	    			+ " FROM membership LEFT JOIN programme ON (membership.programmeid = programme.id)" +
 	    			" WHERE membership.id = "+membership.get(i)+" ;";
     		
@@ -3371,15 +3428,21 @@ public class HornetDBService extends Service {
     	Log.v(TAG, "Getting Pending Updates");
     	int result = 0;
     	ArrayList<String> memberids = new ArrayList<String>();
+    	ArrayList<String> suspendids = new ArrayList<String>();
     	cur = contentResolver.query(ContentDescriptor.PendingUpdates.CONTENT_URI, null, null, null, null);
     	while (cur.moveToNext()) {
-    		if (cur.getInt(cur.getColumnIndex(ContentDescriptor.PendingUpdates.Cols.TABLEID)) 
-    				== ContentDescriptor.TableIndex.Values.Member.getKey()) {
+    		int tableid = cur.getInt(cur.getColumnIndex(ContentDescriptor.PendingUpdates.Cols.TABLEID)); 
+    		
+    		if (tableid == ContentDescriptor.TableIndex.Values.Member.getKey()){
     			memberids.add(cur.getString(cur.getColumnIndex(ContentDescriptor.PendingUpdates.Cols.ROWID)));
+    		} else if (tableid == ContentDescriptor.TableIndex.Values.MembershipSuspend.getKey()) {
+    			suspendids.add(cur.getString(cur.getColumnIndex(ContentDescriptor.PendingUpdates.Cols.ROWID)));
+    			break;
     		} else {
     			//another type of update.
     			//should probably throw an error so I know to write code here.
-    		}
+    			break;
+    		}    		    		
     	}
     	
     	if (!openConnection()) {
@@ -3396,24 +3459,30 @@ public class HornetDBService extends Service {
     					new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Member.getKey()), memberids.get(i)
     			});
     			break;
-    		}
-    		case (-2): { //SQL error
+    		} case (-2): { //SQL error
     			//keep trying, we'll come back to it.
     			contentResolver.delete(ContentDescriptor.PendingUpdates.CONTENT_URI, ContentDescriptor.PendingUpdates.Cols.TABLEID
     					+" = ? AND "+ContentDescriptor.PendingUpdates.Cols.ROWID+" = ?",
     					new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Member.getKey()), memberids.get(i)
     			});
     			break;
-    		}
-    		case (0):{ //row not found.
+    		} case (0):{ //row not found.
     			contentResolver.delete(ContentDescriptor.PendingUpdates.CONTENT_URI, ContentDescriptor.PendingUpdates.Cols.TABLEID
     					+" = ? AND "+ContentDescriptor.PendingUpdates.Cols.ROWID+" = ?",
     					new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Member.getKey()), memberids.get(i)
     			});
-    			
     			break;
-    		}
-    		}
+    		}}
+    	}
+    	
+    	for (int i=0; i< suspendids.size(); i++) {
+    		switch (updateSuspend(suspendids.get(i))){
+    		default:{
+    			contentResolver.delete(ContentDescriptor.PendingUpdates.CONTENT_URI, ContentDescriptor.PendingUpdates.Cols.TABLEID
+    					+" = ? AND "+ContentDescriptor.PendingUpdates.Cols.ROWID+" = ?",
+    					new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.MembershipSuspend.getKey()), suspendids.get(i)});
+    			break;
+    		}}
     	}
     	
     	closeConnection();
