@@ -1401,7 +1401,11 @@ public class HornetDBService extends Service {
 	    		val.put(ContentDescriptor.Booking.Cols.ARRIVAL, Integer.decode(date));
 	    		val.put(ContentDescriptor.Booking.Cols.CLASSID, rs.getInt("classid"));
 	    		val.put(ContentDescriptor.Booking.Cols.PARENTID, rs.getInt("parentid"));
-	    		
+	    		if (rs.getInt("parentid")> 0) {
+	    			has_parent = true;
+	    		} else {
+	    			has_parent = false;
+	    		}
 	    		/** 
 	    		 * last-update is equal to the last sync time, as using the database's last-update time can
 	    		 * cause issues when the times don't match (e.g. if the last-update time on the database is ahead, it'll break thing).. 
