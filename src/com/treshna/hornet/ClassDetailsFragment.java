@@ -45,6 +45,7 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 	private Context ctx;
 	ClassMemberListAdapter mAdapter;
 	LoaderManager mLoaderManager;
+	private View thePage;
 	
 	private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
 	        @Override //when the server sync finishes, it sends out a broadcast.
@@ -68,6 +69,7 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 		 contentResolver = getActivity().getContentResolver();
 		 View page =inflater.inflate(R.layout.class_details, container, false); 
 		 setupView(page);
+		 thePage = page;
 		 return page;
 	 }
 	 
@@ -219,7 +221,10 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
 		if (getActivity() != null) {
-			
+			if (thePage != null) {
+				AutoCompleteTextView addmember = (AutoCompleteTextView) thePage.findViewById(R.id.classAddMember);
+				addmember.setText("");;
+			}
 			return new CursorLoader(getActivity(), ContentDescriptor.Booking.CONTENT_URI, null, 
 					ContentDescriptor.Booking.Cols.PARENTID + " = ? AND "+ContentDescriptor.Booking.Cols.RESULT+" != 5", new String[] {bookingID}, null);
 		}
@@ -229,6 +234,7 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 	
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+		
 		if(cursor.isClosed()) {
 	           System.out.print("\n\nCursor Closed");
 	            Activity activity = getActivity();
@@ -449,6 +455,7 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 		values.put(ContentDescriptor.Booking.Cols.FNAME, firstname);
 		values.put(ContentDescriptor.Booking.Cols.SNAME, surname);
 		values.put(ContentDescriptor.Booking.Cols.DEVICESIGNUP, "t");
+		//DON'T ADD CLASSID FOR CLASS MEMBERS. it'll break the the upload!
 		
 		contentResolver.insert(ContentDescriptor.Booking.CONTENT_URI, values);
 		

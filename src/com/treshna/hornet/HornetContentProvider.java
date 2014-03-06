@@ -466,7 +466,7 @@ public class HornetContentProvider extends ContentProvider {
                 builder.setTables(ContentDescriptor.Member.NAME+" m "
                 		+"LEFT OUTER JOIN "+ContentDescriptor.Membership.NAME+" ms "
                 		+"ON (m."+ContentDescriptor.Member.Cols.MID+" = ms."+ContentDescriptor.Membership.Cols.MID
-                		+")");
+                		+") AND ms."+ContentDescriptor.Membership.Cols.HISTORY+" = 'f'");
                 if (selection.isEmpty()) {
                 	selection = "("+ContentDescriptor.Member.Cols.STATUS+" >= 0 OR "+ContentDescriptor.Member.Cols.STATUS
                 			+" IS NULL)";
@@ -485,7 +485,7 @@ public class HornetContentProvider extends ContentProvider {
             			+") "
             			+ "LEFT JOIN "+ContentDescriptor.Membership.NAME+" ms "
             			+ "ON (ms."+ContentDescriptor.Membership.Cols.MID+" = m."+ContentDescriptor.Member.Cols.MID
-            			+ ") "
+            			+ ") AND ms."+ContentDescriptor.Membership.Cols.HISTORY+" = 'f'"
             			);
             	if (selection.isEmpty()) {
             		selection = "("+ContentDescriptor.Member.Cols.STATUS+" >= 0 OR "+ContentDescriptor.Member.Cols.STATUS

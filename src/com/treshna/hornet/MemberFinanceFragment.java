@@ -228,18 +228,17 @@ public class MemberFinanceFragment extends Fragment implements TagFoundListener,
 			boolean result = false;
 			Cursor cur = contentResolver.query(ContentDescriptor.Company.CONTENT_URI, null, null, null, null);
 			if (cur.moveToFirst()) {
-				String api, te_username, te_password;
-				api = cur.getString(cur.getColumnIndex(ContentDescriptor.Company.Cols.WEB_URL));
+				String te_username, te_password;
 				te_username = cur.getString(cur.getColumnIndex(ContentDescriptor.Company.Cols.TE_USERNAME));
 				te_password = cur.getString(cur.getColumnIndex(ContentDescriptor.Company.Cols.TE_PASSWORD));
 
 				if (!check_status) {
-						result = json.DDLogin(api, te_username, te_password);
+						result = json.DDLogin(te_username, te_password);
 					if (result) {
-						result = json.DDAdd(Integer.parseInt(memberID), api);
+						result = json.DDAdd(Integer.parseInt(memberID), te_username);
 					}
 				} else { //TODO: check if we need to log in again..?
-					result = json.DDcheckStatus(Integer.parseInt(memberID), api, final_session);
+					result = json.DDcheckStatus(Integer.parseInt(memberID), te_username, final_session);
 				}
 			}
 			cur.close();
@@ -262,11 +261,15 @@ public class MemberFinanceFragment extends Fragment implements TagFoundListener,
 				Toast.makeText(getActivity(), "Member Billing Added Successfully!", Toast.LENGTH_LONG).show();
 				
 			} else { //add this back in once we have an actual framework.
-				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-				builder.setTitle("Error Occurred")
-				.setMessage(json.getError()+"\nCODE:"+json.getErrorCode()) //"ERROR:"+...
-				.setPositiveButton("OK", null)
-				.show();
+				if (json.getErrorCode() != 20) {
+					AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+					builder.setTitle("Error Occurred")
+					.setMessage(json.getError()+"\nCODE:"+json.getErrorCode()) //"ERROR:"+...
+					.setPositiveButton("OK", null)
+					.show();
+				} else {
+					Toast.makeText(getActivity(), "No Response From Server, is Your gymmaster site setup?", Toast.LENGTH_LONG).show();
+				}
 			}
 	    }
 	 }

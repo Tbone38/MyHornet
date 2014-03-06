@@ -43,6 +43,8 @@ KEY:
 				Edit Member Hold.
 				Changed Member Notes to Member details/add new features.
 				Move Biling Details to seperate window.
+				Booking API is now fixed. (uses te_username).
+				Fixed historic memberships showing up in various places..
 
         -TODO:
                 Handle permissions/Roles for different staff, to limit what certain staff can see.
@@ -55,8 +57,8 @@ KEY:
                 check that balance/notes are only being downloaded as often as needed.
 				get DD working for bluepay..?
 				Cancel Member Hold.
-				Booking List behaviour seems weird. LOOK INTO WHY/FIX IT.
-				Where do I get the billing api website from..?
+				Fix the Booking Views broken back button.
+				Spacing/padding of Headings..?
 
     V118:
         On first run, we prompt for an easy setup/install.

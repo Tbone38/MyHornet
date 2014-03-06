@@ -1212,7 +1212,12 @@ public class HornetDBService extends Service {
 			
 			values.put(ContentDescriptor.Booking.Cols.LASTUPDATE, String.valueOf(cur.getLong(cur.getColumnIndex(ContentDescriptor.Booking.Cols.LASTUPDATE))));
 			values.put(ContentDescriptor.Booking.Cols.PARENTID, cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.PARENTID)));
-			values.put(ContentDescriptor.Booking.Cols.CLASSID, cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.CLASSID)));
+			String classid = cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.CLASSID));
+			if (classid.compareTo("")==0||classid.compareTo("0")==0|| classid.compareTo(" ")==0) {
+				values.put(ContentDescriptor.Booking.Cols.CLASSID, null);				
+			} else {
+				values.put(ContentDescriptor.Booking.Cols.CLASSID, classid);
+			}
 			
 			//below values can be null?
 			if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Booking.Cols.MSID)))

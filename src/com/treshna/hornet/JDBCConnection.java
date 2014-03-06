@@ -528,7 +528,8 @@ public class JDBCConnection {
     	pStatement = con.prepareStatement("INSERT INTO booking (id, memberid, resourceid, arrival, startid, starttime, "
     			+"bookingtypeid, firstname, surname, result, membershipid, notes, endtime, endid, lastupdate, parentid, classid) " +
     			"VALUES (?,?,?,?::DATE,?::TIME WITHOUT TIME ZONE,?::TIME WITHOUT TIME ZONE,?,?,?,?, ?, ?, " +
-    			"(?::TIME WITHOUT TIME ZONE), (?::TIME WITHOUT TIME ZONE - ?::TIME WITHOUT TIME ZONE), ?, ?, ?);");    	
+    			"(?::TIME WITHOUT TIME ZONE), (?::TIME WITHOUT TIME ZONE - ?::INTERVAL)::TIME WITHOUT TIME ZONE, ?, ?, ?);");
+    			//"(?::TIME WITHOUT TIME ZONE), (?::TIME WITHOUT TIME ZONE - ?::TIME WITHOUT TIME ZONE), ?, ?, ?);");    	
     	
     	pStatement.setInt(1, Integer.parseInt(booking.get(ContentDescriptor.Booking.Cols.BID)));
     	pStatement.setInt(2, Integer.parseInt(booking.get(ContentDescriptor.Booking.Cols.MID)));
@@ -555,15 +556,19 @@ public class JDBCConnection {
     	}
     	pStatement.setString(12, booking.get(ContentDescriptor.Booking.Cols.NOTES));
     	
-    	pStatement.setString(13, booking.get(ContentDescriptor.Booking.Cols.ETIME));
-    	//pStatement.setString(14, booking.get(ContentDescriptor.Booking.Cols.OFFSET)); if uncommenting: +1 the below numbers 
+    	pStatement.setString(13, booking.get(ContentDescriptor.Booking.Cols.ETIME)); 
        	pStatement.setString(14, booking.get(ContentDescriptor.Booking.Cols.ETIME));
     	pStatement.setString(15, booking.get(ContentDescriptor.Booking.Cols.OFFSET));
-    	//todo last-updated
-    	pStatement.setDate(16, new java.sql.Date(Long.valueOf(booking.get(ContentDescriptor.Booking.Cols.LASTUPDATE))));
+
+    	pStatement.setTimestamp(16, new java.sql.Timestamp(Long.valueOf(booking.get(ContentDescriptor.Booking.Cols.LASTUPDATE))));
     	
     	pStatement.setInt(17, Integer.parseInt(booking.get(ContentDescriptor.Booking.Cols.PARENTID)));
-    	pStatement.setInt(18, Integer.parseInt(booking.get(ContentDescriptor.Booking.Cols.CLASSID)));
+    	
+    	if (booking.get(ContentDescriptor.Booking.Cols.CLASSID) == null) {
+    		pStatement.setNull(18, java.sql.Types.INTEGER);
+    	} else {
+    		pStatement.setInt(18, Integer.parseInt(booking.get(ContentDescriptor.Booking.Cols.CLASSID)));
+    	}
     	
     	Log.v(TAG, "Upload Bookings Query:"+pStatement.toString());
     	return pStatement.executeUpdate();

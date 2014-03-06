@@ -2,8 +2,10 @@ package com.treshna.hornet;
 
 import java.io.File;
 import java.util.Date;
+
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -21,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.treshna.hornet.BookingPage.TagFoundListener;
 
 	//TODO: more null handling
@@ -75,11 +78,6 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 		TextView memberName = (TextView) view.findViewById(R.id.member_navigation_name);
 		memberName.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.FNAME))
 					+" "+cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.SNAME)));
-		/*if (cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.COLOUR)) == true) {
-			memberName.setTextColor(Color.BLACK);
-		} else {
-			memberName.setTextColor(Color.parseColor(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.COLOUR))));
-		}*/
 		
 		TextView memberNumber = (TextView) view.findViewById(R.id.member_navigation_number);
 		memberNumber.setText("#"+memberID);
@@ -94,7 +92,11 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 			Services.loadBitmap(imgFile,img, 500, 450);
 		    img.setClickable(true);
 		    img.setOnClickListener(this);
+		    img.setTag(1);
 		} else {
+			img.setClickable(true);
+		    img.setOnClickListener(this);
+		    img.setTag(2);
 			Drawable imgDrawable = getActivity().getResources().getDrawable(R.drawable.nophotogrey);
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
 				img.setBackground(imgDrawable);
@@ -280,14 +282,21 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 			break;
 		}
 		case (R.id.member_navigation_image):{
-			String selection = ContentDescriptor.Image.Cols.DISPLAYVALUE+" = 0"
-					+" AND "+ContentDescriptor.Image.Cols.MID+" = "+memberID;
-			cur = contentResolver.query(ContentDescriptor.Image.CONTENT_URI, null, selection, null, null);
-			if (cur.getCount() <= 0) break;
-			cur.moveToFirst();
-			String date = Services.dateFormat(cur.getString(2), "dd MMM yy hh:mm:ss aa", "yyyy-MM-dd");
-			String message = "Image Taken: "+date+ "\nImage Description: "+cur.getString(3);
-				Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+			int state = Integer.parseInt(v.getTag().toString());
+			if (state == 1) {
+				String selection = ContentDescriptor.Image.Cols.DISPLAYVALUE+" = 0"
+						+" AND "+ContentDescriptor.Image.Cols.MID+" = "+memberID;
+				cur = contentResolver.query(ContentDescriptor.Image.CONTENT_URI, null, selection, null, null);
+				if (cur.getCount() <= 0) break;
+				cur.moveToFirst();
+				String date = Services.dateFormat(cur.getString(2), "dd MMM yy hh:mm:ss aa", "yyyy-MM-dd");
+				String message = "Image Taken: "+date+ "\nImage Description: "+cur.getString(3);
+					Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+			} else {
+				Intent camera = new Intent(getActivity(), CameraWrapper.class);
+				camera.putExtra(VisitorsViewAdapter.EXTRA_ID,memberID);
+				getActivity().startActivity(camera);
+			}
 			break;
 		}
 		case (R.id.button_member_navigation_finance):{

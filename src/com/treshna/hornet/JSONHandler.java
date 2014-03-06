@@ -350,14 +350,13 @@ public class JSONHandler {
     	return true;
     }
 	
-	public boolean DDLogin(String api, String te_username, String te_password) {
+	public boolean DDLogin(String te_username, String te_password) {
 		Log.d(TAG, "DD Login");
 		boolean result = false;
 		String status = "";
 		this.signup_url = "api.gymmaster.co.nz/notavailable";
 		JSONObject response, post;
-		
-		api = "http://gmbooking-demo.gymmaster.co.nz"; //TODO: un-hard-code this.
+		String api = "http://gmbooking-"+te_username+".gymmaster.co.nz";
 				
 		String url = api+GYMLOGIN;
 		post = new JSONObject();
@@ -376,7 +375,6 @@ public class JSONHandler {
 			errorcode = JSONError.NORESPONSE.getKey();
 			return result;
 		}
-		Log.d(TAG, response.toString());
 		
 		try {
 			status = response.getString("validlogin");
@@ -403,13 +401,13 @@ public class JSONHandler {
 		return result;
 	}
 	
-	public boolean DDAdd(int memberid, String api) {
+	public boolean DDAdd(int memberid, String te_username) {
 		Log.d(TAG, "DD Add");
 		boolean result = false;
 		String status = "";
 		JSONObject response, post;
 		
-		api = "http://gmbooking-demo.gymmaster.co.nz"; //TODO: un-hard-code this.
+		String api = "http://gmbooking-"+te_username+".gymmaster.co.nz";
 		
 		String url = api+CREATEDDACCT;
 		
@@ -456,16 +454,17 @@ public class JSONHandler {
 			}
 		}
 		if (result) {
-			result = DDdetails(memberid, api);
+			result = DDdetails(memberid, te_username);
 		}
 		
 		return result;
 	}
 	
-	private boolean DDdetails(int memberid, String api) {
+	private boolean DDdetails(int memberid, String te_username) {
 		Log.d(TAG, "DD Details");
 		boolean result = false;
 		JSONObject response, post;
+		String api = "http://gmbooking-"+te_username+".gymmaster.co.nz";
 		String url = api+EDITEZIDEBITDETAILS;
 		
 		post = new JSONObject();
@@ -502,13 +501,12 @@ public class JSONHandler {
 		return this.session_token;
 	}
 	
-	public boolean DDcheckStatus(int memberid, String api, String session) {
+	public boolean DDcheckStatus(int memberid, String te_username, String session) {
 		boolean result = false;
 		String status = "";
 		JSONObject response, post;
 		
-		//doesn't work.
-		api = "http://gmbooking-demo.gymmaster.co.nz"; //TODO: un-hard-code this.
+		String api = "http://gmbooking-"+te_username+".gymmaster.co.nz";
 		String url = api+CREATEDDACCT;
 		
 		post = new JSONObject();

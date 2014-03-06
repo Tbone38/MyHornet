@@ -19,7 +19,8 @@
 	        android:layout_height="wrap_content"
 	        android:layout_weight=".8"
 	        android:textSize="24sp"
-	        android:text="@string/heading_member_details" />
+	        android:text="@string/heading_member_details"
+	       	android:padding="5dp" />
 	    <ImageView
 	        android:id="@+id/member_details_expand_collapse"
 	        android:layout_width="40dp"
