@@ -25,7 +25,7 @@
     <string name="title_activity_member_info">Member Information</string>
     <string name="filler_text">filler Text, Filler Text!</string>
     <string name="heading_member_info">Member</string>
-    <string name="heading_member_details">Membership Information</string>
+    <string name="heading_membership_details">Membership Information</string>
     <string name="heading_member_notes">Notes</string>
     <string name="heading_member_contact">Contact Details</string>
     <string name="title_activity_add_member">Sign Up</string>

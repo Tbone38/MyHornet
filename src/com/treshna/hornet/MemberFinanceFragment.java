@@ -59,7 +59,6 @@ public class MemberFinanceFragment extends Fragment implements TagFoundListener,
 		mInflater = getActivity().getLayoutInflater();
 		//mInflater = inflater;
 		setupButton();
-		setupBilling();
 		setupFinance();
 		return view;
 	}
@@ -72,29 +71,33 @@ public class MemberFinanceFragment extends Fragment implements TagFoundListener,
 		TextView billing_add = (TextView) view.findViewById(R.id.button_billing_add_text);
 		billing_add.setOnClickListener(this);
 		
+		TextView billing_show = (TextView) view.findViewById(R.id.button_billing_view_text);
+		billing_show.setOnClickListener(this);
+		
 		return view;
 	}
 	
-	private View setupBilling() {
+	private void setupBilling() {
 		Cursor cur = contentResolver.query(ContentDescriptor.BillingHistory.CONTENT_URI, null, ContentDescriptor.BillingHistory.Cols.MEMBERID+" = ?",
 				new String[] {memberID}, ContentDescriptor.BillingHistory.Cols.ID+" DESC");
+		if (cur.getCount()<=0) {
+			Toast.makeText(getActivity(), "No Billing History Available.", Toast.LENGTH_LONG).show();
+			return;
+		}
 		
+		View view = mInflater.inflate(R.layout.alert_billing_details, null);
 		LinearLayout list = (LinearLayout) view.findViewById(R.id.billing_history_list);
 		list.removeAllViews();
 		
-		if (cur.getCount()<= 0) {
-			TextView heading = (TextView) view.findViewById(R.id.member_billing_H);
-			heading.setVisibility(View.GONE);
-		}
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		builder.setTitle("Billing History")
+		.setPositiveButton("OK", null);
 		
 		while (cur.moveToNext()) {
 			LinearLayout row = (LinearLayout) mInflater.inflate(R.layout.member_finance_row, null);
-			row.setTag(cur.getInt(cur.getColumnIndex(ContentDescriptor.BillingHistory.Cols.ID)));
-			row.setClickable(true);
-			row.setOnClickListener(this);
 			
 			if (cur.getPosition()%2 ==0) {
-				row.setBackgroundColor(Color.WHITE);
+				row.setBackgroundColor(Color.TRANSPARENT);
 			}
 			
 			TextView date_view = (TextView) row.findViewById(R.id.finance_row_occurred);
@@ -110,15 +113,19 @@ public class MemberFinanceFragment extends Fragment implements TagFoundListener,
 			TextView amount_view = (TextView) row.findViewById(R.id.finance_row_amount1);
 			amount_view.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.BillingHistory.Cols.AMOUNT)));
 			View colour_block = (View) row.findViewById(R.id.finance_colour_block);
+			
 			if (cur.getString(cur.getColumnIndex(ContentDescriptor.BillingHistory.Cols.FAILED)).compareTo("f")==0) {
 				colour_block.setBackgroundColor(getActivity().getResources().getColor(R.color.visitors_green));
 			} else {
 				colour_block.setBackgroundColor(getActivity().getResources().getColor(R.color.visitors_red));
+				note_view.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.BillingHistory.Cols.FAILREASON)));
 			}
 			list.addView(row);
 		}
+		cur.close();
+		builder.setView(view);
+		builder.show();
 		
-		return view;
 	}
 	
 	private View setupFinance() {
@@ -174,8 +181,6 @@ public class MemberFinanceFragment extends Fragment implements TagFoundListener,
 		mActions.onNewTag(serial);
 	}
 
-	@SuppressWarnings("deprecation")
-	@SuppressLint("NewApi")
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
@@ -185,23 +190,8 @@ public class MemberFinanceFragment extends Fragment implements TagFoundListener,
 			sync.execute(null, null);
 			break;
 		}
-		case (R.id.listRow): {
-			int id = Integer.parseInt(v.getTag().toString());
-			Log.d(TAG, "ID:"+id);
-			LinearLayout row = (LinearLayout) view.findViewById(id);
-			if (row != null) {
-				row.setFocusable(true);
-				row.setFocusableInTouchMode(true);
-				row.requestFocus();
-				row.setClickable(true);
-				row.setOnClickListener(null);
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-					row.setBackground(getActivity().getResources().getDrawable(R.drawable.button));
-				} else {
-					row.setBackgroundDrawable(getActivity().getResources().getDrawable(R.drawable.button));
-				}
-				row.performClick(); //this isn't highlighting like it should.
-			}
+		case (R.id.button_billing_view_text):{
+			setupBilling();
 			break;
 		}
 		}

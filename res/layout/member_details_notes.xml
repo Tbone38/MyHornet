@@ -7,9 +7,145 @@
     android:padding="7dp"
     tools:context=".MemberDetails" >
     <LinearLayout
+        android:id="@+id/memberDetailsHeadingRow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/button"
+        android:clickable="true" >
+	    <TextView
+	        android:id="@+id/memberDetailsLabel"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight=".8"
+	        android:textSize="24sp"
+	        android:text="@string/heading_member_details" />
+	    <ImageView
+	        android:id="@+id/member_details_expand_collapse"
+	        android:layout_width="40dp"
+	        android:layout_height="40dp"
+	        android:src="@drawable/ic_action_collapse"
+	        android:contentDescription="@string/hint_emergency_expand" />
+	</LinearLayout>
+	<LinearLayout
+        android:id="@+id/memberDetails"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/memberDetailsHeadingRow"
+        android:orientation="vertical" >
+	    <TextView
+	        android:id="@+id/label_member_address_street"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="14sp"
+	        android:text="@string/label_member_address_street"
+	        android:paddingLeft="10dp" />
+	    <EditText
+	        android:id="@+id/member_address_street"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:enabled="false"
+	        android:editable="false"
+	        android:inputType="none"
+	        android:paddingLeft="10dp" />
+	    <TextView 
+	        android:id="@+id/label_member_address_suburb"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="14sp"
+	        android:text="@string/label_member_address_suburb"
+	        android:paddingLeft="10dp"/>
+	    <EditText
+	        android:id="@+id/member_address_suburb"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:enabled="false"
+	        android:editable="false"
+	        android:inputType="none"
+	        android:paddingLeft="10dp" />
+	    <TextView
+	        android:id="@+id/label_member_address_city"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="14sp"
+	        android:text="@string/label_member_address_city"
+	        android:paddingLeft="10dp" />
+	    <EditText
+	        android:id="@+id/member_address_city"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:enabled="false"
+	        android:editable="false"
+	        android:inputType="none"
+	        android:paddingLeft="10dp" />
+	    <TextView
+	        android:id="@+id/label_member_area_code"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="14sp"
+	        android:text="@string/label_member_area_code"
+	        android:paddingLeft="10dp" />
+	    <EditText
+	        android:id="@+id/member_area_code"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:enabled="false"
+	        android:editable="false"
+	        android:inputType="none"
+	        android:paddingLeft="10dp" />
+	    <TextView
+	        android:id="@+id/label_member_country"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="14sp"
+	        android:text="@string/label_member_country"
+	        android:paddingLeft="10dp" />
+	    <EditText
+	        android:id="@+id/member_country"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:enabled="false"
+	        android:editable="false"
+	        android:inputType="none"
+	        android:paddingLeft="10dp" />
+	    <TextView
+	        android:id="@+id/label_member_dateofbirth"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="14sp"
+	        android:text="@string/label_member_dateofbirth"
+	        android:paddingLeft="10dp" />
+	    <EditText
+	        android:id="@+id/member_dateofbirth"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:enabled="false"
+	        android:editable="false"
+	        android:inputType="none"
+	        android:paddingLeft="10dp" />
+	    <TextView
+	        android:id="@+id/label_member_gender"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="14sp"
+	        android:text="@string/label_member_gender"
+	        android:paddingLeft="10dp" />
+	    <EditText
+	        android:id="@+id/member_gender"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:enabled="false"
+	        android:editable="false"
+	        android:inputType="none"
+	        android:paddingLeft="10dp" />
+	    
+	    </LinearLayout>
+    
+    <LinearLayout
         android:id="@+id/memberParentRow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/memberDetails"
         android:orientation="vertical"
         android:visibility="gone" >
         <TextView

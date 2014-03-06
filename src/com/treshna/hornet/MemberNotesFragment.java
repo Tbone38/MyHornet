@@ -105,6 +105,61 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 		return view;
 	}
 	
+	private View setupDetails() {
+		cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, ContentDescriptor.Member.Cols.MID+" = ?",
+				new String[] {memberID}, null);
+		if (!cur.moveToFirst()) {
+			return view;
+		}
+		
+		LinearLayout detailsHeading = (LinearLayout) view.findViewById(R.id.memberDetailsHeadingRow);
+		detailsHeading.setOnClickListener(this); //TODO
+		
+		if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.STREET))||
+				!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.SUBURB))||
+				!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.CITY))||
+				!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.POSTAL))||
+				!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.COUNTRY))||
+				!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.DOB))) {
+			
+			EditText street_view, suburb_view, city_view, postal_view, country_view, dob_view, gender_view;
+			String gender = "";
+			street_view = (EditText) view.findViewById(R.id.member_address_street);
+			street_view.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.STREET)));
+			
+			suburb_view = (EditText) view.findViewById(R.id.member_address_suburb);
+			suburb_view.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.SUBURB)));
+			
+			city_view = (EditText) view.findViewById(R.id.member_address_city);
+			city_view.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.CITY)));
+			
+			postal_view = (EditText) view.findViewById(R.id.member_area_code);
+			postal_view.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.POSTAL)));
+			
+			country_view = (EditText) view.findViewById(R.id.member_country);
+			country_view.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.COUNTRY)));
+			
+			dob_view = (EditText) view.findViewById(R.id.member_dateofbirth);
+			dob_view.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.DOB)));
+			
+			gender_view = (EditText) view.findViewById(R.id.member_gender);
+			if (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.GENDER)).compareTo("f")==0) {
+				gender = getResources().getString(R.string.gender_female);
+			} else {
+				gender = getResources().getString(R.string.gender_male);
+			}
+			gender_view.setText(gender);
+			
+		} else {
+			LinearLayout memberDetails = (LinearLayout) view.findViewById(R.id.memberDetails);
+			memberDetails.setVisibility(View.GONE);
+			ImageView expand_collapse = (ImageView) view.findViewById(R.id.member_details_expand_collapse);
+			expand_collapse.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_action_expand));
+		}
+		cur.close();
+		return view;
+	}
+	
 	private View setupMedical() {
 		cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, ContentDescriptor.Member.Cols.MID+" = ?",
 				new String[] {memberID}, null);
@@ -151,7 +206,7 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 	}
 		
 	private View setupView() {
-		
+		setupDetails();
 		setupEmergency();
 		setupMedical();
 		
@@ -324,6 +379,18 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 				expand_collapse.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_action_expand));
 			} else {
 				tasks.setVisibility(View.VISIBLE);
+				expand_collapse.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_action_collapse));
+			}
+			break;
+		}
+		case (R.id.memberDetailsHeadingRow):{
+			LinearLayout details = (LinearLayout) view.findViewById(R.id.memberDetails);
+			ImageView expand_collapse = (ImageView) view.findViewById(R.id.member_details_expand_collapse);
+			if (details.isShown()) {
+				details.setVisibility(View.GONE);
+				expand_collapse.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_action_expand));
+			} else {
+				details.setVisibility(View.VISIBLE);
 				expand_collapse.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_action_collapse));
 			}
 			break;

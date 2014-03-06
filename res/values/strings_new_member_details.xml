@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
  <string name="button_member_navigation_memberships">Memberships</string>
- <string name="button_member_navigation_notes">Notes</string>
+ <string name="button_member_navigation_details">Details</string>
  <string name="button_member_navigation_visits">Visits</string>
  <string name="button_member_navigation_finance">Finance</string>
  <string name="button_member_navigation_information">Information</string>
@@ -15,6 +15,16 @@
  <string name="member_note_H">Add Note</string>
  <string name="member_visit_history">Visit History Since %1$s</string> <!-- First Sync Date -->
  <string name="member_visit_history2">Recent Visit History</string>
+ <string name="heading_member_details">Member Details</string>
+ <string name="label_member_address_street">Street Address</string>
+ <string name="label_member_address_suburb">Suburb</string>
+ <string name="label_member_address_city">City</string>
+ <string name="label_member_area_code">Area Code</string>
+ <string name="label_member_country">Country</string>
+ <string name="label_member_dateofbirth">Date of Birth</string>
+ <string name="label_member_gender">Gender</string>
+ <string name="gender_male">Male</string>
+ <string name="gender_female">Female</string>
  <string name="heading_member_medical">Medical Details</string>
  <string name="label_member_medical_conditions">Medical Conditions</string>
  <string name="label_member_medication">Medication</string>
@@ -35,7 +45,12 @@
  <string name="label_parent_name">Parent\'s Name</string>
  
  <string name="member_finance">Finance</string>
+ <string name="finance_label_date">Date</string>
+ <string name="finance_label_note">Note</string>
+ <string name="finance_label_credit">Credit</string>
+ <string name="finance_label_debit">Debit</string>
  <string name="member_billing">Billing</string>
  <string name="finance_setup_billing">Add/Edit Billing</string>
+ <string name="finance_show_billing">Show Billing</string>
  <string name="heading_member_hold">Member Holds</string>
 </resources>

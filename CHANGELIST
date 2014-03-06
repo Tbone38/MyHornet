@@ -41,6 +41,8 @@ KEY:
                 Member Billing Details (dd_export_member) this is slightly(?) different from the members finances??
 				Modified the member_holds to match gymmaster exactly.
 				Edit Member Hold.
+				Changed Member Notes to Member details/add new features.
+				Move Biling Details to seperate window.
 
         -TODO:
                 Handle permissions/Roles for different staff, to limit what certain staff can see.
@@ -54,8 +56,7 @@ KEY:
 				get DD working for bluepay..?
 				Cancel Member Hold.
 				Booking List behaviour seems weird. LOOK INTO WHY/FIX IT.
-				Change Member Notes to Member details/add new features.
-				Move Biling Details to seperate window.
+				Where do I get the billing api website from..?
 
     V118:
         On first run, we prompt for an easy setup/install.

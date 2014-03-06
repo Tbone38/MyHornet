@@ -362,7 +362,8 @@ public class JDBCConnection {
 			+"member.email AS memail, member.notes AS mnotes, member.status, member.cardno, member.gender, "
 			+"emergencyname, emergencyhome, emergencywork, emergencycell, emergencyrelationship, "
 			+"medication, medicationdosage, medicationbystaff, medicalconditions, "
-			+ "dob, addressstreet, addresssuburb, addresscity, addressareacode, addresscountry, billingactive, dd_export_formatid "
+			+ "dob, addressstreet, addresssuburb, addresscity, addressareacode, addresscountry, billingactive, dd_export_formatid, "
+			+ "gender "
 			+ "FROM member"
 			;
     
@@ -391,7 +392,8 @@ public class JDBCConnection {
 			+"member.email AS memail, member.notes AS mnotes, member.status, member.cardno, member.gender, "
 			+"emergencyname, emergencyhome, emergencywork, emergencycell, emergencyrelationship, "
 			+"medication, medicationdosage, medicationbystaff, medicalconditions, parentname, "
-			+ "dob, addressstreet, addresssuburb, addresscity, addressareacode, addresscountry, billingactive, dd_export_formatid "
+			+ "dob, addressstreet, addresssuburb, addresscity, addressareacode, addresscountry, billingactive, dd_export_formatid, "
+			+ "gender "
 			+ "FROM member"
 			; 
     
@@ -1106,7 +1108,8 @@ public class JDBCConnection {
     public ResultSet getBillingHistory(long lastupdate) throws SQLException {
     	
     	pStatement = con.prepareStatement("SELECT dd_export_member.id, memberid, dd_exportid, amount, failed, dd_export_member.status, note,"
-    			+ " EXTRACT(epoch FROM dd_export_member.lastupdate) AS lastupdate, EXTRACT(epoch FROM at) AS processdate"
+    			+ " EXTRACT(epoch FROM dd_export_member.lastupdate) AS lastupdate, EXTRACT(epoch FROM at) AS processdate, "
+    			+ " failreason, dishonoured, paidbyother, runningtotal"
     			+ " FROM dd_export_member LEFT JOIN member ON (dd_export_member.memberid = member.id)"
     			+ " LEFT JOIN dd_export ON (dd_export.id = dd_export_member.dd_exportid)"
     			+ " WHERE dd_export_member.created >= ?"

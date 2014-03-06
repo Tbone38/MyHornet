@@ -22,6 +22,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MembershipComplete extends Fragment implements OnClickListener, TagFoundListener {
@@ -97,6 +98,20 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 		}
 		
 		memberid = results.get(0);
+		cur.close();
+		
+		cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, ContentDescriptor.Member.Cols.MID+" = ?",
+				new String[] {memberid}, null);
+		if (cur.moveToFirst()) {
+			String note = null;
+			if (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.BILLINGACTIVE)).compareTo("t") != 0) {
+				note = "Warning: Billing not active for this user.";
+				
+				TextView note_view = (TextView) page.findViewById(R.id.membership_billing_note);
+				note_view.setTextColor(getResources().getColor(R.color.red));
+				note_view.setText(note);
+			}
+		}
 		cur.close();
 		
 		//EditText memberAmountOutstanding = (EditText) page.findViewById(R.id.membership_amount_outstanding);

@@ -165,18 +165,24 @@ public class MemberAdd extends NFCActivity implements OnClickListener, DatePicke
 				//InsertMember member = above line
 				clearForm();
 				
-				/*ArrayList<String> tag = new ArrayList<String>();
+				ArrayList<String> tag = new ArrayList<String>();
 				tag.add(memberid);
-				tag.add(null);*
-				Intent i = new Intent(this, EmptyActivity.class);*
-				i.putExtra(Services.Statics.KEY, Services.Statics.FragmentType.MemberDetails.getKey());
-				i.putStringArrayListExtra(VisitorsViewAdapter.EXTRA_ID, tag);*/
-				
+				tag.add(null);
 				Intent i = new Intent(this, EmptyActivity.class);
+				i.putExtra(Services.Statics.KEY, Services.Statics.FragmentType.MemberDetails.getKey());
+				i.putStringArrayListExtra(VisitorsViewAdapter.EXTRA_ID, tag);
+				this.startActivity(i);
+				
+				i = new Intent(this, EmptyActivity.class);
+				i.putExtra(Services.Statics.MID, memberid);
+				i.putExtra(Services.Statics.KEY, Services.Statics.FragmentType.MembershipAdd.getKey());
+				this.startActivity(i);
+				
+				/*Intent i = new Intent(this, EmptyActivity.class);
 				i.putExtra(Services.Statics.KEY, Services.Statics.FragmentType.MemberAddTag.getKey());
 				i.putExtra(Services.Statics.MID, Integer.parseInt(memberid));
+				this.startActivity(i);*/
 				
-				this.startActivity(i);
 				this.finish();
 				
 			}else {

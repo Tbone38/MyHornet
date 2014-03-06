@@ -3321,6 +3321,7 @@ public class HornetDBService extends Service {
 		values.put(ContentDescriptor.Member.Cols.COUNTRY, rs.getString("addresscountry"));
 		values.put(ContentDescriptor.Member.Cols.BILLINGACTIVE, rs.getString("billingactive"));
 		values.put(ContentDescriptor.Member.Cols.DD_EXPORT_FORMATID, rs.getInt("dd_export_formatid"));
+		values.put(ContentDescriptor.Member.Cols.GENDER, rs.getString("gender"));
 		
 		if (use_roll > 0) {
 			values.put(ContentDescriptor.Member.Cols.PARENTNAME, rs.getString("parentname"));
@@ -4225,6 +4226,11 @@ public class HornetDBService extends Service {
 				values.put(ContentDescriptor.BillingHistory.Cols.STATUS, rs.getString("status"));
 				values.put(ContentDescriptor.BillingHistory.Cols.NOTE, rs.getString("note"));
 				values.put(ContentDescriptor.BillingHistory.Cols.PROCESSDATE, rs.getString("processdate"));
+				values.put(ContentDescriptor.BillingHistory.Cols.FAILREASON, rs.getString("failreason"));
+				values.put(ContentDescriptor.BillingHistory.Cols.PAIDBYOTHER, rs.getInt("paidbyother"));
+				values.put(ContentDescriptor.BillingHistory.Cols.DISHONOURED, rs.getString("dishonoured"));
+				values.put(ContentDescriptor.BillingHistory.Cols.RUNNINGTOTAL, rs.getString("runningtotal"));
+				
 				Double processdate, row_lastupdate;
 				row_lastupdate = rs.getDouble("lastupdate");
 				row_lastupdate = (row_lastupdate*1000);

@@ -93,13 +93,18 @@
 	        android:layout_below="@id/membership_signup_fee_L"
 	        android:textSize="18sp"
 	        android:enabled="false"/>
-	    
+	    <TextView
+	        android:id="@+id/membership_billing_note"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@id/membership_signup_fee"
+	        android:textSize="13sp" />
 	   
 	    <TextView
 		    android:id="@+id/membershipactionH"
 		    android:layout_width="match_parent"
 		    android:layout_height="wrap_content"
-		    android:layout_below="@id/membership_signup_fee"
+		    android:layout_below="@id/membership_billing_note"
 		    android:textSize="20sp"
 		    android:text="@string/membership_add_actions"
 		    android:layout_margin="3dp"

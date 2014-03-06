@@ -686,7 +686,9 @@ public class UpdateDatabase {
 				+BillingHistory.Cols.MEMBERID+" INTEGER, "+BillingHistory.Cols.DDEXPORTID+" INTEGER, "
 				+BillingHistory.Cols.FAILED+" BOOLEAN, "+BillingHistory.Cols.AMOUNT+" TEXT,"
 				+BillingHistory.Cols.NOTE+" TEXT, "+BillingHistory.Cols.STATUS+" TEXT, "
-				+BillingHistory.Cols.LASTUPDATE+" TEXT, "+BillingHistory.Cols.PROCESSDATE+" TEXT "
+				+BillingHistory.Cols.LASTUPDATE+" TEXT, "+BillingHistory.Cols.PROCESSDATE+" TEXT, "
+				+BillingHistory.Cols.FAILREASON+" TEXT, "+BillingHistory.Cols.PAIDBYOTHER+" INTEGER, "
+				+BillingHistory.Cols.DISHONOURED+" TEXT DEFAULT 'f', "+BillingHistory.Cols.RUNNINGTOTAL+" TEXT DEFAULT '$0.00' "
 				+");";
 		
 		private static final String SQL13 = "ALTER TABLE "+MembershipSuspend.NAME+" ADD COLUMN "+MembershipSuspend.Cols.SUSPENDCOST+" TEXT DEFAULT '$ 0.00';";
@@ -720,6 +722,8 @@ public class UpdateDatabase {
 		private static final String SQL24 = "ALTER TABLE "+Member.NAME+" ADD COLUMN "+Member.Cols.BILLINGACTIVE+" BOOLEAN DEFAULT 'f';";
 		
 		private static final String SQL25 = "ALTER TABLE "+Member.NAME+" ADD COLUMN "+Member.Cols.DD_EXPORT_FORMATID+" INTEGER;";
+		
+		private static final String SQL26 = "ALTER TABLE "+Member.NAME+" ADD COLUMN "+Member.Cols.EZIDEBIT+" INTEGER;";
 		
 		public static void patchNinetyFive(SQLiteDatabase db) {
 			db.beginTransaction();
@@ -774,6 +778,8 @@ public class UpdateDatabase {
 				db.execSQL(SQL24);
 				Log.w(HornetDatabase.class.getName(), "\n"+SQL25);
 				db.execSQL(SQL25);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL26);
+				db.execSQL(SQL26);
 				db.setTransactionSuccessful();
 			} finally {
 				db.endTransaction();

@@ -46,7 +46,7 @@ import android.provider.BaseColumns;
  *  
  *  311:								400:
  *  312:								401 = idcard
- *  313 = BookingTime
+ *  313 = BookingTime					405 = dd_export_format
  *  315:
  *  324:
  *  325 = Time
@@ -152,6 +152,7 @@ public class ContentDescriptor {
 	     matcher.addURI(authority, KPI.PATH, KPI.PATH_TOKEN);
 	     matcher.addURI(authority, MemberFinance.PATH, MemberFinance.PATH_TOKEN);
 	     matcher.addURI(authority, BillingHistory.PATH, BillingHistory.PATH_TOKEN);
+	     matcher.addURI(authority, DDExportFormat.PATH, DDExportFormat.PATH_TOKEN);
 	     
 	     matcher.addURI(authority, DROPTABLE, TOKEN_DROPTABLE);
 	     
@@ -261,6 +262,7 @@ public class ContentDescriptor {
 	 			public static final String COUNTRY = "addresscountry";
 	 			public static final String BILLINGACTIVE = "billingactive";
 	 			public static final String DD_EXPORT_FORMATID = "dd_export_formatid";
+	 			public static final String EZIDEBIT = "ezidebitcustomerid";
 	        }
 	        
 	        public static class OldCols {
@@ -1190,6 +1192,28 @@ public class ContentDescriptor {
 	 			public static final String NOTE = "note";
 	 			public static final String DDEXPORTID = "dd_export_id";
 	 			public static final String PROCESSDATE = "processdate";
+	 			public static final String FAILREASON = "failreason";
+	 			public static final String PAIDBYOTHER = "paidbyother";
+	 			public static final String DISHONOURED = "dishonoured";
+	 			public static final String RUNNINGTOTAL = "runningtotal";
+	 		}
+	 	}
+	 	
+	 	public static class DDExportFormat {
+	 		public static final String NAME = "dd_export_format";
+	 		public static final String PATH = "dd_export_format";
+	 		public static final int PATH_TOKEN = 405;
+	 		
+	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
+	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.dd_export_format";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.dd_export_format";
+	 		
+	 		public static class Cols implements BaseColumns {
+	 			public static final String ID = "id";
+	 			public static final String NAME = "name";
+	 			public static final String FILENAMESQL = "filenamesql";
+	 			public static final String SQLFUNC = "sqlfunc";
+	 			public static final String EXPORTTYPE = "exporttype";
 	 		}
 	 	}
 }

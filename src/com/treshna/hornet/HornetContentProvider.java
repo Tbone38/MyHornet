@@ -233,6 +233,11 @@ public class HornetContentProvider extends ContentProvider {
         	getContext().getContentResolver().notifyChange(uri, null);
         	return rows;
         }
+        case ContentDescriptor.DDExportFormat.PATH_TOKEN:{
+        	int rows = db.delete(ContentDescriptor.DDExportFormat.NAME, selection, selectionArgs);
+        	getContext().getContentResolver().notifyChange(uri, null);
+        	return rows;
+        }
         
         case ContentDescriptor.TOKEN_DROPTABLE:{ //special case, drops tables/deletes database.
         	FileHandler fh = new FileHandler(ctx);
@@ -433,6 +438,11 @@ public class HornetContentProvider extends ContentProvider {
             	long id = db.insert(ContentDescriptor.BillingHistory.NAME, null, values);
             	getContext().getContentResolver().notifyChange(uri, null);
             	return ContentDescriptor.BillingHistory.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
+            }
+            case ContentDescriptor.DDExportFormat.PATH_TOKEN:{
+            	long id = db.insert(ContentDescriptor.DDExportFormat.NAME, null, values);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return ContentDescriptor.DDExportFormat.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
             }
             default: {
                 throw new UnsupportedOperationException("URI: " + uri + " not supported.");
@@ -812,6 +822,11 @@ public class HornetContentProvider extends ContentProvider {
             	builder.setTables(ContentDescriptor.BillingHistory.NAME);
             	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
             }
+            case ContentDescriptor.DDExportFormat.PATH_TOKEN:{
+            	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+            	builder.setTables(ContentDescriptor.DDExportFormat.NAME);
+            	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+            }
             
             default: throw new UnsupportedOperationException("URI: " + uri + " not supported.");
         }
@@ -979,6 +994,11 @@ public class HornetContentProvider extends ContentProvider {
             	getContext().getContentResolver().notifyChange(uri, null);
             	return result;
             }
+            case ContentDescriptor.DDExportFormat.PATH_TOKEN:{
+            	int result = db.update(ContentDescriptor.DDExportFormat.NAME, values, selection, selectionArgs);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return result;
+            }
             
             //TODO: fill this out further.
             case ContentDescriptor.DeletedRecords.PATH_TOKEN:{ //special case, deletes row from table.
@@ -1002,7 +1022,6 @@ public class HornetContentProvider extends ContentProvider {
             				new UnsupportedOperationException("DELETE FROM TABLE: "+tablename+" NOT SUPPORTED.")); 
             		return 0;
             	}
-            		
             }
             
             default: {
