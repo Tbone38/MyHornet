@@ -143,7 +143,8 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 			dob_view.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.DOB)));
 			
 			gender_view = (EditText) view.findViewById(R.id.member_gender);
-			if (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.GENDER)).compareTo("f")==0) {
+			if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.GENDER))&&
+					cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.GENDER)).compareTo("f")==0) {
 				gender = getResources().getString(R.string.gender_female);
 			} else {
 				gender = getResources().getString(R.string.gender_male);
