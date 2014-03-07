@@ -3030,7 +3030,8 @@ public class HornetDBService extends Service {
     	return result;
     }
     
-    private boolean manualCheckin (int doorid, int memberid, int membershipid) {    	
+    //call this independantly of our Queuing system.
+    public boolean manualCheckin (int doorid, int memberid, int membershipid) {    	
     	if (!openConnection()) {
     		return false;
     		//see statusMessage for details;
