@@ -43,6 +43,10 @@
         android:padding="5dp"
         android:layout_marginLeft="3dp"/>
     
+    <!-- Would you like to be contacted By GymMaster Support? -->
+    <!-- What's your name	? -->
+    <!-- What's your phone #? 	 -->
+    
     <LinearLayout
         android:id="@+id/button_row"
         android:layout_width="match_parent"

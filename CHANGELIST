@@ -56,9 +56,10 @@ KEY:
                 Booking view showing multiple days for selected resource.
                 check that balance/notes are only being downloaded as often as needed.
 				get DD working for bluepay..?
-				Cancel Member Hold.
+				Cancel Member Hold. --Is adjusting the expiry a better option?
 				Fix the Booking Views broken back button.
 				Spacing/padding of Headings..?
+				"Can We Contact You?" Name... #...
 
     V118:
         On first run, we prompt for an easy setup/install.
