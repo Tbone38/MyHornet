@@ -85,6 +85,9 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 	
 	//This needs to filter by active memberships.
 	private View setupView() {
+		if (memberID == null) {
+			return view;
+		}
 		cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, 
 				ContentDescriptor.Membership.Cols.MID+" = ? AND "+ContentDescriptor.Membership.Cols.HISTORY+" = 'f'", new String[] {memberID}, null);
 		

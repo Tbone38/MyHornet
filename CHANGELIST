@@ -23,12 +23,12 @@ KEY:
             Progress Box no longer works. needs to be added back in via a aSync Task for the db_syncing.
                 (had issues trying to attach to windows from the service thread, due to 'Context' complications.)
             Update Recurssion. (updating the same rows every time they change). (occurs in bookings.)
-            Updating version seems to loose Resources & doors. ?
+            Updating version seems to lose Resources & doors. ?
 	
 	v120:
-		DONE:
+			DONE:
 		
-		TODO:
+			TODO:
                 Handle permissions/Roles for different staff, to limit what certain staff can see.
                 the log-file needs a unique identifier so we know which device has the issues.
                 Fix Dates (dd MMM yyyy)
@@ -68,32 +68,32 @@ KEY:
         On first run, we prompt for an easy setup/install.
             This easy setup gets there email address, gymname/organisational name, a username, & a location.
                 the username needs to be unique.
-                    the email address needs to be unique.   
-                        is the username used for the web-address (username.SERVERLOCATION.gymmaster.co.nz)?
-                        the username is used for the database name (g_<USERNAME>)
-                        passed to a cental database on sms.treshna.com, which generates a password, and emails said email-address the password.
-                        the username, password, db_name, and server are returned by the API
-                        It's all passed through a JSON (flask) server (api.gymmaster.co.nz).
-                We also generate the actual Database.
-                    this generation can be done prior, at which point the script will rename a free gymmaster db.
-                        see ~api-gymmaster/free_db/ & ~api-gymmaster/scripts for more details.
-                    the database bondfrontend.conf file can be found in ~api-gymmaster/config/<database name>/
-                    the databases can be upgraded via the ./scripts/update_dbs.sh file
-                    Fixed DB's should now be semi-secure. the GymMaster user is still super over all of the DB's though.
-                        Any user with the gm_tableowner privellage will be super-user over all gymmaster dbs.
-                #DATABASE MAINTENANCE:
-                    a number of scripts exists in the ~api-gymmaster/scripts directory for helping with this.
+                the email address needs to be unique.   
+                    is the username used for the web-address (username.SERVERLOCATION.gymmaster.co.nz)?
+                    the username is used for the database name (g_<USERNAME>)
+                    passed to a cental database on sms.treshna.com, which generates a password, and emails said email-address the password.
+                    the username, password, db_name, and server are returned by the API
+                    It's all passed through a JSON (flask) server (api.gymmaster.co.nz).
+            We also generate the actual Database.
+                this generation can be done prior, at which point the script will rename a free gymmaster db.
+                    see ~api-gymmaster/free_db/ & ~api-gymmaster/scripts for more details.
+                the database bondfrontend.conf file can be found in ~api-gymmaster/config/<database name>/
+                the databases can be upgraded via the ./scripts/update_dbs.sh file
+                Fixed DB's should now be semi-secure. the GymMaster user is still super over all of the DB's though.
+                    Any user with the gm_tableowner privellage will be super-user over all gymmaster dbs.
+            #DATABASE MAINTENANCE:
+                a number of scripts exists in the ~api-gymmaster/scripts directory for helping with this.
                         
-                upload the log-file after each sync to our central server,
-                    -we store the schema version, company_name, and te_username as well.
-                    -the log file will only contain warnings and errors.
-                    -it may want manual deletion, or a trigger that truncates data.
-                        (because at the moment the logs are massive and fairly unhelpful).
-                Remove membership Button.
-                Remove member from class Button.
-                No longer able to clear database when changes are pending.
-                Fixed Get Card for new cards.
-                Added cancel membership.
+        upload the log-file after each sync to our central server,
+            -we store the schema version, company_name, and te_username as well.
+            -the log file will only contain warnings and errors.
+            -it may want manual deletion, or a trigger that truncates data.
+                (because at the moment the logs are massive and fairly unhelpful).
+        Remove membership Button.
+        Remove member from class Button.
+        No longer able to clear database when changes are pending.
+        Fixed Get Card for new cards.
+        Added cancel membership.
 
     v116/117:
         minor bug fixes/undocumented.
