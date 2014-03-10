@@ -24,30 +24,11 @@ KEY:
                 (had issues trying to attach to windows from the service thread, due to 'Context' complications.)
             Update Recurssion. (updating the same rows every time they change). (occurs in bookings.)
             Updating version seems to loose Resources & doors. ?
-    
-    v119:
-        -Done:
-                Altered the add Member process.
-                KPI's (--requires v320).
-                Crazy New SELECT_FUNCTION. 
-                Save default-selected trainer for bookings.
-                OnClick Membership shows additional information.
-                Member Finance Details.
-                Payment Method Handling:
-                    async task/progress box to display while we do JSON stuff with the API
-                    When we edit a member we'll be returned a link. link will take us to payment details site.
-                    this occurs from the member.finance fragment
-                    Works for Ezidebit.
-                Member Billing Details (dd_export_member) this is slightly(?) different from the members finances??
-                Modified the member_holds to match gymmaster exactly.
-                Edit Member Hold.
-                Changed Member Notes to Member details/add new features.
-                Move Biling Details to seperate window.
-                Booking API is now fixed. (uses te_username).
-                Fixed historic memberships showing up in various places..
-                "Can We Contact You?" Name... #... **
-
-        -TODO:
+	
+	v120:
+		DONE:
+		
+		TODO:
                 Handle permissions/Roles for different staff, to limit what certain staff can see.
                 the log-file needs a unique identifier so we know which device has the issues.
                 Fix Dates (dd MMM yyyy)
@@ -60,6 +41,28 @@ KEY:
                 Cancel Member Hold. --Is adjusting the expiry a better option?
                 Fix the Booking Views broken back button.
                 Spacing/padding of Headings..?
+	
+    
+    v119:
+            Altered the add Member process.
+            KPI's (--requires v320).
+            Crazy New SELECT_FUNCTION. 
+            Save default-selected trainer for bookings.
+            OnClick Membership shows additional information.
+            Member Finance Details.
+            Payment Method Handling:
+                async task/progress box to display while we do JSON stuff with the API
+                When we edit a member we'll be returned a link. link will take us to payment details site.
+                this occurs from the member.finance fragment
+                Works for Ezidebit.
+            Member Billing Details (dd_export_member) this is slightly(?) different from the members finances??
+            Modified the member_holds to match gymmaster exactly.
+            Edit Member Hold.
+            Changed Member Notes to Member details/add new features.
+            Move Biling Details to seperate window.
+            Booking API is now fixed. (uses te_username).
+            Fixed historic memberships showing up in various places..
+            "Can We Contact You?" Name... #... **
 
     V118:
         On first run, we prompt for an easy setup/install.
