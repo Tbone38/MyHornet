@@ -36,8 +36,6 @@ public class JDBCConnection {
 
     private String Type = "PostgreSQL", Username = "", Password = "", Address = "", Port = "5432";
     private String Database = "";
-    //TODO: set default username & pw = gymmaster/7urb0
-    // Hard-code?
     private Connection con = null;
     private Statement statement;
     private PreparedStatement pStatement;
@@ -488,9 +486,22 @@ public class JDBCConnection {
 	    	ResultSet rs = null;
 	    	String query ="SELECT membership.id, memberid, membership.startdate, membership.enddate, cardno, membership.notes, " +
 	    			"primarymembership, membership.lastupdate,  membership_state(membership.*, programme.*) as state," +
-	    			" membership.concession, programme.name, programme.id AS programmeid, membership.termination_date, "
-	    			+ "select_column('membership','cancel_reason', membership.*) AS cancel_reason,"
-	    			+ " membership.history, membership.signupfee, membership.paymentdue, membership.nextpayment,"
+	    			" membership.concession, programme.name, programme.id AS programmeid, membership.termination_date, ";
+	    	
+	    	String check_query = "SELECT TRUE from pg_proc WHERE proname = 'select_column' "
+	    			+ "UNION SELECT false FROM pg_proc WHERE 'select_column' NOT IN (SELECT proname FROM pg_proc);";
+	    	pStatement = con.prepareStatement(check_query);
+	    	rs = pStatement.executeQuery();
+	    	
+	    	if (rs.next() && rs.getBoolean(1)) {
+	    			query = query+ "select_column('membership','cancel_reason', membership.*) AS cancel_reason,";
+	    	} else {
+	    		query = query+ "NULL AS cancel_reason,";
+	    	}
+	    	rs.close();
+	    	this.closePreparedStatement();
+	    	
+	    	query = query+ " membership.history, membership.signupfee, membership.paymentdue, membership.nextpayment,"
 	    			+ " membership.firstpayment, membership.upfront"
 	    			+ " FROM membership LEFT JOIN programme ON (membership.programmeid = programme.id)" +
 	    			" WHERE 1=1 ";

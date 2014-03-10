@@ -311,7 +311,7 @@ public class HornetDBService extends Service {
 		   getMemberNoteID();
 		   getBookingID();
 		   int midcount = getMemberID();
-		   if (midcount != 0) statusMessage = midcount+" Sign-up's available";
+		   if (midcount != 0) statusMessage = " Sign-up's available";
 		   if (statusMessage != null && statusMessage.length() >3 ) {
 				   Services.showToast(getApplicationContext(), statusMessage, handler);
 		   }
@@ -392,7 +392,7 @@ public class HornetDBService extends Service {
  		   memberid = bundle.getInt("memberid");
  		   membershipid = bundle.getInt("membershipid");
  		   
- 		   this.manualCheckin(doorid, memberid, membershipid);
+ 		   this.manualCheckin(doorid, memberid, membershipid, null);
  		   
  		   thread.is_networking = false;
  		   break;
@@ -3031,7 +3031,11 @@ public class HornetDBService extends Service {
     }
     
     //call this independantly of our Queuing system.
-    public boolean manualCheckin (int doorid, int memberid, int membershipid) {    	
+    public boolean manualCheckin (int doorid, int memberid, int membershipid, Context context) {
+    	Log.d(TAG, "Manually Checking In");
+    	if (context != null) {
+    		setup(context);
+    	}
     	if (!openConnection()) {
     		return false;
     		//see statusMessage for details;

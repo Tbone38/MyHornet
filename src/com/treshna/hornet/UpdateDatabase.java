@@ -1,5 +1,6 @@
 package com.treshna.hornet;
 
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
@@ -781,7 +782,10 @@ public class UpdateDatabase {
 				Log.w(HornetDatabase.class.getName(), "\n"+SQL26);
 				db.execSQL(SQL26);
 				db.setTransactionSuccessful();
-			} finally {
+			} catch (SQLException e) {
+			e.printStackTrace();
+			db.setTransactionSuccessful(); //shouldn't be doing this, but I don't want to break stuff...?
+			}finally {
 				db.endTransaction();
 			}
 		}

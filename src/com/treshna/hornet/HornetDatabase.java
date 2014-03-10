@@ -46,7 +46,7 @@ import com.treshna.hornet.ContentDescriptor.Visitor;
 public class HornetDatabase extends SQLiteOpenHelper {
 	
 	 public static final String DATABASE_NAME="hornet.db";
-	 private static final int DATABASE_VERSION = 94;
+	 private static final int DATABASE_VERSION = 95;
 	 private Context theContext;
 	 //^^may be required for toasts etc at some point.
 	 

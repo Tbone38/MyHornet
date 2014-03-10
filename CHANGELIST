@@ -24,13 +24,12 @@ KEY:
                 (had issues trying to attach to windows from the service thread, due to 'Context' complications.)
             Update Recurssion. (updating the same rows every time they change). (occurs in bookings.)
             Updating version seems to loose Resources & doors. ?
-	    MAKE SWIPE INDEPENDANT OF THE QUEUE SYSTEM
     
     v119:
         -Done:
                 Altered the add Member process.
                 KPI's (--requires v320).
-				Crazy New SELECT_FUNCTION (--requires v320).
+                Crazy New SELECT_FUNCTION. 
                 Save default-selected trainer for bookings.
                 OnClick Membership shows additional information.
                 Member Finance Details.
@@ -38,14 +37,15 @@ KEY:
                     async task/progress box to display while we do JSON stuff with the API
                     When we edit a member we'll be returned a link. link will take us to payment details site.
                     this occurs from the member.finance fragment
-					Works for Ezidebit.
+                    Works for Ezidebit.
                 Member Billing Details (dd_export_member) this is slightly(?) different from the members finances??
-				Modified the member_holds to match gymmaster exactly.
-				Edit Member Hold.
-				Changed Member Notes to Member details/add new features.
-				Move Biling Details to seperate window.
-				Booking API is now fixed. (uses te_username).
-				Fixed historic memberships showing up in various places..
+                Modified the member_holds to match gymmaster exactly.
+                Edit Member Hold.
+                Changed Member Notes to Member details/add new features.
+                Move Biling Details to seperate window.
+                Booking API is now fixed. (uses te_username).
+                Fixed historic memberships showing up in various places..
+                "Can We Contact You?" Name... #... **
 
         -TODO:
                 Handle permissions/Roles for different staff, to limit what certain staff can see.
@@ -56,11 +56,10 @@ KEY:
                 Format/Default time to 12hr. (?)
                 Booking view showing multiple days for selected resource.
                 check that balance/notes are only being downloaded as often as needed.
-				get DD working for bluepay..?
-				Cancel Member Hold. --Is adjusting the expiry a better option?
-				Fix the Booking Views broken back button.
-				Spacing/padding of Headings..?
-				"Can We Contact You?" Name... #...
+                get DD working for bluepay..?
+                Cancel Member Hold. --Is adjusting the expiry a better option?
+                Fix the Booking Views broken back button.
+                Spacing/padding of Headings..?
 
     V118:
         On first run, we prompt for an easy setup/install.

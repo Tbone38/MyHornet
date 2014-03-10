@@ -4,6 +4,7 @@ package com.treshna.hornet;
 import java.util.ArrayList;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -14,8 +15,8 @@ import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
+import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -448,7 +449,7 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 					cur.close();
 					
 					//parse the details to the Service.
-					Intent updateInt = new Intent(ctx, HornetDBService.class);
+					/*Intent updateInt = new Intent(ctx, HornetDBService.class);
 					Bundle extras = new Bundle(3);
 					extras.putInt("doorid", doorid);
 					extras.putInt("memberid", Integer.parseInt(mid));
@@ -456,7 +457,10 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 					
 					updateInt.putExtras(extras);
 					updateInt.putExtra(Services.Statics.KEY, Services.Statics.MANUALSWIPE);
-				 	ctx.startService(updateInt);
+				 	ctx.startService(updateInt);*/
+					ManualCheckin async = new ManualCheckin();
+					async.execute(doorid, Integer.parseInt(mid), membershipid);
+					
 				 	PollingHandler p = Services.getFreqPollingHandler();
 				 	if (p != null && !p.getConStatus()) {
 				 		Toast.makeText(ctx, "Could not check member in, Check that this device is connected"
@@ -466,4 +470,41 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 	        });
 	        builder.show();
 	}
+	
+	private class ManualCheckin extends AsyncTask<Integer, Integer, Boolean> {
+		private ProgressDialog progress;
+		private HornetDBService sync;
+
+		
+		public ManualCheckin() {
+			sync = new HornetDBService();
+		}
+		
+		protected void onPreExecute() {
+			 progress = ProgressDialog.show(ctx, "Checking In..", 
+					 "Manually checking Member In...");
+		}
+		
+		@Override
+		protected Boolean doInBackground(Integer... params) {
+			int doorid, memberid, membershipid;
+			doorid = params[0];
+			memberid = params[1];
+			membershipid = params[2];
+			return sync.manualCheckin(doorid, memberid, membershipid, ctx);
+		}
+		
+
+		protected void onPostExecute(Boolean success) {
+			progress.dismiss();
+			if (success) {
+			} else {
+				AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+				builder.setTitle("Error Occurred")
+				.setMessage(sync.getStatus())
+				.setPositiveButton("OK", null)
+				.show();
+			}
+	    }
+	 }
 }

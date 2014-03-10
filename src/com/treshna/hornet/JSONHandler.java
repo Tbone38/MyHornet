@@ -166,15 +166,25 @@ public class JSONHandler {
 		return this.signup_url;
 	}
 	
-	public boolean updateUser(String email, String username, String countrycode) {
+	public boolean updateUser(String email, String username, String countrycode, boolean contactable, String contact_name, String contact_number) {
 		byte[] encrypt, decrypt;		
 		/*encrypt = encrypt(" ");
 		try {
 		Log.e(TAG, "TEST STRING ENCRYPTED: "+new String(encrypt, "UTF-8"));
 		} catch (Exception e) {e.printStackTrace();};*/
 
+		//if can contact we add the contact details, other wise ignore.
 		username = username.replace(" ", "%20");
-		String url = HOST+"/updateuser?email="+email+"&username="+username+"&country="+countrycode;
+		String url = HOST+"/updateuser?email="+email+"&username="+username+"&country="+countrycode+"&contactable="+String.valueOf(contactable);
+		
+		if (contactable) {
+			if (contact_name != null) {
+				url = url +"&contactname="+contact_name;	
+			}
+			if (contact_number != null) {
+				url = url +"&contactnumber="+contact_number;
+			}
+		}
 		JSONObject result;
 		String status;
 		errorcode = -1;
@@ -507,7 +517,7 @@ public class JSONHandler {
 		JSONObject response, post;
 		
 		String api = "http://gmbooking-"+te_username+".gymmaster.co.nz";
-		String url = api+CREATEDDACCT;
+		String url = api+CHECKDDSTATUS;
 		
 		post = new JSONObject();
 		try {
