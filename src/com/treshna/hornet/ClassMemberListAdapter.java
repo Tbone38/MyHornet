@@ -96,7 +96,7 @@ public class ClassMemberListAdapter extends SimpleCursorAdapter implements Compo
 		checkin.setOnCheckedChangeListener(this);
 		
 		ImageView cancel_booking = (ImageView) rowLayout.findViewById(R.id.classMemberCancel);
-		cancel_booking.setColorFilter(Services.ColorFilterGenerator.setColourRed());
+		cancel_booking.setColorFilter(Services.ColorFilterGenerator.setColour(context.getResources().getColor(R.color.visitors_red)));
 		cancel_booking.setClickable(true);
 		tag = new ArrayList<String>();
 		tag.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.BID)));

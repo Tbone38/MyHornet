@@ -35,7 +35,6 @@ public class MemberVisitHistoryFragment extends Fragment implements TagFoundList
 		Services.setContext(getActivity());
 		contentResolver = getActivity().getContentResolver();
 		memberID = this.getArguments().getString(Services.Statics.MID);
-		//visitDate = this.getArguments().getString(Services.Statics.KEY);
 		mActions = new MemberActions(getActivity());
 	}
 	

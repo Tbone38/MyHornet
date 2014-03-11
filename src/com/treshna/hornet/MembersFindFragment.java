@@ -130,7 +130,7 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 		filterbutton.setOnClickListener(this);
 		
 		ImageView filter_icon = (ImageView) filterbutton.findViewById(R.id.member_find_filter_drawable);
-		filter_icon.setColorFilter(Services.ColorFilterGenerator.setColourGrey());
+		filter_icon.setColorFilter(Services.ColorFilterGenerator.setColour(getResources().getColor(R.color.grey_cf)));
 	}
 
 	@SuppressLint("NewApi")

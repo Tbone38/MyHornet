@@ -74,6 +74,9 @@ public class MemberFinanceFragment extends Fragment implements TagFoundListener,
 		TextView billing_show = (TextView) view.findViewById(R.id.button_billing_view_text);
 		billing_show.setOnClickListener(this);
 		
+		TextView billing_check = (TextView) view.findViewById(R.id.button_billing_check_text);
+		billing_check.setOnClickListener(this);
+		
 		return view;
 	}
 	
@@ -196,16 +199,13 @@ public class MemberFinanceFragment extends Fragment implements TagFoundListener,
 			setupBilling();
 			break;
 		}
+		case (R.id.button_billing_check_text):{
+			AddBilling sync = new AddBilling(true);
+			sync.execute(null, null);
+			break;
+		}
 		}
 	}
-	
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		  if (requestCode == 1) {
-		     //we need to check the
-			  AddBilling sync = new AddBilling(true);
-			  sync.doInBackground(null,null);
-		  }
-		}
 	
 	private class AddBilling extends AsyncTask<String, Integer, Boolean> {
 		private ProgressDialog progress;
@@ -238,7 +238,10 @@ public class MemberFinanceFragment extends Fragment implements TagFoundListener,
 						result = json.DDAdd(Integer.parseInt(memberID), te_username);
 					}
 				} else { //TODO: check if we need to log in again..?
-					result = json.DDcheckStatus(Integer.parseInt(memberID), te_username, final_session);
+					result = json.DDLogin(te_username, te_password);
+					if (result) {
+						result = json.DDcheckStatus(Integer.parseInt(memberID), te_username, final_session);
+					}
 				}
 			}
 			cur.close();
@@ -258,7 +261,7 @@ public class MemberFinanceFragment extends Fragment implements TagFoundListener,
 				getActivity().startActivityForResult(i, 1);
 			} else if (success && check_status) {
 				//wooh! success.
-				Toast.makeText(getActivity(), "Member Billing Added Successfully!", Toast.LENGTH_LONG).show();
+				Toast.makeText(getActivity(), "Member Billing Status: Good", Toast.LENGTH_LONG).show();
 				
 			} else { //add this back in once we have an actual framework.
 				if (json.getErrorCode() != 20) {

@@ -1,6 +1,7 @@
 package com.treshna.hornet;
 
 import java.util.ArrayList;
+
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,6 +11,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 /*
  * 
@@ -24,7 +27,7 @@ public class LastVisitorsSuperFragment extends Fragment {
 	static public String PREF_KEY = "memberType";
 	private static final String TAG = "LastVisitorsFragment";
 	//public static final int DISPLAYERROR = -1;
-	
+	private View view;
 	//NFCs
 		
 	
@@ -47,12 +50,17 @@ public class LastVisitorsSuperFragment extends Fragment {
         ft.replace(R.id.frame_right, f);
         ft.commit();
         ((MainActivity) getActivity()).setSelectedTab(1);
+        
+        if (view.getTag().toString().compareTo("single_panel") != 0) {
+        	TextView empty_glyph = (TextView) view.findViewById(R.id.empty_glyph);
+        	empty_glyph.setTypeface(Services.Typefaces.get(getActivity(), "fonts/glyphicons_regular.ttf"));
+        }
 	}
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {	
 		super.onCreateView(inflater, container, savedInstanceState);
-		View view = inflater.inflate(R.layout.visitor_frame, container, false);
+		view = inflater.inflate(R.layout.visitor_frame, container, false);
 		
         return view;
     }

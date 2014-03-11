@@ -16,6 +16,7 @@
     <color name="greyout">#FFC4C4C4</color>
     <color name="bookingname">#F0C4C4C4</color>
     <color name="overlay">#A0FFFFFF</color>
+    <color name="grey_cf">#FF615F5F</color>
     
     <color name="android_blue">#FF33B5E5</color>
     <color name="visitors_green">#FF8EAD00</color>
@@ -42,4 +43,8 @@
         
     <color name="overview_timeslot_top_grey">#FFADADAD</color>
     <color name="overview_timeslot_mid_grey">#FFF3F3F3</color>
+    
+    <color name="button_block_header">#FFF2F2F2</color>
+    <color name="button_block_label">#FF5F5F5F</color>
+    <color name="button_block_heading">#FF3B3B3B</color>
 </resources>

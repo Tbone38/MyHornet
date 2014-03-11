@@ -8,6 +8,7 @@ import java.util.Locale;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -218,11 +219,12 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 		LinearLayout notesHeading = (LinearLayout) view.findViewById(R.id.notesHeadingRow);
 		notesHeading.setOnClickListener(this);
 		
-		LinearLayout.LayoutParams llparams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-		llparams.setMargins(5, 5, 5, 5);
+		LinearLayout.LayoutParams llparams;
 		LinearLayout notesGroup = (LinearLayout) view.findViewById(R.id.membernotes);
 		notesGroup.removeAllViews();
-		while (cur.moveToNext()) {	
+		while (cur.moveToNext()) {
+			llparams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			llparams.setMargins(5, 0, 0, 0);
 			TextView notesT = new TextView(getActivity());
 			notesT.setPadding(10, 0, 0, 0);
 			notesT.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.MemberNotes.Cols.NOTES)));
@@ -232,9 +234,16 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 			
 			TextView notesdetails = new TextView(getActivity());
 			notesdetails.setPadding(10, 0, 0, 0);
-			notesdetails.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.MemberNotes.Cols.OCCURRED))
-					+"   by "+cur.getString(cur.getColumnIndex(ContentDescriptor.MemberNotes.Cols.UPDATEUSER)));
+			if (cur.isNull(cur.getColumnIndex(ContentDescriptor.MemberNotes.Cols.UPDATEUSER))) {
+				notesdetails.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.MemberNotes.Cols.OCCURRED)));
+			} else {
+				notesdetails.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.MemberNotes.Cols.OCCURRED))
+						+"   by "+cur.getString(cur.getColumnIndex(ContentDescriptor.MemberNotes.Cols.UPDATEUSER)));
+			}
 			notesdetails.setTextSize(14);
+			notesdetails.setTextColor(getResources().getColor(R.color.button_block_label));
+			llparams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			llparams.setMargins(20, 0, 0, 0);
 			notesdetails.setLayoutParams(llparams);
 			notesGroup.addView(notesdetails);
 		}
@@ -249,17 +258,14 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 		
 		
 		LinearLayout taskHeading = (LinearLayout) view.findViewById(R.id.tasksHeadingRow);
-		taskHeading.setOnClickListener(this);
+		taskHeading.setVisibility(View.GONE);
+		LinearLayout tasks = (LinearLayout) view.findViewById(R.id.membertasks);
+		tasks.setVisibility(View.GONE);
 		
-		if ((cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.TASK1)) == null) 
+		/*if ((cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.TASK1)) == null) 
 				|| (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.TASK1)).compareTo("null") == 0)
 				|| (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.TASK1)).length() == 0)){
 			
-			taskHeading.setVisibility(View.GONE);
-			LinearLayout tasks = (LinearLayout) view.findViewById(R.id.membertasks);
-			tasks.setVisibility(View.GONE);
-			/*ImageView expand_collapse = (ImageView) view.findViewById(R.id.tasks_expand_collapse);
-			expand_collapse.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_action_expand));*/
 			
 		} else {
 			LinearLayout tasksGroup = (LinearLayout) view.findViewById(R.id.membertasks);
@@ -278,7 +284,7 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 				}
 			}			
 			
-		}
+		}*/
 			
 		cur.close();
 		

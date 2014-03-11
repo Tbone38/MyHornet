@@ -367,6 +367,7 @@ public class JSONHandler {
 		this.signup_url = "api.gymmaster.co.nz/notavailable";
 		JSONObject response, post;
 		String api = "http://gmbooking-"+te_username+".gymmaster.co.nz";
+		//String api = "http://192.168.2.132:5000";
 				
 		String url = api+GYMLOGIN;
 		post = new JSONObject();
@@ -418,6 +419,7 @@ public class JSONHandler {
 		JSONObject response, post;
 		
 		String api = "http://gmbooking-"+te_username+".gymmaster.co.nz";
+		//String api = "http://192.168.2.132:5000";
 		
 		String url = api+CREATEDDACCT;
 		
@@ -475,6 +477,7 @@ public class JSONHandler {
 		boolean result = false;
 		JSONObject response, post;
 		String api = "http://gmbooking-"+te_username+".gymmaster.co.nz";
+		//String api = "http://192.168.2.132:5000";
 		String url = api+EDITEZIDEBITDETAILS;
 		
 		post = new JSONObject();
@@ -517,11 +520,13 @@ public class JSONHandler {
 		JSONObject response, post;
 		
 		String api = "http://gmbooking-"+te_username+".gymmaster.co.nz";
+		//String api = "http://192.168.2.132:5000";
 		String url = api+CHECKDDSTATUS;
 		
 		post = new JSONObject();
 		try {
 			post.put("userid", memberid);
+			session = (session == null) ? this.session_token : session;
 			post.put("session", session);
 		} catch (JSONException e) {
 			e.printStackTrace();

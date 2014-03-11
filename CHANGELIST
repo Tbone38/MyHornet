@@ -24,11 +24,12 @@ KEY:
                 (had issues trying to attach to windows from the service thread, due to 'Context' complications.)
             Update Recurssion. (updating the same rows every time they change). (occurs in bookings.)
             Updating version seems to lose Resources & doors. ?
-	
-	v120:
-			DONE:
-		
-			TODO:
+    
+    v120:
+            DONE:
+       		Added Check Billing Status Button.
+ 
+            TODO:
                 Handle permissions/Roles for different staff, to limit what certain staff can see.
                 the log-file needs a unique identifier so we know which device has the issues.
                 Fix Dates (dd MMM yyyy)
@@ -41,7 +42,7 @@ KEY:
                 Cancel Member Hold. --Is adjusting the expiry a better option?
                 Fix the Booking Views broken back button.
                 Spacing/padding of Headings..?
-	
+    
     
     v119:
             Altered the add Member process.
