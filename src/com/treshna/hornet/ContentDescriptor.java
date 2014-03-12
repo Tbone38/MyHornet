@@ -14,8 +14,8 @@ import android.provider.BaseColumns;
  *  In use ID's:
  *    1 = drop table					111:
  *    5 = DeletedRecords				112 = MemberNotes
- *   10:								113:
- *   									114 = MemberBalance
+ *    9 = AppConfig						113:
+ *   10:								114 = MemberBalance
  *   11 = TableIndex					116 = MemberFinance
  *   12:								117 = Billing_history
  *   13 = PendingUploads				121 = CancellationFee
@@ -153,6 +153,7 @@ public class ContentDescriptor {
 	     matcher.addURI(authority, MemberFinance.PATH, MemberFinance.PATH_TOKEN);
 	     matcher.addURI(authority, BillingHistory.PATH, BillingHistory.PATH_TOKEN);
 	     matcher.addURI(authority, DDExportFormat.PATH, DDExportFormat.PATH_TOKEN);
+	     matcher.addURI(authority, AppConfig.PATH, AppConfig.PATH_TOKEN);
 	     
 	     matcher.addURI(authority, DROPTABLE, TOKEN_DROPTABLE);
 	     
@@ -1214,6 +1215,21 @@ public class ContentDescriptor {
 	 			public static final String FILENAMESQL = "filenamesql";
 	 			public static final String SQLFUNC = "sqlfunc";
 	 			public static final String EXPORTTYPE = "exporttype";
+	 		}
+	 	}
+	 	
+	 	public static class AppConfig {
+	 		public static final String NAME = "app_config";
+	 		public static final String PATH = "app_config";
+	 		public static final int PATH_TOKEN = 9;
+	 		
+	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
+	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.app_config";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.app_config";
+	 		
+	 		public static class Cols implements BaseColumns {
+	 			public static final String DB_DEVICEID = "deviceid";
+	 			public static final String DB_TIMEOFFSET = "timeoffset";
 	 		}
 	 	}
 }

@@ -36,7 +36,6 @@ public class DatePickerFragment extends DialogFragment
 			date = Services.dateFormat(format.format(new Date()), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");
 		}
 		//ensure's 0's are in the correct place.
-		Log.v(TAG, date);
 		if (date.length() <8) {
 			date = date.substring(0, 4)+"0"+date.substring(4);
 		}

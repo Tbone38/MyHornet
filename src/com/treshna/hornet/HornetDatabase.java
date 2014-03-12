@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.treshna.hornet.ContentDescriptor.AppConfig;
 import com.treshna.hornet.ContentDescriptor.BillingHistory;
 import com.treshna.hornet.ContentDescriptor.Booking;
 import com.treshna.hornet.ContentDescriptor.BookingTime;
@@ -296,6 +297,7 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		UpdateDatabase.NinetyThree.patchNinetyThree(db);
 		UpdateDatabase.NinetyFour.patchNinetyFour(db);
 		UpdateDatabase.NinetyFive.patchNinetyFive(db);
+		UpdateDatabase.NinetySix.patchNinetySix(db);
 	}
 	
 	private void setupTableIndex(SQLiteDatabase db) {
@@ -353,7 +355,6 @@ public class HornetDatabase extends SQLiteOpenHelper {
 			}
 			case (93):{
 				UpdateDatabase.NinetyThree.patchNinetyThree(db);
-				//db.execSQL("pragma full_column_names=ON;"); //TODO: will this break stuff? 
 				break;
 			}
 			case (94):{
@@ -362,6 +363,10 @@ public class HornetDatabase extends SQLiteOpenHelper {
 			}
 			case (95):{
 				UpdateDatabase.NinetyFive.patchNinetyFive(db);
+				break;
+			}
+			case (96):{
+				UpdateDatabase.NinetySix.patchNinetySix(db);
 				break;
 			}
 			}
@@ -428,11 +433,10 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS "+KPI.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+MemberFinance.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+BillingHistory.NAME);
+		db.execSQL("DROP TABLE IF EXISTS "+AppConfig.NAME);
 	}
 	
 	private void repopulateTable(SQLiteDatabase db) {
-		
-		
 		
 		//restore saved bookingID's
 		Cursor cur = db.query("sqlite_master", new String[] {"name"}, "type='table' AND name='old_"+Booking.NAME+"'", null, null, null, null);

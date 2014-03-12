@@ -88,23 +88,14 @@ public class NFCActivity extends ActionBarActivity {
     		int rowid; 
     		Tag tag;
     		String id;
-    		String[] techlist;
     		ContentResolver contentResolver;
     		Date today;
     		SimpleDateFormat format;
     		ContentValues values;
     		
 	    	//System.out.print("intent Started");
-    		Log.v(TAG, "NFC Intent Started.");
 	           	// get the tag object for the discovered tag
 	    	tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-	    	techlist = tag.getTechList();
-	    	
-	    	Log.v(TAG, "Detected Tag's techlist:");
-	    	for (int i=0;i<techlist.length; i+=1){
-	    		//System.out.print("\n\n"+techlist[i]);
-	    		Log.v(TAG, techlist[i]);
-	    	}
 	    	
 	    	id = getID(tag);
 	    	contentResolver = getContentResolver();

@@ -12,7 +12,7 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.util.Log;
+
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,7 +55,6 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
     		selectedDate = Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");
     		//selectedDate = Services.DateToString(new Date());
     	}
-    	Log.w(TAG, "Selected Date OnCreate:"+selectedDate);
         hasOverview = this.getArguments().getBoolean("hasOverview");
     }
 	
@@ -65,11 +64,8 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-		try {
-			view = inflater.inflate(R.layout.booking_resource, container, false);
-		} catch (ClassCastException e) {
-			Log.e(TAG, "OnCreate View, inflate", e);
-		}
+		view = inflater.inflate(R.layout.booking_resource, container, false);
+		
 		setupCalendar();
 		setupSpinner();
 		setupList();
@@ -275,7 +271,6 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
 	       			+"bt."+ContentDescriptor.BookingTime.Cols.ARRIVAL+" = "+date;
 			String[] where = {date, ContentDescriptor.Booking.Cols.RESULT+" > 5 ", 
 	       			" AND b."+ContentDescriptor.Booking.Cols.PARENTID+" <= 0"};
-	       	Log.v(TAG,"Selected Date:"+date);
 			return new CursorLoader(getActivity(), ContentDescriptor.Time.TIME_BOOKING_URI, null, selection, where, "_id ASC");
 		} else {
 			return null;

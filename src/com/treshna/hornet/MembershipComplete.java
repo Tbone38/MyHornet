@@ -15,7 +15,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -26,7 +25,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class MembershipComplete extends Fragment implements OnClickListener, TagFoundListener {
-	private static final String TAG ="MembershipComplete";
 	Context ctx;
 	ContentResolver contentResolver;
 	Cursor cur;
@@ -195,7 +193,6 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 				values.put(ContentDescriptor.IdCard.Cols.SERIAL, serial);
 				Uri row = contentResolver.insert(ContentDescriptor.IdCard.CONTENT_URI, values);
 				String rowid = row.getLastPathSegment(); 
-				Log.v(TAG, "Adding "+rowid+" to PendingUploads");
 				contentResolver.delete(ContentDescriptor.FreeIds.CONTENT_URI, ContentDescriptor.FreeIds.Cols.ROWID+" = ? AND "+
 						ContentDescriptor.FreeIds.Cols.TABLEID+" = ?",new String[] {cardid, 
 						String.valueOf(ContentDescriptor.TableIndex.Values.Idcard.getKey())});
@@ -209,7 +206,6 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 			} else {
 				cur.close();
 				message = "No Tag ID's available. Please resync the device.";
-				Log.v(TAG, message);
 				cardid = null;
 			}
 		} else { //card in db, get the id.
@@ -223,11 +219,9 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 			if (cur.getCount() > 0) {
 				//id is in use, what should I do?
 				message = "Tag already in use";
-				Log.v(TAG, message);
 				cardid = null;
 			} else {
 				message = "Assigning card No. "+cardid+" to member.";
-				Log.v(TAG, message);
 				if (alertDialog != null){
 					alertDialog.dismiss();
 					alertDialog = null;
@@ -288,8 +282,6 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 		contentResolver.delete(ContentDescriptor.FreeIds.CONTENT_URI, ContentDescriptor.FreeIds.Cols.ROWID+" = ? AND "
 		+ContentDescriptor.FreeIds.Cols.TABLEID+" = ?", new String[] {String.valueOf(msid),
 		String.valueOf(ContentDescriptor.TableIndex.Values.Membership.getKey())});
-		
-		Log.v(TAG, "insert rowid: "+rowid);
 		
 		return Integer.parseInt(rowid);
 	}

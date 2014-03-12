@@ -1135,6 +1135,16 @@ public class JDBCConnection {
     	return pStatement.executeQuery();
     }
     
+    public ResultSet getDevice(int deviceid) throws SQLException {
+    	if (deviceid <= 0) {
+    		return null;
+    	}
+    	pStatement = con.prepareStatement("SELECT id, device, servertime, clienttime, completed, allowed FROM sync WHERE id = ?");
+    	pStatement.setInt(1, deviceid);
+    	
+    	return pStatement.executeQuery();
+    }
+    
     public SQLWarning getWarnings() throws SQLException, NullPointerException {
     	return con.getWarnings();
     }

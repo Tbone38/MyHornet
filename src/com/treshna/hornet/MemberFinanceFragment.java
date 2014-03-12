@@ -3,7 +3,6 @@ package com.treshna.hornet;
 
 import java.util.Date;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
@@ -12,11 +11,8 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -37,8 +33,6 @@ public class MemberFinanceFragment extends Fragment implements TagFoundListener,
 	private MemberActions mActions;
 	
 	private String final_session = null;
-	
-	private static final String TAG = "MemberFinanceFragment";
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

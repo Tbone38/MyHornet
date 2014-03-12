@@ -8,7 +8,6 @@ import java.util.Locale;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;

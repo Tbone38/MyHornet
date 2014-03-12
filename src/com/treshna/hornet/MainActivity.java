@@ -15,7 +15,6 @@ import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -29,7 +28,6 @@ public class MainActivity extends NFCActivity {
 	private static Tab bookingtab;
 	private static Context context;
 	private static int selectedTab;
-	private static String TAG = "MainActivity";
 	private static Fragment cFragment;
 	
 	@Override
@@ -84,7 +82,6 @@ public class MainActivity extends NFCActivity {
 		
         startReciever();
                 /************************************/
-		Log.v("MainActivity", "Finished onCreate");
 	}
 	
 	private void firstSetup() {
@@ -136,11 +133,9 @@ public class MainActivity extends NFCActivity {
 			BookingsListSuperFragment f = (BookingsListSuperFragment) cFragment;
 			if (f.getCurrentFragment() instanceof BookingsOverviewFragment) {
 				//do normal back pop
-				Log.v(TAG, "was OverView Fragment");
 				ActionBar ab = this.getSupportActionBar();
 				ab.setSelectedNavigationItem(0); //just go back to the Find Member View?
 			} else if (f.getCurrentFragment() instanceof BookingsSlideFragment) {
-				Log.v(TAG, "was Slider Fragment");
 				BookingsSlideFragment slideFragment = (BookingsSlideFragment) f.getCurrentFragment();
 				if (slideFragment.hasOverView()) {
 					f.onBackPressed();
@@ -150,7 +145,6 @@ public class MainActivity extends NFCActivity {
 					ab.setSelectedNavigationItem(0); //just go back to the Find Member View?
 				}
 			} else {
-				Log.v(TAG, "was Neither Fragment");
 			}
 		} else if (cFragment instanceof LastVisitorsSuperFragment){
 			ActionBar ab = this.getSupportActionBar();
@@ -266,10 +260,8 @@ public class MainActivity extends NFCActivity {
 	        mActivity = activity;
 	        mTag = tag;
 	        mClass = clz;
-	        Log.i("TabListener", "Creating Fragment:"+mTag);
 	        mFragment = mActivity.getSupportFragmentManager().findFragmentByTag(mTag);
             if (mFragment != null && !mFragment.isDetached()) {
-            	Log.d("TabListener", "Fragment already existsed and was visible.");
                 FragmentTransaction ft = mActivity.getSupportFragmentManager().beginTransaction();
                 //ft.remove(mFragment);
                 ft.detach(mFragment);
@@ -305,7 +297,6 @@ public class MainActivity extends NFCActivity {
 	            // Detach the fragment, because another one is being attached	    		
 	    		ft.detach(mFragment);
 	        } else {
-	        	Log.i("TabListener", "Fragment not dettached, for tab:"+tab.getText());
 	        }
 	    }
 

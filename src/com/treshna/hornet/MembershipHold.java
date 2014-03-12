@@ -19,7 +19,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,9 +28,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
 /**
  * TODO: 	- populate spinner #2.			-DONE
@@ -137,7 +134,6 @@ public class MembershipHold extends ActionBarActivity implements OnClickListener
 		}
 		
 		RadioButton radio = (RadioButton) this.findViewById(radioid);
-		Log.d(TAG, radio.getText().toString());
 		//radio.setSelected(true);
 		radio.setChecked(true);
 		

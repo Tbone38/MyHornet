@@ -2,7 +2,6 @@ package com.treshna.hornet;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -20,6 +19,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
@@ -143,7 +143,9 @@ public class HornetDBService extends Service {
  	   		this_sync = System.currentTimeMillis();
  	   		last_sync = Long.parseLong(Services.getAppSettings(ctx, "last_freq_sync")); //use this for checking lastupdate
 	 	   	
- 	   		
+ 	   		if (!getDeviceDetails()) {
+ 	   			return;
+ 	   		}
  	   		setDate();
  	   		getPendingDownloads();
  	   		getPendingUpdates();
@@ -218,7 +220,9 @@ public class HornetDBService extends Service {
 			getDeletedRecords(last_sync);
 			logger.writeLog();
 	   	  	uploadLog();
-			
+	   	  	
+	   	  	//Finish.
+			updateDevice();
 
 			Services.setPreference(ctx, "last_freq_sync", String.valueOf(this_sync));
 			//Services.showToast(getApplicationContext(), statusMessage, handler);
@@ -268,6 +272,10 @@ public class HornetDBService extends Service {
 		  //Services.showProgress(Services.getContext(), "Syncing Local Database setting from Server", handler, currentCall, true);
 		   //the above box should probably always show. & should be controlled by an async task.
 		   
+ 		  if (!getDeviceDetails()) {
+ 			  return;
+ 		  }
+ 		  
 		   //config
 		   int rcount = getResource();
 		   int days = getOpenHours();
@@ -346,6 +354,8 @@ public class HornetDBService extends Service {
 	   	  	updateOpenHours();
 	   	  	logger.writeLog();
 	   	  	uploadLog();
+	   	  	
+	   	  	updateDevice();
 	   	  	//Services.stopProgress(handler, currentCall);
 	   	  	
 	   	 thread.is_networking = false;
@@ -4275,4 +4285,139 @@ public class HornetDBService extends Service {
     	return result;
     }
     
+    //sync finished!
+    private boolean updateDevice() {
+    	ResultSet rs;
+    	int deviceid = -1;
+    	String uniqueid, query;
+    	uniqueid = ApplicationID.id();
+    	
+    	cur = contentResolver.query(ContentDescriptor.AppConfig.CONTENT_URI, null, null, null, null);
+    	if (cur.moveToFirst()) {
+    		deviceid = cur.getInt(cur.getColumnIndex(ContentDescriptor.AppConfig.Cols.DB_DEVICEID));
+    	}
+    	cur.close();
+    	
+    	if (deviceid <= 0 && uniqueid == null) {
+    		return false;
+    	}
+    	if (!openConnection()) return false;
+    	
+    	//look for an id.
+    	if (deviceid <=0) {
+    		query = "SELECT id FROM sync WHERE device = '"+uniqueid+"';";
+    		try {
+    			rs = connection.startStatementQuery(query);
+    			while (rs.next()) {
+    				deviceid = rs.getInt("id");
+    			}
+    			rs.close();
+    		} catch (SQLException e) {
+    			statusMessage = e.getLocalizedMessage();
+    			e.printStackTrace();
+    		}
+    		connection.closeStatementQuery();
+    	}
+    	
+    	if (deviceid <= 0) {
+    		//we'll need to do an insert.
+    		query = "INSERT INTO sync(device, clienttime, completed, servertime) VALUES ('"+uniqueid+"',"+
+    		"to_timestamp("+(double)(new Date().getTime()/1000d)+"), true, now()) RETURNING id;";
+    		
+    	} else {
+    		query = "UPDATE sync SET (clienttime, completed, servertime) = (to_timestamp("+(double)(new Date().getTime()/1000d)
+    				+"), true, now()) WHERE id = "+deviceid+" RETURNING id;";
+    	}
+    	
+    	try {
+    		rs = connection.startStatementQuery(query);
+    		while (rs.next()) {
+    			ContentValues values = new ContentValues();
+    			values.put(ContentDescriptor.AppConfig.Cols.DB_DEVICEID, rs.getInt("id"));
+    			if (deviceid <=0) {
+    				contentResolver.insert(ContentDescriptor.AppConfig.CONTENT_URI, values);
+    			} 
+    		}
+    		rs.close();
+    	} catch (SQLException e) {
+    		statusMessage = e.getLocalizedMessage();
+    		e.printStackTrace();
+    		return false;
+    	}
+    	closeConnection();
+    	return true;
+    }
+    
+    //sync started!
+    private boolean getDeviceDetails() {
+    	ResultSet rs;
+    	int deviceid = -1;
+    	String uniqueid, query;
+    	uniqueid = ApplicationID.id();
+    	
+    	cur = contentResolver.query(ContentDescriptor.AppConfig.CONTENT_URI, null, null, null, null);
+    	if (cur.moveToFirst()) {
+    		deviceid = cur.getInt(cur.getColumnIndex(ContentDescriptor.AppConfig.Cols.DB_DEVICEID));
+    	}
+    	cur.close();
+    	
+    	
+    	if (deviceid <= 0 && uniqueid == null) {
+    		return false;
+    	}
+    	if (!openConnection()) return false;
+    	
+    	//look for an id.
+    	if (deviceid <=0) {
+    		query = "SELECT id FROM sync WHERE device = '"+uniqueid+"';";
+    		try {
+    			rs = connection.startStatementQuery(query);
+    			while (rs.next()) {
+    				deviceid = rs.getInt("id");
+    			}
+    			rs.close();
+    		} catch (SQLException e) {
+    			statusMessage = e.getLocalizedMessage();
+    			e.printStackTrace();
+    		}
+    		connection.closeStatementQuery();
+    	}
+
+    	if (deviceid <= 0) {
+    		//we'll need to do an insert.
+    		query = "INSERT INTO sync (device, clienttime) VALUES ('"+uniqueid+"',"+
+    		"to_timestamp("+(double)(new Date().getTime()/1000d)+")) RETURNING *;";
+    	} else {
+    		query = "UPDATE sync SET (clienttime, completed, servertime) = (to_timestamp("+(double)(new Date().getTime()/1000d)
+    				+"),false, now()) WHERE id = "+deviceid+" RETURNING *;";
+    	}
+    	
+    	try {
+    		rs = connection.startStatementQuery(query);
+    		while (rs.next()) {
+    			if (!rs.getBoolean("allowed")) {
+    				//delete everything.
+    				Editor editor = PreferenceManager.getDefaultSharedPreferences(MainActivity.getContext()).edit();
+    				editor.clear();
+    				editor.commit();    				
+    				ContentResolver.cancelSync(null, ContentDescriptor.AUTHORITY);
+    				contentResolver.delete(ContentDescriptor.DROPTABLE_URI, null, null);
+    				//return false!
+    				return false;
+    			}
+    			
+    			ContentValues values = new ContentValues();
+    			values.put(ContentDescriptor.AppConfig.Cols.DB_DEVICEID, rs.getInt("id"));
+    			if (deviceid <=0) {
+    				contentResolver.insert(ContentDescriptor.AppConfig.CONTENT_URI, values);
+    			}
+    		}
+    	} catch (SQLException e) {
+    		statusMessage = e.getLocalizedMessage();
+    		e.printStackTrace();
+    		return false;
+    	}
+    	
+    	return true;
+    }
 }

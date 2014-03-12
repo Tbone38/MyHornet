@@ -26,7 +26,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -342,8 +342,6 @@ public class BookingPage extends ActionBarActivity implements OnMemberSelectList
 		
 		card = i.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 		id = getID(card);
-		
-		Log.v(TAG, "\n\n\ncard.serial:"+id);
 		tagFoundListener.onNewTag(id);
 	}
 	

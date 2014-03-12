@@ -4,6 +4,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.treshna.hornet.ContentDescriptor.AppConfig;
 import com.treshna.hornet.ContentDescriptor.BillingHistory;
 import com.treshna.hornet.ContentDescriptor.Booking;
 import com.treshna.hornet.ContentDescriptor.CancellationFee;
@@ -791,4 +792,23 @@ public class UpdateDatabase {
 		}
 	}
 	
+	public static class NinetySix {
+		private static final String SQL1 = "CREATE TABLE "+AppConfig.NAME+" ("+AppConfig.Cols._ID+" INTEGER PRIMARY KEY NOT NULL, "
+				+AppConfig.Cols.DB_DEVICEID+" INTEGER DEFAULT 0, "+AppConfig.Cols.DB_TIMEOFFSET+" NUMERIC "//epoch.
+				+");";
+		
+		public static void patchNinetySix(SQLiteDatabase db) {
+			db.beginTransaction();
+			try {
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL1);
+				db.execSQL(SQL1);
+				db.setTransactionSuccessful();
+			/*} catch (SQLException e) {
+			e.printStackTrace();
+			db.setTransactionSuccessful(); */
+			}finally {
+				db.endTransaction();
+			}
+		}
+	}
 }

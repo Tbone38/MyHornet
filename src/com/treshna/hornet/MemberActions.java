@@ -18,7 +18,6 @@ import android.nfc.NfcAdapter;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -266,7 +265,6 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 				values.put(ContentDescriptor.IdCard.Cols.SERIAL, serial);
 				Uri row = contentResolver.insert(ContentDescriptor.IdCard.CONTENT_URI, values);
 				String rowid = row.getLastPathSegment(); 
-				Log.v(TAG, "Adding "+rowid+" to PendingUploads");
 				contentResolver.delete(ContentDescriptor.FreeIds.CONTENT_URI, ContentDescriptor.FreeIds.Cols.ROWID+" = ? AND "+
 						ContentDescriptor.FreeIds.Cols.TABLEID+" = ?",new String[] {cardid, 
 						String.valueOf(ContentDescriptor.TableIndex.Values.Idcard.getKey())});
@@ -280,7 +278,6 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 			} else {
 				cur.close();
 				message = "No Tag ID's available. Please resync the device.";
-				Log.v(TAG, message);
 			}
 			
 		} else { //card in db, get the id.
@@ -294,11 +291,9 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 			if (cur.getCount() > 0) {
 				//id is in use, what should I do?
 				if (message == null) message = "Tag already in use";
-				Log.v(TAG, message);
 				cardid = null;
 			} else {
 				message = "Assigning card No. "+cardid+" to member.";
-				Log.v(TAG, message);
 				if (alertDialog != null){
 					alertDialog.dismiss();
 					alertDialog = null;
@@ -318,7 +313,6 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 		values.put(ContentDescriptor.Member.Cols.CARDNO, cardid);
 		contentResolver.update(ContentDescriptor.Member.CONTENT_URI, values, ContentDescriptor.Member.Cols.MID+" = ?",
 				new String[] {mid});
-		Log.v(TAG, "Updated Member id:"+mid+" with cardno: "+cardid);
 		values = new ContentValues();
 		values.put(ContentDescriptor.PendingUpdates.Cols.TABLEID, ContentDescriptor.TableIndex.Values.Member.getKey());
 		values.put(ContentDescriptor.PendingUpdates.Cols.ROWID, mid);
@@ -410,7 +404,6 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 		cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols.MID+" = ? AND "
 				+ContentDescriptor.Membership.Cols.HISTORY+" = 'f'", new String[] {mid}, null);
 		while (cur.moveToNext()) {
-			//Log.v(TAG, "membership:"+cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PNAME)));
 			membershiplist.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PNAME)));
 		}
 		cur.close();

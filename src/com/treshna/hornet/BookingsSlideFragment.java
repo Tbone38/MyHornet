@@ -14,7 +14,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,7 +47,6 @@ public class BookingsSlideFragment extends Fragment {
     @Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
     	super.onCreateView(inflater, container, savedInstanceState);
-    	Log.i(TAG, "Creating View");
 	
 		view = inflater.inflate(R.layout.swipe_layout, container, false);
 		// Instantiate a ViewPager and a PagerAdapter.
@@ -147,7 +145,6 @@ public class BookingsSlideFragment extends Fragment {
         	Bundle bdl = new Bundle(2);
             bdl.putBoolean("hasOverview", hasOverview);
             String date = BookingsSlideFragment.this.getDate(position);
-            Log.w(TAG, "getItem Date:"+date);
             bdl.putString("bookings_date", date);
             page.setArguments(bdl);
             

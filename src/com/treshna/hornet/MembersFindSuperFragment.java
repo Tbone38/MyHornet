@@ -7,11 +7,9 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -22,14 +20,12 @@ import com.treshna.hornet.MembersFindFragment.OnMemberSelectListener;
  */
 public class MembersFindSuperFragment extends Fragment implements OnMemberSelectListener{
    
-	private static final String TAG = "LastVisitorsFragment";
 	private View view;
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Services.setContext(getActivity());
-        Log.v(TAG, "Creating Last Visitors");
     }
 	
 	@Override

@@ -15,7 +15,6 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -95,7 +94,6 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 		mslist.removeAllViews();
 		
 		while (cur.moveToNext()) {
-			//Log.e(TAG, "Inflater is:"+mInflater.toString());
 			RelativeLayout membershipRow = (RelativeLayout) mInflater.inflate(R.layout.member_membership_row, null);
 			membershipRow.setClickable(true);
 			membershipRow.setTag(cur.getInt(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MSID)));
@@ -198,7 +196,6 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 		values.put(ContentDescriptor.Membership.Cols.CANCEL_REASON, inputs.get(1));
 		values.put(ContentDescriptor.Membership.Cols.TERMINATION_DATE, inputs.get(0));
 		values.put(ContentDescriptor.Membership.Cols.DEVICESIGNUP, "t");
-		Log.d(TAG, "termination_date:"+inputs.get(0));
 		
 		contentResolver.update(ContentDescriptor.Membership.CONTENT_URI, values, ContentDescriptor.Membership.Cols.MSID+" = ?", 
 				new String[] {String.valueOf(membershipid)});

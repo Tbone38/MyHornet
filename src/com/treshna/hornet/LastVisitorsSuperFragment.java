@@ -7,11 +7,9 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 /*
@@ -25,7 +23,6 @@ public class LastVisitorsSuperFragment extends Fragment {
 	public static final int LASTVISITORS = 1;
 	static public String PREF_NAME = "addMember";
 	static public String PREF_KEY = "memberType";
-	private static final String TAG = "LastVisitorsFragment";
 	//public static final int DISPLAYERROR = -1;
 	private View view;
 	//NFCs
@@ -36,7 +33,6 @@ public class LastVisitorsSuperFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Services.setContext(getActivity());
-        Log.v(TAG, "Creating Last Visitors");
         if (cur != null) cur.close();        
     }
 	

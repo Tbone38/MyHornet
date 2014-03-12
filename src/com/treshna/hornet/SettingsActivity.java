@@ -363,6 +363,11 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		version.setSelectable(false);
 		debug.addPreference(version);
 		
+		Preference uniqueid = new Preference(this);
+		uniqueid.setTitle(this.getString(R.string.pref_unique_id, ApplicationID.id()));
+		uniqueid.setSelectable(false);
+		debug.addPreference(uniqueid);
+		
 		// progress on
 		CheckBoxPreference progress = new CheckBoxPreference(this);
 		progress.setKey("progress");

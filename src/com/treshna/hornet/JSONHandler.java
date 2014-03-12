@@ -7,20 +7,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
-import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.http.HttpEntity;
@@ -35,10 +28,7 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.preference.PreferenceManager;
-import android.text.TextUtils;
-import android.util.Base64;
 import android.util.Log;
 
 public class JSONHandler {
@@ -149,7 +139,6 @@ public class JSONHandler {
 			}
 		}
 		
-		Log.d(TAG, result.toString());
 		//errorcodes 8 = email exists but isn't setup, < 0 is success.
 		return (errorcode <= 0 || errorcode == JSONError.USERNOTSETUP.getKey());
 	}
@@ -211,7 +200,6 @@ public class JSONHandler {
 				}
 			}
 		} else {
-			Log.d(TAG, result.toString());
 			String server = "-1", dbname= "-1", user = "-1", password= "-1";
 			try {
 				server = result.getString("server");
@@ -352,7 +340,6 @@ public class JSONHandler {
 		}
     	result = this.postJSON(url, post);
     	if (result != null) {
-    		Log.d(TAG, result.toString());
     	}
     	
     	//filehandler.deleteFile("db_sync.log"); 
@@ -361,7 +348,6 @@ public class JSONHandler {
     }
 	
 	public boolean DDLogin(String te_username, String te_password) {
-		Log.d(TAG, "DD Login");
 		boolean result = false;
 		String status = "";
 		this.signup_url = "api.gymmaster.co.nz/notavailable";
@@ -413,7 +399,6 @@ public class JSONHandler {
 	}
 	
 	public boolean DDAdd(int memberid, String te_username) {
-		Log.d(TAG, "DD Add");
 		boolean result = false;
 		String status = "";
 		JSONObject response, post;
@@ -473,7 +458,6 @@ public class JSONHandler {
 	}
 	
 	private boolean DDdetails(int memberid, String te_username) {
-		Log.d(TAG, "DD Details");
 		boolean result = false;
 		JSONObject response, post;
 		String api = "http://gmbooking-"+te_username+".gymmaster.co.nz";
@@ -721,7 +705,6 @@ public class JSONHandler {
 			if (!is_post) {
 				httpResponse = httpClient.execute(httpGet);
 			} else if (is_post) {
-				//Log.d(TAG, Arrays.toString(httpPost.getAllHeaders()));
 				httpResponse = httpClient.execute(httpPost);
 			} else {
 				httpResponse = null;

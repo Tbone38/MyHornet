@@ -14,10 +14,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.database.Cursor;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -41,7 +38,6 @@ public class ClassMemberListAdapter extends SimpleCursorAdapter implements Compo
 	
 	private String deleteid;
 	
-	private int mLayout;
 	
 	@SuppressWarnings("deprecation")
 	public ClassMemberListAdapter(Context context, int layout, Cursor c,
@@ -50,7 +46,6 @@ public class ClassMemberListAdapter extends SimpleCursorAdapter implements Compo
 		this.context = context;
 		contentResolver = context.getContentResolver();
 		cur = c;
-		mLayout = layout;
 	}
 	
 	
@@ -116,7 +111,6 @@ public class ClassMemberListAdapter extends SimpleCursorAdapter implements Compo
 			tag = (ArrayList<String>) buttonView.getTag();
 		}
 		bookingid = tag.get(0);
-		Log.v(TAG, "Check Box Tag: BookingID:"+bookingid);
 		
 		if (isChecked) {//is checked, set checkin time.
 			long tenminutes = 600000;

@@ -299,8 +299,6 @@ public class Services {
 			handler.post(new Runnable() {  
 					@Override  
 					public void run() {
-						//System.out.print("\n\nContext:"+ctx);
-						Log.v(TAG+".showProgress", "Progress Bar Context:"+ctx);
 						progress = ProgressDialog.show(ctx, "Syncing", message, true);//breaking here.
 			}});
 		}
