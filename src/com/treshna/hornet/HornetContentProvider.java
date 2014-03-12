@@ -628,6 +628,9 @@ public class HornetContentProvider extends ContentProvider {
             case ContentDescriptor.Resource.PATH_TOKEN:{
             	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
             	builder.setTables(ContentDescriptor.Resource.NAME);
+            	selection = (selection.isEmpty()) ?
+            			ContentDescriptor.Resource.Cols.HISTORY+" = 'f'"
+            			: selection+" AND "+ ContentDescriptor.Resource.Cols.HISTORY+" = 'f'";
             	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
             }
             case ContentDescriptor.Resource.PATH_FOR_ID_TOKEN:{

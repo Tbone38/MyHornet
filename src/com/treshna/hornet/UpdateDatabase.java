@@ -23,6 +23,7 @@ import com.treshna.hornet.ContentDescriptor.PendingDeletes;
 import com.treshna.hornet.ContentDescriptor.PendingUpdates;
 import com.treshna.hornet.ContentDescriptor.PendingUploads;
 import com.treshna.hornet.ContentDescriptor.Programme;
+import com.treshna.hornet.ContentDescriptor.Resource;
 import com.treshna.hornet.ContentDescriptor.RollCall;
 import com.treshna.hornet.ContentDescriptor.RollItem;
 import com.treshna.hornet.ContentDescriptor.TableIndex;
@@ -797,11 +798,15 @@ public class UpdateDatabase {
 				+AppConfig.Cols.DB_DEVICEID+" INTEGER DEFAULT 0, "+AppConfig.Cols.DB_TIMEOFFSET+" NUMERIC "//epoch.
 				+");";
 		
+		private static final String SQL2 = "ALTER TABLE "+Resource.NAME+" ADD COLUMN "+Resource.Cols.HISTORY+" TEXT DEFAULT 'f';";
+		
 		public static void patchNinetySix(SQLiteDatabase db) {
 			db.beginTransaction();
 			try {
 				Log.w(HornetDatabase.class.getName(), "\n"+SQL1);
 				db.execSQL(SQL1);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL2);
+				db.execSQL(SQL2);
 				db.setTransactionSuccessful();
 			/*} catch (SQLException e) {
 			e.printStackTrace();

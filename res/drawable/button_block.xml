@@ -2,5 +2,5 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:drawable="@color/android_blue"
           android:state_pressed="true" />
-    <item android:drawable="@color/button_block_header" />
+    <item android:drawable="@color/booking_resource_background" />
 </selector>

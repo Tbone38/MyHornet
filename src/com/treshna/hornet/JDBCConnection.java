@@ -262,12 +262,14 @@ public class JDBCConnection {
     		return 0;
 		}
     }
-    public ResultSet getResource() throws SQLException, NullPointerException {
+    public ResultSet getResource(long last_sync) throws SQLException, NullPointerException {
 	    	ResultSet rs = null;
 	    	pStatement = con.prepareStatement("select resource.id as resourceid, resource.name as resourcename, "
 	    			+ "resource.companyid as resourcecompanyid, resourcetype.name as resourcetypename, "
-	    			+ "resourcetype.period as resourcetypeperiod FROM resource LEFT JOIN resourcetype"
-	    			+" ON (resource.resourcetypeid = resourcetype.id) WHERE resource.history = 'f';");
+	    			+ "resourcetype.period as resourcetypeperiod , history "
+	    			+ "FROM resource LEFT JOIN resourcetype"
+	    			+" ON (resource.resourcetypeid = resourcetype.id) WHERE resource.lastupdate > ?;");
+	    	pStatement.setTimestamp(1, new Timestamp(last_sync));
 	    	rs = pStatement.executeQuery();
 	    	return rs;
     }

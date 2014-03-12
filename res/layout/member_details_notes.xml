@@ -4,7 +4,6 @@
     android:id="@+id/pageLayout"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:padding="7dp"
     tools:context=".MemberDetails" >
     <LinearLayout
         android:id="@+id/memberDetailsHeadingRow"
@@ -13,8 +12,16 @@
         android:orientation="horizontal"
         android:background="@drawable/button_block"
         android:clickable="true"
-        android:layout_marginLeft="3dp"
-        android:layout_marginRight="3dp" >
+        android:padding="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp" >
+        <TextView
+            android:id="@+id/memberDetailsGlyph"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:text="@string/glyph_paperclip" />
 	    <TextView
 	        android:id="@+id/memberDetailsLabel"
 	        android:layout_width="0dp"
@@ -30,17 +37,18 @@
 	        android:src="@drawable/ic_action_collapse"
 	        android:contentDescription="@string/hint_emergency_expand" />
 	</LinearLayout>
+
 	<LinearLayout
-        android:id="@+id/memberDetails"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/memberDetailsHeadingRow"
-        android:layout_marginTop="1dp"
-        android:layout_marginLeft="3dp"
-        android:layout_marginRight="3dp"
-        android:layout_marginBottom="3dp"
-        android:orientation="vertical"
-        android:background="@drawable/button_block" >
+	    android:id="@+id/memberDetails"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@id/memberDetailsHeadingRow"
+	    android:layout_marginLeft="10dp"
+	    android:layout_marginRight="10dp"
+	    android:layout_marginTop="1dp"
+	    android:background="@drawable/button_block"
+	    android:orientation="vertical" >
+
 	    <TextView
 	        android:id="@+id/label_member_address_street"
 	        android:layout_width="wrap_content"
@@ -202,10 +210,17 @@
         android:layout_below="@id/memberParentRow"
         android:orientation="horizontal"
         android:background="@drawable/button_block"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="3dp"
-        android:layout_marginRight="3dp"
+        android:padding="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:clickable="true" >
+        <TextView
+            android:id="@+id/emergencyContactGlyph"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:text="@string/glyph_phone" />
 	    <TextView
 	        android:id="@+id/emergencyContactH"
 	        android:layout_width="0dp"
@@ -230,9 +245,9 @@
         android:layout_below="@id/emergencyHeadingRow"
         android:orientation="vertical"
         android:layout_marginTop="1dp"
-        android:layout_marginLeft="3dp"
-        android:layout_marginRight="3dp"
-        android:layout_marginBottom="3dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:background="@drawable/button_block" >
 	    <TextView
 	        android:id="@+id/emergencyContactNameL"
@@ -337,9 +352,16 @@
         android:orientation="horizontal"
         android:background="@drawable/button_block"
         android:clickable="true"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="3dp"
-        android:layout_marginRight="3dp" >
+        android:padding="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp" >
+	    <TextView
+	        android:id="@+id/memberMedicalGlyph"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="24sp"
+	        android:text="@string/glyph_medical" />	        
 	    <TextView
 	        android:id="@+id/medicalH"
 	        android:textSize="24sp"
@@ -364,9 +386,9 @@
         android:layout_below="@id/medicalHeadingRow"
         android:orientation="vertical"
         android:layout_marginTop="1dp"
-        android:layout_marginLeft="3dp"
-        android:layout_marginRight="3dp"
-        android:layout_marginBottom="3dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:background="@drawable/button_block" >
 	    <TextView
 	        android:id="@+id/medicalConditionsL"
@@ -442,9 +464,16 @@
         android:orientation="horizontal"
         android:background="@drawable/button_block"
         android:clickable="true"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="3dp"
-        android:layout_marginRight="3dp" >
+        android:padding="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp" >
+	    <TextView
+	        android:id="@+id/memberNotesGlyph"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="24sp"
+	        android:text="@string/glyph_note" />
 		<TextView
 	    	android:id="@+id/membernotesH"
 	    	android:textSize="24sp"
@@ -472,9 +501,9 @@
 	    android:orientation="vertical"
 	    android:background="@drawable/button_block"
 	    android:layout_marginTop="1dp"
-	    android:layout_marginLeft="3dp"
-        android:layout_marginRight="3dp"
-        android:layout_marginBottom="3dp" >
+	    android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp" >
 	</LinearLayout>
 	
 	<TextView
@@ -483,6 +512,8 @@
 	    android:layout_height="wrap_content"
 	    android:layout_below="@id/membernotes"
 	    android:text="@string/member_note_H"
+	    android:paddingLeft="10dp"
+	    android:layout_marginLeft="10dp"
 	    android:textSize="14sp" />
 	<LinearLayout
 	    android:id="@+id/memberaddnotes"
@@ -495,6 +526,8 @@
 	        android:layout_width="0dp"
 	        android:layout_height="wrap_content"
 	        android:layout_weight=".7"
+	        android:layout_marginLeft="30dp"
+	        android:paddingLeft="10dp"
         	android:lines="2"
     		android:gravity="top|left"
     		android:inputType="textMultiLine" />
@@ -504,7 +537,8 @@
 	        android:layout_weight=".3"
 	    	android:orientation="vertical"
 	    	android:layout_gravity="bottom"
-	    	android:layout_marginLeft="5dp">
+	    	android:layout_marginLeft="5dp"
+        	android:layout_marginRight="10dp">
 	    	<TextView
 	        	android:id="@+id/button_add_note"
 	            android:layout_width="match_parent"
@@ -531,9 +565,9 @@
         android:orientation="horizontal"
         android:background="@drawable/button_block"
         android:clickable="true"
-		android:layout_marginTop="5dp"
-       	android:layout_marginLeft="3dp"
-       	android:layout_marginRight="3dp" >
+		android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp" >
 		<TextView
 	    	android:id="@+id/membertasksH"
 	    	android:textSize="24sp"
@@ -557,9 +591,9 @@
 	    android:layout_height="wrap_content"
 	    android:layout_below="@id/tasksHeadingRow"
 	    android:layout_marginTop="1dp"
-        android:layout_marginLeft="3dp"
-        android:layout_marginRight="3dp"
-        android:layout_marginBottom="3dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:orientation="vertical"
         android:background="@drawable/button_block" >
 	    

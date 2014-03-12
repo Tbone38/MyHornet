@@ -508,6 +508,10 @@ public class ContentDescriptor {
 	 			public static final String RTNAME = "typename";
 	 			public static final String PERIOD = "period";
 	 			public static final String LASTUPDATE = "lastupdate";
+	 			
+	 			//added v120
+	 			public static final String HISTORY = "historic";
+	 			
 	 		}
 	 	}
 	 	

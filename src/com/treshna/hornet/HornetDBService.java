@@ -19,7 +19,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
@@ -50,7 +49,7 @@ public class HornetDBService extends Service {
     private static int currentCall;
     private static FileHandler logger;
 
-    Context ctx;
+    //Context ctx;
     private long this_sync;
     private long last_sync;
     
@@ -62,19 +61,21 @@ public class HornetDBService extends Service {
 		return null;
 	}
 	
+	//context is probably leaky?
 	private void setup(Context context) {
 		SharedPreferences preferences;
 		if (context == null) {
 			preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-			ctx = getApplicationContext();
+			context = getApplicationContext();
+			//ctx = getApplicationContext();
 		} else {
 			preferences = PreferenceManager.getDefaultSharedPreferences(context);
-			ctx = context;
+			//ctx = context;
 		}
 		connection = new JDBCConnection(preferences.getString("address", "-1"),preferences.getString("port", "-1"),
 				 preferences.getString("database", "-1"), preferences.getString("username", "-1"),
 				 preferences.getString("password", "-1"));
-	   contentResolver = ctx.getContentResolver(); //this.getContentResolver();
+	   contentResolver = context.getContentResolver(); //this.getContentResolver();
 	   
 	}
 	@Override  
@@ -83,18 +84,17 @@ public class HornetDBService extends Service {
 
 	   setup(null);
 	   
-	   logger = new FileHandler(ctx);
+	   logger = new FileHandler(getApplicationContext());
 	   logger.clearLog();
 	   currentCall = intent.getIntExtra(Services.Statics.KEY, -1);
 	   Bundle bundle = intent.getExtras();
-	   /**
-	    * magical queue-ing, used to enforce one network operation at a time.
-	    */
 	   
-	   if (thread == null) {
-		   thread = new NetworkThread();
-	   }
+	   //TODO: 	check if this is more or/less memory efficient.
+	   //		also check if the threading is functional.
+	   thread = NetworkThread.getInstance();
 	   thread.addNetwork(currentCall, bundle, this);
+	 //  startNetworking(currentCall, bundle);
+	 
 	   if (!thread.isAlive() && thread.getState() == Thread.State.NEW) {
 		   Log.v(TAG, "STARTING THREAD");
 		   thread.start();
@@ -103,9 +103,11 @@ public class HornetDBService extends Service {
 		   thread = new NetworkThread();
 		   thread.addNetwork(currentCall, bundle, this);
 		   thread.start();
+		   
 	   } else {
 		   Log.v(TAG, "Thread State:"+thread.getState());
 	   }
+	   
 	   
 	   // do these want moved into the threads ?
 	   statusMessage = "";
@@ -122,11 +124,9 @@ public class HornetDBService extends Service {
      * this functions starts a series of network operations determined by the call.
      * for a list of calls, see Services.Statics
      * 
-     * It should only be run from a seperate thread, as otherwise the networking blocks the 
-     * UI..
      */
-    public void startNetworking(int currentcall, Bundle bundle){
-    	String first_sync = Services.getAppSettings(ctx, "first_sync");
+    public synchronized void startNetworking(int currentcall, Bundle bundle){
+    	String first_sync = Services.getAppSettings(getApplicationContext(), "first_sync");
     	if (first_sync.compareTo("-1")==0 && currentCall == Services.Statics.FREQUENT_SYNC) {
     		currentCall = Services.Statics.FIRSTRUN;
     	}
@@ -137,11 +137,11 @@ public class HornetDBService extends Service {
  	   		
 			if (first_sync.compareTo("-1")==0) {
 				SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy", Locale.US);
-				Services.setPreference(ctx, "first_sync", format.format(new Date()));
+				Services.setPreference(getApplicationContext(), "first_sync", format.format(new Date()));
 			}
  	   		
  	   		this_sync = System.currentTimeMillis();
- 	   		last_sync = Long.parseLong(Services.getAppSettings(ctx, "last_freq_sync")); //use this for checking lastupdate
+ 	   		last_sync = Long.parseLong(Services.getAppSettings(getApplicationContext(), "last_freq_sync")); //use this for checking lastupdate
 	 	   	
  	   		if (!getDeviceDetails()) {
  	   			return;
@@ -183,6 +183,7 @@ public class HornetDBService extends Service {
 			}
 			
 			//downloads!
+			getResource(last_sync);
 			getMember(last_sync);
 			getProgrammes(last_sync);
 			getMembership(last_sync);
@@ -190,7 +191,7 @@ public class HornetDBService extends Service {
 			getClasses(last_sync);
 			
 			//Roll Stuff.
-			int use_roll = Integer.parseInt(Services.getAppSettings(this.ctx, "use_roll"));
+			int use_roll = Integer.parseInt(Services.getAppSettings(getApplicationContext(), "use_roll"));
 			if (use_roll > 0) {
 	 	   		getRollID();
 	 	   		getRollItemID();
@@ -202,7 +203,7 @@ public class HornetDBService extends Service {
 		 	   		
 		 	   	logger.writeLog();
 		   	  	uploadLog();
-	 	   		Services.setPreference(ctx, "last_freq_sync", String.valueOf(this_sync));
+	 	   		Services.setPreference(getApplicationContext(), "last_freq_sync", String.valueOf(this_sync));
 	 	   		return;
 			}
 			
@@ -224,7 +225,7 @@ public class HornetDBService extends Service {
 	   	  	//Finish.
 			updateDevice();
 
-			Services.setPreference(ctx, "last_freq_sync", String.valueOf(this_sync));
+			Services.setPreference(getApplicationContext(), "last_freq_sync", String.valueOf(this_sync));
 			//Services.showToast(getApplicationContext(), statusMessage, handler);
 			/*Broadcast an intent to let the app know that the sync has finished
 			 * communicating with the server/updating the cache.
@@ -251,9 +252,9 @@ public class HornetDBService extends Service {
  					try {
  						wait(1500);
  					} catch (Exception e ) {};
- 					Intent updateInt = new Intent(ctx, HornetDBService.class);
+ 					Intent updateInt = new Intent(getApplicationContext(), HornetDBService.class);
  					updateInt.putExtra(Services.Statics.KEY, Services.Statics.FREQUENT_SYNC);
- 					ctx.startService(updateInt);
+ 					getApplicationContext().startService(updateInt);
  				}}).start();
  		  
  		  thread.is_networking = false;
@@ -265,7 +266,7 @@ public class HornetDBService extends Service {
 
  		  if (first_sync.compareTo("-1")==0) {
  			  SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy", Locale.US);
- 			  Services.setPreference(ctx, "first_sync", format.format(new Date()));
+ 			  Services.setPreference(getApplicationContext(), "first_sync", format.format(new Date()));
  		  }
  		  
  		  this_sync = System.currentTimeMillis();
@@ -277,14 +278,17 @@ public class HornetDBService extends Service {
  		  }
  		  
 		   //config
-		   int rcount = getResource();
+		   int rcount = getResource(0);
 		   int days = getOpenHours();
+		   setTime(); 
+	   	   setDate();
+	   	   updateOpenHours();
 		   getDoors();
 		   getConfig();
 		   getMembershipExpiryReasons();
 		   getProgrammes(0);
 		   
-		   int use_roll = Integer.parseInt(Services.getAppSettings(this.ctx, "use_roll"));
+		   int use_roll = Integer.parseInt(Services.getAppSettings(getApplicationContext(), "use_roll"));
 		   if (use_roll > 0) {
 			   getMember(-1);
 			   getMembership(-1);
@@ -301,12 +305,9 @@ public class HornetDBService extends Service {
 	 	   	   getRollItem(0);
 			   
 			   //Services.stopProgress(handler, currentCall);
-			   Services.setPreference(ctx, "last_freq_sync", String.valueOf(this_sync));
+			   Services.setPreference(getApplicationContext(), "last_freq_sync", String.valueOf(this_sync));
 			   //Services.showProgress(Services.getContext(), "Setting up resource", handler, currentCall, false);
 		   	   //rebuild times, then update the reference in date.
-		   	   setTime(); 
-		   	   setDate();
-		   	   updateOpenHours();
 			   logger.writeLog();
 		   	   uploadLog();
 		   	   //Services.stopProgress(handler, currentCall);
@@ -345,13 +346,10 @@ public class HornetDBService extends Service {
 		   uploadPendingDeletes();
 		   
 		   //Services.stopProgress(handler, currentCall);
-		   Services.setPreference(ctx, "last_freq_sync", String.valueOf(this_sync));
+		   Services.setPreference(getApplicationContext(), "last_freq_sync", String.valueOf(this_sync));
 		   //Services.showProgress(Services.getContext(), "Setting up resource", handler, currentCall, false);
 
 	   	  	//rebuild times, then update the reference in date.
-	   	  	setTime(); 
-	   	  	setDate();
-	   	  	updateOpenHours();
 	   	  	logger.writeLog();
 	   	  	uploadLog();
 	   	  	
@@ -588,12 +586,12 @@ public class HornetDBService extends Service {
 	    	}
     	}
         closeConnection();
-        Services.setPreference(ctx, "lastsync", String.valueOf(this_sync));//String.valueOf(System.currentTimeMillis())   	
+        Services.setPreference(getApplicationContext(), "lastsync", String.valueOf(this_sync));//String.valueOf(System.currentTimeMillis())   	
 		return true;
     }
     
     public void visitorImages() {
-    	String lastsync = Services.getAppSettings(ctx, "lastsync");
+    	String lastsync = Services.getAppSettings(getApplicationContext(), "lastsync");
     	cur = contentResolver.query(ContentDescriptor.Visitor.CONTENT_URI, null, ContentDescriptor.Visitor.Cols.LASTUPDATE+" >= ?",
     			new String[] {lastsync}, null);
     	
@@ -627,7 +625,7 @@ public class HornetDBService extends Service {
     	byte[] is;
     	SimpleDateFormat dateFormat;
     	
-    	oldQuery = PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean("image", false);
+    	oldQuery = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("image", false);
     	ArrayList<String> imagelist = new ArrayList<String>();
     	while (cursor.moveToNext()){
     		imageWhereQuery = imageWhereQuery + " "+ cursor.getString(index) + ",";
@@ -785,6 +783,7 @@ public class HornetDBService extends Service {
         		return;
         	}
     	}
+    	imagelist = null;
     	
     	closeConnection();
     }
@@ -1142,14 +1141,14 @@ public class HornetDBService extends Service {
     	return result;
     }
     
-    private int getResource(){
+    private int getResource(long last_sync){
     	ResultSet rs = null;
     	int result = 0;
     	if (!openConnection()) {
     		return -1; //connection failed;
     	}
     	try {
-    		rs = connection.getResource();
+    		rs = connection.getResource(last_sync);
     		while (rs.next()) {
     			cur = contentResolver.query(ContentDescriptor.Resource.CONTENT_URI, null, ContentDescriptor.Resource.Cols.ID +" = "+rs.getString(1),
 	    				null, null);
@@ -1166,6 +1165,7 @@ public class HornetDBService extends Service {
 	    		}
 	    		cur.close();
     		}
+    		rs.close();
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
     	}
@@ -1256,7 +1256,7 @@ public class HornetDBService extends Service {
 	    		e.printStackTrace();
 	    		statusMessage = e.getLocalizedMessage();
 	    	}
-			
+			cur.close();
 			i +=1;
     	}
     	
@@ -1347,7 +1347,7 @@ public class HornetDBService extends Service {
     	tomorrow = new java.sql.Date(cal.getTime().getTime());
     	
     	this_sync = new Date().getTime(); 
-    	last_sync = Long.parseLong(Services.getAppSettings(ctx, "b_lastsync"));
+    	last_sync = Long.parseLong(Services.getAppSettings(getApplicationContext(), "b_lastsync"));
     	    	
     	cur = contentResolver.query(ContentDescriptor.BookingTime.CONTENT_URI, null, null, null, null);
     	if (cur.getCount() <= 0) {
@@ -1495,6 +1495,7 @@ public class HornetDBService extends Service {
 	    			cur.close();
 	    		}
 	    	}
+	    	rs.close();
     	} catch (SQLException e) {
     		e.printStackTrace();
     		statusMessage = e.getLocalizedMessage();
@@ -1502,7 +1503,7 @@ public class HornetDBService extends Service {
     	closeConnection();
 
     	Log.v(TAG, "BookingCount:"+result);
-    	Services.setPreference(ctx, "b_lastsync", String.valueOf(this_sync));
+    	Services.setPreference(getApplicationContext(), "b_lastsync", String.valueOf(this_sync));
     	return result;
     }
     
@@ -1537,6 +1538,7 @@ public class HornetDBService extends Service {
     				contentResolver.insert(ContentDescriptor.Bookingtype.CONTENT_URI, values);
     				result +=1;
     		}
+    		rs.close();
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
     		e.printStackTrace();
@@ -1591,6 +1593,7 @@ public class HornetDBService extends Service {
 	    		
 	    		result +=1;
 	    	}
+	    	rs.close();
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
     		e.printStackTrace();
@@ -1689,7 +1692,7 @@ public class HornetDBService extends Service {
     	if (!openConnection()) {
     		return -1; //connection failed;
     	}
-    	int use_roll = Integer.parseInt(Services.getAppSettings(this.ctx, "use_roll"));
+    	int use_roll = Integer.parseInt(Services.getAppSettings(getApplicationContext(), "use_roll"));
     	try {
     		
     		if (last_sync == -1) {
@@ -1722,6 +1725,7 @@ public class HornetDBService extends Service {
     			
     			result +=1;
     		}
+    		rs.close();
     	} catch (SQLException e){
     		statusMessage = e.getLocalizedMessage();
     		e.printStackTrace();
@@ -1741,7 +1745,7 @@ public class HornetDBService extends Service {
     	}
     	
     	try {
-    		int use_roll = Integer.parseInt(Services.getAppSettings(this.ctx, "use_roll"));
+    		int use_roll = Integer.parseInt(Services.getAppSettings(getApplicationContext(), "use_roll"));
     		rs = connection.getMembership(String.valueOf(last_sync), use_roll);
     			
     		while (rs.next()){
@@ -1760,6 +1764,7 @@ public class HornetDBService extends Service {
     			//cur.close();
     			result +=1;
     		}
+    		rs.close();
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
     		e.printStackTrace();
@@ -1771,7 +1776,7 @@ public class HornetDBService extends Service {
     private void bookingImages(){
     	String b_lastsync;
     	
-    	b_lastsync = Services.getAppSettings(ctx, "b_lastsync");
+    	b_lastsync = Services.getAppSettings(getApplicationContext(), "b_lastsync");
     	cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.LASTUPDATE+" > ?", 
     			new String[] {b_lastsync}, null);
     	queryServerForImage(cur, 12);
@@ -1855,6 +1860,7 @@ public class HornetDBService extends Service {
     			contentResolver.insert(ContentDescriptor.OpenTime.CONTENT_URI, values);
     			result +=1;
     		}
+    		rs.close();
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
     		e.printStackTrace();
@@ -2419,6 +2425,7 @@ public class HornetDBService extends Service {
 	    					ContentDescriptor.TableIndex.Values.MembershipSuspend.getKey());
 	    			contentResolver.insert(ContentDescriptor.FreeIds.CONTENT_URI, values);
 	    		}
+	    		rs.close();
 	    	} catch (SQLException e) {
 	    		statusMessage = e.getLocalizedMessage();
 	    		e.printStackTrace();
@@ -2564,7 +2571,7 @@ public class HornetDBService extends Service {
     	    				+ContentDescriptor.PendingUploads.Cols.ROWID+" = ?", 
     	    				new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.MembershipSuspend.getKey()),
     	    				String.valueOf(rows.get(i))});
-    				Services.showToast(ctx, "Hold time set beyond membership start/end.", handler);
+    				Services.showToast(getApplicationContext(), "Hold time set beyond membership start/end.", handler);
     				continue;
     			} else if (statusMessage.contains(Services.Statics.ERROR_MSHOLD2)) {
     				contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, 
@@ -2572,7 +2579,7 @@ public class HornetDBService extends Service {
     	    				+ContentDescriptor.PendingUploads.Cols.ROWID+" = ?", 
     	    				new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.MembershipSuspend.getKey()),
     	    				String.valueOf(rows.get(i))});
-    				Services.showToast(ctx, "Member already on Hold.", handler);
+    				Services.showToast(getApplicationContext(), "Member already on Hold.", handler);
     				continue;
     			} else if (statusMessage.contains(Services.Statics.ERROR_MSHOLD3)) {
     				contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, 
@@ -2716,6 +2723,7 @@ public class HornetDBService extends Service {
     			contentResolver.insert(ContentDescriptor.IdCard.CONTENT_URI, values);
     			result +=1;
     		}
+    		rs.close();
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
     		e.printStackTrace();
@@ -2804,6 +2812,7 @@ public class HornetDBService extends Service {
     			
     			contentResolver.insert(ContentDescriptor.PaymentMethod.CONTENT_URI, values);
     		}
+    		rs.close();
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
     		e.printStackTrace();
@@ -2857,6 +2866,7 @@ public class HornetDBService extends Service {
     			}
     			cur.close();
     		}
+    		rs.close();
     	} catch (SQLException e ) {
     		statusMessage = e.getLocalizedMessage();
     		e.printStackTrace();
@@ -2917,7 +2927,7 @@ public class HornetDBService extends Service {
 	    			values.put(ContentDescriptor.FreeIds.Cols.TABLEID, ContentDescriptor.TableIndex.Values.Membership.getKey());
 	    			contentResolver.insert(ContentDescriptor.FreeIds.CONTENT_URI, values);
     			}
-    			
+    			rs.close();
     			result +=1;
     		} catch (SQLException e){
     			statusMessage = e.getLocalizedMessage();
@@ -3030,6 +3040,7 @@ public class HornetDBService extends Service {
     			cur.close();
     			result +=1;
     		}
+    		rs.close();
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
     		e.printStackTrace();
@@ -3104,7 +3115,7 @@ public class HornetDBService extends Service {
     			
     			result +=1;
     		}
-    	rs.close();
+    		rs.close();
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
     		return -3;
@@ -3384,7 +3395,7 @@ public class HornetDBService extends Service {
     		return -1;
     	}
     	
-    	int use_roll = Integer.parseInt(Services.getAppSettings(this.ctx, "use_roll"));
+    	int use_roll = Integer.parseInt(Services.getAppSettings(getApplicationContext(), "use_roll"));
     	for (int i = 0; i < member.size(); i++) {
     		String query;
 
@@ -3404,6 +3415,7 @@ public class HornetDBService extends Service {
     				contentResolver.update(ContentDescriptor.Member.CONTENT_URI, values, ContentDescriptor.Member.Cols.MID+" = ?",
         						new String[] {rs.getString("id")});
     			}
+    			rs.close();
     		} catch (SQLException e) {
     			statusMessage = e.getLocalizedMessage();
     			e.printStackTrace();
@@ -3532,6 +3544,7 @@ public class HornetDBService extends Service {
     			
     			contentResolver.update(ContentDescriptor.DeletedRecords.CONTENT_URI, values, null, null);
     		}
+    		rs.close();
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
     		e.printStackTrace();
@@ -3869,6 +3882,7 @@ public class HornetDBService extends Service {
     				values.put(ContentDescriptor.RollItem.Cols.ROLLITEMID, rollitemid);
     				contentResolver.insert(ContentDescriptor.RollItem.CONTENT_URI, values);
     			}
+    			cur.close();
     		}
     		rs.close();
     	} catch (SQLException e) {
@@ -3942,7 +3956,7 @@ public class HornetDBService extends Service {
     }
     
     private boolean uploadLog(){ //TODO: fix this. it uploads a ton of fairly useless shit.
-    	JSONHandler json = new JSONHandler(ctx);
+    	JSONHandler json = new JSONHandler(getApplicationContext());
     	String te_username = "", schemaversion = "", company_name = "";
     	
     	cur = contentResolver.query(ContentDescriptor.Company.CONTENT_URI, null, null, null, null);
@@ -4160,7 +4174,7 @@ public class HornetDBService extends Service {
     			}
     			result +=1;
     		}
-    		
+    		rs.close();
     	} catch (SQLException e) {
     		e.printStackTrace();
     		return -2;
@@ -4216,6 +4230,7 @@ public class HornetDBService extends Service {
     				contentResolver.insert(ContentDescriptor.MemberFinance.CONTENT_URI, values);
     			}
     		}
+    		rs.close();
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
     		e.printStackTrace();
@@ -4274,7 +4289,8 @@ public class HornetDBService extends Service {
 					contentResolver.insert(ContentDescriptor.BillingHistory.CONTENT_URI, values);
 				}
 				result +=1;
-			} 
+			}
+			rs.close();
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
     		e.printStackTrace();
@@ -4395,7 +4411,8 @@ public class HornetDBService extends Service {
     	try {
     		rs = connection.startStatementQuery(query);
     		while (rs.next()) {
-    			if (!rs.getBoolean("allowed")) {
+    			/* TODO: add the allowed column to the sync table in gymmaster;
+    			 * if (!rs.getBoolean("allowed")) {
     				//delete everything.
     				Editor editor = PreferenceManager.getDefaultSharedPreferences(MainActivity.getContext()).edit();
     				editor.clear();
@@ -4404,7 +4421,7 @@ public class HornetDBService extends Service {
     				contentResolver.delete(ContentDescriptor.DROPTABLE_URI, null, null);
     				//return false!
     				return false;
-    			}
+    			}*/
     			
     			ContentValues values = new ContentValues();
     			values.put(ContentDescriptor.AppConfig.Cols.DB_DEVICEID, rs.getInt("id"));
@@ -4412,6 +4429,7 @@ public class HornetDBService extends Service {
     				contentResolver.insert(ContentDescriptor.AppConfig.CONTENT_URI, values);
     			}
     		}
+    		rs.close();
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
     		e.printStackTrace();
