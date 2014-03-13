@@ -118,6 +118,7 @@ public class HornetDBService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        connection.closeConnection();
         Log.d(TAG, "Database Service destroyed");
     }
     /**
@@ -224,7 +225,7 @@ public class HornetDBService extends Service {
 	   	  	
 	   	  	//Finish.
 			updateDevice();
-
+			connection.closeConnection();
 			Services.setPreference(getApplicationContext(), "last_freq_sync", String.valueOf(this_sync));
 			//Services.showToast(getApplicationContext(), statusMessage, handler);
 			/*Broadcast an intent to let the app know that the sync has finished
@@ -245,6 +246,7 @@ public class HornetDBService extends Service {
 			  
 		   int result;
 		   result = swipe();
+		   connection.closeConnection();
 		   if (result > 0) {};//TODO:
 		   Services.showToast(getApplicationContext(), statusMessage, handler);
  		   new Thread (new Runnable() { 
@@ -345,16 +347,14 @@ public class HornetDBService extends Service {
 		   getPaymentMethods();
 		   uploadPendingDeletes();
 		   
-		   //Services.stopProgress(handler, currentCall);
 		   Services.setPreference(getApplicationContext(), "last_freq_sync", String.valueOf(this_sync));
-		   //Services.showProgress(Services.getContext(), "Setting up resource", handler, currentCall, false);
 
 	   	  	//rebuild times, then update the reference in date.
 	   	  	logger.writeLog();
 	   	  	uploadLog();
 	   	  	
 	   	  	updateDevice();
-	   	  	//Services.stopProgress(handler, currentCall);
+	   	  	connection.closeConnection();
 	   	  	
 	   	 thread.is_networking = false;
 		   if (statusMessage != null) {
@@ -384,6 +384,7 @@ public class HornetDBService extends Service {
  		   thread.is_networking = true;
  		   int result;
  		   result = classSwipe();
+ 		   connection.closeConnection();
  		   if (result <= 0) {
  			   Log.e(TAG, statusMessage);
  			   Log.e(TAG, "Class Swipe returned Error-Code:"+result);
@@ -401,7 +402,7 @@ public class HornetDBService extends Service {
  		   membershipid = bundle.getInt("membershipid");
  		   
  		   this.manualCheckin(doorid, memberid, membershipid, null);
- 		   
+ 		   connection.closeConnection();
  		   thread.is_networking = false;
  		   break;
  	   }
@@ -2371,7 +2372,7 @@ public class HornetDBService extends Service {
     	}*/
     	connection.closeStatementQuery();
     	connection.closePreparedStatement();
-    	connection.closeConnection();
+    	//connection.closeConnection();
     }
     
     public String getStatus() {

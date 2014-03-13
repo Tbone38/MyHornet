@@ -79,6 +79,9 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 		LinearLayout emergencyHeading = (LinearLayout) view.findViewById(R.id.emergencyHeadingRow);
 		emergencyHeading.setOnClickListener(this);
 		
+		TextView glyph = (TextView) emergencyHeading.findViewById(R.id.emergencyContactGlyph);
+		glyph.setTypeface(Services.Typefaces.get(getActivity(), "fonts/glyphicons_regular.ttf"));
+		
 		if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMERGENCYNAME)) &&
 				!cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMERGENCYNAME)).isEmpty()) {
 			
@@ -113,7 +116,9 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 		}
 		
 		LinearLayout detailsHeading = (LinearLayout) view.findViewById(R.id.memberDetailsHeadingRow);
-		detailsHeading.setOnClickListener(this); //TODO
+		detailsHeading.setOnClickListener(this);
+		TextView glyph = (TextView) detailsHeading.findViewById(R.id.memberDetailsGlyph);
+		glyph.setTypeface(Services.Typefaces.get(getActivity(), "fonts/glyphicons_regular.ttf"));
 		
 		if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.STREET))||
 				!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.SUBURB))||
@@ -180,6 +185,8 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 		
 		LinearLayout medicalHeading = (LinearLayout) view.findViewById(R.id.medicalHeadingRow);
 		medicalHeading.setOnClickListener(this);
+		TextView glyph = (TextView) medicalHeading.findViewById(R.id.memberMedicalGlyph);
+		glyph.setTypeface(Services.Typefaces.get(getActivity(), "fonts/glyphicons_regular.ttf"));
 		
 		if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.MEDICAL)) &&
 				!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.MEDICATION)) &&
@@ -217,6 +224,8 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 		
 		LinearLayout notesHeading = (LinearLayout) view.findViewById(R.id.notesHeadingRow);
 		notesHeading.setOnClickListener(this);
+		TextView glyph = (TextView) notesHeading.findViewById(R.id.memberNotesGlyph);
+		glyph.setTypeface(Services.Typefaces.get(getActivity(), "fonts/glyphicons_regular.ttf"));
 		
 		LinearLayout.LayoutParams llparams;
 		LinearLayout notesGroup = (LinearLayout) view.findViewById(R.id.membernotes);
@@ -282,7 +291,6 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 					tasksGroup.addView(tasks);
 				}
 			}			
-			
 		}*/
 			
 		cur.close();

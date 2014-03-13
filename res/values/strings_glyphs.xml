@@ -3,11 +3,12 @@
     <string name="glyph_parents"> &#57381;</string>
     <string name="glyph_note">&#57392;</string>
     <string name="glyph_phone">&#58435;</string>
-    <string name="glyph_medical">&#57745;</string> <!-- needs to painted red..? -->
+    <string name="glyph_medical">&#57745;</string> <!-- needs to be painted red..? -->
     <string name="glyph_paperclip">&#128206;</string>
     <string name="glyph_woman">&#128105;</string>
     <string name="glyph_man">&#57348;</string>
     <string name="glyph_info">&#57750;</string>
     <string name="glyph_help">&#57749;</string>
+    <string name="glyph_person_book"> &#57481;</string>
 
 </resources>

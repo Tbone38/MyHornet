@@ -57,6 +57,8 @@ KEY:
                 Spacing/padding of Headings..?
                 Add UI elements to GymMaster for managing the devices in the sync table.
 		Improve sync-times/OutOfMemory Issues.
+		Fix # of connections being used by the app.
+		Fix Connection handling in Flask API.
     
     
     v119:

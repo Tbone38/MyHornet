@@ -20,6 +20,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
+import org.postgresql.ds.PGPoolingDataSource;
+
 import android.content.ContentValues;
 import android.util.Log;
 
@@ -41,6 +43,7 @@ public class JDBCConnection {
     private PreparedStatement pStatement;
     //private static final String TAG = "JDBCConnection";
     private static String TAG = "HORNETSERVICE";
+    private PGPoolingDataSource source;
     
     private String getConnectionUrl() {
             return new String("jdbc:postgresql://" + Address + ":" + Port + "/" + Database);
@@ -57,6 +60,20 @@ public class JDBCConnection {
     	this.Database = database;
     	this.Username = username;
     	this.Password = password;
+    	try {
+    		Class.forName("org.postgresql.Driver");
+    		//Class.forName("org.postgresql.ds.PGPoolingDataSource");
+    	} catch (ClassNotFoundException e) {
+    		throw new RuntimeException(e); 
+    	}
+    	
+    	/*source = new PGPoolingDataSource();
+        source.setDataSourceName("gymmaster");
+        source.setServerName(this.Address);
+        source.setDatabaseName(this.Database);
+        source.setUser(this.Username);
+        source.setPassword(this.Password);
+        source.setMaxConnections(5);*/
     }
     public JDBCConnection(String address, String database, String username, 
     		String password) {
@@ -73,11 +90,11 @@ public class JDBCConnection {
                         con = null;
                     }
             }
-           
+            
             Properties properties = new Properties();
             properties.put("user", Username);
             properties.put("password", Password);
-           
+            
             if (Type.compareTo("PostgreSQL") == 0) {
             	Class.forName("org.postgresql.Driver");
             }
@@ -85,10 +102,14 @@ public class JDBCConnection {
             Log.v(TAG, "Starting Connection");
             try {
             	con = DriverManager.getConnection(getConnectionUrl(), properties);
+            	//con = source.getConnection();
             } catch (SQLException e) {
             	Log.e(TAG, "ERROR OPENING CONNECTION", e);
             }
     }
+    
+   
+    
     
     public boolean isConnected() {
     	boolean result = false;

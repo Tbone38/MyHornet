@@ -21,7 +21,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="24sp"
-            android:text="@string/glyph_paperclip" />
+            android:text="@string/glyph_person_book"
+            android:textColor="@color/grey_cf" />
 	    <TextView
 	        android:id="@+id/memberDetailsLabel"
 	        android:layout_width="0dp"
@@ -190,8 +191,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="24sp"
-            android:text="@string/label_parent_name"
-            android:textColor="@color/button_block_label" />
+            android:text="@string/label_parent_name" />
         <EditText
 	        android:id="@+id/memberParentName"
 	        android:layout_width="wrap_content"
@@ -220,7 +220,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="24sp"
-            android:text="@string/glyph_phone" />
+            android:text="@string/glyph_phone"
+            android:textColor="@color/grey_cf" />
 	    <TextView
 	        android:id="@+id/emergencyContactH"
 	        android:layout_width="0dp"
@@ -361,7 +362,8 @@
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:textSize="24sp"
-	        android:text="@string/glyph_medical" />	        
+	        android:text="@string/glyph_medical"
+	        android:textColor="@color/grey_cf" />	        
 	    <TextView
 	        android:id="@+id/medicalH"
 	        android:textSize="24sp"
@@ -473,7 +475,8 @@
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:textSize="24sp"
-	        android:text="@string/glyph_note" />
+	        android:text="@string/glyph_note"
+	        android:textColor="@color/grey_cf" />
 		<TextView
 	    	android:id="@+id/membernotesH"
 	    	android:textSize="24sp"
