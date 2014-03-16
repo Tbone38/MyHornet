@@ -55,7 +55,7 @@ public class ReportTypesAndNamesActivity extends ListActivity {
 						intent.putExtra("report_id", reportNameId.getText().toString());
 						intent.putExtra("report_name", reportName.getText().toString());
 						intent.putExtra("report_function_name", reportFunctionName.getText().toString());
-						startActivity(intent);					
+						startActivity(intent);				
 					}
 					
 				}  
