@@ -1,11 +1,19 @@
 package com.treshna.hornet;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+
+import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -18,6 +26,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.treshna.hornet.R.color;
 
@@ -236,6 +245,22 @@ public class MainActivity extends NFCActivity {
 	    	startActivity(i);
 	    	return true;
 	    }
+	    case (R.id.report_types_test):{
+	    	this.startReportTypesActivity(this);
+	    	return true;
+	    }
+	    case (R.id.report_names_test):{
+	    	this.startReportNamesActivity(this);
+	    	return true;
+	    }
+	    case (R.id.report_types_and_names):{
+	    	this.startReportTypesAndNamesActivity(this);
+	    	return true;
+	    }
+	    case (R.id.report_date_options):{
+	    	this.startReportDateOptionsActivity(this);
+	    	return true;
+	    }
 	    default:
 	    	return super.onOptionsItemSelected(item);
 	    }
@@ -312,5 +337,29 @@ public class MainActivity extends NFCActivity {
 	    public void onTabReselected(Tab tab, FragmentTransaction ft) {
 	        // User selected the already selected tab. Usually do nothing.
 	    }
-	}	
+	}
+	
+	private void startReportTypesActivity (Context view)
+	{
+		Intent intent = new Intent(view,Report_Types_ListActivity.class);
+		this.startActivity(intent);
+	}
+	private void startReportNamesActivity (Context view)
+	{
+		Intent intent = new Intent(view,ReportNamesActivity.class);
+		this.startActivity(intent);
+	}
+	private void startReportTypesAndNamesActivity (Context view)
+	{
+		Intent intent = new Intent(view,ReportTypesAndNamesActivity.class);
+		this.startActivity(intent);
+	}
+	private void startReportDateOptionsActivity (Context view)
+	{
+		Intent intent = new Intent(view,ReportDateOptionsActivity.class);
+		intent.putExtra("report_name", "Expiring Members");
+		this.startActivity(intent);
+	}
 }
+
+	

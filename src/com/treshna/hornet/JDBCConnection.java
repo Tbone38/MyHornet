@@ -1057,6 +1057,8 @@ public class JDBCConnection {
     	}
     }
     
+    
+    
     public ResultSet getFinance(long lastupdate) throws SQLException {
     	//what our members have payed.
     	String query = "SELECT payment.id AS id, payment.memberid AS memberid, payment.membershipid AS membershipid,"
@@ -1123,6 +1125,23 @@ public class JDBCConnection {
     	
     	return pStatement.executeQuery();
     }
+    
+    public ResultSet getReportTypes() throws SQLException {
+    	    this.pStatement = con.prepareStatement("Select id, name, view_name, reportgroup from Report_Type");
+    	    return this.pStatement.executeQuery();
+    }
+    public ResultSet getReportNamesByReportTypeId(int report_type_id) throws SQLException {
+    	this.pStatement = con.prepareStatement("Select id, name from user_report where report_type_id = ?");
+    	this.pStatement.setInt(1,report_type_id);
+    	return this.pStatement.executeQuery();
+    }
+    public ResultSet getReportTypesAndNames() throws SQLException {
+    	String query = "SELECT id, '        '||name AS name, function_name, report_type_id AS order, false as istype FROM user_report" 
+    	+" UNION SELECT id, name, view_name, id AS order, true as istype FROM report_type ORDER BY \"order\", \"istype\" DESC, name,id";
+	    this.pStatement = con.prepareStatement(query);
+	    return this.pStatement.executeQuery();
+    }
+    
     
     public SQLWarning getWarnings() throws SQLException, NullPointerException {
     	return con.getWarnings();

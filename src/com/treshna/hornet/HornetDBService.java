@@ -1,6 +1,7 @@
 package com.treshna.hornet;
 
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -132,9 +133,7 @@ public class HornetDBService extends Service {
     	}
     	switch (currentCall){
  	   	case (Services.Statics.FREQUENT_SYNC): { //this should be run frequently
- 	   		
  	   		thread.is_networking = true;
- 	   		
 			if (first_sync.compareTo("-1")==0) {
 				SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy", Locale.US);
 				Services.setPreference(ctx, "first_sync", format.format(new Date()));
@@ -2854,6 +2853,124 @@ public class HornetDBService extends Service {
     	}
     	closeConnection();
     	return result;	
+    }
+    
+    
+    
+    public ArrayList<HashMap<String, String>>  getReportTypes(Context context){
+    	
+    	this.setup(context);
+    	ArrayList<HashMap<String, String>> resultMapList  = null;
+    	ResultSet result = null;
+    	
+    	if (!this.openConnection()){
+    
+    	}
+    	
+    	try {
+			result = this.connection.getReportTypes();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+    	
+    	
+    	resultMapList = this.resultSetToMapList(result);
+		   
+    		this.closeConnection();
+    	
+		return resultMapList;
+	
+    }
+    
+    public ArrayList<HashMap<String, String>>  getReportNamesAndTypes(Context context){
+    	
+    	this.setup(context);
+    	ArrayList<HashMap<String, String>> resultMapList  = null;
+    	ResultSet result = null;
+    	
+    	if (!this.openConnection()){
+    
+    	}
+    	
+    	try {
+			result = this.connection.getReportTypesAndNames();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+    	
+    	
+    	resultMapList = this.resultSetToMapList(result);
+		   
+    		this.closeConnection();
+    	
+		return resultMapList;
+	
+    }
+    
+ public ArrayList<HashMap<String, String>>  getReportNamesByReportTypeId(Context context, int reportTypeId){
+    	
+    	this.setup(context);
+    	ArrayList<HashMap<String, String>> resultMapList  = null;
+    	ResultSet result = null;
+    	String id, name, viewName, reportGroup;
+    	int columnCount = 0;
+    	
+    	if (!this.openConnection()){
+    			
+    	}
+    	
+    	try {
+			result = this.connection.getReportNamesByReportTypeId(reportTypeId);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+    	
+    	
+    	resultMapList = this.resultSetToMapList(result);
+		   
+    		this.closeConnection();
+    	
+		return resultMapList;
+	
+    }
+    
+    
+    
+    private ArrayList<HashMap<String, String>> resultSetToMapList(ResultSet result) {
+    	ArrayList<HashMap<String, String>> resultMapList =  new ArrayList<HashMap<String, String>>();
+    	ResultSetMetaData resultMeta = null;
+    	HashMap<String, String> resultMap = null;
+    	try {
+			resultMeta = result.getMetaData();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+    	   	/*Extracting key-value pairings for each record
+    	   	 * into a list of hash-maps, this to detach the data
+    	   	 * from the connection object for return to the UI. 
+    	   	 */
+    	try {
+			while (result.next()){
+				resultMap = new HashMap<String,String>();
+			   for (int i = 1; i <= resultMeta.getColumnCount(); i++)				     
+				   
+			   {
+				   
+				   System.out.println("Column Name:" +resultMeta.getColumnName(i) + " Value: " +result.getString(resultMeta.getColumnName(i)));
+				   resultMap.put(resultMeta.getColumnName(i), result.getString(resultMeta.getColumnName(i)));		
+			   }
+			   
+			   resultMapList.add(resultMap);
+			   
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	return resultMapList;
     }
     
     private int getMembershipID(){

@@ -23,10 +23,34 @@
         android:id="@+id/action_kpi"
         android:orderInCategory="600"
         android:title="@string/action_kpi"
-        android:showAsAction="never" />    
+        android:showAsAction="never" />
+         
      <item
         android:id="@+id/action_settings"
         android:orderInCategory="700"
         android:title="@string/action_settings"
-        android:showAsAction="never" />   
+        android:showAsAction="never" />
+      <item
+        android:id="@+id/report_types_test"
+        android:orderInCategory="800"
+        android:title="@string/report_types_title"
+        android:showAsAction="never" /> 
+      <item
+        android:id="@+id/report_names_test"
+        android:orderInCategory="900"
+        android:title="@string/report_names_title"
+        android:showAsAction="never" />
+      <item
+        android:id="@+id/report_types_and_names"
+        android:orderInCategory="1000"
+        android:title="@string/report_types_and_names_title"
+        android:showAsAction="never" />
+      <item
+        android:id="@+id/report_date_options"
+        android:orderInCategory="1100"
+        android:title="@string/report_date_options_title"
+        android:showAsAction="never" />
+
+
+           
 </menu>

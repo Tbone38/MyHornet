@@ -131,6 +131,11 @@
             android:name="com.treshna.hornet.SetupActivity"
             android:label="@string/title_activity_magic" >
         </activity>
+        <activity android:name="Report_Types_ListActivity" android:launchMode="standard"></activity>
+        <activity android:name="ReportNamesActivity"></activity>
+        <activity android:name="ReportTypesAndNamesActivity"></activity>
+        <activity android:name="Report_Date_Selector_Activity"></activity>
+        <activity android:name="ReportDateOptionsActivity"></activity>
     </application>
 
 </manifest>

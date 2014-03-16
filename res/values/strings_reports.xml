@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="report_types_title">Report Types</string>
+    <string name="report_names_title">Report Names</string>
+    <string name="report_types_and_names_title">Report Types And Names</string>
+    <string name="report_date_options_title">Report Date Options</string>
+    <string name="start_date_title">Select Start Date</string>
+    <string name="end_date_title">Select End Date</string>
+    
+        
+</resources>
