@@ -1,6 +1,9 @@
 package com.treshna.hornet;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import android.app.Activity;
@@ -13,7 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class ReportDateOptionsActivity extends Activity {
-	private HashMap<String,String> reportData = new HashMap<String,String>() ;
+	private HashMap<String,Object> reportData = new HashMap<String,Object>() ;
 	private DatePicker startDatePicker = null;
 	private DatePicker endDatePicker = null;
 	@Override
@@ -25,7 +28,7 @@ public class ReportDateOptionsActivity extends Activity {
 		startDatePicker = (DatePicker) findViewById(R.id.start_date);
 		endDatePicker = (DatePicker) findViewById(R.id.end_date);
 		Button nextButton =  (Button) findViewById(R.id.btnNext);	
-		reportNameTxt.setText(intent.getStringExtra("report_name"));
+		reportNameTxt.setText(intent.getStringExtra("report_name").trim());
 		reportData.put("report_id", intent.getStringExtra("report_id"));
 		reportData.put("report_name", intent.getStringExtra("report_name"));
 		reportData.put("report_function_name", intent.getStringExtra("report_function_name"));
@@ -40,31 +43,19 @@ public class ReportDateOptionsActivity extends Activity {
 		//renderReport();
 	}
 	
-	private String dateStringFromPicker (DatePicker datePicker) {
+	private long dateStringFromPicker (DatePicker datePicker) {
 		int day = datePicker.getDayOfMonth();
-		int month = datePicker.getMonth() + 1;
+		int month = datePicker.getMonth();
 		int year = datePicker.getYear();
-		
-		StringBuilder dateString = new StringBuilder();
-		dateString.append(day);
-		dateString.append("-");
-		dateString.append(month);
-		dateString.append("-");
-		dateString.append(year);
-		
-		return dateString.toString();
+		Calendar cal = Calendar.getInstance();
+		cal.set(year, month, day);		
+		return cal.getTime().getTime();	
 	}
 	
 	
 	
 	private void renderReport(){
-		int duration = Toast.LENGTH_LONG;
-		String dates  = "Start Date: ";
-		dates += this.dateStringFromPicker(this.startDatePicker);
-		dates += "\nEnd Date: ";
-		dates += this.dateStringFromPicker(this.endDatePicker);
-		Toast dateToast = Toast.makeText(ReportDateOptionsActivity.this, dates, duration);
-		dateToast.show();
+		
 		reportData.put("start_date", this.dateStringFromPicker(startDatePicker));
 		reportData.put("end_date", this.dateStringFromPicker(endDatePicker));	
 		
