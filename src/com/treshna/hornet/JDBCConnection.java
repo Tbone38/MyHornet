@@ -1142,6 +1142,21 @@ public class JDBCConnection {
 	    return this.pStatement.executeQuery();
     }
     
+    public ResultSet getReportDataByDateRange(String functionName, Date startDate, Date endDate) throws SQLException {
+    	try {
+    		con.clearWarnings();
+    	String query = "SELECT * from "+functionName+"(?,?)";
+    	System.out.println("Select * from " + functionName + "(" + startDate + "," + endDate + ")");
+    	this.pStatement = con.prepareStatement(query);
+    	this.pStatement.setDate(1, new java.sql.Date(startDate.getTime()));
+    	this.pStatement.setDate(2, new java.sql.Date(endDate.getTime()));    	
+    	return this.pStatement.executeQuery();
+    	} catch (SQLException e) {
+    		Log.e(TAG, "SQL ERROR:"+con.getWarnings(), e);
+    		throw new SQLException(e);
+    	}
+    }
+    
     
     public SQLWarning getWarnings() throws SQLException, NullPointerException {
     	return con.getWarnings();
