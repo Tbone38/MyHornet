@@ -1,44 +1,36 @@
 package com.treshna.hornet;
 
+import java.sql.Date;
 import java.sql.ResultSet;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+
 public class ReportColumnOptionsActivity extends ListActivity {
 	private ArrayList<HashMap<String,String>> resultMapList = null;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.report_column_options);
-		//"get_pt_performance('2014-01-01'::date, '2014-03-01'::date)";
-		SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd");
-		Date testStartDate = null;
-		try {
-			testStartDate = dateFormat.parse("2014-01-01");
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		Date testEndDate = null;
-		try {
-			testEndDate = dateFormat.parse("2014-03-01");
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		String testFunctionName = "get_pt_performance";
-		GetReportDataByDateRange syncNames = new GetReportDataByDateRange(testFunctionName, testStartDate,testEndDate);
+		Intent intent = this.getIntent();
+
+		Date startDate  =  new Date(intent.getLongExtra("start_date", 0));
+		Date endDate  =  new Date(intent.getLongExtra("end_date", 0));
+		String reportId = intent.getStringExtra("report_id");
+		String reportName = intent.getStringExtra("report_name");
+		String functionName = intent.getStringExtra("report_function_name");
+		functionName = functionName.substring(0, functionName.indexOf('('));
+	    System.out.println("Function: " + functionName);
+		GetReportDataByDateRange syncNames = new GetReportDataByDateRange(functionName, startDate, endDate);
 		syncNames.execute(null,null);
+		
 	}
 	
 	private class GetReportDataByDateRange extends AsyncTask<String, Integer, Boolean> {

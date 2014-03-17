@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.*;
-import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -17,7 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
-import android.widget.Toast;
+
 
 public class ReportDateOptionsActivity extends Activity {
 	private HashMap<String,Object> reportData = new HashMap<String,Object>() ;
@@ -59,21 +57,18 @@ public class ReportDateOptionsActivity extends Activity {
 	
 	
 	private void renderReport(){
-		/*JSONObject dateStringer = new JSONObject();
-		dateStringer.put("startDate",this.dateStringFromPicker(startDatePicker));
-		dateStringer.toString();*/
-		/*SimpleDateFormat dateFormatter = new SimpleDateFormat("yy-MM-dd");
-		String startDateString = dateFormatter.parse(startDatePicker);*/
 		
 		reportData.put("start_date",this.dateStringFromPicker(startDatePicker));
 		reportData.put("end_date", this.dateStringFromPicker(endDatePicker));
 		
 		Intent reportColumnsIntent = new Intent(this.getApplicationContext(), ReportColumnOptionsActivity.class);
-		
-		for (Map.Entry param: reportData.entrySet()){
-			//System.out.println(param.getKey().toString()+ ": " + param.getValue().toString());
+		//Pushing UI and upstream data through to the report column options intent..
+		for (Map.Entry<String,Object> param: reportData.entrySet()){
+			//Casting the date values to time-stamp to pass through the intent..
 			if ((param.getKey().toString().compareTo("start_date") == 0) || (param.getKey().toString().compareTo("end_date") == 0) ){
 				reportColumnsIntent.putExtra(param.getKey().toString(), ((Date) param.getValue()).getTime());
+			} else {
+				reportColumnsIntent.putExtra(param.getKey().toString(),  param.getValue().toString());
 			}
 				
 		}
