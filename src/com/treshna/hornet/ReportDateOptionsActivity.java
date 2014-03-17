@@ -2,9 +2,13 @@ package com.treshna.hornet;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+
+import org.apache.*;
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -43,25 +47,38 @@ public class ReportDateOptionsActivity extends Activity {
 		//renderReport();
 	}
 	
-	private long dateStringFromPicker (DatePicker datePicker) {
+	private Date  dateStringFromPicker (DatePicker datePicker) {
 		int day = datePicker.getDayOfMonth();
 		int month = datePicker.getMonth();
 		int year = datePicker.getYear();
 		Calendar cal = Calendar.getInstance();
-		cal.set(year, month, day);		
-		return cal.getTime().getTime();	
+		cal.set(year, month, day);
+		return cal.getTime();	
 	}
 	
 	
 	
 	private void renderReport(){
+		/*JSONObject dateStringer = new JSONObject();
+		dateStringer.put("startDate",this.dateStringFromPicker(startDatePicker));
+		dateStringer.toString();*/
+		/*SimpleDateFormat dateFormatter = new SimpleDateFormat("yy-MM-dd");
+		String startDateString = dateFormatter.parse(startDatePicker);*/
 		
-		reportData.put("start_date", this.dateStringFromPicker(startDatePicker));
-		reportData.put("end_date", this.dateStringFromPicker(endDatePicker));	
+		reportData.put("start_date",this.dateStringFromPicker(startDatePicker));
+		reportData.put("end_date", this.dateStringFromPicker(endDatePicker));
+		
+		Intent reportColumnsIntent = new Intent(this.getApplicationContext(), ReportColumnOptionsActivity.class);
 		
 		for (Map.Entry param: reportData.entrySet()){
-			System.out.println(param.getKey().toString()+ ": " + param.getValue().toString());
+			//System.out.println(param.getKey().toString()+ ": " + param.getValue().toString());
+			if ((param.getKey().toString().compareTo("start_date") == 0) || (param.getKey().toString().compareTo("end_date") == 0) ){
+				reportColumnsIntent.putExtra(param.getKey().toString(), ((Date) param.getValue()).getTime());
+			}
+				
 		}
+						
+		this.startActivity(reportColumnsIntent);
 	}
 	
 	
