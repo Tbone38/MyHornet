@@ -127,7 +127,6 @@ public class JDBCConnection {
     public void closeConnection(){
     	 if (con != null) {
     		 try {
-    			 con.commit();
             	//System.out.println("Closing Connection");
     			 Log.v(TAG, "Closing Connection");
             	con.close();
@@ -306,12 +305,12 @@ public class JDBCConnection {
     
     public ResultSet getBookings(java.sql.Date yesterday, java.sql.Date tomorrow, long last_sync) throws SQLException, NullPointerException{
 	    	ResultSet rs = null;
-	
-			System.out.print("\n\nGetting Bookings with update After "+new java.sql.Date(last_sync));
+
 			Log.v(TAG, "Getting Bookings with update After "+new java.sql.Timestamp(last_sync));
 	    	pStatement = con.prepareStatement("SELECT resourceid, booking.firstname, booking.surname, "
 	    			+"CASE WHEN bookingtype.externalname IS NOT NULL THEN bookingtype.externalname ELSE bookingtype.name END AS bookingname, "
-	    			+"booking.startid, booking.endid, booking.arrival, booking.id AS bookingid, bookingtype.id AS bookingtypeid, booking.endtime, booking.notes, booking.result, "
+	    			+"booking.startid, booking.endid, EXTRACT(epoch FROM booking.arrival) AS arrival, "
+	    			+ "booking.id AS bookingid, bookingtype.id AS bookingtypeid, booking.endtime, booking.notes, booking.result, "
 	    			+"booking.memberid, booking.lastupdate AS bookinglastupdate, booking.membershipid, booking.checkin, "
 	    			+ "booking.classname, booking.classid, booking.parentid FROM booking "
 	    			+"LEFT JOIN bookingtype ON (booking.bookingtypeid = bookingtype.id) "
@@ -789,10 +788,11 @@ public class JDBCConnection {
     	return pStatement.executeUpdate();
     }
     
-    public ResultSet getIdCards() throws SQLException, NullPointerException {
+    public ResultSet getIdCards(long last_sync) throws SQLException, NullPointerException {
 	    	ResultSet rs;
 	    	
-	    	pStatement = con.prepareStatement("SELECT id, serial FROM idcard;");
+	    	pStatement = con.prepareStatement("SELECT id, serial, created FROM idcard WHERE created > ?;");
+	    	pStatement.setTimestamp(1, new java.sql.Timestamp(last_sync));
 	    	rs = pStatement.executeQuery();
 	    	
 	    	return rs;
@@ -1162,7 +1162,7 @@ public class JDBCConnection {
     	if (deviceid <= 0) {
     		return null;
     	}
-    	pStatement = con.prepareStatement("SELECT id, device, servertime, clienttime, completed, allowed FROM sync WHERE id = ?");
+    	pStatement = con.prepareStatement("SELECT id, device, servertime, clienttime, completed, allowed_access FROM sync WHERE id = ?");
     	pStatement.setInt(1, deviceid);
     	
     	return pStatement.executeQuery();

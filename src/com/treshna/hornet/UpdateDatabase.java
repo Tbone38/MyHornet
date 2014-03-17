@@ -11,6 +11,7 @@ import com.treshna.hornet.ContentDescriptor.CancellationFee;
 import com.treshna.hornet.ContentDescriptor.Class;
 import com.treshna.hornet.ContentDescriptor.Company;
 import com.treshna.hornet.ContentDescriptor.FreeIds;
+import com.treshna.hornet.ContentDescriptor.IdCard;
 import com.treshna.hornet.ContentDescriptor.Image;
 import com.treshna.hornet.ContentDescriptor.KPI;
 import com.treshna.hornet.ContentDescriptor.Member;
@@ -800,6 +801,8 @@ public class UpdateDatabase {
 		
 		private static final String SQL2 = "ALTER TABLE "+Resource.NAME+" ADD COLUMN "+Resource.Cols.HISTORY+" TEXT DEFAULT 'f';";
 		
+		private static final String SQL3 = "ALTER TABLE "+IdCard.NAME+" ADD COLUMN "+IdCard.Cols.CREATED+" NUMERIC ";
+		
 		public static void patchNinetySix(SQLiteDatabase db) {
 			db.beginTransaction();
 			try {
@@ -807,6 +810,8 @@ public class UpdateDatabase {
 				db.execSQL(SQL1);
 				Log.w(HornetDatabase.class.getName(), "\n"+SQL2);
 				db.execSQL(SQL2);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL3);
+				db.execSQL(SQL3);
 				db.setTransactionSuccessful();
 			/*} catch (SQLException e) {
 			e.printStackTrace();

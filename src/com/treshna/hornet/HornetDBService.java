@@ -19,6 +19,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
@@ -150,14 +151,9 @@ public class HornetDBService extends Service {
  	   		setDate();
  	   		getPendingDownloads();
  	   		getPendingUpdates();
- 	   		//get Visitors
- 	   		boolean result = getLastVisitors();
-			if (result == true) { //If database query was successful, then look for images; else show toast.
-				visitorImages();
-			}
 			
 			uploadIdCard();
-			getIdCards();
+			getIdCards(last_sync, null);
 			
 			getMemberNoteID();
 			getMemberID();
@@ -182,6 +178,13 @@ public class HornetDBService extends Service {
 			if (upload_sid_count < 0) {
 				Services.showToast(getApplicationContext(), statusMessage, handler);
 			}
+			
+			//do bookings!
+			updateBookings();
+			long b_lastsync = Long.parseLong(Services.getAppSettings(getApplicationContext(), "b_lastsync"));
+			getBookings(b_lastsync);
+			bookingImages();
+			getClasses(last_sync);
 			
 			//downloads!
 			getResource(last_sync);
@@ -213,11 +216,12 @@ public class HornetDBService extends Service {
 			getFinancialDetails(last_sync);
 			getBillingHistory(last_sync);
 			
-			//do bookings!
-			updateBookings(); 
-			getBookings();
-			bookingImages();
-			getClasses(last_sync);
+			//get Visitors
+ 	   		boolean result = getLastVisitors();
+			if (result == true) { //If database query was successful, then look for images; else show toast.
+				visitorImages();
+			}
+			
 			uploadPendingDeletes();
 			getDeletedRecords(last_sync);
 			logger.writeLog();
@@ -289,6 +293,9 @@ public class HornetDBService extends Service {
 		   getConfig();
 		   getMembershipExpiryReasons();
 		   getProgrammes(0);
+		   getBookings(0);
+		   memberImages();
+		   getClasses(-1);
 		   
 		   int use_roll = Integer.parseInt(Services.getAppSettings(getApplicationContext(), "use_roll"));
 		   if (use_roll > 0) {
@@ -337,13 +344,10 @@ public class HornetDBService extends Service {
 		   getMemberBalance(-1);
 		   getFinancialDetails(0);
 		   getBillingHistory(0);
-		   getBookings();
-		   memberImages();
-		   getClasses(-1);
 		   getLastVisitors();
 		   
 		   //do Memberships!
-		   getIdCards();
+		   getIdCards(0, null);
 		   getPaymentMethods();
 		   uploadPendingDeletes();
 		   
@@ -1330,13 +1334,13 @@ public class HornetDBService extends Service {
     	return result;
     }
     
-    private int getBookings(){
+    private int getBookings(long last_sync){
     	Log.v(TAG, "Getting Bookings");
     	ResultSet rs;
     	int result;
     	Calendar cal;
     	java.sql.Date yesterday, tomorrow;
-    	long this_sync, last_sync;
+    	long this_sync;
     	
     	rs = null;
     	result = 0;
@@ -1348,7 +1352,8 @@ public class HornetDBService extends Service {
     	tomorrow = new java.sql.Date(cal.getTime().getTime());
     	
     	this_sync = new Date().getTime(); 
-    	last_sync = Long.parseLong(Services.getAppSettings(getApplicationContext(), "b_lastsync"));
+    	//last_sync = Long.parseLong(Services.getAppSettings(getApplicationContext(), "b_lastsync"));
+    	
     	    	
     	cur = contentResolver.query(ContentDescriptor.BookingTime.CONTENT_URI, null, null, null, null);
     	if (cur.getCount() <= 0) {
@@ -1367,7 +1372,6 @@ public class HornetDBService extends Service {
     	
     	try {
     		rs = connection.getBookings(yesterday, tomorrow, last_sync);
-    		Log.v(TAG, "getBookings() Row Count"+rs.getFetchSize()); 
 	    	while (rs.next()) {
 	    		ContentValues val;
 	    		SimpleDateFormat format;
@@ -1399,7 +1403,9 @@ public class HornetDBService extends Service {
 	    			}
 	    		}
 	    		
-	    		date = Services.dateFormat(rs.getString("arrival"), "yyyy-MM-dd", "yyyyMMdd");
+	    		//date = Services.dateFormat(rs.getString("arrival"), "yyyy-MM-dd", "yyyyMMdd");
+	    		Double doubledate = rs.getDouble("arrival")*1000d;
+	    		date = String.valueOf(doubledate);
 	    		starttime = getTime(rs.getString("startid"), contentResolver, false );
 	    		endtime = getTime(rs.getString("endtime"), contentResolver, true);
 	    		
@@ -1408,13 +1414,13 @@ public class HornetDBService extends Service {
 	    		val.put(ContentDescriptor.Booking.Cols.STIME, rs.getString("startid"));
 	    		val.put(ContentDescriptor.Booking.Cols.ETIME, rs.getString("endtime"));
 	    		val.put(ContentDescriptor.Booking.Cols.BID, rs.getString("bookingid"));
-	    		val.put(ContentDescriptor.Booking.Cols.BOOKINGTYPE, rs.getString("bookingtypeid"));
 	    		val.put(ContentDescriptor.Booking.Cols.NOTES, rs.getString("notes"));
+	    		val.put(ContentDescriptor.Booking.Cols.BOOKINGTYPE, rs.getString("bookingtypeid"));
 	    		val.put(ContentDescriptor.Booking.Cols.RESULT, rs.getString("result"));
 	    		val.put(ContentDescriptor.Booking.Cols.MID, rs.getString("memberid"));
 	    		val.put(ContentDescriptor.Booking.Cols.MSID, rs.getString("membershipid"));
 	    		val.put(ContentDescriptor.Booking.Cols.RID, rs.getString("resourceid"));
-	    		val.put(ContentDescriptor.Booking.Cols.ARRIVAL, Integer.decode(date));
+	    		val.put(ContentDescriptor.Booking.Cols.ARRIVAL, date);
 	    		val.put(ContentDescriptor.Booking.Cols.CLASSID, rs.getInt("classid"));
 	    		val.put(ContentDescriptor.Booking.Cols.PARENTID, rs.getInt("parentid"));
 	    		if (rs.getInt("parentid")> 0) {
@@ -1465,6 +1471,7 @@ public class HornetDBService extends Service {
 	    						new String[] {rs.getString("bookingid")});
 	    			}
 	    		}
+
 	    		if (!has_parent) {
 		    		timeid = starttime;
 		    		while (timeid<=endtime) {
@@ -1472,7 +1479,7 @@ public class HornetDBService extends Service {
 		    			val.put(ContentDescriptor.BookingTime.Cols.BID, rs.getString("bookingid"));
 		    			val.put(ContentDescriptor.BookingTime.Cols.RID, rs.getString("resourceid"));
 		    			val.put(ContentDescriptor.BookingTime.Cols.TIMEID, timeid);
-		    			val.put(ContentDescriptor.BookingTime.Cols.ARRIVAL, Integer.decode(date));
+		    			val.put(ContentDescriptor.BookingTime.Cols.ARRIVAL, date);
 		    			
 		    			cur = contentResolver.query(ContentDescriptor.BookingTime.CONTENT_URI, null, "bt."+ContentDescriptor.BookingTime.Cols.BID+" = ? AND bt."
 		    					+ContentDescriptor.BookingTime.Cols.RID+" = ? AND bt."+ContentDescriptor.BookingTime.Cols.TIMEID+" = ? AND bt."
@@ -1610,10 +1617,15 @@ public class HornetDBService extends Service {
     	Date date;
     	int currentDay;
     	ContentValues values;
-    	SimpleDateFormat format = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
     	
     	current = Calendar.getInstance();
+    	current.set(Calendar.HOUR_OF_DAY, 0); 
+		current.set(Calendar.MINUTE, 0);
+		current.set(Calendar.SECOND, 0);
     	maximum = Calendar.getInstance();
+    	maximum.set(Calendar.HOUR_OF_DAY, 0); 
+		maximum.set(Calendar.MINUTE, 0);
+		maximum.set(Calendar.SECOND, 0);
     	maximum.add(Calendar.MONTH, 1);
     	current.add(Calendar.MONTH, -1);
     	
@@ -1622,7 +1634,7 @@ public class HornetDBService extends Service {
     	cur = contentResolver.query(ContentDescriptor.Date.CONTENT_URI, null, null, null, null);
     	if (cur.moveToLast()) {
     		String maxdate = cur.getString(cur.getColumnIndex(ContentDescriptor.Date.Cols.DATE));
-    		SimpleDateFormat format2 = new SimpleDateFormat("yyyyMMdd", Locale.US);
+    		SimpleDateFormat format2 = new SimpleDateFormat("dd MMM yyyy", Locale.US);
     		try {
     			date = format2.parse(maxdate);
     		} catch (ParseException e) {
@@ -1638,7 +1650,7 @@ public class HornetDBService extends Service {
 			date = current.getTime();
 			currentDay = current.get(Calendar.DAY_OF_WEEK);
 			values = new ContentValues();
-			values.put(ContentDescriptor.Date.Cols.DATE, Services.dateFormat(format.format(date), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd"));
+			values.put(ContentDescriptor.Date.Cols.DATE, Services.DateToString(date));
 			values.put(ContentDescriptor.Date.Cols.DAYOFWEEK, currentDay);
 			contentResolver.insert(ContentDescriptor.Date.CONTENT_URI, values);
 			current.add(Calendar.DATE, 1);
@@ -1646,12 +1658,12 @@ public class HornetDBService extends Service {
 		Log.v(TAG, "Finished Setting Date");
     }
     
-    private void setTime(){
+    private void setTime(){//TODO: fix the delete time issue.
     	Log.v(TAG, "Setting Time!!");
 		contentResolver.delete(ContentDescriptor.Time.CONTENT_URI, null, null); 
 		int interval;
 		Calendar day, upperlimit, lowerlimit;
-		
+		SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss", Locale.US);
 		interval = 15; //DEFAULT INTERVER = 15.
 		day = Calendar.getInstance();
 		day.add(Calendar.DATE, -1);
@@ -1661,7 +1673,6 @@ public class HornetDBService extends Service {
 		upperlimit.set(Calendar.MINUTE, 59);
 		upperlimit.set(Calendar.SECOND, 1);
 		
-		//System.out.print("\n\nLowerLimit:"+llimit);
 		lowerlimit = Calendar.getInstance();
 		lowerlimit.set(Calendar.HOUR_OF_DAY, 0); 
 		lowerlimit.set(Calendar.MINUTE, 0);
@@ -1672,13 +1683,10 @@ public class HornetDBService extends Service {
 				String time;
 				
 				values = new ContentValues();
-				time = lowerlimit.getTime().toString();
-				time = Services.dateFormat(time, "EEE MMM dd HH:mm:ss", "HH:mm:ss");
-				//System.out.print("\n\nAfter Time:"+time);
+				time = format.format(lowerlimit.getTime());		
 				values.put(ContentDescriptor.Time.Cols.TIME, time);
 				contentResolver.insert(ContentDescriptor.Time.CONTENT_URI, values);
 				lowerlimit.add(Calendar.MINUTE, interval);
-				//System.out.print("\n\nID:"+id+"  TIME:"+time+" DATE:"+date);
 			}
     }
     
@@ -2694,17 +2702,22 @@ public class HornetDBService extends Service {
     	return result;
     }
     
-    private int getIdCards() {
+    //TODO: make sure we've tried to do this before assigning a tag every time.
+    public int getIdCards(long last_sync, Context context) {
     	Log.v(TAG, "Getting ID Cards");
     	int result = 0;
     	ResultSet rs;
+    	
+    	if (context != null) {
+    		setup(context);
+    	}
     	
     	if (!openConnection()) {
     		return -1; //connection failed;
     	}
     	
     	try {
-    		rs = connection.getIdCards();
+    		rs = connection.getIdCards(last_sync);
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
     		e.printStackTrace();
@@ -2712,7 +2725,7 @@ public class HornetDBService extends Service {
     	}
     	// presumably our connection was a success, in which case clear the idcard cache and re-add all the data.
     	// this would be more efficient if the idcard table had a timestamp column.
-    	contentResolver.delete(ContentDescriptor.IdCard.CONTENT_URI, null, null);
+    	//contentResolver.delete(ContentDescriptor.IdCard.CONTENT_URI, null, null);
     	
     	try {
     		while (rs.next()) {
@@ -2730,7 +2743,8 @@ public class HornetDBService extends Service {
     		e.printStackTrace();
     		return -3;
     	}
-    	connection.closeConnection();
+    	closeConnection();
+    	//connection.closeConnection();
     	
     	return result;
     }
@@ -2771,7 +2785,7 @@ public class HornetDBService extends Service {
     		} catch (SQLException e) {
     			Log.e(TAG, "ERROR OCCURED");;
     			Log.e(TAG, e.getSQLState());
-    			if (e.getSQLState().contains("42710")) { //TODO:check that this works.
+    			if (e.getSQLState().contains("42710")) {
     				contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, ContentDescriptor.PendingUploads.Cols.ROWID+" = ? AND "
         					+ContentDescriptor.PendingUploads.Cols.TABLEID+" = ?", new String[] {rowid.get(i), 
         					String.valueOf(ContentDescriptor.TableIndex.Values.Idcard.getKey())});
@@ -4412,8 +4426,8 @@ public class HornetDBService extends Service {
     	try {
     		rs = connection.startStatementQuery(query);
     		while (rs.next()) {
-    			/* TODO: add the allowed column to the sync table in gymmaster;
-    			 * if (!rs.getBoolean("allowed")) {
+    			 //TODO: add the allowed column to the sync table in gymmaster;
+    			 if (!rs.getBoolean("allowed_access")) {
     				//delete everything.
     				Editor editor = PreferenceManager.getDefaultSharedPreferences(MainActivity.getContext()).edit();
     				editor.clear();
@@ -4422,7 +4436,7 @@ public class HornetDBService extends Service {
     				contentResolver.delete(ContentDescriptor.DROPTABLE_URI, null, null);
     				//return false!
     				return false;
-    			}*/
+    			}
     			
     			ContentValues values = new ContentValues();
     			values.put(ContentDescriptor.AppConfig.Cols.DB_DEVICEID, rs.getInt("id"));

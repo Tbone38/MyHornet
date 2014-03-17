@@ -1,7 +1,10 @@
 package com.treshna.hornet;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -90,9 +93,11 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
     	mYear.setId(30);
     	mYear.setGravity(Gravity.CENTER_HORIZONTAL);
     	selectedDate = Services.getAppSettings(getActivity(), "bookings_date");
-    	if (Integer.parseInt(selectedDate) == -1) {
-    		selectedDate = Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");
-    		//selectedDate = Services.DateToString(new Date());
+    	if (selectedDate.compareTo("-1") == 0) {
+    		//selectedDate = Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");
+    		//SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd", Locale.US);
+    		//selectedDate = format.format(new Date());
+    		selectedDate = Services.DateToString(new Date());
     	}
         updateDate();
        
@@ -109,10 +114,12 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
 	
 	private void updateDate(){
 		if (mMonth != null && mDay != null && mYear != null) {
-			mMonth.setText(Services.dateFormat(selectedDate, "yyyyMMdd", "MMM"));
-			//mDay.setText(Services.dateFormat(selectedDate, "yyyyMMdd", "dd"));
+			/*mMonth.setText(Services.dateFormat(selectedDate, "yyyyMMdd", "MMM"));
 			mDay.setText(Services.dateFormat(selectedDate, "yyyyMMdd", "dd"));
-			mYear.setText(Services.dateFormat(selectedDate, "yyyyMMdd", "yyyy"));
+			mYear.setText(Services.dateFormat(selectedDate, "yyyyMMdd", "yyyy"));*/
+			mDay.setText(Services.dateFormat(selectedDate, "dd MMM yyyy", "dd"));
+			mMonth.setText(Services.dateFormat(selectedDate, "dd MMM yyyy", "MMM"));
+			mYear.setText(Services.dateFormat(selectedDate, "dd MMM yyyy", "yyyy"));
 		}
 	}
 
@@ -152,9 +159,20 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
 			 TextView resourcename = (TextView) row.findViewById(R.id.booking_resource_name);
 				resourcename.setText(resource.get(i)[1]);
 				
+				Date theDate = Services.StringToDate(selectedDate, "dd MMM yyyy");
+				Calendar cal = Calendar.getInstance(Locale.US);
+				cal.setTime(theDate);
+				cal.set(Calendar.HOUR_OF_DAY, 0); 
+				cal.set(Calendar.MINUTE, 0);
+				cal.set(Calendar.SECOND, 0);
+				long start,end;
+				start = cal.getTime().getTime();
+				cal.add(Calendar.MINUTE, 1439);
+				end = cal.getTime().getTime();
+				
 				cur = contentResolver.query(ContentDescriptor.BookingTime.CONTENT_URI, null, "bt."+ContentDescriptor.BookingTime.Cols.RID+" = ? AND bt."
-						+ContentDescriptor.BookingTime.Cols.ARRIVAL+" = ? AND "+ContentDescriptor.Booking.Cols.PARENTID+" = 0", 
-						new String[] {resource.get(i)[0], selectedDate}, null);
+						+ContentDescriptor.BookingTime.Cols.ARRIVAL+" BETWEEN ? AND ? AND "+ContentDescriptor.Booking.Cols.PARENTID+" = 0", 
+						new String[] {resource.get(i)[0], String.valueOf(start), String.valueOf(end)}, null);
 				ArrayList<int[]> bookingtimes = new ArrayList<int[]>();
 				
 				while (cur.moveToNext()){
@@ -629,7 +647,7 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
 	@Override
 	public void onDateSelect(String date, DatePickerFragment theDatePicker) {
 		selectedDate = date;
-		selectedDate = Services.dateFormat(selectedDate, "dd MMM yyyy", "yyyyMMdd");
+		//selectedDate = Services.dateFormat(selectedDate, "dd MMM yyyy", "yyyyMMdd");
 		Services.setPreference(getActivity(), "bookings_date", selectedDate);
 		updateDate();
 		getList(mInflater);

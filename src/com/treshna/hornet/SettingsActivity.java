@@ -94,7 +94,8 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		setup.setOnPreferenceClickListener(this);
 		
 		Preference uniqueid = this.findPreference("uniqueid");
-		uniqueid.setTitle(this.getString(R.string.pref_unique_id, ApplicationID.id()));
+		uniqueid.setTitle("Unique ID");
+		uniqueid.setSummary(ApplicationID.id());
 		
 		/**/
 		

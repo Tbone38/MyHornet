@@ -1,5 +1,6 @@
 package com.treshna.hornet;
 
+import android.annotation.SuppressLint;
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.Context;
@@ -596,19 +597,20 @@ public class HornetContentProvider extends ContentProvider {
             					+ContentDescriptor.OpenTime.NAME+" ot LEFT JOIN "
             					+ContentDescriptor.Date.NAME+" d ON (d."+ContentDescriptor.Date.Cols.DAYOFWEEK
             					+" = ot."+ContentDescriptor.OpenTime.Cols.DAYOFWEEK+" ) WHERE "
-            					+" d."+ContentDescriptor.Date.Cols.DATE+" = "+selectionArgs[0]+")"
+            					+" d."+ContentDescriptor.Date.Cols.DATE+" = '"+selectionArgs[0]+"')"
             					+" AND "
             					+"t."+ContentDescriptor.Time.Cols.ID+" <= (" 
             					+"SELECT ot."+ContentDescriptor.OpenTime.Cols.CLOSEID+" FROM "
             					+ContentDescriptor.OpenTime.NAME+" ot LEFT JOIN "
             					+ContentDescriptor.Date.NAME+" d ON (d."+ContentDescriptor.Date.Cols.DAYOFWEEK
             					+" = ot."+ContentDescriptor.OpenTime.Cols.DAYOFWEEK+" ) WHERE "
-            					+" d."+ContentDescriptor.Date.Cols.DATE+" = "+selectionArgs[0]+")"
+            					+" d."+ContentDescriptor.Date.Cols.DATE+" = '"+selectionArgs[0]+"')"
             					;
             	/* If etime is not null, then for each id between current id and etime, show details equal to
             	 * the current details.
             	 *
             	 */
+            	//Log.w("SQL", builder.buildQuery(projection, selection, "_id", null, sortOrder, null));
             	return builder.query(db, projection, selection, null, "_id", null, sortOrder);
             }
             

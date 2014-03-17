@@ -37,9 +37,9 @@ public class BookingsSlideFragment extends Fragment {
         Services.setContext(getActivity());
         
         selectedDate = Services.getAppSettings(getActivity(), "bookings_date");
-    	if (Integer.parseInt(selectedDate) == -1) {
-    		selectedDate = Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");
-    		//selectedDate = Services.DateToString(new Date());
+    	if (selectedDate.compareTo("-1") == 0) {
+    		//selectedDate = Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");
+    		selectedDate = Services.DateToString(new Date());
     	}
     	hasOverview = this.getArguments().getBoolean("hasOverview");
     }
@@ -72,7 +72,7 @@ public class BookingsSlideFragment extends Fragment {
      */
     private String getDate(int position){
     	selectedDate = Services.getAppSettings(getActivity(), "bookings_date");
-    	SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd", Locale.US);
+    	SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy", Locale.US);
     	Calendar cal = Calendar.getInstance();
     	Date date;
     	

@@ -806,6 +806,7 @@ public class ContentDescriptor {
 	 		public static class Cols implements BaseColumns {
 	 			public static final String CARDID = "cardid";
 	 			public static final String SERIAL = "serial";
+	 			public static final String CREATED = "created";
 	 		}
 	 	}
 	 	

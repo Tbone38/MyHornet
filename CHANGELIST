@@ -42,6 +42,8 @@ KEY:
                     -Also tracks when app is syncing/last synced.
 		Fixed Bookings disappearing everytime we update the App.
 		Fixed historic resources showing up.
+		Fix # of connections being used by the app. (still haven't got pooling working..)
+		Fixed Booking sync_times not being cleared
  
             TODO:
                 Handle permissions/Roles for different staff, to limit what certain staff can see.
@@ -56,9 +58,12 @@ KEY:
                 Fix the Booking Views broken back button.
                 Spacing/padding of Headings..?
                 Add UI elements to GymMaster for managing the devices in the sync table.
+			Add allowed_access column
 		Improve sync-times/OutOfMemory Issues.
-		Fix # of connections being used by the app.
 		Fix Connection handling in Flask API.
+		Add better ErrorLog to Flask API.
+		Fix Times/(possibly dates?) disappearing everytime we update the app.
+		Finish adding the Device handling to the gymmaster desktop app.
     
     
     v119:
