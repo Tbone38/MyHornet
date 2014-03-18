@@ -8,6 +8,7 @@
     <string name="end_date_title">Select End Date</string>
     <string name="report_btn_next">Next</string>
     <string name="report_column_options_title">Report Column Options</string>
+    <string name="report_create_btn_title">Create Report</string>
     
         
 </resources>
