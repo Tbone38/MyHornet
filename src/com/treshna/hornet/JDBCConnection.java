@@ -23,6 +23,7 @@ import java.util.Properties;
 import org.postgresql.ds.PGPoolingDataSource;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.util.Log;
 
 /**
@@ -43,9 +44,14 @@ public class JDBCConnection {
     private PreparedStatement pStatement;
     //private static final String TAG = "JDBCConnection";
     private static String TAG = "HORNETSERVICE";
-    private PGPoolingDataSource source;
+    private Context ctx; //applicationContext(), DO NOT USE activityContext()
     
     private String getConnectionUrl() {
+    	if (Address.isEmpty()||Database.isEmpty()|| Port.isEmpty() && ctx != null) {
+    		Address = Services.getAppSettings(ctx, "address");
+    		Database = Services.getAppSettings(ctx, "database");
+    		Port = Services.getAppSettings(ctx, "port");
+    	}
             return new String("jdbc:postgresql://" + Address + ":" + Port + "/" + Database);
     }
     
@@ -60,24 +66,14 @@ public class JDBCConnection {
     	this.Database = database;
     	this.Username = username;
     	this.Password = password;
-    	try {
-    		Class.forName("org.postgresql.Driver");
-    		//Class.forName("org.postgresql.ds.PGPoolingDataSource");
-    	} catch (ClassNotFoundException e) {
-    		throw new RuntimeException(e); 
-    	}
-    	
-    	/*source = new PGPoolingDataSource();
-        source.setDataSourceName("gymmaster");
-        source.setServerName(this.Address);
-        source.setDatabaseName(this.Database);
-        source.setUser(this.Username);
-        source.setPassword(this.Password);
-        source.setMaxConnections(5);*/
     }
     public JDBCConnection(String address, String database, String username, 
     		String password) {
     	this(address, "5432", database, username, password);
+    }
+    
+    public JDBCConnection(Context context) {
+    	this.ctx = context;
     }
 
     public synchronized void openConnection() throws ClassNotFoundException, SQLException {
@@ -90,7 +86,10 @@ public class JDBCConnection {
                         con = null;
                     }
             }
-            
+            if (Username.isEmpty()||Password.isEmpty() && ctx != null) {
+            	Username = Services.getAppSettings(ctx, "username");
+            	Password = Services.getAppSettings(ctx, "password");
+            }
             Properties properties = new Properties();
             properties.put("user", Username);
             properties.put("password", Password);
@@ -98,18 +97,14 @@ public class JDBCConnection {
             if (Type.compareTo("PostgreSQL") == 0) {
             	Class.forName("org.postgresql.Driver");
             }
-            //System.out.println("Start Connection");
+            
             Log.v(TAG, "Starting Connection");
             try {
-            	con = DriverManager.getConnection(getConnectionUrl(), properties);
-            	//con = source.getConnection();
+            	con = DriverManager.getConnection(getConnectionUrl(), properties);            
             } catch (SQLException e) {
             	Log.e(TAG, "ERROR OPENING CONNECTION", e);
             }
     }
-    
-   
-    
     
     public boolean isConnected() {
     	boolean result = false;
@@ -127,7 +122,6 @@ public class JDBCConnection {
     public void closeConnection(){
     	 if (con != null) {
     		 try {
-            	//System.out.println("Closing Connection");
     			 Log.v(TAG, "Closing Connection");
             	con.close();
              } catch (SQLException e) {
@@ -484,13 +478,14 @@ public class JDBCConnection {
     public ResultSet getClasses(String lastsync) throws SQLException, NullPointerException {
 	    	ResultSet rs = null;
 	    	String query = "SELECT id, name, max_students,  description, price, onlinebook FROM class "
-	    	+" WHERE lastupdate > ?::TIMESTAMP WITHOUT TIME ZONE";
+	    	+" WHERE lastupdate > ?";
 	   
 	    	Date lastupdate = new Date(Long.valueOf(lastsync));
 	    	Log.d(TAG, "Classes Last-Update:"+lastupdate);
 	    	pStatement = con.prepareStatement(query);
-	    	pStatement.setString(1, Services.dateFormat(lastupdate.toString(),
-	    				"EEE MMM dd HH:mm:ss zzz yyyy", "dd-MM-yyyy HH:mm:ss"));
+	    	/*pStatement.setString(1, Services.dateFormat(lastupdate.toString(),
+	    				"EEE MMM dd HH:mm:ss zzz yyyy", "dd MMM yyyy HH:mm:ss"));*/
+	    	pStatement.setTimestamp(1, new java.sql.Timestamp(Long.parseLong(lastsync)));
 	    	
 	    	rs = pStatement.executeQuery();
 	    	return rs;

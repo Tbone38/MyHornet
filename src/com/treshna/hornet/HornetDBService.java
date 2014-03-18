@@ -18,7 +18,6 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -64,18 +63,19 @@ public class HornetDBService extends Service {
 	
 	//context is probably leaky?
 	private void setup(Context context) {
-		SharedPreferences preferences;
+		//SharedPreferences preferences;
 		if (context == null) {
-			preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+			//preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 			context = getApplicationContext();
 			//ctx = getApplicationContext();
 		} else {
-			preferences = PreferenceManager.getDefaultSharedPreferences(context);
+			//preferences = PreferenceManager.getDefaultSharedPreferences(context);
 			//ctx = context;
 		}
-		connection = new JDBCConnection(preferences.getString("address", "-1"),preferences.getString("port", "-1"),
+		/*connection = new JDBCConnection(preferences.getString("address", "-1"),preferences.getString("port", "-1"),
 				 preferences.getString("database", "-1"), preferences.getString("username", "-1"),
-				 preferences.getString("password", "-1"));
+				 preferences.getString("password", "-1"));*/
+		connection = new JDBCConnection(context);
 	   contentResolver = context.getContentResolver(); //this.getContentResolver();
 	   
 	}
@@ -132,6 +132,11 @@ public class HornetDBService extends Service {
     	if (first_sync.compareTo("-1")==0 && currentCall == Services.Statics.FREQUENT_SYNC) {
     		currentCall = Services.Statics.FIRSTRUN;
     	}
+    	
+    	if (!getDeviceDetails()) {
+	   			return;
+	   	}
+    	
     	switch (currentCall){
  	   	case (Services.Statics.FREQUENT_SYNC): { //this should be run frequently
  	   		
@@ -145,9 +150,6 @@ public class HornetDBService extends Service {
  	   		this_sync = System.currentTimeMillis();
  	   		last_sync = Long.parseLong(Services.getAppSettings(getApplicationContext(), "last_freq_sync")); //use this for checking lastupdate
 	 	   	
- 	   		if (!getDeviceDetails()) {
- 	   			return;
- 	   		}
  	   		setDate();
  	   		getPendingDownloads();
  	   		getPendingUpdates();
@@ -228,15 +230,12 @@ public class HornetDBService extends Service {
 	   	  	uploadLog();
 	   	  	
 	   	  	//Finish.
-			updateDevice();
-			connection.closeConnection();
 			Services.setPreference(getApplicationContext(), "last_freq_sync", String.valueOf(this_sync));
 			//Services.showToast(getApplicationContext(), statusMessage, handler);
 			/*Broadcast an intent to let the app know that the sync has finished
 			 * communicating with the server/updating the cache.
 			 * App can now refresh the list. */
 			
-			thread.is_networking = false;
 			Intent bcIntent = new Intent();
 			bcIntent.setAction("com.treshna.hornet.serviceBroadcast");
 			sendBroadcast(bcIntent);
@@ -250,7 +249,7 @@ public class HornetDBService extends Service {
 			  
 		   int result;
 		   result = swipe();
-		   connection.closeConnection();
+		   
 		   if (result > 0) {};//TODO:
 		   Services.showToast(getApplicationContext(), statusMessage, handler);
  		   new Thread (new Runnable() { 
@@ -263,7 +262,6 @@ public class HornetDBService extends Service {
  					getApplicationContext().startService(updateInt);
  				}}).start();
  		  
- 		  thread.is_networking = false;
  		   break;
  	   }
  	   
@@ -278,10 +276,6 @@ public class HornetDBService extends Service {
  		  this_sync = System.currentTimeMillis();
 		  //Services.showProgress(Services.getContext(), "Syncing Local Database setting from Server", handler, currentCall, true);
 		   //the above box should probably always show. & should be controlled by an async task.
-		   
- 		  if (!getDeviceDetails()) {
- 			  return;
- 		  }
  		  
 		   //config
 		   int rcount = getResource(0);
@@ -356,11 +350,7 @@ public class HornetDBService extends Service {
 	   	  	//rebuild times, then update the reference in date.
 	   	  	logger.writeLog();
 	   	  	uploadLog();
-	   	  	
-	   	  	updateDevice();
-	   	  	connection.closeConnection();
-	   	  	
-	   	 thread.is_networking = false;
+
 		   if (statusMessage != null) {
 			   Services.showToast(getApplicationContext(), statusMessage, handler);
 		   }
@@ -369,7 +359,7 @@ public class HornetDBService extends Service {
 		   Log.v(TAG, "rcount:"+rcount+"  btcount:"+btcount+"  rscount:"+rscount+"  mcount:"+mcount
 				   +"  days:"+days);
 		   
-		  Services.showToast(getApplicationContext(),"Download Finished GymMaster Mobile will now restart",handler);
+		  /*Services.showToast(getApplicationContext(),"Download Finished GymMaster Mobile will now restart",handler);*/
 		   
 		  Intent bcIntent = new Intent();
 		  bcIntent.putExtra(Services.Statics.IS_RESTART, true);
@@ -388,12 +378,10 @@ public class HornetDBService extends Service {
  		   thread.is_networking = true;
  		   int result;
  		   result = classSwipe();
- 		   connection.closeConnection();
  		   if (result <= 0) {
  			   Log.e(TAG, statusMessage);
  			   Log.e(TAG, "Class Swipe returned Error-Code:"+result);
  		   }
- 		   thread.is_networking = false;
  		   break;
  	   }
  	   case (Services.Statics.MANUALSWIPE):{
@@ -406,18 +394,20 @@ public class HornetDBService extends Service {
  		   membershipid = bundle.getInt("membershipid");
  		   
  		   this.manualCheckin(doorid, memberid, membershipid, null);
- 		   connection.closeConnection();
- 		   thread.is_networking = false;
+ 		   
  		   break;
  	   }
  	   }
+    	updateDevice();
+		connection.closeConnection();
+    	thread.is_networking = false;
     }
     
     public static Handler getHandler(){
     	return handler;
     }
     
-	public boolean getLastVisitors(){
+	private boolean getLastVisitors(){
 		Log.v(TAG, "Getting Last Visitors");
     	long this_sync = new Date().getTime();
     	if (!openConnection()) {
@@ -438,7 +428,7 @@ public class HornetDBService extends Service {
     			rs = connection.startStatementQuery(query);
     		}catch (Exception e) {
     			statusMessage = e.getLocalizedMessage();
-    			e.printStackTrace();
+    			Log.e(TAG, "",e);
     			return false;
     		}
         	int insertCount = 0;
@@ -587,7 +577,7 @@ public class HornetDBService extends Service {
 	    			return false;
 	    		}
     		} else {
-	    		e.printStackTrace();	
+	    		Log.e(TAG,"",e);	
 	    	}
     	}
         closeConnection();
@@ -595,7 +585,7 @@ public class HornetDBService extends Service {
 		return true;
     }
     
-    public void visitorImages() {
+    private void visitorImages() {
     	String lastsync = Services.getAppSettings(getApplicationContext(), "lastsync");
     	cur = contentResolver.query(ContentDescriptor.Visitor.CONTENT_URI, null, ContentDescriptor.Visitor.Cols.LASTUPDATE+" >= ?",
     			new String[] {lastsync}, null);
@@ -603,7 +593,7 @@ public class HornetDBService extends Service {
     	queryServerForImage(cur, 1);
     }
     
-    public void memberImages() {
+    private void memberImages() {
     	cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, null, null, null);
     	queryServerForImage(cur, 1);
     }
@@ -620,7 +610,7 @@ public class HornetDBService extends Service {
      * @param cursor
      * @param index
      */
-    public void queryServerForImage(Cursor cursor, int index) {
+    private void queryServerForImage(Cursor cursor, int index) {
     	Log.v(TAG, "Querying Server for images");
     	boolean oldQuery;
     	ResultSet rs;
@@ -668,7 +658,7 @@ public class HornetDBService extends Service {
         		rs = connection.startStatementQuery(theQuery);
         	} catch (SQLException e) {
         		statusMessage = e.getLocalizedMessage();
-        		e.printStackTrace();
+        		Log.e(TAG, "", e);
         		return;
         	}
         	try {
@@ -777,13 +767,13 @@ public class HornetDBService extends Service {
 	        	rs.close();
         	} catch (SQLException e) {
         		statusMessage = e.getLocalizedMessage();
-        		e.printStackTrace();
+        		Log.e(TAG, "", e);
         		closeConnection();
         		return;
         	} catch (ParseException e) {
         		//date formatted incorrectly.
         		statusMessage = e.getLocalizedMessage();
-        		e.printStackTrace();
+        		Log.e(TAG, "", e);
         		closeConnection();
         		return;
         	}
@@ -794,7 +784,7 @@ public class HornetDBService extends Service {
     }
     
     
-    public int uploadImage() {
+    private int uploadImage() {
     	int result = 0;
     	cur = contentResolver.query(ContentDescriptor.PendingUploads.CONTENT_URI, null, ContentDescriptor.PendingUploads.Cols.TABLEID+" = ?",
     			new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Image.getKey())}, null);
@@ -844,7 +834,7 @@ public class HornetDBService extends Service {
         		result +=1;
         	} catch (SQLException e) {
         		statusMessage = e.getLocalizedMessage();
-        		e.printStackTrace();
+        		Log.e(TAG, "", e);
         		return -2;
         	}
         	
@@ -929,7 +919,7 @@ public class HornetDBService extends Service {
 	    		connection.closePreparedStatement();
         	} catch (SQLException e) {
         		statusMessage = e.getLocalizedMessage();
-        		e.printStackTrace();
+        		Log.e(TAG, "", e);
         		return -2;
         	}
         	
@@ -982,7 +972,7 @@ public class HornetDBService extends Service {
     		connection.updateRow(values, ContentDescriptor.Member.NAME, where);
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
-    		e.printStackTrace();
+    		Log.e(TAG, "", e);
     		return -2;
     	}
     	cur.close();
@@ -1057,7 +1047,7 @@ public class HornetDBService extends Service {
 	    		rs.close();
     		} catch (SQLException e) {
     			statusMessage = e.getLocalizedMessage();
-    			e.printStackTrace();
+    			Log.e(TAG, "", e);
     			return 0;
     		}
     		
@@ -1130,7 +1120,7 @@ public class HornetDBService extends Service {
 	    		
 				result +=1;
     		} catch (SQLException e) {
-    			e.printStackTrace();
+    			Log.e(TAG, "", e);
     			statusMessage = e.getLocalizedMessage();
     		}
     		try {
@@ -1173,6 +1163,7 @@ public class HornetDBService extends Service {
     		rs.close();
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
+    		Log.e(TAG, "", e);
     	}
     	closeConnection();
     	
@@ -1258,7 +1249,7 @@ public class HornetDBService extends Service {
 	    		result += state;
 	    		connection.closePreparedStatement();
 	    	} catch (SQLException e) {
-	    		e.printStackTrace();
+	    		Log.e(TAG, "", e);
 	    		statusMessage = e.getLocalizedMessage();
 	    	}
 			cur.close();
@@ -1316,7 +1307,7 @@ public class HornetDBService extends Service {
     			connection.closePreparedStatement();
     		} catch (SQLException e) {
     			statusMessage = e.getLocalizedMessage();
-    			e.printStackTrace();
+    			Log.e(TAG, "", e);
     		}
     		cur.close();
     		contentResolver.delete(ContentDescriptor.PendingUpdates.CONTENT_URI, ContentDescriptor.PendingUpdates.Cols.ROWID+" = ? AND "
@@ -1505,7 +1496,7 @@ public class HornetDBService extends Service {
 	    	}
 	    	rs.close();
     	} catch (SQLException e) {
-    		e.printStackTrace();
+    		Log.e(TAG, "", e);
     		statusMessage = e.getLocalizedMessage();
     	}
     	closeConnection();
@@ -1549,7 +1540,7 @@ public class HornetDBService extends Service {
     		rs.close();
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
-    		e.printStackTrace();
+    		Log.e(TAG, "", e);
     	}
     	closeConnection();
     	
@@ -1604,7 +1595,7 @@ public class HornetDBService extends Service {
 	    	rs.close();
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
-    		e.printStackTrace();
+    		Log.e(TAG, "", e);
     	}
     	closeConnection();
     	return result;
@@ -1737,7 +1728,7 @@ public class HornetDBService extends Service {
     		rs.close();
     	} catch (SQLException e){
     		statusMessage = e.getLocalizedMessage();
-    		e.printStackTrace();
+    		Log.e(TAG, "", e);
     	}
     	closeConnection();
     	
@@ -1776,7 +1767,7 @@ public class HornetDBService extends Service {
     		rs.close();
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
-    		e.printStackTrace();
+    		Log.e(TAG, "", e);
     	}
     	closeConnection();
     	return result;
@@ -1838,7 +1829,7 @@ public class HornetDBService extends Service {
 		    	
 	    	} catch (SQLException e) {
 	    		statusMessage = e.getLocalizedMessage();
-	    		e.printStackTrace();
+	    		Log.e(TAG, "", e);
 	    	}
     		closeConnection();
     	}
@@ -1872,7 +1863,7 @@ public class HornetDBService extends Service {
     		rs.close();
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
-    		e.printStackTrace();
+    		Log.e(TAG, "" , e);
     	}
     	closeConnection();
     	return result;
@@ -2016,7 +2007,7 @@ public class HornetDBService extends Service {
         		rs.close();
     		} catch (SQLException e) {
     			//error occured with sql on upload class.
-    			e.printStackTrace();
+    			Log.e(TAG, "", e);
     			statusMessage = e.getLocalizedMessage();
     			return -2;
     		}
@@ -2030,7 +2021,7 @@ public class HornetDBService extends Service {
     		} catch (SQLException e) {
     			//error occured with sql on upload recurring;
     			Log.v(TAG, "ERROR OCCURED");
-    			e.printStackTrace();
+    			Log.e(TAG, "", e);
     			statusMessage = e.getLocalizedMessage();
     			return -3;
     		}
@@ -2098,6 +2089,7 @@ public class HornetDBService extends Service {
     		rs.close();
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
+    		Log.e(TAG, "", e);
     		return -2;
     	}
     	closeConnection();
@@ -2185,7 +2177,7 @@ public class HornetDBService extends Service {
     			rs.close();
     		} catch (SQLException e) {
     			statusMessage = e.getLocalizedMessage();
-    			e.printStackTrace();
+    			Log.e(TAG, "", e);
     			return -1;
     		}
     		connection.closePreparedStatement();
@@ -2437,7 +2429,7 @@ public class HornetDBService extends Service {
 	    		rs.close();
 	    	} catch (SQLException e) {
 	    		statusMessage = e.getLocalizedMessage();
-	    		e.printStackTrace();
+	    		Log.e(TAG, "", e);
 	    		return -2;
 	    	}
 	    	result +=1;
@@ -2463,7 +2455,7 @@ public class HornetDBService extends Service {
     		rs = connection.getSuspends(last_sync);
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
-    		e.printStackTrace();
+    		Log.e(TAG,"", e);
     		return -2;
     	}
     	try {
@@ -2506,7 +2498,7 @@ public class HornetDBService extends Service {
     		rs.close();
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
-    		e.printStackTrace();
+    		Log.e(TAG, "", e);
     		return -3;
     	}
     	
@@ -2568,7 +2560,7 @@ public class HornetDBService extends Service {
     					suspendcost, oneofffee, allowentry, extend_membership, promotion, fullcost, holdfee, prorata);
     		} catch (SQLException e) {
     			statusMessage = e.getLocalizedMessage();
-    			e.printStackTrace();
+    			Log.e(TAG, "", e);
     			
     			/* Realistically if we're hitting any of these, 
     			 * we can probably delete the membership hold as well.
@@ -2646,7 +2638,7 @@ public class HornetDBService extends Service {
 					oneofffee, allowentry, extend_membership, promotion, fullcost, holdfee, prorata, Integer.parseInt(sid));
 			result +=1;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			Log.e(TAG, "", e);
 			statusMessage = e.getLocalizedMessage();
 			return -1;
 		}
@@ -2690,7 +2682,7 @@ public class HornetDBService extends Service {
     			result +=1;
     		} catch (SQLException e) {
     			statusMessage = e.getLocalizedMessage();
-    			e.printStackTrace();
+    			Log.e(TAG, "", e);
     			return -2;
     		} catch (NullPointerException e) {
     			return -3; //we haven't got a connection.
@@ -2720,7 +2712,7 @@ public class HornetDBService extends Service {
     		rs = connection.getIdCards(last_sync);
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
-    		e.printStackTrace();
+    		Log.e(TAG, "", e);
     		return -2;
     	}
     	// presumably our connection was a success, in which case clear the idcard cache and re-add all the data.
@@ -2740,7 +2732,7 @@ public class HornetDBService extends Service {
     		rs.close();
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
-    		e.printStackTrace();
+    		Log.e(TAG, "", e);
     		return -3;
     	}
     	closeConnection();
@@ -2815,7 +2807,7 @@ public class HornetDBService extends Service {
     		rs = connection.getPaymentMethods();
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
-    		e.printStackTrace();
+    		Log.e(TAG, "", e);
     		return -2;
     	}
     	try {
@@ -2830,7 +2822,7 @@ public class HornetDBService extends Service {
     		rs.close();
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
-    		e.printStackTrace();
+    		Log.e(TAG, "", e);
     		return -3;
     	}
     	
@@ -2850,7 +2842,7 @@ public class HornetDBService extends Service {
     		rs = connection.getProgrammes(String.valueOf(last_sync));
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
-    		e.printStackTrace();
+    		Log.e(TAG, "", e);
     		return -2;
     	}
     	try {
@@ -2884,7 +2876,7 @@ public class HornetDBService extends Service {
     		rs.close();
     	} catch (SQLException e ) {
     		statusMessage = e.getLocalizedMessage();
-    		e.printStackTrace();
+    		Log.e(TAG, "", e);
     		return -3;
     	}
     	closeConnection();
@@ -2946,7 +2938,7 @@ public class HornetDBService extends Service {
     			result +=1;
     		} catch (SQLException e){
     			statusMessage = e.getLocalizedMessage();
-    			e.printStackTrace();
+    			Log.e(TAG, "", e);
     			return -2;
     		}
     	}
@@ -2998,7 +2990,7 @@ public class HornetDBService extends Service {
 	    				cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PRICE)));
     		} catch (SQLException e) {
     			statusMessage = e.getLocalizedMessage();
-    			e.printStackTrace();
+    			Log.e(TAG, "", e);
     			//return -2;
     			contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, ContentDescriptor.PendingUploads.Cols.TABLEID
     					+"= ? AND "+ContentDescriptor.PendingUploads.Cols.ROWID+" = ?", 
@@ -3058,7 +3050,7 @@ public class HornetDBService extends Service {
     		rs.close();
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
-    		e.printStackTrace();
+    		Log.e(TAG, "", e);
     		return -2;
     	}
     	closeConnection();
@@ -3077,15 +3069,21 @@ public class HornetDBService extends Service {
     		//see statusMessage for details;
     	}
     	
+    	if (!getDeviceDetails()) {
+   			return false;
+    	}
+    	
     	try {
     		connection.manualCheckIn(doorid, membershipid, memberid);
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
-    		e.printStackTrace();
+    		Log.e(TAG, "", e);
     		return false;
     	}
     	
+    	updateDevice();
     	closeConnection();
+    	connection.closeConnection();
     	
     	return true;
     }
@@ -3249,7 +3247,7 @@ public class HornetDBService extends Service {
 	    		
     		} catch (SQLException e) {
     			statusMessage = e.getLocalizedMessage();
-    			e.printStackTrace();
+    			Log.e(TAG, "", e);
     			return -2;
     		}
     	}
@@ -3303,7 +3301,7 @@ public class HornetDBService extends Service {
     		}
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
-    		e.printStackTrace();
+    		Log.e(TAG, "", e);
     		return -2;
     	}
     	
@@ -3433,7 +3431,7 @@ public class HornetDBService extends Service {
     			rs.close();
     		} catch (SQLException e) {
     			statusMessage = e.getLocalizedMessage();
-    			e.printStackTrace();
+    			Log.e(TAG, "", e);
     		}
     		contentResolver.delete(ContentDescriptor.PendingDownloads.CONTENT_URI, ContentDescriptor.PendingDownloads.Cols.ROWID+" = ? AND "
     				+ContentDescriptor.PendingDownloads.Cols.TABLEID+" = ?",new String[] {member.get(i),
@@ -3461,7 +3459,7 @@ public class HornetDBService extends Service {
     			rs.close();
     		} catch (SQLException e) {
     			statusMessage = e.getLocalizedMessage();
-    			e.printStackTrace();
+    			Log.e(TAG, "", e);
     		}
     		contentResolver.delete(ContentDescriptor.PendingDownloads.CONTENT_URI, ContentDescriptor.PendingDownloads.Cols.ROWID+" = ? AND "
     				+ContentDescriptor.PendingDownloads.Cols.TABLEID+" = ?", new String[] {membership.get(i),
@@ -3562,7 +3560,7 @@ public class HornetDBService extends Service {
     		rs.close();
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
-    		e.printStackTrace();
+    		Log.e(TAG, "", e);
     		return -3;
     	}
     	
@@ -3604,7 +3602,7 @@ public class HornetDBService extends Service {
     	    		rs.close();
     	    	} catch (SQLException e) {
     	    		statusMessage = e.getLocalizedMessage();
-    	    		e.printStackTrace();
+    	    		Log.e(TAG, "", e);
     	    		return -2;
     	    	}
     	}
@@ -3664,7 +3662,7 @@ public class HornetDBService extends Service {
     			rs.close();
     		} catch (SQLException e) {
     			statusMessage = e.getLocalizedMessage();
-    			e.printStackTrace();
+    			Log.e(TAG, "", e);
     			return -2;
     		}
     	}
@@ -3717,7 +3715,7 @@ public class HornetDBService extends Service {
 				result +=1;
 			} catch (SQLException e) {
 	    		statusMessage =e.getLocalizedMessage();
-	    		e.printStackTrace();
+	    		Log.e(TAG, "", e);
 	    		return -2;
 	    	}
 		}
@@ -3775,7 +3773,7 @@ public class HornetDBService extends Service {
 				result +=1;
 			}catch (SQLException e) {
         		statusMessage = e.getLocalizedMessage();
-        		e.printStackTrace();
+        		Log.e(TAG, "", e);
         		return -2;
 			}
 		}
@@ -3826,7 +3824,7 @@ public class HornetDBService extends Service {
 				result +=1;
 	    	} catch (SQLException e) {
 	    		statusMessage = e.getLocalizedMessage();
-	    		e.printStackTrace();
+	    		Log.e(TAG, "", e);
 	    		return -2;
 	    	}
 		}
@@ -3863,7 +3861,7 @@ public class HornetDBService extends Service {
     		rs.close();
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
-    		e.printStackTrace();
+    		Log.e(TAG, "", e);
     		return -2;
     	}
     	closeConnection();
@@ -3902,7 +3900,7 @@ public class HornetDBService extends Service {
     		rs.close();
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
-    		e.printStackTrace();
+    		Log.e(TAG, "", e);
     		return -2;
     	}
     	return result;
@@ -3932,7 +3930,7 @@ public class HornetDBService extends Service {
     		rs = connection.getCompanyConfig();
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
-    		e.printStackTrace();
+    		Log.e(TAG, "", e);
     		return -2;
     	}
     	
@@ -3962,7 +3960,7 @@ public class HornetDBService extends Service {
     		rs.close();
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
-    		e.printStackTrace();
+    		Log.e(TAG, "", e);
     		return -3;
     	}
     	closeConnection();
@@ -3972,7 +3970,7 @@ public class HornetDBService extends Service {
     
     private boolean uploadLog(){ //TODO: fix this. it uploads a ton of fairly useless shit.
     	JSONHandler json = new JSONHandler(getApplicationContext());
-    	String te_username = "", schemaversion = "", company_name = "";
+    	String te_username = "", schemaversion = "", company_name = "", appid = "";
     	
     	cur = contentResolver.query(ContentDescriptor.Company.CONTENT_URI, null, null, null, null);
     	if (cur.moveToFirst()) {
@@ -3982,7 +3980,9 @@ public class HornetDBService extends Service {
     	}
     	cur.close();
     	
-    	return json.uploadLog(this_sync, te_username, schemaversion, company_name);
+    	appid = ApplicationID.id();
+    	
+    	return json.uploadLog(this_sync, te_username, schemaversion, company_name, appid);
     }
     
     private int uploadPendingDeletes() {
@@ -4017,7 +4017,7 @@ public class HornetDBService extends Service {
     					String.valueOf(ContentDescriptor.TableIndex.Values.Membership.getKey())});
     		} catch (SQLException e) {
     			statusMessage = e.getLocalizedMessage();
-    			e.printStackTrace();
+    			Log.e(TAG, "", e);
     			//may as well remove the pending delete, the SQL Exception may have been caused by it.
     			contentResolver.delete(ContentDescriptor.PendingDeletes.CONTENT_URI, ContentDescriptor.PendingDeletes.Cols.ROWID+" = ? AND "
     					+ContentDescriptor.PendingDeletes.Cols.TABLEID+" = ?", new String[] {String.valueOf(memberships.get(i)),
@@ -4119,7 +4119,7 @@ public class HornetDBService extends Service {
 					contentResolver.insert(ContentDescriptor.PendingDownloads.CONTENT_URI, values);
 				} catch (SQLException e) {
 					statusMessage = e.getLocalizedMessage();
-					e.printStackTrace();
+					Log.e(TAG, "", e);
 					return -1;
 				}
     		}
@@ -4157,6 +4157,9 @@ public class HornetDBService extends Service {
     		Log.e(TAG, "no Connection");
     		return -1;
     	}
+    	if (!getDeviceDetails()) {
+   			return -1;
+    	}
     	//for the time being, lets delete all metrics when we sync.
     	contentResolver.delete(ContentDescriptor.KPI.CONTENT_URI, null, null);
     	
@@ -4191,11 +4194,14 @@ public class HornetDBService extends Service {
     		}
     		rs.close();
     	} catch (SQLException e) {
-    		e.printStackTrace();
+    		Log.e(TAG, "", e);
+    		statusMessage = e.getLocalizedMessage();
     		return -2;
     	}
     	
+    	updateDevice();
     	closeConnection();
+    	connection.closeConnection();
     	
     	return result;
     }
@@ -4248,7 +4254,7 @@ public class HornetDBService extends Service {
     		rs.close();
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
-    		e.printStackTrace();
+    		Log.e(TAG, "", e);
     		return -2;
     	}
     	
@@ -4308,7 +4314,7 @@ public class HornetDBService extends Service {
 			rs.close();
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
-    		e.printStackTrace();
+    		Log.e(TAG,"",e);
     		return -2;
     	}
     	
@@ -4345,7 +4351,7 @@ public class HornetDBService extends Service {
     			rs.close();
     		} catch (SQLException e) {
     			statusMessage = e.getLocalizedMessage();
-    			e.printStackTrace();
+    			Log.e(TAG,"", e);
     		}
     		connection.closeStatementQuery();
     	}
@@ -4372,7 +4378,7 @@ public class HornetDBService extends Service {
     		rs.close();
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
-    		e.printStackTrace();
+    		Log.e(TAG, "", e);
     		return false;
     	}
     	closeConnection();
@@ -4409,15 +4415,15 @@ public class HornetDBService extends Service {
     			rs.close();
     		} catch (SQLException e) {
     			statusMessage = e.getLocalizedMessage();
-    			e.printStackTrace();
+    			Log.e(TAG, "", e);
     		}
     		connection.closeStatementQuery();
     	}
 
     	if (deviceid <= 0) {
     		//we'll need to do an insert.
-    		query = "INSERT INTO sync (device, clienttime) VALUES ('"+uniqueid+"',"+
-    		"to_timestamp("+(double)(new Date().getTime()/1000d)+")) RETURNING *;";
+    		query = "INSERT INTO sync (device, clienttime, completed) VALUES ('"+uniqueid+"',"+
+    		"to_timestamp("+(double)(new Date().getTime()/1000d)+"), false) RETURNING *;";
     	} else {
     		query = "UPDATE sync SET (clienttime, completed, servertime) = (to_timestamp("+(double)(new Date().getTime()/1000d)
     				+"),false, now()) WHERE id = "+deviceid+" RETURNING *;";
@@ -4426,10 +4432,10 @@ public class HornetDBService extends Service {
     	try {
     		rs = connection.startStatementQuery(query);
     		while (rs.next()) {
-    			 //TODO: add the allowed column to the sync table in gymmaster;
+
     			 if (!rs.getBoolean("allowed_access")) {
     				//delete everything.
-    				Editor editor = PreferenceManager.getDefaultSharedPreferences(MainActivity.getContext()).edit();
+    				Editor editor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
     				editor.clear();
     				editor.commit();    				
     				ContentResolver.cancelSync(null, ContentDescriptor.AUTHORITY);
@@ -4447,7 +4453,7 @@ public class HornetDBService extends Service {
     		rs.close();
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
-    		e.printStackTrace();
+    		Log.e(TAG, "", e);
     		return false;
     	}
     	

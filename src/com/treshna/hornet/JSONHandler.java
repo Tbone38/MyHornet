@@ -223,7 +223,7 @@ public class JSONHandler {
 				errormsg = "please refer to the details in the email that was sent to you, in order to finish the setup.";
 				errorcode = JSONError.BADRETRIEVE.getKey();
 			}
-			SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ctx);
+			SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ctx.getApplicationContext());
 			SharedPreferences.Editor editor = preferences.edit();
 			editor.putString("address", server);
 			editor.putString("port", "5432");
@@ -310,13 +310,15 @@ public class JSONHandler {
 		return false;
 	}
 	
-	public boolean uploadLog(long this_sync, String te_username, String schemaversion, String company_name) {
+	public boolean uploadLog(long this_sync, String te_username, String schemaversion, String company_name, String appid) {
     	String contents = null;
     	FileHandler filehandler = new FileHandler(ctx);
     	contents = filehandler.getLog();
     	
     	if (contents == null) {
     		return false;
+    	} else {
+    		
     	}
     	
     	if (te_username == null || te_username.isEmpty()) {
@@ -324,7 +326,7 @@ public class JSONHandler {
     		return false;
     	}
     	
-    	String url = HOST+"/uploadlog";
+    	String url = HOST+"/uploadlog";	
 		JSONObject result, post;
 		post = new JSONObject();
 		try {
@@ -333,6 +335,7 @@ public class JSONHandler {
 			post.put("time", this_sync);
 			post.put("contents", contents);
 			post.put("company_name", company_name);
+			post.put("application_id", appid);
 			
 		} catch (JSONException e) {
 			e.printStackTrace();

@@ -17,6 +17,7 @@ import java.nio.channels.FileChannel;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.os.Environment;
+import android.util.Log;
 
 /**
  * @author callum
@@ -222,7 +223,8 @@ public class FileHandler {
 		StringBuffer fileContents = new StringBuffer("");
 		
 		fileSize = logfile.length();
-		if (fileSize <= 0) {
+		//Log.d(TAG, "LOG FILE SIZE:"+fileSize);
+		if (fileSize <= 0|| fileSize==36) {
 			return null;
 		}
 		
