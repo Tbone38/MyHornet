@@ -49,6 +49,7 @@ KEY:
 			Added allowed_access column
 			Added notes column
 			Added staffid column
+		Cancel Membership - date for termination alignment.
  
             TODO:
                 Handle permissions/Roles for different staff, to limit what certain staff can see.
@@ -65,7 +66,10 @@ KEY:
 		Fix Connection handling in Flask API.
 		Add better ErrorLog to Flask API.
 		Fix Times/(possibly dates?) disappearing everytime we update the app.
-		The Sync Table is going to break backwards compatability. What do?
+		Record Emails/SMS send from app in gymmaster device.
+		Can add Blank notes.
+		Assign TAG should give a warning if you try and assign a TAG to a member who already has a tag (should ask if you want to wipe current tag)
+		Should stop assigning tags after one has been assigned.
     
     
     v119:

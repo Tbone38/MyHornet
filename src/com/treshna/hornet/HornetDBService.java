@@ -4452,9 +4452,12 @@ public class HornetDBService extends Service {
     		}
     		rs.close();
     	} catch (SQLException e) {
+			//if we got here either our connection was bad, or our query was bad.
+			//if the query was bad, then we're probably using an older version of GymMaster (not > 320)
+			//in which case, continue!.
     		statusMessage = e.getLocalizedMessage();
     		Log.e(TAG, "", e);
-    		return false;
+    		return true;
     	}
     	
     	return true;
