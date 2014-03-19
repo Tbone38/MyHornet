@@ -137,6 +137,7 @@
         <activity android:name="Report_Date_Selector_Activity"></activity>
         <activity android:name="ReportDateOptionsActivity"></activity>
         <activity android:name="ReportColumnOptionsActivity"></activity>
+        <activity android:name="ReportMainActivity"></activity>
     </application>
 
 </manifest>
