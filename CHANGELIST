@@ -70,6 +70,7 @@ KEY:
 		Can add Blank notes.
 		Assign TAG should give a warning if you try and assign a TAG to a member who already has a tag (should ask if you want to wipe current tag)
 		Should stop assigning tags after one has been assigned.
+		Test Access Control, does it/can we get it working with the GymMaster Access/Security Control?
     
     
     v119:
