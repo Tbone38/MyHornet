@@ -61,7 +61,7 @@ public class ReportDateOptionsActivity extends Activity {
 		reportData.put("start_date",this.dateStringFromPicker(startDatePicker));
 		reportData.put("end_date", this.dateStringFromPicker(endDatePicker));
 		
-		Intent reportColumnsIntent = new Intent(this.getApplicationContext(), ReportColumnOptionsActivity.class);
+		Intent reportColumnsIntent = new Intent(this.getApplicationContext(), ReportMainActivity.class);
 		//Pushing UI and upstream data through to the report column options intent..
 		for (Map.Entry<String,Object> param: reportData.entrySet()){
 			//Casting the date values to time-stamp to pass through the intent..

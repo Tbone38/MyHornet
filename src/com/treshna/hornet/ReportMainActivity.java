@@ -1,80 +1,126 @@
 package com.treshna.hornet;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import android.annotation.TargetApi;
+import android.app.ActionBar.LayoutParams;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 
-public class ReportColumnOptionsActivity extends ListActivity {
+public class ReportMainActivity extends ListActivity {
 	private ArrayList<HashMap<String,String>> resultMapList = null;
+	private String reportName = null;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		this.setContentView(R.layout.report_column_options);
+		this.setContentView(R.layout.report_main_list);
 		//Fetching data passed through from the preceding Activities..
 		Intent intent = this.getIntent();
 		Date startDate  =  new Date(intent.getLongExtra("start_date", 0));
 		Date endDate  =  new Date(intent.getLongExtra("end_date", 0));
 		String reportId = intent.getStringExtra("report_id");
-		String reportName = intent.getStringExtra("report_name");
+		reportName = intent.getStringExtra("report_name");
 		String functionName = intent.getStringExtra("report_function_name");
-		Button createBtn = (Button) this.findViewById(R.id.btnCreateReport);
 		//removes the parameter refs from the function name
 		functionName = functionName.substring(0, functionName.indexOf('('));
 	    System.out.println("Function: " + functionName);
-	    createBtn.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				 getCheckedColumns();
-			}
-		});
 	    this.getReportData(functionName, startDate , endDate);
 	}
 	
 	private void buildListAdapter() {
 		if (resultMapList.size() > 0){
 			ListView listView = this.getListView();
+			TextView textView  = null;
+			TextView reportNameTextView = (TextView) findViewById(R.id.report_main_title);
+			reportNameTextView.setText(reportName);
+			LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams( LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT );
+			BigDecimal valueCharLength = null;
+			HashMap<String,String> dataRow = resultMapList.get(0);
+			LinearLayout reportHeadingLayout = (LinearLayout) this.findViewById(R.id.report_list_headings);
+			for (Entry<String,String> row : dataRow.entrySet()){
+				
+				if (row.getValue()!= null && !row.getValue().isEmpty()) {
+					
+					textView =  new TextView(ReportMainActivity.this);
+					valueCharLength = new BigDecimal(row.getValue().toString().length());
+					valueCharLength.setScale(BigDecimal.ROUND_DOWN);
+					int textBaseMargin = 5;
+					int colMargin = textBaseMargin;
+					System.out.println("Value Length: " + valueCharLength.intValue());
+					if (row.getKey().length() < valueCharLength.intValue())
+					{
+						colMargin  += valueCharLength.intValue(); 
+					}
+					System.out.println("Key Length: " + row.getKey().length());
+					System.out.println("Col Margin: " + colMargin);		
+					layoutParams = new LinearLayout.LayoutParams( 0, LayoutParams.WRAP_CONTENT, 1);
+					layoutParams.setMargins(textBaseMargin, 0, 0, 0);
+					textView.setLayoutParams(layoutParams);
+					textView.setText(row.getKey());
+					reportHeadingLayout.addView(textView);
+				}
+			}
+			
+			ListAdapter listAdapter = new ArrayAdapter<HashMap<String,String>>(ReportMainActivity.this,R.layout.report_main_row,
+					this.resultMapList){
 
-			ListAdapter listAdapter = new ArrayAdapter<HashMap<String,String>>(ReportColumnOptionsActivity.this,R.layout.report_column_options_row,
-					this.getResultColumnNames()){
-
+						@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 						@Override
 						public View getView(int position, View convertView,
 								ViewGroup parent) {
 						//Dynamically binding column names to textView text
-						LayoutInflater inflater = LayoutInflater.from(getContext());
+						TextView textView  = null;
+						ArrayList<View> viewsList = new ArrayList<View>();
+						//LayoutInflater inflater = LayoutInflater.from(getContext());
 						HashMap<String,String> dataRow =  this.getItem(position);
+						//convertView  = parent.findViewById(R.layout.report_main_row);
+						//convertView  = inflater.inflate(R.layout.report_main_row, null);
+						LinearLayout linLayout = new LinearLayout(ReportMainActivity.this);
+						linLayout.setOrientation(LinearLayout.HORIZONTAL);
+						AbsListView.LayoutParams listLayoutParams = new AbsListView.LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT);
+						LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams( LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT );
+						linLayout.setLayoutParams(listLayoutParams);
+						
 						for (Entry<String,String> row : dataRow.entrySet()){
-							convertView  = inflater.inflate(R.layout.report_column_options_row, null);
-							TextView columnName	 = (TextView) convertView.findViewById(R.id.report_column_name);
-							CheckBox columnBox = (CheckBox) convertView.findViewById(R.id.column_checkBox);
-							//Attaching a tag with column name value to the checkBox
-							columnBox.setTag(row.getValue());
-							columnName.setText(row.getValue());
+							layoutParams = new LinearLayout.LayoutParams( 0,LayoutParams.WRAP_CONTENT,3);
+							//Dynamically generate text views for each column name..
+								//System.out.println("Column Name Main Row: " + row.getKey());
+								textView =  new TextView(ReportMainActivity.this);
+								layoutParams.setMargins(5, 0, 0, 0);
+								textView.setLayoutParams(layoutParams);
+								textView.setText(row.getValue());
+							if (row.getValue()!= null && !row.getValue().isEmpty()) {
+								linLayout.addView(textView);
+								//viewsList.add(textView);
+								//convertView.addTouchables(viewsList);
+							}
 						}	
 							
-							return convertView;
+							return linLayout;
 						}
 						
 			        };
@@ -95,7 +141,7 @@ public class ReportColumnOptionsActivity extends ListActivity {
 		ArrayList<HashMap<String,String>> colNamesList = new ArrayList<HashMap<String,String>>();
 		
 		for (Entry<String, String> row : rowMap.entrySet()){
-			System.out.println("Column Name: " + row.getKey());
+			//System.out.println("Column Name: " + row.getKey());
 			colName = new HashMap<String,String>();
 			colName.put("column_name", row.getKey());
 			colNamesList.add(colName);
@@ -138,13 +184,13 @@ public class ReportColumnOptionsActivity extends ListActivity {
 		
 		
 		protected void onPreExecute() {
-			progress = ProgressDialog.show(ReportColumnOptionsActivity.this, "Retrieving..", 
+			progress = ProgressDialog.show(ReportMainActivity.this, "Retrieving..", 
 					 "Retrieving Report Date By Date Range...");
 		}
 		
 		@Override
 		protected Boolean doInBackground(String... params) {
-			resultMapList = sync.getReportDataByDateRange(ReportColumnOptionsActivity.this, functionName, startDate, endDate);
+			resultMapList = sync.getReportDataByDateRange(ReportMainActivity.this, functionName, startDate, endDate);
 	        return true;
 		}
 		
@@ -166,10 +212,10 @@ public class ReportColumnOptionsActivity extends ListActivity {
 				}*/
 				//Calls back to the owning activity to build the adapter
 				//ReportColumnOptionsActivity.this.buildListAdapter();
-				ReportColumnOptionsActivity.this.buildListAdapter();
+				ReportMainActivity.this.buildListAdapter();
 				
 			} else {
-				AlertDialog.Builder builder = new AlertDialog.Builder(ReportColumnOptionsActivity.this);
+				AlertDialog.Builder builder = new AlertDialog.Builder(ReportMainActivity.this);
 				builder.setTitle("Error Occurred")
 				.setMessage(sync.getStatus())
 				.setPositiveButton("OK", null)
