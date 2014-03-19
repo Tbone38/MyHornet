@@ -94,7 +94,6 @@ public class ReportMainActivity extends ListActivity {
 								ViewGroup parent) {
 						//Dynamically binding column names to textView text
 						TextView textView  = null;
-						ArrayList<View> viewsList = new ArrayList<View>();
 						//LayoutInflater inflater = LayoutInflater.from(getContext());
 						HashMap<String,String> dataRow =  this.getItem(position);
 						//convertView  = parent.findViewById(R.layout.report_main_row);
@@ -115,8 +114,6 @@ public class ReportMainActivity extends ListActivity {
 								textView.setText(row.getValue());
 							if (row.getValue()!= null && !row.getValue().isEmpty()) {
 								linLayout.addView(textView);
-								//viewsList.add(textView);
-								//convertView.addTouchables(viewsList);
 							}
 						}	
 							
@@ -134,37 +131,6 @@ public class ReportMainActivity extends ListActivity {
 		syncNames.execute(null,null);
 		
 	}
-	
-	private ArrayList<HashMap<String,String>> getResultColumnNames () {
-		HashMap<String,String> rowMap = resultMapList.get(0);
-		HashMap<String,String> colName = null;
-		ArrayList<HashMap<String,String>> colNamesList = new ArrayList<HashMap<String,String>>();
-		
-		for (Entry<String, String> row : rowMap.entrySet()){
-			//System.out.println("Column Name: " + row.getKey());
-			colName = new HashMap<String,String>();
-			colName.put("column_name", row.getKey());
-			colNamesList.add(colName);
-		}
-		return colNamesList;
-	}
-	
-	private void getCheckedColumns () {
-	  ArrayList<String> checkedColumns = null;
-	  ListView listView = this.getListView();
-	  View view = null;
-	  CheckBox checkBox = null;
-	  for (int i = 0; i < listView.getCount(); i++){
-		  	view = listView.getChildAt(i);
-		  	checkBox = (CheckBox) view.findViewById(R.id.column_checkBox);
-		  	if (checkBox.isChecked())
-		  		System.out.println(checkBox.getTag());
-		  		checkedColumns.add((String) checkBox.getTag());
-		  	
-	  }    	  
-	}
-	
-	
 	
 	protected class GetReportDataByDateRange extends AsyncTask<String, Integer, Boolean> {
 		private ProgressDialog progress;
