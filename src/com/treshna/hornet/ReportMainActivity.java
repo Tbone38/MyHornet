@@ -96,6 +96,50 @@ public class ReportMainActivity extends ListActivity {
 						TextView textView  = null;
 						//LayoutInflater inflater = LayoutInflater.from(getContext());
 						HashMap<String,String> dataRow =  this.getItem(position);
+						//Loops to find all which columns are all null 
+						boolean allRowsNull = false;
+						int nullCount = 0;
+						int colIndex = 0;
+						String colName = "";
+						HashMap<String,Integer> colNullCount = new HashMap<String,Integer>();
+						int [] allNullsColIndices = new int[resultMapList.get(0).size() -1];
+						
+						for (int  i = 0; i< resultMapList.size(); i ++){
+							
+							for (Entry<String,String> col : dataRow.entrySet()){
+								if (col.getKey().compareTo("actiontype")== 0) {
+									
+								if (position == 1){
+									System.out.println("Action Type: " + col.getValue());
+									}
+								}
+								if (!colNullCount.containsKey(col.getKey())){
+									colNullCount.put(col.getKey(), 1); 
+								}
+								else
+								{
+									if (col.getValue()== null || col.getValue().isEmpty() ){
+										colNullCount.put(col.getKey(),colNullCount.get(col.getKey() )+ 1 );
+									}
+																	
+									
+								}						
+								
+							}
+									
+							
+						}
+					
+					if (position == 1){
+						
+						for (Entry<String,Integer> col : colNullCount.entrySet()){
+							//System.out.println("Col Name: " + col.getKey() + "Col Count: " + col.getValue());
+						}
+						
+						//System.out.println("List Size: " + resultMapList.size());
+					}
+					
+					
 						//convertView  = parent.findViewById(R.layout.report_main_row);
 						//convertView  = inflater.inflate(R.layout.report_main_row, null);
 						LinearLayout linLayout = new LinearLayout(ReportMainActivity.this);
@@ -104,16 +148,17 @@ public class ReportMainActivity extends ListActivity {
 						LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams( LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT );
 						linLayout.setLayoutParams(listLayoutParams);
 						
-						for (Entry<String,String> row : dataRow.entrySet()){
+						for (Entry<String,String> col : dataRow.entrySet()){
 							layoutParams = new LinearLayout.LayoutParams( 0,LayoutParams.WRAP_CONTENT,3);
 							//Dynamically generate text views for each column name..
 								//System.out.println("Column Name Main Row: " + row.getKey());
 								textView =  new TextView(ReportMainActivity.this);
 								layoutParams.setMargins(5, 0, 0, 0);
 								textView.setLayoutParams(layoutParams);
-								textView.setText(row.getValue());
-							if (row.getValue()!= null && !row.getValue().isEmpty()) {
+								textView.setText(col.getValue());
+							if (colNullCount.get(col.getKey()) != resultMapList.size()) {
 								linLayout.addView(textView);
+								
 							}
 						}	
 							
