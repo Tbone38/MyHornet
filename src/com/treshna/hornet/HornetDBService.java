@@ -2907,7 +2907,7 @@ public class HornetDBService extends Service {
 	
     }
   
-  public ArrayList<HashMap<String, String>>  getReportDataByDateRange(Context context,String functionName, Date startDate, Date endDate){
+  public ArrayList<HashMap<String, String>>  getReportDataByDateRange(Context context,int report_id, String functionName, Date startDate, Date endDate){
   	
   	this.setup(context);
   	ArrayList<HashMap<String, String>> resultMapList  = null;
@@ -2918,7 +2918,7 @@ public class HornetDBService extends Service {
   	}
   	
   	try {
-			result = this.connection.getReportDataByDateRange(functionName, startDate, endDate);
+			result = this.connection.getReportDataByDateRange(report_id, functionName, startDate, endDate);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -2960,6 +2960,32 @@ public class HornetDBService extends Service {
 		return resultMapList;
 	
     }
+ 
+ public ArrayList<HashMap<String, String>>  getHumanReadableColumnNameByReportId(Context context, int reportId){
+ 	
+ 	this.setup(context);
+ 	ArrayList<HashMap<String, String>> resultMapList  = null;
+ 	ResultSet result = null;
+ 
+ 	
+ 	if (!this.openConnection()){
+ 			
+ 	}
+ 	
+ 	try {
+			result = this.connection.getReportNamesByReportTypeId(reportId);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+ 	
+ 	
+ 	resultMapList = this.resultSetToMapList(result);
+		   
+ 		this.closeConnection();
+ 	
+		return resultMapList;
+	
+ }
     
     
     

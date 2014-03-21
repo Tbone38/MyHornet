@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import com.treshna.hornet.ReportColumnOptionsActivity.GetReportDataByDateRange;
+
 import android.annotation.TargetApi;
 import android.app.ActionBar.LayoutParams;
 import android.app.AlertDialog;
@@ -33,6 +35,7 @@ import android.widget.TextView;
 
 public class ReportMainActivity extends ListActivity {
 	private ArrayList<HashMap<String,String>> resultMapList = null;
+	private ArrayList<HashMap<String,String>> columnsMapList = null;
 	private String reportName = null;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,17 +45,17 @@ public class ReportMainActivity extends ListActivity {
 		Intent intent = this.getIntent();
 		Date startDate  =  new Date(intent.getLongExtra("start_date", 0));
 		Date endDate  =  new Date(intent.getLongExtra("end_date", 0));
-		String reportId = intent.getStringExtra("report_id");
+		int reportId = Integer.parseInt(intent.getStringExtra("report_id"));
 		reportName = intent.getStringExtra("report_name");
 		String functionName = intent.getStringExtra("report_function_name");
 		//removes the parameter refs from the function name
 		functionName = functionName.substring(0, functionName.indexOf('('));
-	    System.out.println("Function: " + functionName);
-	    this.getReportData(functionName, startDate , endDate);
+	    this.getReportData(reportId, functionName, startDate , endDate);
 	}
 	
 	private void buildListAdapter() {
 		if (resultMapList.size() > 0){
+			printColumnsList();
 			ListView listView = this.getListView();
 			TextView textView  = null;
 			TextView reportNameTextView = (TextView) findViewById(R.id.report_main_title);
@@ -70,13 +73,13 @@ public class ReportMainActivity extends ListActivity {
 					valueCharLength.setScale(BigDecimal.ROUND_DOWN);
 					int textBaseMargin = 5;
 					int colMargin = textBaseMargin;
-					System.out.println("Value Length: " + valueCharLength.intValue());
+					//System.out.println("Value Length: " + valueCharLength.intValue());
 					if (row.getKey().length() < valueCharLength.intValue())
 					{
 						colMargin  += valueCharLength.intValue(); 
 					}
-					System.out.println("Key Length: " + row.getKey().length());
-					System.out.println("Col Margin: " + colMargin);		
+					//System.out.println("Key Length: " + row.getKey().length());
+					//System.out.println("Col Margin: " + colMargin);		
 					layoutParams = new LinearLayout.LayoutParams( 0, LayoutParams.WRAP_CONTENT, 1);
 					layoutParams.setMargins(textBaseMargin, 0, 0, 0);
 					textView.setLayoutParams(layoutParams);
@@ -97,22 +100,12 @@ public class ReportMainActivity extends ListActivity {
 						//LayoutInflater inflater = LayoutInflater.from(getContext());
 						HashMap<String,String> dataRow =  this.getItem(position);
 						//Loops to find all which columns are all null 
-						boolean allRowsNull = false;
-						int nullCount = 0;
-						int colIndex = 0;
-						String colName = "";
 						HashMap<String,Integer> colNullCount = new HashMap<String,Integer>();
-						int [] allNullsColIndices = new int[resultMapList.get(0).size() -1];
 						
 						for (int  i = 0; i< resultMapList.size(); i ++){
 							
 							for (Entry<String,String> col : dataRow.entrySet()){
-								if (col.getKey().compareTo("actiontype")== 0) {
-									
-								if (position == 1){
-									System.out.println("Action Type: " + col.getValue());
-									}
-								}
+
 								if (!colNullCount.containsKey(col.getKey())){
 									colNullCount.put(col.getKey(), 1); 
 								}
@@ -120,14 +113,9 @@ public class ReportMainActivity extends ListActivity {
 								{
 									if (col.getValue()== null || col.getValue().isEmpty() ){
 										colNullCount.put(col.getKey(),colNullCount.get(col.getKey() )+ 1 );
-									}
-																	
-									
-								}						
-								
-							}
-									
-							
+									}																										
+								}														
+							}																
 						}
 					
 					if (position == 1){
@@ -170,29 +158,47 @@ public class ReportMainActivity extends ListActivity {
 	  }
 	}
 	
-	protected void getReportData (String functionName, Date startDate, Date endDate) {
+	private void printColumnsList() {
 		
-		GetReportDataByDateRange syncNames = new GetReportDataByDateRange(functionName, startDate , endDate);
+	for (HashMap<String,String> row: columnsMapList){
+		for (Entry<String,String> col : row.entrySet()){
+			System.out.println(col.getKey() + ": " + col.getValue());
+		}		
+	}
+
+	}
+	
+	
+	protected void getReportData (int reportId, String functionName, Date startDate, Date endDate) {
+		
+		GetReportDataByDateRange syncNames = new GetReportDataByDateRange(reportId, functionName, startDate , endDate);
 		syncNames.execute(null,null);
 		
 	}
+	protected void getColumnsData(int reportId){
+		GetHumanReadableColumnNameByReportId syncData = new GetHumanReadableColumnNameByReportId(reportId);
+		syncData.execute(null,null);	
+	}
+	
+	
 	
 	protected class GetReportDataByDateRange extends AsyncTask<String, Integer, Boolean> {
 		private ProgressDialog progress;
 		private HornetDBService sync;
 		private ResultSet result = null;
+		private int reportId= 0;
 		private String functionName = null;
 		private Date startDate = null;
 		private Date endDate = null;
 		
 	
-		public GetReportDataByDateRange (String functionName, Date startDate, Date endDate) {
+		public GetReportDataByDateRange (int reportId, String functionName, Date startDate, Date endDate) {
 			sync = new HornetDBService();
+			this.reportId = reportId;
 			this.functionName = functionName;
 			this.startDate = startDate;
 			this.endDate = endDate;
 		}
-		
 		
 		protected void onPreExecute() {
 			progress = ProgressDialog.show(ReportMainActivity.this, "Retrieving..", 
@@ -201,7 +207,7 @@ public class ReportMainActivity extends ListActivity {
 		
 		@Override
 		protected Boolean doInBackground(String... params) {
-			resultMapList = sync.getReportDataByDateRange(ReportMainActivity.this, functionName, startDate, endDate);
+			resultMapList = sync.getReportDataByDateRange(ReportMainActivity.this,reportId, functionName, startDate, endDate);
 	        return true;
 		}
 		
@@ -223,7 +229,7 @@ public class ReportMainActivity extends ListActivity {
 				}*/
 				//Calls back to the owning activity to build the adapter
 				//ReportColumnOptionsActivity.this.buildListAdapter();
-				ReportMainActivity.this.buildListAdapter();
+				ReportMainActivity.this.getColumnsData(reportId);
 				
 			} else {
 				AlertDialog.Builder builder = new AlertDialog.Builder(ReportMainActivity.this);
@@ -234,4 +240,58 @@ public class ReportMainActivity extends ListActivity {
 			}
 	    }
 	 }
+	protected class GetHumanReadableColumnNameByReportId extends AsyncTask<String, Integer, Boolean> {
+		private ProgressDialog progress;
+		private HornetDBService sync;
+		private ResultSet result = null;
+		private int reportId= 0;
+
+		
+	
+		public GetHumanReadableColumnNameByReportId (int reportId) {
+			sync = new HornetDBService();
+			this.reportId = reportId;
+		}
+		
+		protected void onPreExecute() {
+			progress = ProgressDialog.show(ReportMainActivity.this, "Retrieving..", 
+					 "Retrieving Human Readable Column Names"	+ "...");
+		}
+		
+		@Override
+		protected Boolean doInBackground(String... params) {
+			columnsMapList = sync.getHumanReadableColumnNameByReportId(ReportMainActivity.this,reportId);
+	        return true;
+		}
+		
+
+		protected void onPostExecute(Boolean success) {
+			progress.dismiss();
+			if (success) {
+			/*
+				System.out.println("\nReport-Type_Data");
+				
+				System.out.println("Result List Size: " + resultMapList.size());
+				
+				for (HashMap<String,String> resultMap: resultMapList){
+				
+					for (HashMap.Entry entry: resultMap.entrySet()){
+						 System.out.println("Field: " + entry.getKey() + " Value: " + entry.getValue());					 
+					}
+				
+				}*/
+				//Calls back to the owning activity to build the adapter
+				//ReportColumnOptionsActivity.this.buildListAdapter();
+				  ReportMainActivity.this.buildListAdapter();
+				
+			} else {
+				AlertDialog.Builder builder = new AlertDialog.Builder(ReportMainActivity.this);
+				builder.setTitle("Error Occurred")
+				.setMessage(sync.getStatus())
+				.setPositiveButton("OK", null)
+				.show();
+			}
+	    }
+	 }
+		
 }
