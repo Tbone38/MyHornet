@@ -1142,7 +1142,7 @@ public class JDBCConnection {
 	    return this.pStatement.executeQuery();
     }
     
-    public ResultSet getReportDataByDateRange(String functionName, Date startDate, Date endDate) throws SQLException {
+    public ResultSet getReportDataByDateRange(int report_id, String functionName, Date startDate, Date endDate) throws SQLException {
     	try {
     		con.clearWarnings();
     	String query = "SELECT * from "+functionName+"(?,?)";
@@ -1169,8 +1169,7 @@ public class JDBCConnection {
     		throw new SQLException(e);
     	}
     }
-    
-    
+     
     public SQLWarning getWarnings() throws SQLException, NullPointerException {
     	return con.getWarnings();
     }

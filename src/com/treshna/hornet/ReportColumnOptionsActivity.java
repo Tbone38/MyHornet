@@ -33,7 +33,7 @@ public class ReportColumnOptionsActivity extends ListActivity {
 		Intent intent = this.getIntent();
 		Date startDate  =  new Date(intent.getLongExtra("start_date", 0));
 		Date endDate  =  new Date(intent.getLongExtra("end_date", 0));
-		String reportId = intent.getStringExtra("report_id");
+		int reportId = Integer.parseInt(intent.getStringExtra("report_id"));
 		String reportName = intent.getStringExtra("report_name");
 		String functionName = intent.getStringExtra("report_function_name");
 		Button createBtn = (Button) this.findViewById(R.id.btnCreateReport);
@@ -80,12 +80,13 @@ public class ReportColumnOptionsActivity extends ListActivity {
 	  }
 	}
 	
-	protected void getReportData (String functionName, Date startDate, Date endDate) {
+	protected void getReportData ( String functionName, Date startDate, Date endDate) {
 		
-		GetReportDataByDateRange syncNames = new GetReportDataByDateRange(functionName, startDate , endDate);
-		syncNames.execute(null,null);
+		GetReportDataByDateRange syncData = new GetReportDataByDateRange(functionName, startDate , endDate);
+		syncData.execute(null,null);
 		
 	}
+
 	
 	private ArrayList<HashMap<String,String>> getResultColumnNames () {
 		HashMap<String,String> rowMap = resultMapList.get(0);
@@ -132,6 +133,7 @@ public class ReportColumnOptionsActivity extends ListActivity {
 			this.functionName = functionName;
 			this.startDate = startDate;
 			this.endDate = endDate;
+			
 		}
 		
 		
@@ -142,7 +144,7 @@ public class ReportColumnOptionsActivity extends ListActivity {
 		
 		@Override
 		protected Boolean doInBackground(String... params) {
-			resultMapList = sync.getReportDataByDateRange(ReportColumnOptionsActivity.this, functionName, startDate, endDate);
+			resultMapList = sync.getReportDataByDateRange(ReportColumnOptionsActivity.this,functionName, startDate, endDate);
 	        return true;
 		}
 		
