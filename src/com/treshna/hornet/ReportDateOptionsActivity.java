@@ -8,8 +8,12 @@ import java.util.Locale;
 import java.util.Map;
 
 
+
+
+
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -21,6 +25,7 @@ public class ReportDateOptionsActivity extends Activity {
 	private HashMap<String,Object> reportData = new HashMap<String,Object>() ;
 	private DatePicker startDatePicker = null;
 	private DatePicker endDatePicker = null;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		this.setContentView(R.layout.report_user_date_options);
@@ -34,6 +39,8 @@ public class ReportDateOptionsActivity extends Activity {
 		reportData.put("report_id", intent.getStringExtra("report_id"));
 		reportData.put("report_name", intent.getStringExtra("report_name"));
 		reportData.put("report_function_name", intent.getStringExtra("report_function_name"));
+	
+		
 		nextButton.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
@@ -54,8 +61,7 @@ public class ReportDateOptionsActivity extends Activity {
 		return cal.getTime();	
 	}
 	
-	
-	
+
 	private void renderReport(){
 		
 		reportData.put("start_date",this.dateStringFromPicker(startDatePicker));

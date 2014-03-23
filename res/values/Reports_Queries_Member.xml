@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+     <string-array name ="Report_Id_1_Query">
+                	         
+	  <item>Current Members| FROM get_all_members(?,?)AS fun left join member on fun.mid=member.id left join membership on fun.msid=membership.id left join programme on fun.pid=programme.id
+	    	 left join programmegroup on fun.pgid=programmegroup.id left join member_view on fun.mid=member_view.id left join staff on fun.ptid=staff.id left join promotion on fun.pmtid=promotion.promotion_id left join involvement on fun.involvementid=involvement.id</item>
+     </string-array>
+     
+     <string-array name = "Report_Id_1_Fields">
+         
+         <item >Member ID|member.id</item>
+         
+         <item >Name|get_name(member.firstname, member.surname) AS \"Name\"</item>
+         
+
+         <item>Mobile|member.phonecell AS \"Mobile\"</item>
+         
+
+          
+         <item>Programme|programme.name AS \"Programme\"</item>
+         
+
+          
+         <item>Start|membership.startdate AS \"Start\"</item>
+         
+
+         
+         <item>End|membership.enddate AS \"End\"</item>
+         
+
+          
+         <item>Fee|membership.paymentdue AS \"Fee\"</item>
+         
+
+          
+         <item>Price Desc|price_desc(0::text::money, programme.id) AS \"Price Desc\"</item>
+         
+
+          
+         <item>Last Visit|member_last_visit(member.id) AS \"Last Visit\"</item>
+
+          
+         <item>Happy|get_happiness(member.id) AS \"Happy\"</item>
+         
+     </string-array>
+    
+    
+    
+</resources>

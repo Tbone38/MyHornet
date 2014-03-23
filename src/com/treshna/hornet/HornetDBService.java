@@ -2918,7 +2918,7 @@ public class HornetDBService extends Service {
   	}
   	
   	try {
-			result = this.connection.getReportDataByDateRange(functionName, startDate, endDate);
+			result = this.connection.getReportDataByDateRangeTwo(functionName, startDate, endDate);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

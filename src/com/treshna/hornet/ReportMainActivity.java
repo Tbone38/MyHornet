@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import android.annotation.TargetApi;
@@ -34,6 +35,8 @@ import android.widget.TextView;
 public class ReportMainActivity extends ListActivity {
 	private ArrayList<HashMap<String,String>> resultMapList = null;
 	private String reportName = null;
+	private String mainQuery = null;
+	private HashMap<String,String> fieldsMap  = null;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -48,7 +51,31 @@ public class ReportMainActivity extends ListActivity {
 		//removes the parameter refs from the function name
 		functionName = functionName.substring(0, functionName.indexOf('('));
 	    System.out.println("Function: " + functionName);
-	    this.getReportData(functionName, startDate , endDate);
+	    this.mainQuery = ReportQueryResources.getMainQuery(this.getApplicationContext(),reportId);	
+		this.fieldsMap = ReportQueryResources.getAllQueryFields(this.getApplicationContext(),reportId);
+		this.buildQuery();
+		System.out.println(mainQuery);
+		this.getReportData(mainQuery, startDate , endDate);
+	    
+	}
+	
+	private void buildQuery(){
+		StringBuilder queryBuilder = new StringBuilder();
+		queryBuilder.append("SELECT ");
+		int index = 0;
+		for (Map.Entry field: fieldsMap.entrySet()){
+			//if ((field.getKey().toString().compareTo("Member ID")==0) || (index % 2 == 0) ){
+				queryBuilder.append(field.getValue());
+				queryBuilder.append(',');
+				queryBuilder.append(' ');
+			//}
+			index++;
+		}
+		//remove the last comma...
+		queryBuilder.replace(queryBuilder.length() - 2, queryBuilder.length(), " ");
+		queryBuilder.append(mainQuery);
+		
+		mainQuery = queryBuilder.toString();
 	}
 	
 	private void buildListAdapter() {
@@ -63,7 +90,7 @@ public class ReportMainActivity extends ListActivity {
 			LinearLayout reportHeadingLayout = (LinearLayout) this.findViewById(R.id.report_list_headings);
 			for (Entry<String,String> row : dataRow.entrySet()){
 				
-				if (row.getValue()!= null && !row.getValue().isEmpty()) {
+				if (row.getValue()!= null && !row.getValue().isEmpty() && !(row.getKey().toString().compareTo("id")==0)) {
 					
 					textView =  new TextView(ReportMainActivity.this);
 					valueCharLength = new BigDecimal(row.getValue().toString().length());
@@ -95,51 +122,8 @@ public class ReportMainActivity extends ListActivity {
 						//Dynamically binding column names to textView text
 						TextView textView  = null;
 						//LayoutInflater inflater = LayoutInflater.from(getContext());
-						HashMap<String,String> dataRow =  this.getItem(position);
 						//Loops to find all which columns are all null 
-						boolean allRowsNull = false;
-						int nullCount = 0;
-						int colIndex = 0;
-						String colName = "";
-						HashMap<String,Integer> colNullCount = new HashMap<String,Integer>();
-						int [] allNullsColIndices = new int[resultMapList.get(0).size() -1];
-						
-						for (int  i = 0; i< resultMapList.size(); i ++){
-							
-							for (Entry<String,String> col : dataRow.entrySet()){
-								if (col.getKey().compareTo("actiontype")== 0) {
-									
-								if (position == 1){
-									System.out.println("Action Type: " + col.getValue());
-									}
-								}
-								if (!colNullCount.containsKey(col.getKey())){
-									colNullCount.put(col.getKey(), 1); 
-								}
-								else
-								{
-									if (col.getValue()== null || col.getValue().isEmpty() ){
-										colNullCount.put(col.getKey(),colNullCount.get(col.getKey() )+ 1 );
-									}
-																	
-									
-								}						
-								
-							}
-									
-							
-						}
-					
-					if (position == 1){
-						
-						for (Entry<String,Integer> col : colNullCount.entrySet()){
-							//System.out.println("Col Name: " + col.getKey() + "Col Count: " + col.getValue());
-						}
-						
-						//System.out.println("List Size: " + resultMapList.size());
-					}
-					
-					
+						HashMap<String,String> dataRow = this.getItem(position);
 						//convertView  = parent.findViewById(R.layout.report_main_row);
 						//convertView  = inflater.inflate(R.layout.report_main_row, null);
 						LinearLayout linLayout = new LinearLayout(ReportMainActivity.this);
@@ -149,26 +133,50 @@ public class ReportMainActivity extends ListActivity {
 						linLayout.setLayoutParams(listLayoutParams);
 						
 						for (Entry<String,String> col : dataRow.entrySet()){
-							layoutParams = new LinearLayout.LayoutParams( 0,LayoutParams.WRAP_CONTENT,3);
-							//Dynamically generate text views for each column name..
-								//System.out.println("Column Name Main Row: " + row.getKey());
-								textView =  new TextView(ReportMainActivity.this);
-								layoutParams.setMargins(5, 0, 0, 0);
-								textView.setLayoutParams(layoutParams);
-								textView.setText(col.getValue());
-							if (colNullCount.get(col.getKey()) != resultMapList.size()) {
-								linLayout.addView(textView);
-								
+									
+							if (col.getValue()!= null && !col.getValue().isEmpty() && !(col.getKey().toString().compareTo("id")==0)) {								
+								  	layoutParams = new LinearLayout.LayoutParams( 0,LayoutParams.WRAP_CONTENT,3);
+									//Dynamically generate text views for each column name..
+									//System.out.println("Column Name Main Row: " + row.getKey());
+									textView =  new TextView(ReportMainActivity.this);
+									layoutParams.setMargins(5, 0, 0, 0);
+									textView.setLayoutParams(layoutParams);
+									textView.setText(col.getValue());
+									linLayout.addView(textView);
 							}
 						}	
 							
 							return linLayout;
 						}
 						
+						private boolean isColumnAllNull(String colName) {
+							HashMap<String,Integer> colNullCount = new HashMap<String,Integer>();
+							
+							for (HashMap<String,String> dataRow: resultMapList){
+								
+								for (Entry<String,String> col : dataRow.entrySet()){
+
+									if (!colNullCount.containsKey(col.getKey())){
+										colNullCount.put(col.getKey(), 1); 
+									}
+									else
+									{
+										if (col.getValue()== null || col.getValue().isEmpty() ){
+											colNullCount.put(col.getKey(),colNullCount.get(col.getKey() )+ 1 );
+										}																										
+									}														
+								}																
+							}
+							
+							 return colNullCount.get(colName) == resultMapList.size();
+						}
+						
+						
 			        };
 			this.setListAdapter(listAdapter);
 	  }
 	}
+	
 	
 	protected void getReportData (String functionName, Date startDate, Date endDate) {
 		

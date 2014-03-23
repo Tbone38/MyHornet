@@ -1157,6 +1157,19 @@ public class JDBCConnection {
     	}
     }
     
+    public ResultSet getReportDataByDateRangeTwo(String mainQuery, Date startDate, Date endDate) throws SQLException {
+    	try {
+    		con.clearWarnings(); 	
+    	this.pStatement = con.prepareStatement(mainQuery);
+    	this.pStatement.setDate(1, new java.sql.Date(startDate.getTime()));
+    	this.pStatement.setDate(2, new java.sql.Date(endDate.getTime()));    	
+    	return this.pStatement.executeQuery();
+    	} catch (SQLException e) {
+    		Log.e(TAG, "SQL ERROR:"+con.getWarnings(), e);
+    		throw new SQLException(e);
+    	}
+    }
+    
     
     public SQLWarning getWarnings() throws SQLException, NullPointerException {
     	return con.getWarnings();
