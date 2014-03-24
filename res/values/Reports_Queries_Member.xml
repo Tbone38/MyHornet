@@ -44,6 +44,105 @@
          <item>Happy|get_happiness(member.id) AS \"Happy\"</item>
          
      </string-array>
+     
+      <string-array name ="Report_Id_133_Query">
+                	         
+	  <item>Membershipless | FROM get_membershipless(?,?)AS fun left join member on fun.mid=member.id left join staff on fun.cmid=staff.id</item>
+     </string-array>
+     
+     <string-array name = "Report_Id_133_Fields">
+         
+         <item >Member ID|member.id</item>
+         
+         <item >Member Joining Date|member.joiningdate AS \"Member Joining Date\"</item>
+         
+         <item >Member Name|get_name(member.firstname, member.surname) AS \"Member Name\"</item>
+
+         <item>Staff Name|get_name(staff.firstname, staff.surname) AS \"Staff Name\"</item>
+        
+     </string-array>
+     
+     
+     <string-array name ="Report_Id_131_Query">
+                	         
+	 <item>Cancelling Members|FROM get_cancelling_memberships(?, ?)AS fun</item>
+     </string-array>
+     
+     <string-array name = "Report_Id_131_Fields">
+         
+         <item >Member ID|fun.mid AS \"Member ID\"</item>
+         
+         <item >Name|get_membername_from_id(fun.mid) AS \"Name\"</item>
+         
+
+         <item>Membership ID|fun.msid AS \"Membership ID\"</item>
+         
+
+          
+         <item>Membership Name|get_msname(fun.msid) AS \"Membership Name\"</item>
+         
+
+          
+         <item>Cancellation Date|get_mscdate(fun.msid) AS \"Cancellation Date\"</item>
+         
+
+         
+         <item>Cancellation Reason|get_mscreason(fun.msid) AS \"Cancellation Reason\"</item>
+
+         
+     </string-array>
+     
+     <string-array name ="Report_Id_101_Query">
+                	         
+	  <item>All Members Including Historical Members| FROM get_incl_historic_members(?, ?)AS fun left join member on fun.mid=member.id left join membership on fun.msid=membership.id left join programme on fun.pid=programme.id left join 
+	        programmegroup on fun.pgid=programmegroup.id left join member_view on fun.mid=member_view.id</item>
+     </string-array>
+     
+     <string-array name = "Report_Id_101_Fields">
+         
+         <item >Member ID|member.id</item>
+         
+         <item >Name|get_name(member.firstname, member.surname) AS \"Name\"</item>
+         
+         <item>Mobile|member.phonecell AS \"Mobile\"</item>
+                   
+         <item>Programme|programme.name AS \"Programme\"</item>
+                    
+         <item>Last Visit|member_last_visit(member.id) AS \"Last Visit\"</item>
+                           
+     </string-array>
+     
+     <string-array name ="Report_Id_104_Query">
+                	         
+	  <item>Birthday List|FROM get_birthday_members2(?,?)AS fun left join member on fun.mid=member.id left join membership on fun.msid=membership.id left join programme
+	       on fun.pid=programme.id left join programmegroup on fun.pgid=programmegroup.id left join member_view on fun.mid=member_view.id</item>
+     </string-array>
+     
+     <string-array name = "Report_Id_104_Fields">
+         
+         <item >Member ID|member.id</item>
+         
+         <item >Name|get_name(member.firstname, member.surname) AS \"Name\"</item>
+         
+
+         <item>Birthday|member.dob AS \"Birthday\"</item>
+         
+
+          
+         <item>Age|member_view.age AS \"Age\"</item>
+         
+
+          
+         <item>Day|fun.birthmmdd AS \"Day\"</item>
+         
+
+         
+         <item>Programme|programme.name AS \"Programme\"</item>
+
+         
+     </string-array>
+     
+     
     
     
     

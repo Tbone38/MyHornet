@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 
 import com.treshna.hornet.ReportColumnOptionsActivity.GetReportDataByDateRange;
 
+import android.R.attr;
 import android.annotation.TargetApi;
 import android.app.ActionBar.LayoutParams;
 import android.app.AlertDialog;
@@ -39,6 +40,7 @@ public class ReportMainActivity extends ListActivity {
 	private ArrayList<HashMap<String,String>> columnsMapList = null;
 	private String reportName = null;
 	private String mainQuery = null;
+	private String[] selectedColumnNames = null;
 	private HashMap<String,String> fieldsMap  = null;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,14 +51,10 @@ public class ReportMainActivity extends ListActivity {
 		Date startDate  =  new Date(intent.getLongExtra("start_date", 0));
 		Date endDate  =  new Date(intent.getLongExtra("end_date", 0));
 		String reportId = intent.getStringExtra("report_id");
+		selectedColumnNames = intent.getStringArrayExtra("selected_column_names");
 		reportName = intent.getStringExtra("report_name");
-		String functionName = intent.getStringExtra("report_function_name");
-		//removes the parameter refs from the function name
-		functionName = functionName.substring(0, functionName.indexOf('('));
-	    System.out.println("Function: " + functionName);
 	    this.mainQuery = ReportQueryResources.getMainQuery(this.getApplicationContext(),reportId);	
 		this.fieldsMap = ReportQueryResources.getAllQueryFields(this.getApplicationContext(),reportId);
-		System.out.println(fieldsMap.size());
 		this.buildQuery();
 		System.out.println(mainQuery);
 		this.getReportData(mainQuery, startDate , endDate);
@@ -66,18 +64,48 @@ public class ReportMainActivity extends ListActivity {
 	private void buildQuery(){
 		StringBuilder queryBuilder = new StringBuilder();
 		queryBuilder.append("SELECT ");
-		for (Map.Entry field: fieldsMap.entrySet()){		
-				queryBuilder.append(field.getValue());
-				queryBuilder.append(',');
-				queryBuilder.append(' ');	
+		
+		for (Map.Entry<String,String> field: fieldsMap.entrySet()){
+			  
+				if (this.isColumnSelected(field.getKey().toString())){
+					queryBuilder.append(field.getValue());
+					queryBuilder.append(',');
+					queryBuilder.append(' ');
+				}
 		}
+		
 		//remove the last comma...
 		queryBuilder.replace(queryBuilder.length() - 2, queryBuilder.length(), " ");
 		queryBuilder.append(mainQuery);
-		
+		/*queryBuilder.append("ORDER BY ");
+		//Adding the select columns to order by..
+		for (Map.Entry<String,String> field: fieldsMap.entrySet()){
+			  
+			if (this.isColumnSelected(field.getKey().toString())){
+				queryBuilder.append(field.getValue());
+				queryBuilder.append(',');
+				queryBuilder.append(' ');
+			}
+		}*/
+		queryBuilder.append(";");
 		mainQuery = queryBuilder.toString();
-
+		
+		
+		}
+		
+	private boolean isColumnSelected(String columnName){
+		
+		for (int i = 0; i < this.selectedColumnNames.length; i++){
+			System.out.println("Selected Columns: " +selectedColumnNames[i]);
+			if (selectedColumnNames[i] != null){
+				 if (columnName.compareTo(selectedColumnNames[i])== 0){
+					return true;
+				 }
+			}
+		}
+		return false;
 	}
+
 	
 	private void buildListAdapter() {
 		if (resultMapList.size() > 0){
@@ -91,8 +119,8 @@ public class ReportMainActivity extends ListActivity {
 			LinearLayout reportHeadingLayout = (LinearLayout) this.findViewById(R.id.report_list_headings);
 			for (Entry<String,String> row : dataRow.entrySet()){
 				
-				if (row.getValue()!= null && !row.getValue().isEmpty() && !(row.getKey().toString().compareTo("id")==0)) {
-					
+				//if (row.getValue()!= null && !row.getValue().isEmpty() && !(row.getKey().toString().compareTo("id")==0)) {
+				if (!isColumnAllNull(row.getKey().toString())) {
 					textView =  new TextView(ReportMainActivity.this);
 					valueCharLength = new BigDecimal(row.getValue().toString().length());
 					valueCharLength.setScale(BigDecimal.ROUND_DOWN);
@@ -106,6 +134,8 @@ public class ReportMainActivity extends ListActivity {
 					//System.out.println("Key Length: " + row.getKey().length());
 					//System.out.println("Col Margin: " + colMargin);		
 					layoutParams = new LinearLayout.LayoutParams( 0, LayoutParams.WRAP_CONTENT, 1);
+					textView.setTextAppearance(ReportMainActivity.this,attr.textAppearanceLarge);
+					textView.setTextAppearance(ReportMainActivity.this, attr.textStyle|2);
 					layoutParams.setMargins(textBaseMargin, 0, 0, 0);
 					textView.setLayoutParams(layoutParams);
 					textView.setText(row.getKey());
@@ -134,7 +164,8 @@ public class ReportMainActivity extends ListActivity {
 						HashMap<String,String> dataRow = this.getItem(position);
 						for (Entry<String,String> col : dataRow.entrySet()){
 									
-							if (col.getValue()!= null && !col.getValue().isEmpty() && !(col.getKey().toString().compareTo("id")==0)) {								
+							//if (col.getValue()!= null && !col.getValue().isEmpty() && !(col.getKey().toString().compareTo("id")==0)) {
+							if (!isColumnAllNull(col.getKey().toString())) {
 								  	layoutParams = new LinearLayout.LayoutParams( 0,LayoutParams.WRAP_CONTENT,3);
 									//Dynamically generate text views for each column name..
 									//System.out.println("Column Name Main Row: " + row.getKey());
@@ -177,7 +208,27 @@ public class ReportMainActivity extends ListActivity {
 	  }
 	}
 	
+	private boolean isColumnAllNull(String colName) {
+		HashMap<String,Integer> colNullCount = new HashMap<String,Integer>();
+		
+		for (HashMap<String,String> dataRow: resultMapList){
+			
+			for (Entry<String,String> col : dataRow.entrySet()){
 
+				if (!colNullCount.containsKey(col.getKey())){
+					colNullCount.put(col.getKey(), 1); 
+				}
+				else
+				{
+					if (col.getValue()== null || col.getValue().isEmpty() ){
+						colNullCount.put(col.getKey(),colNullCount.get(col.getKey() )+ 1 );
+					}																										
+				}														
+			}																
+		}
+		
+		 return colNullCount.get(colName) == resultMapList.size();
+	}
 	
 	protected void getReportData (String functionName, Date startDate, Date endDate) {
 		
