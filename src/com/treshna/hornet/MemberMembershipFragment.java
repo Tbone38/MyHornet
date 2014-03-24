@@ -323,11 +323,12 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 			//show an alert with billing info for the membership...
 			int membershipid = Integer.parseInt(v.getTag().toString());
 			String[] columns = {ContentDescriptor.Membership.Cols.STATE+" AS 'Membership State:'", 
-					ContentDescriptor.Membership.Cols.SIGNUP+" AS 'Signup Fee:'", 
-					ContentDescriptor.Membership.Cols.FIRSTPAYMENT+" AS 'First Payment:'",
-					ContentDescriptor.Membership.Cols.PAYMENTDUE+" AS 'Payment Due:'",
-					ContentDescriptor.Membership.Cols.NEXTPAYMENT+" AS 'Next Payment:'",
+					ContentDescriptor.Membership.Cols.FIRSTPAYMENT+" AS 'First Payment Date:'",
+					ContentDescriptor.Membership.Cols.NEXTPAYMENT+" AS 'Next Payment Date:'",
+					ContentDescriptor.Membership.Cols.SIGNUP+" AS 'Signup Fee:'",
+					ContentDescriptor.Membership.Cols.PAYMENTDUE+" AS 'Payment Due:'",					
 					ContentDescriptor.Membership.Cols.UPFRONT+" AS 'Upfront Fee:'",
+					ContentDescriptor.Membership.Cols.TERMINATION_DATE+" AS 'Termination Date:'",
 					ContentDescriptor.Membership.Cols.VISITS+" AS 'Concession Count:'",
 					ContentDescriptor.Membership.Cols.PNAME};
 			Cursor cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, columns, ContentDescriptor.Membership.Cols.MSID+" = ?",

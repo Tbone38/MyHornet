@@ -191,7 +191,7 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 	    
 	    LinearLayout bookings = (LinearLayout) view.findViewById(R.id.button_member_navigation_booking);
 	    bookings.setOnClickListener(this);
-	    bookings.setVisibility(View.GONE);
+	    //bookings.setVisibility(View.GONE);
 	    
 	    
 		return view;

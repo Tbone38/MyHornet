@@ -1,13 +1,10 @@
 package com.treshna.hornet;
 
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import java.sql.Date;
 
 import android.content.ContentResolver;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -56,6 +53,44 @@ public class MemberBookingsFragment extends Fragment implements TagFoundListener
 	
 	private View setupView() {
 		//we inflate the list here.
+		cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.MID+" = ? AND "
+		+ContentDescriptor.Booking.Cols.RESULT+" != 5", new String[] {memberID}, ContentDescriptor.Booking.Cols.ARRIVAL+" DESC");
+		LinearLayout list = (LinearLayout) view.findViewById(R.id.booking_list);
+		list.removeAllViews();		
+		while (cur.moveToNext()) {
+			LinearLayout row = (LinearLayout) mInflater.inflate(R.layout.member_booking_row, null);
+			
+			if (cur.getPosition()%2!=0) { //we're doing it backwards ?
+				row.setBackgroundColor(Color.WHITE);
+			}
+			
+			TextView date_view = (TextView) row.findViewById(R.id.booking_row_date);
+			Date arrival = new Date(cur.getLong(cur.getColumnIndex(ContentDescriptor.Booking.Cols.ARRIVAL)));
+			date_view.setText(Services.DateToString(arrival)+" "+cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.STIME)));
+			
+			TextView name_view = (TextView) row.findViewById(R.id.booking_row_name);
+			name_view.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.BOOKING)));
+			
+			TextView status_view = (TextView) row.findViewById(R.id.booking_row_status);
+			status_view.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.ETIME)));
+			
+			View colour_block = (View) row.findViewById(R.id.member_booking_colour_block);
+			switch (cur.getInt(cur.getColumnIndex(ContentDescriptor.Booking.Cols.RESULT))){
+			case (20):
+			case (21):{
+				colour_block.setBackgroundColor(getActivity().getResources().getColor(R.color.visitors_green));
+				break;
+			}
+			case (15):{
+				colour_block.setBackgroundColor(getActivity().getResources().getColor(R.color.visitors_red));
+				break;
+			}
+			default:
+				colour_block.setBackgroundColor(getActivity().getResources().getColor(R.color.wheat));
+				break;
+			}
+			list.addView(row);
+		}
 				
 		mActions.setupActions(view, memberID);
 		return view;

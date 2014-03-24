@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.treshna.hornet.BookingPage.TagFoundListener;
 
@@ -307,6 +308,9 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 		
 		EditText note_view = (EditText) view.findViewById(R.id.addnote);
 		note = note_view.getText().toString();
+		if (note == null || note.isEmpty() || note.compareTo(" ")==0) {
+			note = null;
+		}
 		
 		return note;
 	}
@@ -346,6 +350,10 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 		case (R.id.button_add_note):{
 			//get text from edit text, add it to cache/pending uploads.
 			String note = getNewNote();
+			if (note == null) {
+				Toast.makeText(getActivity(), "Cannot save empty note", Toast.LENGTH_LONG).show();
+				break;
+			}
 			updateNote(note);
 			break;
 		}

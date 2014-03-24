@@ -172,7 +172,9 @@
 		    android:layout_height="wrap_content"
 		    android:layout_below="@id/bookingTimeRow"
 		    android:textSize="16sp"
-		    android:text="@string/bookingNotesL" />
+		    android:text="@string/bookingNotesL"
+		    android:padding="5dp"
+	        android:layout_margin="3dp" />
 		<EditText 
 		    android:id="@+id/bookingNotes"
 		    android:layout_width="match_parent"
@@ -187,14 +189,16 @@
 	        android:layout_height="wrap_content"
 	        android:orientation="horizontal"
 	        android:layout_below="@id/bookingNotes"
-	        android:layout_margin="3dp">
+	        >
 	        <TextView 
 	            android:id="@+id/bookingResourceH"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
 	            android:textSize="16sp"
 	            android:text="@string/bookingResourceH"
-	            android:padding="5dp"/>
+	            android:padding="5dp"
+	            android:layout_margin="3dp"
+	            />
 	        <Spinner
 	            android:id="@+id/bookingResourceS"
 	            android:layout_width="wrap_content"

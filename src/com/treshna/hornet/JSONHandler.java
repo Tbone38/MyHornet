@@ -45,8 +45,10 @@ public class JSONHandler {
 	private String session_token = null;
 	private static final String GYMLOGIN = "/gymlogin";
 	private static final String CREATEDDACCT = "/createddaccount";
-	private static final String EDITEZIDEBITDETAILS = "/editezdebitdetails";
+	private static final String EDITDDACCOUNT = "/editddaccount";
 	private static final String CHECKDDSTATUS = "/checkddstatus";
+	private static final String API1 = "http://gmonline-";
+	private static final String API2 = ".gymmaster.co.nz";
 	
 	public JSONHandler(Context context) {
 		
@@ -355,7 +357,7 @@ public class JSONHandler {
 		String status = "";
 		this.signup_url = "api.gymmaster.co.nz/notavailable";
 		JSONObject response, post;
-		String api = "http://gmbooking-"+te_username+".gymmaster.co.nz";
+		String api = API1+te_username+API2;
 		//String api = "http://192.168.2.132:5000";
 				
 		String url = api+GYMLOGIN;
@@ -406,7 +408,7 @@ public class JSONHandler {
 		String status = "";
 		JSONObject response, post;
 		
-		String api = "http://gmbooking-"+te_username+".gymmaster.co.nz";
+		String api = API1+te_username+API2;
 		//String api = "http://192.168.2.132:5000";
 		
 		String url = api+CREATEDDACCT;
@@ -463,9 +465,9 @@ public class JSONHandler {
 	private boolean DDdetails(int memberid, String te_username) {
 		boolean result = false;
 		JSONObject response, post;
-		String api = "http://gmbooking-"+te_username+".gymmaster.co.nz";
+		String api = API1+te_username+API2;
 		//String api = "http://192.168.2.132:5000";
-		String url = api+EDITEZIDEBITDETAILS;
+		String url = api+EDITDDACCOUNT;
 		
 		post = new JSONObject();
 		try {
@@ -506,7 +508,7 @@ public class JSONHandler {
 		String status = "";
 		JSONObject response, post;
 		
-		String api = "http://gmbooking-"+te_username+".gymmaster.co.nz";
+		String api = API1+te_username+API2;
 		//String api = "http://192.168.2.132:5000";
 		String url = api+CHECKDDSTATUS;
 		

@@ -246,10 +246,13 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 	 */
 	@Override
 	public void onNewTag(String serial) {
+		if (alertDialog == null || !alertDialog.isShowing()) {
+			return;
+		}
 		ContentResolver contentResolver = ctx.getContentResolver();
 		Cursor cur;
 		String message = null;
-		
+		//TODO: "Do You really want to overwrite your currently assigned tag?"
 		cur = contentResolver.query(ContentDescriptor.IdCard.CONTENT_URI, null, ContentDescriptor.IdCard.Cols.SERIAL+" = ?",
 				new String[] {serial}, null);
 		if (!cur.moveToFirst()) { //card not in db, add it.

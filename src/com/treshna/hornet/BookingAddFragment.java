@@ -163,8 +163,10 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		TextView typelabel = new TextView(ctx);
 		RelativeLayout.LayoutParams rlparams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		rlparams.addRule(RelativeLayout.BELOW, R.id.bookingResourceRow);
-
+		rlparams.setMargins(3, 3, 3, 3);
+		
 		typelabel.setId(10);
+		typelabel.setPadding(5, 5, 5, 5);
 		typelabel.setLayoutParams(rlparams);
 		typelabel.setText(R.string.bookingTypeH);
 		typelabel.setTextSize(16);
