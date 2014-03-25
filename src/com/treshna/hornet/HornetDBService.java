@@ -285,10 +285,10 @@ public class HornetDBService extends Service {
 	   	   updateOpenHours();
 		   getDoors();
 		   getConfig();
-		   getMembershipExpiryReasons();
+		   getPaymentMethods();
+		   
 		   getProgrammes(0);
 		   getBookings(0);
-		   memberImages();
 		   getClasses(-1);
 		   
 		   int use_roll = Integer.parseInt(Services.getAppSettings(getApplicationContext(), "use_roll"));
@@ -329,20 +329,23 @@ public class HornetDBService extends Service {
 		   }
 		   		   
 		   //stuff
-		   getMemberNotes(-1);
+		   
 		   int rscount = getResultStatus();
 		   int btcount = getBookingType();
 		   int mcount = getMember(-1);
 		   int mscount = getMembership(-1);
+		   memberImages();
 		   getMembershipSuspends(-1);
 		   getMemberBalance(-1);
+		   getMemberNotes(-1);
+		   getMembershipExpiryReasons();
 		   getFinancialDetails(0);
 		   getBillingHistory(0);
 		   getLastVisitors();
 		   
 		   //do Memberships!
 		   getIdCards(0, null);
-		   getPaymentMethods();
+		   
 		   uploadPendingDeletes();
 		   
 		   Services.setPreference(getApplicationContext(), "last_freq_sync", String.valueOf(this_sync));
@@ -1767,8 +1770,9 @@ public class HornetDBService extends Service {
     		rs.close();
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
-    		Log.e(TAG, "", e);
+    		Log.e(TAG, "Membership Error:", e);
     	}
+
     	closeConnection();
     	return result;
     }

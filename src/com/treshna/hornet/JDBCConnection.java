@@ -522,22 +522,23 @@ public class JDBCConnection {
 	    			+ " membership.firstpayment, membership.upfront"
 	    			+ " FROM membership LEFT JOIN programme ON (membership.programmeid = programme.id)" +
 	    			" WHERE 1=1 ";
-	    	if (ymca > 0) {
+	    	if (ymca > 0) { //ADD YMCA HANDLING.
 	    		query = query + "AND memberid IN (SELECT DISTINCT memberid FROM membership "
 	    				+ "WHERE programmeid IN (SELECT id FROM programme WHERE history = false "
 	    				+ "AND programmegroupid = 0) GROUP BY memberid) ";
 	    	}
 	    	if (lastsync != null) {
-	    		query = query + "AND membership.lastupdate > ?::TIMESTAMP WITHOUT TIME ZONE ;";
+	    		//query = query + "AND membership.lastupdate > ?::TIMESTAMP WITHOUT TIME ZONE ;";
+	    		query = query + "AND membership.lastupdate > ?;";
 	    	} else {
 	    		query = query + "AND membership.history = 'f'";
 	    	}
-	    	//ADD YMCA HANDLING.
-	  
+	    	
 	    	pStatement = con.prepareStatement(query);
 	    	if (lastsync != null) {
-	    		pStatement.setString(1, Services.dateFormat(new Date(Long.parseLong(lastsync)).toString(),
-	    				"EEE MMM dd HH:mm:ss zzz yyyy", "dd-MMM-yyyy HH:mm:ss"));
+	    		/*pStatement.setString(1, Services.dateFormat(new Date(Long.parseLong(lastsync)).toString(),
+	    				"EEE MMM dd HH:mm:ss zzz yyyy", "dd-MMM-yyyy HH:mm:ss"));*/
+	    		pStatement.setTimestamp(1, new java.sql.Timestamp(Long.parseLong(lastsync)));
 	    	}
 	    	
 	    	rs = pStatement.executeQuery();
@@ -1047,7 +1048,7 @@ public class JDBCConnection {
 		
 		pStatement = con.prepareStatement(update_query);
 		pStatement.setInt(1, membershipid);
-		Log.w(TAG, pStatement.toString());
+		//Log.w(TAG, pStatement.toString());
 		pStatement.executeUpdate();
 		
 		if (cancellation_fee != null) {

@@ -94,10 +94,19 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 		mslist.removeAllViews();
 		
 		while (cur.moveToNext()) {
+			boolean is_cancelled = false;
+			is_cancelled = (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Membership.Cols.CANCEL_REASON))
+					&& cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.HISTORY)).compareTo("f")==0) ? true : false;
+			
 			RelativeLayout membershipRow = (RelativeLayout) mInflater.inflate(R.layout.member_membership_row, null);
 			membershipRow.setClickable(true);
 			membershipRow.setTag(cur.getInt(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MSID)));
 			membershipRow.setOnClickListener(this);
+			
+			if (is_cancelled) {
+				RelativeLayout content = (RelativeLayout) membershipRow.findViewById(R.id.member_membership_content);
+				content.setBackgroundColor(getActivity().getResources().getColor(R.color.membership_cancelled));
+			}
 			
 			ImageView icon = (ImageView) membershipRow.findViewById(R.id.member_membership_drawable);
 			icon.setColorFilter(Services.ColorFilterGenerator.setColour(getResources().getColor(R.color.grey_cf)));

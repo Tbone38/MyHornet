@@ -54,6 +54,8 @@ KEY:
 		Tag Assignment should stop after the first tag.
                 Added Member Booking Page (that shows just that members up-coming bookings.)
 		Can no longer add Blank notes.
+		Added better ErrorLog to Flask API.
+		Cancel Membership - Shows that the membership has been cancelled (background set to red)
  
             TODO:
                 Handle permissions/Roles for different staff, to limit what certain staff can see.
@@ -67,12 +69,11 @@ KEY:
                 Spacing/padding of Labels & Headings..
 		Improve sync-times/OutOfMemory Issues.
 		Fix Connection handling in Flask API.
-		Add better ErrorLog to Flask API.
 		Fix Times/(possibly dates?) disappearing everytime we update the app.
 		Record Emails/SMS send from app in gymmaster device.
 		Assign TAG should give a warning if you try and assign a TAG to a member who already has a tag (should ask if you want to wipe current tag)
 		Test Access Control, does it/can we get it working with the GymMaster Access/Security Control?
-		Cancel Membership - It should show that the membership has been cancelled in some fashion (change the colour of the background or something so we know that it has a pending change/cancellation?
+		Look into resolving the weird booking issues on the Sony Tablet..
     
     
     v119:
