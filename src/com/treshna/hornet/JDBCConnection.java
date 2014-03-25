@@ -1142,6 +1142,12 @@ public class JDBCConnection {
 	    return this.pStatement.executeQuery();
     }
     
+    public ResultSet getReportColumnsByReportId(int reportId) throws SQLException {
+	    this.pStatement = con.prepareStatement("Select id AS \"report_field_id\", column_name from report_field where user_report_id = ?");
+	    this.pStatement.setInt(1, reportId);
+	    return this.pStatement.executeQuery();
+    }
+    
     public ResultSet getReportDataByDateRange(int report_id, String functionName, Date startDate, Date endDate) throws SQLException {
     	try {
     		con.clearWarnings();

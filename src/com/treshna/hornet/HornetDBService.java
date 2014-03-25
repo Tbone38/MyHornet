@@ -2962,7 +2962,7 @@ public class HornetDBService extends Service {
 	
     }
  
- public ArrayList<HashMap<String, String>>  getHumanReadableColumnNameByReportId(Context context, int reportId){
+ public ArrayList<HashMap<String, String>>  getReportColumnsByReportId(Context context, int reportId) {
  	
  	this.setup(context);
  	ArrayList<HashMap<String, String>> resultMapList  = null;
@@ -2974,7 +2974,7 @@ public class HornetDBService extends Service {
  	}
  	
  	try {
-			result = this.connection.getReportNamesByReportTypeId(reportId);
+			result = this.connection.getReportColumnsByReportId(reportId);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

@@ -94,8 +94,12 @@ Cancelling Members
 All Members Including Historical
 Birthday List
 
+Query for fetching column & field data for report_queries
+SELECT report_field.source_field_id, report_field.id, report_field.column_name
+         , (SELECT field FROM report_source_field WHERE id = report_field.source_field_id) AS field 
+         FROM report_field
+         WHERE user_report_id = 1
+         ORDER BY sort_order, column_name;
 
-
-
-
-
+Simplified query for the column options display
+Select id, column_name from report_field where user_report_id = 1;

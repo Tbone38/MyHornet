@@ -102,7 +102,7 @@ public class ReportTypesAndNamesActivity extends ListActivity {
 			progress.dismiss();
 			if (success) {
 				
-				System.out.println("\nReport_Type_And_Name_Data");
+				/*System.out.println("\nReport_Type_And_Name_Data");
 				
 				System.out.println("Result List Size: " + resultMapList.size());
 				
@@ -112,7 +112,7 @@ public class ReportTypesAndNamesActivity extends ListActivity {
 						 System.out.println("Field: " + entry.getKey() + " Value: " + entry.getValue());					 
 					}
 				
-				}
+				}*/
 				//Calls back to the owning activity to build the adapter
 				ReportTypesAndNamesActivity.this.buildListAdapter();
 				

@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.treshna.hornet.ReportColumnOptionsActivity.GetReportDataByDateRange;
 
 import android.R.attr;
 import android.annotation.TargetApi;

@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,11 +27,11 @@ import android.widget.TextView;
 
 public class ReportColumnOptionsActivity extends ListActivity {
 	private ArrayList<HashMap<String,String>> resultMapList = null;
-	private HashMap<String,String> fieldsMap  = null;
+	//private HashMap<String,String> fieldsMap  = null;
 	private String[] selectedColumns = null;
 	private long startDate = 0;
 	private long endDate = 0;
-	private String reportId = null;
+	private int reportId = 0;
 	private String reportName = null;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -40,29 +41,30 @@ public class ReportColumnOptionsActivity extends ListActivity {
 		Intent intent = this.getIntent();
 		startDate  =  intent.getLongExtra("start_date", 0);
 		endDate  =  intent.getLongExtra("end_date", 0);
-		reportId = intent.getStringExtra("report_id");
+		reportId = Integer.parseInt(intent.getStringExtra("report_id"));
 		reportName = intent.getStringExtra("report_name");
 		Button createBtn = (Button) this.findViewById(R.id.btnCreateReport);
-	    //fetching query fields from xml data file..
+	    /*fetching query fields from xml data file..
 	    fieldsMap = ReportQueryResources.getAllQueryFields(this.getApplicationContext(),reportId);
+	    */
 	    createBtn.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				 getCheckedColumns();
-				 loadMainReportActivity();
+				 //loadMainReportActivity();
 			}
 		});
-	    //this.getReportData(functionName, startDate , endDate);
-	    this.buildListAdapter();
+	    
+	    this.getReportColumnOptions();
 	}
 	
 	private void buildListAdapter() {
-		if (this.getResultColumnNames().size() > 0){
+		if (this.resultMapList.size() > 0){
 			ListView listView = this.getListView();
-
+			//PrintQueryResultData();
 			ListAdapter listAdapter = new ArrayAdapter<HashMap<String,String>>(ReportColumnOptionsActivity.this,R.layout.report_column_options_row,
-					this.getResultColumnNames()){
+					this.resultMapList){
 
 						@Override
 						public View getView(int position, View convertView,
@@ -70,13 +72,33 @@ public class ReportColumnOptionsActivity extends ListActivity {
 						//Dynamically binding column names to textView text
 						LayoutInflater inflater = LayoutInflater.from(getContext());
 						HashMap<String,String> dataRow =  this.getItem(position);
-						for (Entry<String,String> row : dataRow.entrySet()){
-							convertView  = inflater.inflate(R.layout.report_column_options_row, null);
-							TextView columnName	 = (TextView) convertView.findViewById(R.id.report_column_name);
-							CheckBox columnBox = (CheckBox) convertView.findViewById(R.id.column_checkBox);
+						for (Entry<String,String> row : dataRow.entrySet()){							
 							//Attaching a tag with column name value to the checkBox
-							columnBox.setTag(row.getValue());
-							columnName.setText(row.getValue());
+							TextView columnName	 = null;
+							CheckBox columnBox  = null;
+
+							if (row.getKey().toString().compareTo("column_name")== 0){
+								
+								if (columnName.getText()== null){	
+								
+									columnName.setText(row.getValue());
+								} else {
+									
+									convertView  = inflater.inflate(R.layout.report_column_options_row, null);
+									columnName	 = (TextView) convertView.findViewById(R.id.report_column_name);
+									columnBox = (CheckBox) convertView.findViewById(R.id.column_checkBox);
+									
+								}
+																							 																
+								
+							} else if (row.getKey().toString().compareTo("report_field_id")== 0) {
+								
+
+								
+									columnBox.setTag(row.getValue());
+																
+							}
+							
 						}	
 							
 							return convertView;
@@ -87,24 +109,25 @@ public class ReportColumnOptionsActivity extends ListActivity {
 	  }
 	}
 	
-	protected void getReportData ( String functionName, Date startDate, Date endDate) {
+	protected void getReportColumnOptions () {
 		
-		GetReportDataByDateRange syncData = new GetReportDataByDateRange(functionName, startDate , endDate);
+		GetReportColumnOptions syncData = new GetReportColumnOptions();
 		syncData.execute(null,null);
 		
 	}
 
 	
 	private ArrayList<HashMap<String,String>> getResultColumnNames () {
-		HashMap<String,String> rowMap = this.fieldsMap;
+		HashMap<String,String> rowMap = null;
 		HashMap<String,String> colName = null;
 		ArrayList<HashMap<String,String>> colNamesList = new ArrayList<HashMap<String,String>>();
 		
 		int index = 0;
 		for (Entry<String, String> row : rowMap.entrySet()){
-			System.out.println("Column Name: " + row.getKey());
-			colName = new HashMap<String,String>();
-			colName.put("column_name", row.getKey());
+			
+				System.out.println("Column Name: " + row.getValue());
+				colName = new HashMap<String,String>();
+				colName.put("column_name", row.getKey());
 
 			colNamesList.add(colName);
 			index ++;
@@ -134,40 +157,42 @@ public class ReportColumnOptionsActivity extends ListActivity {
 		  	view = listView.getChildAt(i);
 		  	checkBox = (CheckBox) view.findViewById(R.id.column_checkBox);
 		  	if (checkBox.isChecked())
-		  		//System.out.println(checkBox.getTag());
-			    selectedColumns[i] = checkBox.getTag().toString();
+		  		System.out.println(checkBox.getTag());
+			    //selectedColumns[i] = checkBox.getTag().toString();
 		  	
 	  }    	  
 	}
 	
+	private void PrintQueryResultData () {
+		for (HashMap<String,String> resultMap: this.resultMapList){
+			for (Entry<String,String> column: resultMap.entrySet()){
+				System.out.println(column.getKey()+ " " + column.getValue());
+			}
+		}
+	}
 	
 	
-	protected class GetReportDataByDateRange extends AsyncTask<String, Integer, Boolean> {
+	
+	protected class GetReportColumnOptions extends AsyncTask<String, Integer, Boolean> {
 		private ProgressDialog progress;
 		private HornetDBService sync;
 		private ResultSet result = null;
-		private String functionName = null;
-		private Date startDate = null;
-		private Date endDate = null;
 		
-	
-		public GetReportDataByDateRange (String functionName, Date startDate, Date endDate) {
-			sync = new HornetDBService();
-			this.functionName = functionName;
-			this.startDate = startDate;
-			this.endDate = endDate;
 			
+		public GetReportColumnOptions () {
+			sync = new HornetDBService();
+	
 		}
 		
 		
 		protected void onPreExecute() {
 			progress = ProgressDialog.show(ReportColumnOptionsActivity.this, "Retrieving..", 
-					 "Retrieving Report Date By Date Range...");
+					 "Retrieving Report Column Names...");
 		}
 		
 		@Override
 		protected Boolean doInBackground(String... params) {
-			resultMapList = sync.getReportDataByDateRange(ReportColumnOptionsActivity.this,functionName, startDate, endDate);
+			resultMapList = sync.getReportColumnsByReportId(ReportColumnOptionsActivity.this, reportId);
 	        return true;
 		}
 		
