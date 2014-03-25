@@ -9,6 +9,7 @@ import java.util.Locale;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.ContentResolver;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
@@ -59,39 +60,75 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
         	mDatePicker.getDialog().dismiss();
         }
         RelativeLayout calendarwrapper = (RelativeLayout) view.findViewById(R.id.booking_overview_calendar_wrapper);
-        
-    	RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        RelativeLayout.LayoutParams params;
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+        	params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+        	params.setMargins(10, 0, 10, 0);
+        	params.addRule(RelativeLayout.CENTER_IN_PARENT);
+        	//params.addRule(RelativeLayout.RIGHT_OF, 20);
+        } else {
+        	params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        }
     	
     	mMonth = new TextView(getActivity());
     	mMonth.setTextSize(49);
     	mMonth.setTextColor(this.getResources().getColor(R.color.android_blue));
     	mMonth.setLayoutParams(params);
     	mMonth.setId(10);
-    	mMonth.setGravity(Gravity.CENTER_HORIZONTAL);
+    	if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+    		//mMonth.setGravity(Gravity.CENTER_VERTICAL);
+    		mMonth.setGravity(Gravity.CENTER);
+    	} else {
+    		mMonth.setGravity(Gravity.CENTER_HORIZONTAL);
+    	}
     	
-    	
-    	params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-    	params.addRule(RelativeLayout.CENTER_HORIZONTAL);
-    	params.addRule(RelativeLayout.BELOW, 10);
+    	if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+    		params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+        	params.addRule(RelativeLayout.CENTER_VERTICAL);
+    		//params.addRule(RelativeLayout.CENTER_IN_PARENT);
+    		params.addRule(RelativeLayout.LEFT_OF, 10);
+    		params.setMargins(10, 0, 10, 0);
+    	} else {
+    		params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        	params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+    		params.addRule(RelativeLayout.BELOW, 10);
+    	}
     	
     	mDay = new TextView(getActivity());
     	mDay.setTextSize(55);
     	mDay.setTextColor(this.getResources().getColor(R.color.android_blue));
     	mDay.setLayoutParams(params);
     	mDay.setId(20);
-    	mDay.setGravity(Gravity.CENTER_HORIZONTAL);
+    	if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+    		//mDay.setGravity(Gravity.CENTER_VERTICAL);
+    		mDay.setGravity(Gravity.CENTER);
+    	} else {
+    		mDay.setGravity(Gravity.CENTER_HORIZONTAL);
+    	}
     	
     	
-    	params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-    	params.addRule(RelativeLayout.CENTER_HORIZONTAL);
-    	params.addRule(RelativeLayout.BELOW, 20);
+    	
+    	if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+    		params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+        	params.addRule(RelativeLayout.CENTER_VERTICAL);
+    		params.addRule(RelativeLayout.RIGHT_OF, 10);
+    		params.setMargins(10, 0, 10, 0);
+    	} else {
+    		params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        	params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+    		params.addRule(RelativeLayout.BELOW, 20);
+    	}
     	
     	mYear = new TextView(getActivity());
     	mYear.setTextSize(47);
     	mYear.setTextColor(this.getResources().getColor(R.color.android_blue));
     	mYear.setLayoutParams(params);
     	mYear.setId(30);
-    	mYear.setGravity(Gravity.CENTER_HORIZONTAL);
+    	if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+    		mYear.setGravity(Gravity.CENTER_VERTICAL);
+    	} else {
+    		mYear.setGravity(Gravity.CENTER_HORIZONTAL);
+    	}
     	selectedDate = Services.getAppSettings(getActivity(), "bookings_date");
     	if (selectedDate.compareTo("-1") == 0) {
     		//selectedDate = Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");

@@ -73,7 +73,7 @@ KEY:
 		Record Emails/SMS send from app in gymmaster device.
 		Assign TAG should give a warning if you try and assign a TAG to a member who already has a tag (should ask if you want to wipe current tag)
 		Test Access Control, does it/can we get it working with the GymMaster Access/Security Control?
-		Look into resolving the weird booking issues on the Sony Tablet..
+		Look into resolving the weird booking issues on the Sony Tablet.. --SEMI DONE ?
     
     
     v119:
