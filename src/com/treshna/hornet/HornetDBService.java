@@ -25,6 +25,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.treshna.hornet.ContentDescriptor.Membership;
 
@@ -2359,6 +2360,8 @@ public class HornetDBService extends Service {
 	    		connected = connection.isConnected();
 	    	} catch (SQLException e) {
 	    		statusMessage = e.getLocalizedMessage();
+	    		e.printStackTrace();
+	    		Services.showToast(getApplicationContext(), statusMessage, handler);
 	    		connected = false;
 	    	} catch (ClassNotFoundException e) {
 	    		//Postgresql JDBC driver missing!!

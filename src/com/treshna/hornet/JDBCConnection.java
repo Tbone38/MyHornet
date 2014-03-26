@@ -99,11 +99,7 @@ public class JDBCConnection {
             }
             
             Log.v(TAG, "Starting Connection");
-            try {
-            	con = DriverManager.getConnection(getConnectionUrl(), properties);            
-            } catch (SQLException e) {
-            	Log.e(TAG, "ERROR OPENING CONNECTION", e);
-            }
+            con = DriverManager.getConnection(getConnectionUrl(), properties);            
     }
     
     public boolean isConnected() {

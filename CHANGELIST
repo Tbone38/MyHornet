@@ -40,40 +40,40 @@ KEY:
                 Added Check Billing Status Button.
                 Added sync table functionallity, to allow remote removal of app contents.
                     -Also tracks when app is syncing/last synced.
-		Fixed Bookings disappearing everytime we update the App.
-		Fixed historic resources showing up.
-		Fix # of connections being used by the app. (still haven't got pooling working..)
-		Fixed Booking sync_times not being cleared
+				Fixed Bookings disappearing everytime we update the App.
+				Fixed historic resources showing up.
+				Fix # of connections being used by the app. (still haven't got pooling working..)
+				Fixed Booking sync_times not being cleared
                 the log-file uses the unique id so we know which device has the issues.
-		the log-file is now human readable.
+				the log-file is now human readable.
                 Added UI elements to GymMaster for managing the devices in the sync table.
-			Added allowed_access column
-			Added notes column
-			Added staffid column
-		Cancel Membership - date for termination alignment.
-		Tag Assignment should stop after the first tag.
-                Added Member Booking Page (that shows just that members up-coming bookings.)
-		Can no longer add Blank notes.
-		Added better ErrorLog to Flask API.
-		Cancel Membership - Shows that the membership has been cancelled (background set to red)
+				Added allowed_access column
+				Added notes column
+				Added staffid column
+				Cancel Membership - date for termination alignment.
+				Tag Assignment should stop after the first tag.
+	            Added Member Booking Page (that shows just that members up-coming bookings.)
+				Can no longer add Blank notes.
+				Added better ErrorLog to Flask API.
+				Cancel Membership - Shows that the membership has been cancelled (background set to red)
+				Resolved the weird booking issues, caused by changing arrival to epoch in some places but not other.
  
             TODO:
                 Handle permissions/Roles for different staff, to limit what certain staff can see.
-                Fix Dates (dd MMM yyyy)
+                Fix Dates (dd MMM yyyy) --Mostly Done.
                 get password encryption working.
                 Format/Default time to 12hr. (?)
                 Booking view showing multiple days for selected resource.
                 get DD working for bluepay..?
-                Cancel Member Hold. --Is adjusting the expiry a better option?
+                Cancel Member Hold. --I think adjusting the expiry is better.
                 Fix the Booking Views broken back button.
                 Spacing/padding of Labels & Headings..
-		Improve sync-times/OutOfMemory Issues.
-		Fix Connection handling in Flask API.
-		Fix Times/(possibly dates?) disappearing everytime we update the app.
-		Record Emails/SMS send from app in gymmaster device.
-		Assign TAG should give a warning if you try and assign a TAG to a member who already has a tag (should ask if you want to wipe current tag)
-		Test Access Control, does it/can we get it working with the GymMaster Access/Security Control?
-		Look into resolving the weird booking issues on the Sony Tablet.. --SEMI DONE ?
+				Improve sync-times/OutOfMemory Issues.
+				Fix Connection handling in Flask API.
+				Fix Times/(possibly dates?) disappearing everytime we update the app.
+				Record Emails/SMS send from app in gymmaster device.
+				Assign TAG should give a warning if you try and assign a TAG to a member who already has a tag (should ask if you want to wipe current tag)
+				Test Access Control, does it/can we get it working with the GymMaster Access/Security Control (Using Views?)?
     
     
     v119:

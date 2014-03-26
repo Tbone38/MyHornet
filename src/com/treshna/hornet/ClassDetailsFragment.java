@@ -130,7 +130,7 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 		getActivity().setTitle(classname);
 		
 		dateView = (TextView) page.findViewById(R.id.classDate);
-		dateView.setText(Services.dateFormat(date, "yyyyMMdd", "dd MMM yyyy")+", ");
+		dateView.setText(Services.DateToString(new Date(Long.parseLong(date)))+", ");
 		//dateView.setText(date);
 		
 		stimeView = (TextView) page.findViewById(R.id.classSTime);
