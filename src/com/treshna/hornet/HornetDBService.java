@@ -2732,7 +2732,7 @@ public class HornetDBService extends Service {
     			
     			values.put(ContentDescriptor.IdCard.Cols.CARDID, rs.getString("id"));
     			values.put(ContentDescriptor.IdCard.Cols.SERIAL, rs.getString("serial"));
-    			
+    			//TODO: created column
     			contentResolver.insert(ContentDescriptor.IdCard.CONTENT_URI, values);
     			result +=1;
     		}
@@ -2743,7 +2743,6 @@ public class HornetDBService extends Service {
     		return -3;
     	}
     	closeConnection();
-    	//connection.closeConnection();
     	
     	return result;
     }
@@ -2898,8 +2897,7 @@ public class HornetDBService extends Service {
     	if (!openConnection()) {
     		return -1; //see statusMessage for error;
     	}
-    	/*cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols.MID+" = 0",
-    			null, null);*/
+
     	cur = contentResolver.query(ContentDescriptor.FreeIds.CONTENT_URI, null, ContentDescriptor.FreeIds.Cols.TABLEID+" = "
     			+ContentDescriptor.TableIndex.Values.Membership.getKey(), null, null);
     	int free_count = cur.getCount();

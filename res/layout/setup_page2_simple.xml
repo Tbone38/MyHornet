@@ -51,6 +51,7 @@
         android:text="@string/simple_contactable"
         android:paddingLeft="5dp"
         android:paddingTop="5dp"
+        android:checked="true"
         />
     <!-- What's your name	? -->
     <TextView
@@ -60,7 +61,7 @@
         android:textSize="18sp"
         android:text="@string/simple_contact_name"
         android:padding="5dp"
-        android:visibility="gone" />
+         />
     <EditText
         android:id="@+id/setup_contact_name"
         android:layout_width="match_parent"
@@ -68,7 +69,7 @@
         android:inputType="textCapWords"
         android:padding="5dp"
         android:layout_marginLeft="3dp"
-        android:visibility="gone" />
+         />
     
     <!-- What's your phone #? 	 -->
     <TextView
@@ -78,7 +79,7 @@
         android:textSize="18sp"
         android:text="@string/simple_contact_number"
         android:padding="5dp"
-        android:visibility="gone" />
+         />
     <EditText 
         android:id="@+id/setup_contact_number"
         android:layout_width="match_parent"
@@ -86,7 +87,7 @@
         android:inputType="phone"
         android:padding="5dp"
         android:layout_marginLeft="3dp"
-        android:visibility="gone"/>
+        />
     
     <LinearLayout
         android:id="@+id/button_row"

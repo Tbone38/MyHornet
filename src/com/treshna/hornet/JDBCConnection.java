@@ -782,10 +782,15 @@ public class JDBCConnection {
     
     public ResultSet getIdCards(long last_sync) throws SQLException, NullPointerException {
 	    	ResultSet rs;
-	    	
-	    	pStatement = con.prepareStatement("SELECT id, serial, created FROM idcard WHERE created > ?;");
-	    	pStatement.setTimestamp(1, new java.sql.Timestamp(last_sync));
-	    	rs = pStatement.executeQuery();
+	    	try {
+	    		pStatement = con.prepareStatement("SELECT id, serial, created FROM idcard WHERE created > ?;");
+	    		pStatement.setTimestamp(1, new java.sql.Timestamp(last_sync));
+	    		rs = pStatement.executeQuery();
+	    	} catch (SQLException e) {
+	    		this.closePreparedStatement();
+	    		pStatement = con.prepareStatement("SELECT id, serial FROM idcard;");
+	    		rs = pStatement.executeQuery(); 
+	    	}
 	    	
 	    	return rs;
     }

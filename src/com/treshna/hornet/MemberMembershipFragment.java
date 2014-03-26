@@ -113,7 +113,6 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 			
 			ImageView cancel_membership = (ImageView) membershipRow.findViewById(R.id.member_membership_cancel);
 			cancel_membership.setTag(cur.getInt(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MSID)));
-			//cancel_membership.setColorFilter(Services.ColorFilterGenerator.setColourRed());
 			cancel_membership.setClickable(true);
 			cancel_membership.setOnClickListener(this);
 			

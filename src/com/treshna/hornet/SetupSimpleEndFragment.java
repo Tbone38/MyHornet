@@ -142,7 +142,6 @@ public class SetupSimpleEndFragment extends Fragment implements OnClickListener,
 		}
 	}
 	
-	//TODO: create a callback that changes the fragment.
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
