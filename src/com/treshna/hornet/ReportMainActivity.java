@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-
 import android.R.attr;
 import android.annotation.TargetApi;
 import android.app.ActionBar.LayoutParams;
@@ -19,6 +18,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,47 +36,84 @@ import android.widget.TextView;
 
 public class ReportMainActivity extends ListActivity {
 	private ArrayList<HashMap<String,String>> resultMapList = null;
-	private ArrayList<HashMap<String,String>> columnsMapList = null;
+	private ArrayList<HashMap<String,String>> columnsMapList =  null;
 	private String reportName = null;
-	private String mainQuery = null;
-	private String[] selectedColumnNames = null;
-	private HashMap<String,String> fieldsMap  = null;
+	private String reportFunctionName = null;
+	private String queryFunctionParamsCut = null;
+	private String finalQuery = null;
+	private Date startDate = null;
+	private Date endDate = null;
+	private String mainQueryFunction = null;
+	private int[] selectedColumnIds = null;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.report_main_list);
 		//Fetching data passed through from the preceding Activities..
 		Intent intent = this.getIntent();
-		Date startDate  =  new Date(intent.getLongExtra("start_date", 0));
-		Date endDate  =  new Date(intent.getLongExtra("end_date", 0));
-		String reportId = intent.getStringExtra("report_id");
-		selectedColumnNames = intent.getStringArrayExtra("selected_column_names");
+		startDate  =  new Date(intent.getLongExtra("start_date", 0));
+		endDate  =  new Date(intent.getLongExtra("end_date", 0));
+		int reportId = intent.getIntExtra("report_id",0);
+		selectedColumnIds = intent.getIntArrayExtra("selected_column_ids");
 		reportName = intent.getStringExtra("report_name");
-	    this.mainQuery = ReportQueryResources.getMainQuery(this.getApplicationContext(),reportId);	
-		this.fieldsMap = ReportQueryResources.getAllQueryFields(this.getApplicationContext(),reportId);
-		this.buildQuery();
-		System.out.println(mainQuery);
-		this.getReportData(mainQuery, startDate , endDate);
+		reportFunctionName = intent.getStringExtra("report_function_name");		
+		queryFunctionParamsCut = reportFunctionName.substring(0,reportFunctionName.indexOf('('));
+		this.getColumnData(reportId);
 	    
 	}
 	
 	private void buildQuery(){
+		
 		StringBuilder queryBuilder = new StringBuilder();
 		queryBuilder.append("SELECT ");
-		
-		for (Map.Entry<String,String> field: fieldsMap.entrySet()){
-			  
-				if (this.isColumnSelected(field.getKey().toString())){
-					queryBuilder.append(field.getValue());
-					queryBuilder.append(',');
-					queryBuilder.append(' ');
+		boolean isSelected = false;
+	
+		for (HashMap<String,String> columnsMap : columnsMapList ){
+			isSelected = false;
+			for (Map.Entry<String,String> field: columnsMap.entrySet()){
+				
+				if (field.getKey().toString().compareTo("column_id")== 0){
+					if (this.isColumnSelected(Integer.parseInt(field.getValue()))){
+						isSelected = true;
+					}
+					
 				}
-		}
+			}
+			for (Map.Entry<String,String> field: columnsMap.entrySet()){
+				//System.out.println(field.getKey() + " : " + field.getValue());
+				if (isSelected){
+					if(field.getKey().toString().compareTo("field")== 0){
+							queryBuilder.append(field.getValue());
+							queryBuilder.append(" AS ");
+							
+					}
+					if(field.getKey().toString().compareTo("column_name")== 0){
+								queryBuilder.append("\"" + field.getValue() + "\"");
+								queryBuilder.append(", ");
+					}				
+
+			   }
+			
+           }							
+		 }
+			//remove the last comma...
+			queryBuilder.replace(queryBuilder.length() - 2, queryBuilder.length(), " ");
+			queryBuilder.append(" FROM ");
+			String reportFunctionWithDateParams =  this.queryFunctionParamsCut + "(" + this.startDate + ',' + this.endDate + ')';
+			queryBuilder.append(reportFunctionWithDateParams);
+			
+			queryBuilder.append(";");
+			System.out.println(queryBuilder.toString());
 		
+		
+	   
+
+		
+		/*
 		//remove the last comma...
 		queryBuilder.replace(queryBuilder.length() - 2, queryBuilder.length(), " ");
 		queryBuilder.append(mainQuery);
-		/*queryBuilder.append("ORDER BY ");
+		queryBuilder.append("ORDER BY ");
 		//Adding the select columns to order by..
 		for (Map.Entry<String,String> field: fieldsMap.entrySet()){
 			  
@@ -86,18 +123,15 @@ public class ReportMainActivity extends ListActivity {
 				queryBuilder.append(' ');
 			}
 		}*/
-		queryBuilder.append(";");
-		mainQuery = queryBuilder.toString();
+
+}	
+
 		
+	private boolean isColumnSelected(int columnId){
 		
-		}
-		
-	private boolean isColumnSelected(String columnName){
-		
-		for (int i = 0; i < this.selectedColumnNames.length; i++){
-			System.out.println("Selected Columns: " +selectedColumnNames[i]);
-			if (selectedColumnNames[i] != null){
-				 if (columnName.compareTo(selectedColumnNames[i])== 0){
+		for (int i = 0; i < this.selectedColumnIds.length; i++){
+			if (selectedColumnIds[i] != 0){
+				 if (selectedColumnIds[i]== columnId){
 					return true;
 				 }
 			}
@@ -229,14 +263,21 @@ public class ReportMainActivity extends ListActivity {
 		 return colNullCount.get(colName) == resultMapList.size();
 	}
 	
-	protected void getReportData (String functionName, Date startDate, Date endDate) {
+	private void getReportData (String functionName, Date startDate, Date endDate) {
 		
-		GetReportDataByDateRange syncNames = new GetReportDataByDateRange(functionName, startDate , endDate);
-		syncNames.execute(null,null);
+		GetReportDataByDateRange syncNames = new GetReportDataByDateRange(functionName, startDate , endDate);		syncNames.execute(null,null);
 		
 	}
-
 	
+	private void getColumnData (int reportId) {
+		
+		GetReportColumnsFieldsByReportId syncColumns  = new GetReportColumnsFieldsByReportId(reportId);	
+		syncColumns.execute(null,null);
+		
+	}
+	
+	
+
 	protected class GetReportDataByDateRange extends AsyncTask<String, Integer, Boolean> {
 		private ProgressDialog progress;
 		private HornetDBService sync;
@@ -281,6 +322,46 @@ public class ReportMainActivity extends ListActivity {
 				}*/
 				//Calls back to the owning activity to build the adapter
 				ReportMainActivity.this.buildListAdapter();
+				
+			} else {
+				AlertDialog.Builder builder = new AlertDialog.Builder(ReportMainActivity.this);
+				builder.setTitle("Error Occurred")
+				.setMessage(sync.getStatus())
+				.setPositiveButton("OK", null)
+				.show();
+			}
+	    }
+	 }
+	
+	protected class GetReportColumnsFieldsByReportId extends AsyncTask<String, Integer, Boolean> {
+		private ProgressDialog progress;
+		private HornetDBService sync;
+		private int reportId = 0;
+		
+	
+		public GetReportColumnsFieldsByReportId (int reportId) {
+			sync = new HornetDBService();
+			this.reportId = reportId;
+
+		}
+		
+		protected void onPreExecute() {
+			progress = ProgressDialog.show(ReportMainActivity.this, "Retrieving..", 
+					 "Retrieving Report Column Data...");
+		}
+		
+		@Override
+		protected Boolean doInBackground(String... params) {
+			columnsMapList = sync.getReportColumnsFieldsByReportId(ReportMainActivity.this,reportId);
+	        return true;
+		}
+		
+
+		protected void onPostExecute(Boolean success) {
+			progress.dismiss();
+			if (success) {
+				//Calls back to the owning activity to build the adapter
+				ReportMainActivity.this.buildQuery();
 				
 			} else {
 				AlertDialog.Builder builder = new AlertDialog.Builder(ReportMainActivity.this);

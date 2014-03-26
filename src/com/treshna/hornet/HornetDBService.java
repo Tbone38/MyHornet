@@ -2987,6 +2987,32 @@ public class HornetDBService extends Service {
 		return resultMapList;
 	
  }
+ 
+ public ArrayList<HashMap<String, String>>  getReportColumnsFieldsByReportId(Context context, int reportId) {
+	 	
+	 	this.setup(context);
+	 	ArrayList<HashMap<String, String>> resultMapList  = null;
+	 	ResultSet result = null;
+	 
+	 	
+	 	if (!this.openConnection()){
+	 			
+	 	}
+	 	
+	 	try {
+				result = this.connection.getReportColumnsFieldsByReportId(reportId);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+	 	
+	 	
+	 		resultMapList = this.resultSetToMapList(result);
+			   
+	 		this.closeConnection();
+	 	
+			return resultMapList;
+		
+	 }
     
     
     

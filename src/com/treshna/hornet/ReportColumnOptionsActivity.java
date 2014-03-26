@@ -28,11 +28,12 @@ import android.widget.TextView;
 public class ReportColumnOptionsActivity extends ListActivity {
 	private ArrayList<HashMap<String,String>> resultMapList = null;
 	//private HashMap<String,String> fieldsMap  = null;
-	private String[] selectedColumns = null;
+	private int[] selectedColumns = null;
 	private long startDate = 0;
 	private long endDate = 0;
 	private int reportId = 0;
 	private String reportName = null;
+	private String reportFunctionName = null;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -42,6 +43,7 @@ public class ReportColumnOptionsActivity extends ListActivity {
 		startDate  =  intent.getLongExtra("start_date", 0);
 		endDate  =  intent.getLongExtra("end_date", 0);
 		reportId = Integer.parseInt(intent.getStringExtra("report_id"));
+		reportFunctionName = intent.getStringExtra("report_function_name");
 		reportName = intent.getStringExtra("report_name");
 		Button createBtn = (Button) this.findViewById(R.id.btnCreateReport);
 	    /*fetching query fields from xml data file..
@@ -51,8 +53,8 @@ public class ReportColumnOptionsActivity extends ListActivity {
 			
 			@Override
 			public void onClick(View v) {
-				 getCheckedColumns();
-				 //loadMainReportActivity();
+			     getCheckedColumns();
+				 loadMainReportActivity();
 			}
 		});
 	    
@@ -72,32 +74,27 @@ public class ReportColumnOptionsActivity extends ListActivity {
 						//Dynamically binding column names to textView text
 						LayoutInflater inflater = LayoutInflater.from(getContext());
 						HashMap<String,String> dataRow =  this.getItem(position);
+						int index = 0;
+						TextView columnName	 = null;
+						CheckBox columnBox  = null;
+						convertView  = inflater.inflate(R.layout.report_column_options_row, null);			
+						
 						for (Entry<String,String> row : dataRow.entrySet()){							
 							//Attaching a tag with column name value to the checkBox
-							TextView columnName	 = null;
-							CheckBox columnBox  = null;
 
+							
+							if (row.getKey().toString().compareTo("report_field_id")== 0){
+								columnBox = (CheckBox) convertView.findViewById(R.id.column_checkBox);
+								columnBox.setTag(row.getValue());																				 																
+							
+							}			
+							
 							if (row.getKey().toString().compareTo("column_name")== 0){
+								columnName	 = (TextView) convertView.findViewById(R.id.report_column_name);							
+								columnName.setText(row.getValue());																			 																
 								
-								if (columnName.getText()== null){	
-								
-									columnName.setText(row.getValue());
-								} else {
-									
-									convertView  = inflater.inflate(R.layout.report_column_options_row, null);
-									columnName	 = (TextView) convertView.findViewById(R.id.report_column_name);
-									columnBox = (CheckBox) convertView.findViewById(R.id.column_checkBox);
-									
-								}
-																							 																
-								
-							} else if (row.getKey().toString().compareTo("report_field_id")== 0) {
-								
-
-								
-									columnBox.setTag(row.getValue());
-																
 							}
+
 							
 						}	
 							
@@ -142,7 +139,8 @@ public class ReportColumnOptionsActivity extends ListActivity {
 		Intent mainReportIntent = new Intent(this.getApplicationContext(), ReportMainActivity.class);
 		mainReportIntent.putExtra("report_id", reportId);
 		mainReportIntent.putExtra("report_name", reportName);
-		mainReportIntent.putExtra("selected_column_names", selectedColumns);
+		mainReportIntent.putExtra("report_function_name", reportFunctionName);
+		mainReportIntent.putExtra("selected_column_ids", selectedColumns);
 		mainReportIntent.putExtra("start_date", startDate);
 		mainReportIntent.putExtra("end_date", endDate);
 		startActivity(mainReportIntent);
@@ -152,14 +150,15 @@ public class ReportColumnOptionsActivity extends ListActivity {
 	  ListView listView = this.getListView();
 	  View view = null;
 	  CheckBox checkBox = null;
-	  this.selectedColumns = new String[listView.getCount()];
+	  this.selectedColumns = new int[listView.getCount()];
+	  int columnIndex = 0;
 	  for (int i = 0; i < listView.getCount(); i++){
 		  	view = listView.getChildAt(i);
 		  	checkBox = (CheckBox) view.findViewById(R.id.column_checkBox);
 		  	if (checkBox.isChecked())
-		  		System.out.println(checkBox.getTag());
-			    //selectedColumns[i] = checkBox.getTag().toString();
-		  	
+		  		//System.out.println(checkBox.getTag());
+			    selectedColumns[columnIndex] = Integer.parseInt(checkBox.getTag().toString());
+		  		columnIndex += 1;
 	  }    	  
 	}
 	

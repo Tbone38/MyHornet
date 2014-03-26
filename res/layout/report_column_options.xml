@@ -23,6 +23,6 @@
 	        android:layout_height="wrap_content"
 	        android:textSize="40sp"
 	        android:background="#E1ED5C"
-	  		android:layout_gravity="right"
+	  		android:layout_gravity="center"
 	        android:text="@string/report_create_btn_title" />
 </LinearLayout>
