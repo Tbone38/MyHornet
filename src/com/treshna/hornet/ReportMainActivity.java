@@ -3,7 +3,9 @@ package com.treshna.hornet;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -37,14 +39,16 @@ import android.widget.TextView;
 public class ReportMainActivity extends ListActivity {
 	private ArrayList<HashMap<String,String>> resultMapList = null;
 	private ArrayList<HashMap<String,String>> columnsMapList =  null;
+	private ArrayList<HashMap<String,String>> joiningTablesMapList =  null;
 	private String reportName = null;
 	private String reportFunctionName = null;
-	private String queryFunctionParamsCut = null;
+	private String queryFunctionParamsCut = null; 
 	private String finalQuery = null;
 	private Date startDate = null;
 	private Date endDate = null;
 	private String mainQueryFunction = null;
 	private int[] selectedColumnIds = null;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -79,7 +83,8 @@ public class ReportMainActivity extends ListActivity {
 					
 				}
 			}
-			for (Map.Entry<String,String> field: columnsMap.entrySet()){
+			
+		for (Map.Entry<String,String> field: columnsMap.entrySet()){
 				//System.out.println(field.getKey() + " : " + field.getValue());
 				if (isSelected){
 					if(field.getKey().toString().compareTo("field")== 0){
@@ -96,18 +101,28 @@ public class ReportMainActivity extends ListActivity {
 			
            }							
 		 }
+
 			//remove the last comma...
 			queryBuilder.replace(queryBuilder.length() - 2, queryBuilder.length(), " ");
 			queryBuilder.append(" FROM ");
-			String reportFunctionWithDateParams =  this.queryFunctionParamsCut + "(" + this.startDate + ',' + this.endDate + ')';
+			SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-M-dd");
+			Log.i("Date Check: ", dateFormatter.format(this.startDate));
+			String reportFunctionWithDateParams =  this.queryFunctionParamsCut + "(" + "'" + dateFormatter.format(this.startDate) + "'" +"::Date"  + "," + "'" + dateFormatter.format(this.endDate) + "'" + "::Date" +  ')';
 			queryBuilder.append(reportFunctionWithDateParams);
+			queryBuilder.append("As fun ");
+			
+			
+			for (HashMap<String,String> joinsMap : joiningTablesMapList ){
+				for (Map.Entry<String,String> field: joinsMap.entrySet()){
+					queryBuilder.append(field.getValue());
+					queryBuilder.append(' ');	
+				}
+			}
 			
 			queryBuilder.append(";");
 			System.out.println(queryBuilder.toString());
-		
-		
-	   
-
+			finalQuery = queryBuilder.toString();
+			this.getReportData(finalQuery);
 		
 		/*
 		//remove the last comma...
@@ -152,24 +167,13 @@ public class ReportMainActivity extends ListActivity {
 			LinearLayout reportHeadingLayout = (LinearLayout) this.findViewById(R.id.report_list_headings);
 			for (Entry<String,String> row : dataRow.entrySet()){
 				
-				//if (row.getValue()!= null && !row.getValue().isEmpty() && !(row.getKey().toString().compareTo("id")==0)) {
-				if (!isColumnAllNull(row.getKey().toString())) {
-					textView =  new TextView(ReportMainActivity.this);
-					valueCharLength = new BigDecimal(row.getValue().toString().length());
-					valueCharLength.setScale(BigDecimal.ROUND_DOWN);
-					int textBaseMargin = 5;
-					int colMargin = textBaseMargin;
-					//System.out.println("Value Length: " + valueCharLength.intValue());
-					if (row.getKey().length() < valueCharLength.intValue())
-					{
-						colMargin  += valueCharLength.intValue(); 
-					}
-					//System.out.println("Key Length: " + row.getKey().length());
-					//System.out.println("Col Margin: " + colMargin);		
+				//if (row.getValue()!= null && !row.getValue().isEmpty()/* && !(row.getKey().toString().compareTo("id")==0)*/) {
+				 if (!isColumnAllNull(row.getKey().toString())) {
+					textView =  new TextView(ReportMainActivity.this);		
 					layoutParams = new LinearLayout.LayoutParams( 0, LayoutParams.WRAP_CONTENT, 1);
 					textView.setTextAppearance(ReportMainActivity.this,attr.textAppearanceLarge);
 					textView.setTextAppearance(ReportMainActivity.this, attr.textStyle|2);
-					layoutParams.setMargins(textBaseMargin, 0, 0, 0);
+					layoutParams.setMargins(5, 0, 0, 0);
 					textView.setLayoutParams(layoutParams);
 					textView.setText(row.getKey());
 					reportHeadingLayout.addView(textView);
@@ -196,9 +200,10 @@ public class ReportMainActivity extends ListActivity {
 						linLayout.setLayoutParams(listLayoutParams);
 						HashMap<String,String> dataRow = this.getItem(position);
 						for (Entry<String,String> col : dataRow.entrySet()){
-									
-							//if (col.getValue()!= null && !col.getValue().isEmpty() && !(col.getKey().toString().compareTo("id")==0)) {
+							Log.i("Null Column Test", (!isColumnAllNull(col.getKey().toString()) + " : " +  col.getKey().toString()));	
+							//if (col.getValue()!= null && !col.getValue().isEmpty() /*&& !(col.getKey().toString().compareTo("id")==0)*/) {
 							if (!isColumnAllNull(col.getKey().toString())) {
+									
 								  	layoutParams = new LinearLayout.LayoutParams( 0,LayoutParams.WRAP_CONTENT,3);
 									//Dynamically generate text views for each column name..
 									//System.out.println("Column Name Main Row: " + row.getKey());
@@ -232,7 +237,7 @@ public class ReportMainActivity extends ListActivity {
 								}																
 							}
 							
-							 return colNullCount.get(colName) == resultMapList.size();
+							 return colNullCount.get(colName) == resultMapList.size()-1;
 						}
 						
 						
@@ -260,12 +265,13 @@ public class ReportMainActivity extends ListActivity {
 			}																
 		}
 		
-		 return colNullCount.get(colName) == resultMapList.size();
+		 return colNullCount.get(colName) == resultMapList.size()-1;
 	}
 	
-	private void getReportData (String functionName, Date startDate, Date endDate) {
+	private void getReportData (String finalQuery) {
 		
-		GetReportDataByDateRange syncNames = new GetReportDataByDateRange(functionName, startDate , endDate);		syncNames.execute(null,null);
+		GetReportDataByDateRange syncNames = new GetReportDataByDateRange(finalQuery);	
+		syncNames.execute(null,null);
 		
 	}
 	
@@ -276,21 +282,25 @@ public class ReportMainActivity extends ListActivity {
 		
 	}
 	
+	private void getJoiningTablesData (String functionName) {
+		
+		GetJoiningTablesByFunctionName syncColumns  = new GetJoiningTablesByFunctionName(functionName);	
+		syncColumns.execute(null,null);
+		
+	}
+	
 	
 
 	protected class GetReportDataByDateRange extends AsyncTask<String, Integer, Boolean> {
 		private ProgressDialog progress;
 		private HornetDBService sync;
-		private String functionName = null;
-		private Date startDate = null;
-		private Date endDate = null;
+		private String finalQuery = null;
 		
 	
-		public GetReportDataByDateRange (String functionName, Date startDate, Date endDate) {
+		public GetReportDataByDateRange (String finalQuery) {
 			sync = new HornetDBService();
-			this.functionName = functionName;
-			this.startDate = startDate;
-			this.endDate = endDate;
+			this.finalQuery = finalQuery;
+
 		}
 		
 		protected void onPreExecute() {
@@ -300,7 +310,7 @@ public class ReportMainActivity extends ListActivity {
 		
 		@Override
 		protected Boolean doInBackground(String... params) {
-			resultMapList = sync.getReportDataByDateRange(ReportMainActivity.this,functionName, startDate, endDate);
+			resultMapList = sync.getReportDataByDateRange(ReportMainActivity.this,finalQuery);
 	        return true;
 		}
 		
@@ -308,19 +318,7 @@ public class ReportMainActivity extends ListActivity {
 		protected void onPostExecute(Boolean success) {
 			progress.dismiss();
 			if (success) {
-			/*
-				System.out.println("\nReport-Type_Data");
-				
-				System.out.println("Result List Size: " + resultMapList.size());
-				
-				for (HashMap<String,String> resultMap: resultMapList){
-				
-					for (HashMap.Entry entry: resultMap.entrySet()){
-						 System.out.println("Field: " + entry.getKey() + " Value: " + entry.getValue());					 
-					}
-				
-				}*/
-				//Calls back to the owning activity to build the adapter
+
 				ReportMainActivity.this.buildListAdapter();
 				
 			} else {
@@ -334,11 +332,16 @@ public class ReportMainActivity extends ListActivity {
 	 }
 	
 	protected class GetReportColumnsFieldsByReportId extends AsyncTask<String, Integer, Boolean> {
-		private ProgressDialog progress;
-		private HornetDBService sync;
+		protected ProgressDialog progress;
+		protected HornetDBService sync;
 		private int reportId = 0;
 		
-	
+		public GetReportColumnsFieldsByReportId () {
+			sync = new HornetDBService();
+
+		}
+		
+		
 		public GetReportColumnsFieldsByReportId (int reportId) {
 			sync = new HornetDBService();
 			this.reportId = reportId;
@@ -360,8 +363,8 @@ public class ReportMainActivity extends ListActivity {
 		protected void onPostExecute(Boolean success) {
 			progress.dismiss();
 			if (success) {
-				//Calls back to the owning activity to build the adapter
-				ReportMainActivity.this.buildQuery();
+				//Calls back to the owning activity to call the thread to retrieve the joining tables
+				ReportMainActivity.this.getJoiningTablesData(reportFunctionName);
 				
 			} else {
 				AlertDialog.Builder builder = new AlertDialog.Builder(ReportMainActivity.this);
@@ -372,5 +375,42 @@ public class ReportMainActivity extends ListActivity {
 			}
 	    }
 	 }
+	
+	private class GetJoiningTablesByFunctionName extends GetReportColumnsFieldsByReportId {
+		private String functionName = null;
+
+		public GetJoiningTablesByFunctionName(String functionName) {
+			super();
+			this.functionName = functionName;
+		}
+
+		@Override
+		protected void onPreExecute() {
+			progress = ProgressDialog.show(ReportMainActivity.this, "Retrieving..", 
+					 "Retrieving Report Joining Table Data...");
+		}
+
+		@Override
+		protected Boolean doInBackground(String... params) {
+			joiningTablesMapList = sync.getJoiningTablesByFunctionName(ReportMainActivity.this, functionName);
+			return true;
+		}
+
+		@Override
+		protected void onPostExecute(Boolean success) {
+			progress.dismiss();
+			if (success) {
+				//Calls back to the owning activity to build the adapter
+				ReportMainActivity.this.buildQuery();
+				
+			} else {
+				AlertDialog.Builder builder = new AlertDialog.Builder(ReportMainActivity.this);
+				builder.setTitle("Error Occurred")
+				.setMessage(sync.getStatus())
+				.setPositiveButton("OK", null)
+				.show();
+			}
+	      }
+		}				
+	}
 		
-}

@@ -4,7 +4,10 @@ Members Type:
 Sql for Current Members
 Report Id : 1
 
-SELECT member.id, get_name(member.firstname, member.surname) AS "Name", member.phonecell AS "Mobile", programme.name AS "Programme", membership.startdate AS "Start", membership.enddate AS "End", membership.paymentdue AS "Fee", price_desc(0::text::money, programme.id) AS "Price Desc", member_last_visit(member.id) AS "Last Visit", get_happiness(member.id) AS "Happy" FROM get_all_members('2013-03-04', '2014-03-05')AS fun left join member on fun.mid=member.id left join membership on fun.msid=membership.id left join programme on fun.pid=programme.id left join programmegroup on fun.pgid=programmegroup.id left join member_view on fun.mid=member_view.id left join staff on fun.ptid=staff.id left join promotion on fun.pmtid=promotion.promotion_id left join involvement on fun.involvementid=involvement.id   ORDER BY "Name", "Mobile", "Programme", "Start", "End", "Fee", "Price Desc", "Last Visit", "Happy";;
+SELECT member.id, get_name(member.firstname, member.surname) AS "Name", member.phonecell AS "Mobile", programme.name AS "Programme",
+ membership.startdate AS "Start", membership.enddate AS "End", membership.paymentdue AS "Fee", price_desc(0::text::money, programme.i
+d) AS "Price Desc", member_last_visit(member.id) AS "Last Visit", get_happiness(member.id) AS "Happy" FROM get_all_members('2013-03-0
+4', '2014-03-05')AS fun left join member on fun.mid=member.id left join membership on fun.msid=membership.id left join programme on fun.pid=programme.id left join programmegroup on fun.pgid=programmegroup.id left join member_view on fun.mid=member_view.id left join staff on fun.ptid=staff.id left join promotion on fun.pmtid=promotion.promotion_id left join involvement on fun.involvementid=involvement.id   ORDER BY "Name", "Mobile", "Programme", "Start", "End", "Fee", "Price Desc", "Last Visit", "Happy";;
 
 Membershipless
 Report Id: 133
@@ -72,6 +75,8 @@ Suspended Members
 Report Id: 109
 SELECT member.id, get_name(member.firstname, member.surname) AS "Name", fun.startdate AS "Suspension Start", fun.enddate AS "Suspension End", reason AS "Reason" FROM get_suspended_member('2013-03-24', '2014-03-24')AS fun left join member on fun.mid=member.id left join member_view on fun.mid=member_view.id   ORDER BY "Name", "Suspension Start", "Suspension End", "Reason";;
 
+
+select joining_query from report_function_table where function_name = 'get_all_members(${sdate}, ${edate})';
 
 
 Sales Type:

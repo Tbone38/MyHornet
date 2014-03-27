@@ -21,8 +21,9 @@
 	        android:id="@+id/btnCreateReport"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:textSize="40sp"
+	        android:textSize="30sp"
 	        android:background="#E1ED5C"
 	  		android:layout_gravity="center"
+	  		android:padding="10dp"
 	        android:text="@string/report_create_btn_title" />
 </LinearLayout>

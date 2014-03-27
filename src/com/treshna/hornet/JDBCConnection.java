@@ -1135,6 +1135,12 @@ public class JDBCConnection {
     	this.pStatement.setInt(1,report_type_id);
     	return this.pStatement.executeQuery();
     }
+    public ResultSet getJoiningTablesByFunctionName(String functionName) throws SQLException {
+    	String query = "Select joining_query from report_function_table where function_name = ?";
+    	this.pStatement = con.prepareStatement(query);
+    	this.pStatement.setString(1,functionName);
+    	return this.pStatement.executeQuery();
+    }
     public ResultSet getReportTypesAndNames() throws SQLException {
     	String query = "SELECT id, '        '||name AS name, function_name, report_type_id AS order, false as istype FROM user_report" 
     	+" UNION SELECT id, name, view_name, id AS order, true as istype FROM report_type ORDER BY \"order\", \"istype\" DESC, name,id";
@@ -1157,19 +1163,9 @@ public class JDBCConnection {
 	    return this.pStatement.executeQuery();
     }
     
-    public ResultSet getReportDataByDateRange(int report_id, String functionName, Date startDate, Date endDate) throws SQLException {
-    	try {
-    		con.clearWarnings();
-    	String query = "SELECT * from "+functionName+"(?,?)";
-    	System.out.println("Select * from " + functionName + "(" + startDate + "," + endDate + ")");
-    	this.pStatement = con.prepareStatement(query);
-    	this.pStatement.setDate(1, new java.sql.Date(startDate.getTime()));
-    	this.pStatement.setDate(2, new java.sql.Date(endDate.getTime()));    	
+    public ResultSet getReportDataByDateRange( String finalQuery) throws SQLException {
+    	this.pStatement = con.prepareStatement(finalQuery);    	
     	return this.pStatement.executeQuery();
-    	} catch (SQLException e) {
-    		Log.e(TAG, "SQL ERROR:"+con.getWarnings(), e);
-    		throw new SQLException(e);
-    	}
     }
     
     public ResultSet getReportDataByDateRangeTwo(String mainQuery, Date startDate, Date endDate) throws SQLException {
