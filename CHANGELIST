@@ -57,7 +57,10 @@ KEY:
                 Added better ErrorLog to Flask API.
                 Cancel Membership - Shows that the membership has been cancelled (background set to red)
                 Resolved the weird booking issues, caused by changing arrival to epoch in some places but not other.
-		"Can we Contact you...?" Defaults to ticked.
+                "Can we Contact you...?" Defaults to ticked.
+                Changed Blue Tick to green.
+                Assign TAG gives a warning when attempting to assign to member with one already.
+                Fixed Connection handling in Flask API. --semi
  
             TODO:
                 Handle permissions/Roles for different staff, to limit what certain staff can see.
@@ -70,12 +73,14 @@ KEY:
                 Fix the Booking Views broken back button.
                 Spacing/padding of Labels & Headings..
                 Improve sync-times/OutOfMemory Issues.
-                Fix Connection handling in Flask API.
                 Fix Times/(possibly dates?) disappearing everytime we update the app.
                 Record Emails/SMS send from app in gymmaster device.
-                Assign TAG should give a warning if you try and assign a TAG to a member who already has a tag (should ask if you want to wipe current tag)
                 Test Access Control, does it/can we get it working with the GymMaster Access/Security Control (Using Views?)?
-		Change Blue Ticks to Green Ticks.
+                Issue with sync table: the servertime isn't being set correctly.
+                Move the app navigation over to a navigation Drawer.
+                Fix the backstack.
+                Fix the PollingHandler running on the UI thread. (blocking etc).
+                Improve Performance of the Booking Overview page.
     
     
     v119:

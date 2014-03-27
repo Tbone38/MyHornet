@@ -174,7 +174,11 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 			String email="mailto:"+Uri.encode(v.getTag().toString())+"?subject="+Uri.encode("Gym Details");
 			Intent intent = new Intent(Intent.ACTION_SENDTO);
 			intent.setData(Uri.parse(email));
-			ctx.startActivity(intent);
+			try {
+				ctx.startActivity(intent);
+			} catch (ActivityNotFoundException e) { 
+				Toast.makeText(ctx, "Cannot send emails from this device.", Toast.LENGTH_LONG).show();
+			}
 			break;
 		}
 		case (R.id.button_sms):{
@@ -198,7 +202,11 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 				String ph ="tel:"+tag.get(0).substring(tag.get(0).indexOf(":")+1);
 				Intent intent = new Intent(Intent.ACTION_DIAL);
 				intent.setData(Uri.parse(ph));
-				ctx.startActivity(intent);
+				try {
+					ctx.startActivity(intent);
+				} catch(ActivityNotFoundException e) {
+					Toast.makeText(ctx, "Cannot make call's from this device.", Toast.LENGTH_LONG).show();
+				}
 			} 
 			else {
 				//show popup window, let user select the number to call.
@@ -227,7 +235,29 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 			break;
 		}
 		case (R.id.button_tag):{
-			swipeBox();
+			Cursor cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, ContentDescriptor.Member.Cols.MID+" = ?",
+					new String[] {mid}, null);
+			if (!cur.moveToFirst()) break;
+			
+			if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.CARDNO))) {
+				//confirm we want to overwrite.
+				AlertDialog.Builder builder= new AlertDialog.Builder(ctx);
+				builder.setTitle("Overwrite current Tag?")
+				.setMessage("Are you sure you want to overwrite the currently assigned Tag?")
+				.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+						
+						swipeBox();
+					}})
+				.setNegativeButton("Cancel", null)
+				.show();
+				cur.close();
+			} else {
+				cur.close();
+				swipeBox();
+			}
 		}
 		}
 	}

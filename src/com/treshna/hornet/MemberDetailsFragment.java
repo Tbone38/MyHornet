@@ -120,7 +120,7 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 
 		int status = cur.getInt(cur.getColumnIndex(ContentDescriptor.Member.Cols.STATUS));
 		if (status >= 0) {
-			if (status == 0) { //Current
+			if (status == 0|| status == 5) { //Current
 				ImageView statusView;
 				statusView = (ImageView) view.findViewById(R.id.member_status_ok);
 				statusView.setVisibility(View.VISIBLE);
@@ -140,12 +140,6 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 				statusView = (ImageView) view.findViewById(R.id.member_status_casual);
 				statusView.setVisibility(View.VISIBLE);
 				statusView.setColorFilter(Services.ColorFilterGenerator.setColour(getResources().getColor(R.color.visitors_red)));
-			} else if (status == 5) { //casual ?
-				//what should be shown?
-				ImageView statusView;
-				statusView = (ImageView) view.findViewById(R.id.member_status_ok);
-				statusView.setVisibility(View.VISIBLE);
-				statusView.setColorFilter(Services.ColorFilterGenerator.setColour(getResources().getColor(R.color.android_blue)));
 			}
 		} else {
 			ImageView statusView;

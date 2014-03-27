@@ -7,7 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Locale;
-
+import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -22,6 +22,7 @@ import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -186,22 +187,32 @@ public class Services {
 	 * This function allows the application to manually set the value of an 
 	 * application property. (setting)
 	 */
+	@SuppressLint("InlinedApi")
 	public static void setPreference(Context context, String key, String value) {
-		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+		SharedPreferences preferences;
+		
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			preferences = context.getSharedPreferences(context.getPackageName()+"_preferences", Context.MODE_MULTI_PROCESS);
+		} else {
+			preferences = PreferenceManager.getDefaultSharedPreferences(context);
+		}
 		Editor e = preferences.edit();
 		e.putString(key, value);
 		e.commit();
 	}
-	
 	 
-	 public static String getAppSettings(Context context, String key){
+	 @SuppressLint("InlinedApi")
+	public static String getAppSettings(Context context, String key){
 		 //Exception e = new Exception();
 		 Log.d(TAG, "Getting App Setting: "+key);
-		 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+		 SharedPreferences preferences;
+		 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			 preferences = context.getSharedPreferences(context.getPackageName() + "_preferences", Context.MODE_MULTI_PROCESS);
+		 } else {
+			 preferences = PreferenceManager.getDefaultSharedPreferences(context);
+		 }
 		 return (preferences.getString(key, "-1"));
 	}
-
-	
 	
 	//converts a DP input into pixels, useful for programmatically setting View margins/padding/etc.
 	public static int convertdpToPxl(Context c, int dp){

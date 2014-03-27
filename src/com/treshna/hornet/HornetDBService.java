@@ -4333,6 +4333,11 @@ public class HornetDBService extends Service {
     	int deviceid = -1;
     	String uniqueid, query;
     	uniqueid = ApplicationID.id();
+    	if (uniqueid == null) {
+    		//we've not got an unique string, probably because of an issue
+    		//with the sd-card.
+    		return true;
+    	}
     	
     	cur = contentResolver.query(ContentDescriptor.AppConfig.CONTENT_URI, null, null, null, null);
     	if (cur.moveToFirst()) {
@@ -4340,9 +4345,6 @@ public class HornetDBService extends Service {
     	}
     	cur.close();
     	
-    	if (deviceid <= 0 && uniqueid == null) {
-    		return false;
-    	}
     	if (!openConnection()) return false;
     	
     	//look for an id.
@@ -4363,12 +4365,12 @@ public class HornetDBService extends Service {
     	
     	if (deviceid <= 0) {
     		//we'll need to do an insert.
-    		query = "INSERT INTO sync(device, clienttime, completed, servertime) VALUES ('"+uniqueid+"',"+
-    		"to_timestamp("+(double)(new Date().getTime()/1000d)+"), true, now()) RETURNING id;";
+    		query = "INSERT INTO sync(servertime, device, clienttime, completed) VALUES (now(), '"+uniqueid+"',"+
+    		"to_timestamp("+(double)(new Date().getTime()/1000d)+"), true) RETURNING id;";
     		
-    	} else {
-    		query = "UPDATE sync SET (clienttime, completed, servertime) = (to_timestamp("+(double)(new Date().getTime()/1000d)
-    				+"), true, now()) WHERE id = "+deviceid+" RETURNING id;";
+    	} else { //the behaviour of the servertime doesn't seem correct.
+    		query = "UPDATE sync SET (servertime, clienttime, completed) = (now(), to_timestamp("+(double)(new Date().getTime()/1000d)
+    				+"), true) WHERE id = "+deviceid+" RETURNING id;";
     	}
     	
     	try {
@@ -4396,6 +4398,11 @@ public class HornetDBService extends Service {
     	int deviceid = -1;
     	String uniqueid, query;
     	uniqueid = ApplicationID.id();
+    	if (uniqueid == null) {
+    		//we've not got a unique id. likely because of an issue with the SD-card.
+    		//try syncing anyway.
+    		return true;
+    	}
     	
     	cur = contentResolver.query(ContentDescriptor.AppConfig.CONTENT_URI, null, null, null, null);
     	if (cur.moveToFirst()) {
@@ -4403,10 +4410,6 @@ public class HornetDBService extends Service {
     	}
     	cur.close();
     	
-    	
-    	if (deviceid <= 0 && uniqueid == null) {
-    		return false;
-    	}
     	if (!openConnection()) return false;
     	
     	//look for an id.
@@ -4430,8 +4433,8 @@ public class HornetDBService extends Service {
     		query = "INSERT INTO sync (device, clienttime, completed) VALUES ('"+uniqueid+"',"+
     		"to_timestamp("+(double)(new Date().getTime()/1000d)+"), false) RETURNING *;";
     	} else {
-    		query = "UPDATE sync SET (clienttime, completed, servertime) = (to_timestamp("+(double)(new Date().getTime()/1000d)
-    				+"),false, now()) WHERE id = "+deviceid+" RETURNING *;";
+    		query = "UPDATE sync SET (servertime, clienttime, completed) = (now(), to_timestamp("+(double)(new Date().getTime()/1000d)
+    				+"),false) WHERE id = "+deviceid+" RETURNING *;";
     	}
     	
     	try {

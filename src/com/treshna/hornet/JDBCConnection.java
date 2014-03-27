@@ -42,7 +42,6 @@ public class JDBCConnection {
     private Connection con = null;
     private Statement statement;
     private PreparedStatement pStatement;
-    //private static final String TAG = "JDBCConnection";
     private static String TAG = "HORNETSERVICE";
     private Context ctx; //applicationContext(), DO NOT USE activityContext()
     

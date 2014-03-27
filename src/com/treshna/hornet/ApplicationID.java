@@ -1,6 +1,7 @@
 package com.treshna.hornet;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -12,6 +13,10 @@ public class ApplicationID {
     private static String sID = null;
     private static final String INSTALLATION = "GYMMASTER_MOBILE_INSTALLATION";
 
+    /**
+     * returns the UUID for the application install on success, else returns null.
+     * @return
+     */
     public synchronized static String id() { //Context context
         if (sID == null) {  
         	
@@ -27,8 +32,17 @@ public class ApplicationID {
                 	writeInstallationFile(installation);
                 }
                 sID = readInstallationFile(installation);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+            } catch (FileNotFoundException e) {
+            	//we've not got an sd-card, or something else went wrong.
+                //throw new RuntimeException(e);
+            	e.printStackTrace();
+            	return null;
+            } catch (IllegalArgumentException e) {
+            	e.printStackTrace();
+            	return null;
+            } catch (IOException e) {
+            	e.printStackTrace();
+            	return null;
             }
         }
         return sID;

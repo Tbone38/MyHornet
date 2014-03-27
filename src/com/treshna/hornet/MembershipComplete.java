@@ -9,6 +9,7 @@ import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -151,7 +152,28 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 			break;
 		}
 		case (R.id.button_addtag_row):{
-			swipeBox();
+			Cursor cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, ContentDescriptor.Member.Cols.MID+" = ?",
+					new String[] {memberid}, null);
+			if (!cur.moveToFirst()) break;
+			
+			if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.CARDNO))) {
+				//confirm we want to overwrite.
+				AlertDialog.Builder builder= new AlertDialog.Builder(ctx);
+				builder.setTitle("Overwrite current Tag?")
+				.setMessage("Are you sure you want to overwrite the currently assigned Tag?")
+				.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+						swipeBox();
+					}})
+				.setNegativeButton("Cancel", null)
+				.show();
+				cur.close();
+			} else {
+				cur.close();
+				swipeBox();
+			}
 			break;
 		}
 		}
@@ -175,6 +197,8 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 		ContentResolver contentResolver = getActivity().getContentResolver();
 		Cursor cur;
 		String message = "";
+		
+		if (alertDialog == null || !alertDialog.isShowing()) return;
 		
 		cur = contentResolver.query(ContentDescriptor.IdCard.CONTENT_URI, null, ContentDescriptor.IdCard.Cols.SERIAL+" = ?",
 				new String[] {serial}, null);
