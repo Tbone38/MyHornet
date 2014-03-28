@@ -61,6 +61,7 @@ KEY:
                 Changed Blue Tick to green.
                 Assign TAG gives a warning when attempting to assign to member with one already.
                 Fixed Connection handling in Flask API. --semi
+                Seperate Sign-Up App. 
  
             TODO:
                 Handle permissions/Roles for different staff, to limit what certain staff can see.
@@ -81,8 +82,9 @@ KEY:
                 Fix the backstack.
                 Fix the PollingHandler running on the UI thread. (blocking etc).
                 Improve Performance of the Booking Overview page.
-   				Seperate Sign-Up App. 
-				Fix image primary image issue (multiple images for a member considering themselves the primary image);
+                Fix image primary image issue (multiple images for a member considering themselves the primary image);
+                Fix member signup from the signup app when access is restricted (can't get a memberid during signup).
+                    -Instead, assign the memberid during the upload attempt?
     
     v119:
             Altered the add Member process.
