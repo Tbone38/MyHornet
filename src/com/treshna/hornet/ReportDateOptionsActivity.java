@@ -25,6 +25,7 @@ public class ReportDateOptionsActivity extends Activity {
 	private HashMap<String,Object> reportData = new HashMap<String,Object>() ;
 	private DatePicker startDatePicker = null;
 	private DatePicker endDatePicker = null;
+	private int reportId = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -34,22 +35,33 @@ public class ReportDateOptionsActivity extends Activity {
 		TextView reportNameTxt = (TextView) findViewById(R.id.report_date_options_report_name);
 		startDatePicker = (DatePicker) findViewById(R.id.start_date);
 		endDatePicker = (DatePicker) findViewById(R.id.end_date);
-		Button nextButton =  (Button) findViewById(R.id.btnNext);	
+		Button createButton =  (Button) findViewById(R.id.btnCreateReport);
+		Button columnOptionsButton =  (Button) findViewById(R.id.btnColumnOptions);
 		reportNameTxt.setText(intent.getStringExtra("report_name").trim());
-		reportData.put("report_id", intent.getStringExtra("report_id"));
+		reportId = Integer.parseInt(intent.getStringExtra("report_id"));
 		reportData.put("report_name", intent.getStringExtra("report_name"));
 		reportData.put("report_function_name", intent.getStringExtra("report_function_name"));
 	
 		
-		nextButton.setOnClickListener(new View.OnClickListener() {
+		createButton.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				renderReport();
+				loadMainReport();
 				
 			}
-		}); 
-		//renderReport();
+		});
+		
+		columnOptionsButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				loadColumnOptions();
+				
+			}
+		});
+		
+		
 	}
 	
 	private Date  dateStringFromPicker (DatePicker datePicker) {
@@ -62,28 +74,37 @@ public class ReportDateOptionsActivity extends Activity {
 	}
 	
 
-	private void renderReport(){
+	private void loadMainReport(){
 		
+		loadIntent("date_options", ReportMainActivity.class);
+	
+	}
+	
+	private void loadColumnOptions() {
+		
+		loadIntent("column_options", ReportColumnOptionsActivity.class);
+	}
+	
+	private void loadIntent(String callingActivity, Class<?> activity) {
 		reportData.put("start_date",this.dateStringFromPicker(startDatePicker));
 		reportData.put("end_date", this.dateStringFromPicker(endDatePicker));
 		
-		Intent reportColumnsIntent = new Intent(this.getApplicationContext(), ReportColumnOptionsActivity.class);
+		Intent reportMainIntent = new Intent(this.getApplicationContext(), activity);
+		reportMainIntent.putExtra("report_id", reportId);
 		//Pushing UI and upstream data through to the report column options intent..
 		for (Map.Entry<String,Object> param: reportData.entrySet()){
 			//Casting the date values to time-stamp to pass through the intent..
-			if ((param.getKey().toString().compareTo("start_date") == 0) || (param.getKey().toString().compareTo("end_date") == 0) ){
-				reportColumnsIntent.putExtra(param.getKey().toString(), ((Date) param.getValue()).getTime());
-			} else {
-				reportColumnsIntent.putExtra(param.getKey().toString(),  param.getValue().toString());
-			}
-				
+				if ((param.getKey().toString().compareTo("start_date") == 0) || (param.getKey().toString().compareTo("end_date") == 0) ){
+					reportMainIntent.putExtra(param.getKey().toString(), ((Date) param.getValue()).getTime());
+				} else {
+					reportMainIntent.putExtra(param.getKey().toString(),  param.getValue().toString());
+				}
+			
 		}
+		reportMainIntent.putExtra("calling_activity", callingActivity);     
 						
-		this.startActivity(reportColumnsIntent);
-	}
-	
-	
-	
-	
-
+		this.startActivity(reportMainIntent);
+	 }
+		
 }
+

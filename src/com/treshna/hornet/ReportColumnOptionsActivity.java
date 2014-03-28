@@ -42,13 +42,10 @@ public class ReportColumnOptionsActivity extends ListActivity {
 		Intent intent = this.getIntent();
 		startDate  =  intent.getLongExtra("start_date", 0);
 		endDate  =  intent.getLongExtra("end_date", 0);
-		reportId = Integer.parseInt(intent.getStringExtra("report_id"));
+		reportId =  intent.getIntExtra("report_id", 0);
 		reportFunctionName = intent.getStringExtra("report_function_name");
 		reportName = intent.getStringExtra("report_name");
 		Button createBtn = (Button) this.findViewById(R.id.btnCreateReport);
-	    /*fetching query fields from xml data file..
-	    fieldsMap = ReportQueryResources.getAllQueryFields(this.getApplicationContext(),reportId);
-	    */
 	    createBtn.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
@@ -63,8 +60,6 @@ public class ReportColumnOptionsActivity extends ListActivity {
 	
 	private void buildListAdapter() {
 		if (this.resultMapList.size() > 0){
-			ListView listView = this.getListView();
-			//PrintQueryResultData();
 			ListAdapter listAdapter = new ArrayAdapter<HashMap<String,String>>(ReportColumnOptionsActivity.this,R.layout.report_column_options_row,
 					this.resultMapList){
 
@@ -94,7 +89,6 @@ public class ReportColumnOptionsActivity extends ListActivity {
 								columnName.setText(row.getValue());																			 																
 								
 							}
-
 							
 						}	
 							
@@ -139,6 +133,7 @@ public class ReportColumnOptionsActivity extends ListActivity {
 		Intent mainReportIntent = new Intent(this.getApplicationContext(), ReportMainActivity.class);
 		mainReportIntent.putExtra("report_id", reportId);
 		mainReportIntent.putExtra("report_name", reportName);
+		mainReportIntent.putExtra("calling_activity", "column_options");
 		mainReportIntent.putExtra("report_function_name", reportFunctionName);
 		mainReportIntent.putExtra("selected_column_ids", selectedColumns);
 		mainReportIntent.putExtra("start_date", startDate);

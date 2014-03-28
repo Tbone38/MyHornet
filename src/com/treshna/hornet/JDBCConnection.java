@@ -1149,7 +1149,7 @@ public class JDBCConnection {
     }
     
     public ResultSet getReportColumnsByReportId(int reportId) throws SQLException {
-	    this.pStatement = con.prepareStatement("Select id AS \"report_field_id\", column_name from report_field where user_report_id = ?");
+	    this.pStatement = con.prepareStatement("Select id AS \"report_field_id\", column_name from report_field where user_report_id = ? Order By id");
 	    this.pStatement.setInt(1, reportId);
 	    return this.pStatement.executeQuery();
     }

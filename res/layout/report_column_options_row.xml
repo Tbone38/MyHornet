@@ -9,7 +9,7 @@
         android:layout_width="0dip"
         android:layout_weight="0.3"
         android:layout_height="wrap_content"
-        android:textSize="30sp"
+        android:textSize="25sp"
         android:gravity="left" />
 
     <CheckBox
@@ -17,7 +17,7 @@
         android:layout_width="0dip"
         android:layout_weight="0.3"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
+        android:gravity="center"
          />
 
 </LinearLayout>
