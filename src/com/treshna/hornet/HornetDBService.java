@@ -170,6 +170,7 @@ public class HornetDBService extends Service {
 			
 			//do uploads //ORDER MATTERS!
 			uploadMember();
+			uploadProspects();
 			uploadMembership();
 			updateMembership();
 			uploadMemberNotes();
@@ -4469,5 +4470,57 @@ public class HornetDBService extends Service {
     	}
     	
     	return true;
+    }
+    
+    private int uploadProspects() {
+    	int result = 0;
+    	
+    	if (!openConnection()) {
+    		return -1;
+    	}
+    	
+    	cur = contentResolver.query(ContentDescriptor.PendingUploads.CONTENT_URI, null, ContentDescriptor.PendingUploads.Cols.TABLEID+" = ?",
+    			new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Prospect.getKey())}, null);
+    	while (cur.moveToNext()) {
+    		int rowid = cur.getInt(cur.getColumnIndex(ContentDescriptor.PendingUploads.Cols.ROWID));
+    		Cursor cur2 = contentResolver.query(ContentDescriptor.Enquiry.CONTENT_URI, null, ContentDescriptor.Enquiry.Cols._ID+" = ?",
+    				new String[] {String.valueOf(rowid)}, null);
+    		
+    		if (!cur2.moveToFirst()) {
+    			cur2.close();
+    			contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, ContentDescriptor.PendingUploads.Cols.ROWID+" = ? AND "
+    					+ContentDescriptor.PendingUploads.Cols.TABLEID+" = ?",new String[] {String.valueOf(rowid), 
+    					cur.getString(ContentDescriptor.TableIndex.Values.Prospect.getKey())});
+    			Log.w(TAG, "Could not find Prospect for Pending Upload, with Enquiry _id:"+rowid);
+    			continue;
+    		}
+    		try {
+    			result += connection.insertEnquiry(cur2.getString(cur2.getColumnIndex(ContentDescriptor.Enquiry.Cols.SNAME)),
+    					cur2.getString(cur2.getColumnIndex(ContentDescriptor.Enquiry.Cols.FNAME)),
+    					cur2.getString(cur2.getColumnIndex(ContentDescriptor.Enquiry.Cols.GENDER)),
+    					cur2.getString(cur2.getColumnIndex(ContentDescriptor.Enquiry.Cols.EMAIL)),
+    					cur2.getString(cur2.getColumnIndex(ContentDescriptor.Enquiry.Cols.DOB)),
+    					cur2.getString(cur2.getColumnIndex(ContentDescriptor.Enquiry.Cols.STREET)),
+	    				cur2.getString(cur2.getColumnIndex(ContentDescriptor.Enquiry.Cols.SUBURB)),
+	    				cur2.getString(cur2.getColumnIndex(ContentDescriptor.Enquiry.Cols.CITY)),
+	    				cur2.getString(cur2.getColumnIndex(ContentDescriptor.Enquiry.Cols.POSTAL)),
+	    				cur2.getString(cur2.getColumnIndex(ContentDescriptor.Enquiry.Cols.PHHOME)),
+	    				cur2.getString(cur2.getColumnIndex(ContentDescriptor.Enquiry.Cols.PHCELL)),
+	    				cur2.getString(cur2.getColumnIndex(ContentDescriptor.Enquiry.Cols.NOTES)));
+    		} catch (SQLException e) {
+    			Log.e(TAG, "", e);	
+    		} finally { //clean-up.
+    			cur2.close();
+    			contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, ContentDescriptor.PendingUploads.Cols.ROWID+" = ? AND "
+    					+ContentDescriptor.PendingUploads.Cols.TABLEID+" = ?",new String[] {String.valueOf(rowid), 
+    					String.valueOf(ContentDescriptor.TableIndex.Values.Prospect.getKey())});
+    		}
+    		
+    		closeConnection();		
+    	}
+    	cur.close();
+    	
+    	
+    	return result;
     }
 }

@@ -17,6 +17,7 @@ import com.treshna.hornet.ContentDescriptor.Class;
 import com.treshna.hornet.ContentDescriptor.Company;
 import com.treshna.hornet.ContentDescriptor.Date;
 import com.treshna.hornet.ContentDescriptor.Door;
+import com.treshna.hornet.ContentDescriptor.Enquiry;
 import com.treshna.hornet.ContentDescriptor.FreeIds;
 import com.treshna.hornet.ContentDescriptor.IdCard;
 import com.treshna.hornet.ContentDescriptor.Image;
@@ -434,6 +435,7 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS "+MemberFinance.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+BillingHistory.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+AppConfig.NAME);
+		db.execSQL("DROP TABLE IF EXISTS "+Enquiry.NAME);
 	}
 	
 	private void repopulateTable(SQLiteDatabase db) {

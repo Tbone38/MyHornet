@@ -10,6 +10,7 @@ import com.treshna.hornet.ContentDescriptor.Booking;
 import com.treshna.hornet.ContentDescriptor.CancellationFee;
 import com.treshna.hornet.ContentDescriptor.Class;
 import com.treshna.hornet.ContentDescriptor.Company;
+import com.treshna.hornet.ContentDescriptor.Enquiry;
 import com.treshna.hornet.ContentDescriptor.FreeIds;
 import com.treshna.hornet.ContentDescriptor.IdCard;
 import com.treshna.hornet.ContentDescriptor.Image;
@@ -803,6 +804,25 @@ public class UpdateDatabase {
 		
 		private static final String SQL3 = "ALTER TABLE "+IdCard.NAME+" ADD COLUMN "+IdCard.Cols.CREATED+" NUMERIC ";
 		
+		private static final String SQL4 = "CREATE TABLE "+Enquiry.NAME+" ("+Enquiry.Cols._ID+" INTEGER PRIMARY KEY NOT NULL, "
+				+Enquiry.Cols.EID+" INTEGER, "+Enquiry.Cols.MID+" INTEGER, "
+				+Enquiry.Cols.FNAME+" TEXT, "+Enquiry.Cols.SNAME+" TEXT, "
+				+Enquiry.Cols.EMAIL+" TEXT, "+Enquiry.Cols.PHCELL+" TEXT, "
+				+Enquiry.Cols.PHHOME+" TEXT,"+Enquiry.Cols.PHWORK+" TEXT, "
+				+Enquiry.Cols.DOB+" TEXT, "+Enquiry.Cols.GENDER+" TEXT, "
+				+Enquiry.Cols.STREET+" TEXT, "+Enquiry.Cols.SUBURB+" TEXT, "
+				+Enquiry.Cols.CITY+" TEXT, "+Enquiry.Cols.POSTAL+" TEXT, "
+				+Enquiry.Cols.NOTES+" TEXT, "+Enquiry.Cols.DEVICESIGNUP+" TEXT default 'f' "
+				+");";
+		
+		private static final String SQL5 = "CREATE TRIGGER "+Enquiry.Triggers.ON_INSERT+" AFTER INSERT ON "+Enquiry.NAME
+				+" FOR EACH ROW WHEN new."+Enquiry.Cols.DEVICESIGNUP+" = 't' " 
+				+" BEGIN "
+					+"INSERT OR REPLACE INTO "+PendingUploads.NAME
+					+ " ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
+					+ " VALUES (new."+Enquiry.Cols._ID+", "+TableIndex.Values.Prospect.getKey()+");"
+				+" END; ";
+		
 		public static void patchNinetySix(SQLiteDatabase db) {
 			db.beginTransaction();
 			try {
@@ -812,6 +832,10 @@ public class UpdateDatabase {
 				db.execSQL(SQL2);
 				Log.w(HornetDatabase.class.getName(), "\n"+SQL3);
 				db.execSQL(SQL3);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL4);
+				db.execSQL(SQL4);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL5);
+				db.execSQL(SQL5);
 				db.setTransactionSuccessful();
 			/*} catch (SQLException e) {
 			e.printStackTrace();

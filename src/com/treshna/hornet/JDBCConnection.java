@@ -1164,6 +1164,62 @@ public class JDBCConnection {
     	return pStatement.executeQuery();
     }
     
+    public int insertEnquiry( String surname, String firstname, String gender, String email, String dob,
+    		String street, String suburb, String city, String postal, String hphone, String cphone, String notes) throws SQLException {
+    	
+    	pStatement = con.prepareStatement("INSERT INTO enquiry (surname, firstname, gender, email, dob, addressstreet, addresssuburb, "
+    			+ "addresscity, addressareacode, notes, phonehome, phonecell) VALUES (?, ?, ?, ?, ?::DATE, ?, ?, ?, ?, ?, ?, ?);");
+    	
+    	pStatement.setString(1, surname);
+    	pStatement.setString(2, firstname);
+    	pStatement.setString(3, gender);
+    	
+    	if (email != null) {
+    		pStatement.setString(4, email);
+    	} else {
+    		pStatement.setNull(4, java.sql.Types.VARCHAR);
+    	}
+    	pStatement.setString(5, dob);
+    	
+    	if (street != null) {
+    		pStatement.setString(6, street);
+    	} else {
+    		pStatement.setNull(6, java.sql.Types.VARCHAR);
+    	}
+    	if (suburb != null) {
+    		pStatement.setString(7, suburb);
+    	} else {
+    		pStatement.setNull(7, java.sql.Types.VARCHAR);
+    	}
+    	if (city != null) {
+    		pStatement.setString(8, city);
+    	} else {
+    		pStatement.setNull(8, java.sql.Types.VARCHAR);
+    	}
+    	if (postal != null) {
+    		pStatement.setString(9, postal);
+    	} else {
+    		pStatement.setNull(9, java.sql.Types.VARCHAR);
+    	}
+    	if (notes != null) {
+    		pStatement.setString(10, notes);
+    	} else {
+    		pStatement.setNull(10, java.sql.Types.VARCHAR);
+    	}
+    	if (hphone != null) {
+    		pStatement.setString(11, hphone);
+    	} else {
+    		pStatement.setNull(11, java.sql.Types.VARCHAR);
+    	}
+    	if (cphone != null) {
+    		pStatement.setString(12, cphone);
+    	} else {
+    		pStatement.setNull(12, java.sql.Types.VARCHAR);
+    	}
+    	
+    	return pStatement.executeUpdate();
+    }
+    
     public SQLWarning getWarnings() throws SQLException, NullPointerException {
     	return con.getWarnings();
     }

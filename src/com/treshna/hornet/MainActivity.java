@@ -15,8 +15,11 @@ import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBarActivity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.FrameLayout;
 
 import com.treshna.hornet.R.color;
 
@@ -41,6 +44,13 @@ public class MainActivity extends NFCActivity {
 		super.onCreate(savedInstanceState);
 
 		this.setContentView(R.layout.main_activity);
+		/*this.setContentView(R.layout.drawer_layout);
+		LayoutInflater inflater = this.getLayoutInflater();
+		
+		FrameLayout frame = (FrameLayout) this.findViewById(R.id.content_view);
+		View contents = inflater.inflate(R.layout.main_activity, null);
+		frame.addView(contents);*/
+		
 		this.setTitle("GymMaster");
 		this.setTitleColor(color.gym);
 		context = getApplicationContext();

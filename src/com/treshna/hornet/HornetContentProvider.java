@@ -54,6 +54,9 @@ public class HornetContentProvider extends ContentProvider {
 	    	 return ContentDescriptor.Company.CONTENT_TYPE_DIR;
 	     case ContentDescriptor.Company.PATH_FOR_ID_TOKEN:
 	    	 return ContentDescriptor.Company.CONTENT_ITEM_TYPE;
+	     case ContentDescriptor.Enquiry.PATH_TOKEN:{
+	    	 return ContentDescriptor.Enquiry.CONTENT_TYPE_DIR;
+	     }
 	     default:
 	         throw new UnsupportedOperationException ("URI " + uri + " is not supported.");
 	     }
@@ -238,6 +241,11 @@ public class HornetContentProvider extends ContentProvider {
         }
         case ContentDescriptor.AppConfig.PATH_TOKEN:{
         	int rows = db.delete(ContentDescriptor.AppConfig.NAME, selection, selectionArgs);
+        	getContext().getContentResolver().notifyChange(uri, null);
+        	return rows;
+        }
+        case ContentDescriptor.Enquiry.PATH_TOKEN:{
+        	int rows = db.delete(ContentDescriptor.Enquiry.NAME, selection, selectionArgs);
         	getContext().getContentResolver().notifyChange(uri, null);
         	return rows;
         }
@@ -451,6 +459,11 @@ public class HornetContentProvider extends ContentProvider {
             	long id = db.insert(ContentDescriptor.AppConfig.NAME, null, values);
             	getContext().getContentResolver().notifyChange(uri, null);
             	return ContentDescriptor.AppConfig.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
+            }
+            case ContentDescriptor.Enquiry.PATH_TOKEN:{
+            	long id = db.insert(ContentDescriptor.Enquiry.NAME, null, values);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return ContentDescriptor.Enquiry.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
             }
             default: {
                 throw new UnsupportedOperationException("URI: " + uri + " not supported.");
@@ -844,6 +857,11 @@ public class HornetContentProvider extends ContentProvider {
             	builder.setTables(ContentDescriptor.AppConfig.NAME);
             	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
             }
+            case ContentDescriptor.Enquiry.PATH_TOKEN:{
+            	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+            	builder.setTables(ContentDescriptor.Enquiry.NAME);
+            	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+            }
             
             default: throw new UnsupportedOperationException("URI: " + uri + " not supported.");
         }
@@ -1018,6 +1036,11 @@ public class HornetContentProvider extends ContentProvider {
             }
             case ContentDescriptor.AppConfig.PATH_TOKEN:{
             	int result = db.update(ContentDescriptor.AppConfig.NAME, values, selection, selectionArgs);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return result;
+            }
+            case ContentDescriptor.Enquiry.PATH_TOKEN:{
+            	int result = db.update(ContentDescriptor.Enquiry.NAME, values, selection, selectionArgs);
             	getContext().getContentResolver().notifyChange(uri, null);
             	return result;
             }

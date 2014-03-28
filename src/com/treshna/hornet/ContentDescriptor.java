@@ -43,7 +43,7 @@ import android.provider.BaseColumns;
  *  115 = Member_MemberBalance			305:
  *  120:								310 = Booking
  *  125 = Membership
- *  
+ *  170 = Prospect
  *  311:								400:
  *  312:								401 = idcard
  *  313 = BookingTime					405 = dd_export_format
@@ -154,6 +154,7 @@ public class ContentDescriptor {
 	     matcher.addURI(authority, BillingHistory.PATH, BillingHistory.PATH_TOKEN);
 	     matcher.addURI(authority, DDExportFormat.PATH, DDExportFormat.PATH_TOKEN);
 	     matcher.addURI(authority, AppConfig.PATH, AppConfig.PATH_TOKEN);
+	     matcher.addURI(authority, Enquiry.PATH, Enquiry.PATH_TOKEN);
 	     
 	     matcher.addURI(authority, DROPTABLE, TOKEN_DROPTABLE);
 	     
@@ -272,6 +273,41 @@ public class ContentDescriptor {
 	        }
 	        
 	    }
+	 	
+	 	public static class Enquiry {
+	 		public static final String NAME = "enquiry";
+	 		public static final String PATH = "enquiry";
+	 		public static final int PATH_TOKEN = 170;
+	 		
+	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
+	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.enquiry";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.enquiry";
+	 		
+	 		public static class Triggers {
+	 			public static final String ON_INSERT = "enquiry_insert";
+	 		}
+	 		
+	 		public static class Cols implements BaseColumns {
+	 			
+	 			public static final String EID = "eid";
+	 			public static final String MID = "mid"; 	            
+	            public static final String FNAME="firstname";
+	            public static final String SNAME="surname";	 			
+	 			public static final String PHHOME = "phonehome";
+	       	 	public static final String PHCELL = "phonecell";
+	       	 	public static final String PHWORK = "phonework";
+	       	 	public static final String EMAIL = "email";
+	       	 	public static final String DOB = "dob";
+	 			public static final String GENDER = "gender";
+	 			public static final String NOTES = "notes";
+	 			public static final String STREET = "street";
+	 			public static final String SUBURB = "suburb";
+	 			public static final String CITY = "city";
+	 			public static final String POSTAL = "postal";
+	 			public static final String DEVICESIGNUP = "devicesignup"; 
+	 			//boolean field, to tell the difference between downloaded members and android signup members.
+	 		}
+	 	}
 
 	 	public static class Visitor {
 	 		public static final String NAME = "visitor";
@@ -1016,7 +1052,7 @@ public class ContentDescriptor {
 	 			Booking(1), Class(2), Swipe(3),Membership(4) /*when adding memberships*/,
 	 					Member(5) /*when adding members/prospects*/,Image(6),
 	 					MembershipSuspend(7), MemberNotes(8), RollCall(9), RollItem(10),
-	 					Idcard(11);
+	 					Idcard(11), Prospect(12);
 	 			
 	 			private final int key;
 	 			
