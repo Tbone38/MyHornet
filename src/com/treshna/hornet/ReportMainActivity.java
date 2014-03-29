@@ -41,9 +41,9 @@ import android.widget.TextView;
 
 
 public class ReportMainActivity extends ListActivity {
-	private ArrayList<HashMap<String,String>> resultMapList = null;
-	private ArrayList<HashMap<String,String>> columnsMapList =  null;
-	private ArrayList<HashMap<String,String>> joiningTablesMapList =  null;
+	public ArrayList<HashMap<String,String>> resultMapList = null;
+	public ArrayList<HashMap<String,String>> columnsMapList =  null;
+	public ArrayList<HashMap<String,String>> joiningTablesMapList =  null;
 	private String reportName = null;
 	private String reportFunctionName = null;
 	private String queryFunctionParamsCut = null; 

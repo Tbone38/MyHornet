@@ -21,18 +21,28 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class ReportTypesAndNamesActivity extends ListActivity {
 	private ArrayList<HashMap<String,String>> resultMapList = null;
-
+	private GetReportTypesAndNamesNameData syncTypesAndNames = null;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.report_types_and_names_list);
-		//Call the thread for dowloading data from central db
-		GetReportTypesAndNamesNameData syncTypesAndNames = new GetReportTypesAndNamesNameData();
-		syncTypesAndNames.execute(null,null);
-		
+		getNamesData();
 	}
 	
+	public GetReportTypesAndNamesNameData getSyncTypesAndNames() {
+		return syncTypesAndNames;
+	}
+
+	public ArrayList<HashMap<String, String>> getResultMapList() {
+		return resultMapList;
+	}
+	
+	public void getNamesData () {
+		syncTypesAndNames = new GetReportTypesAndNamesNameData();
+		//syncTypesAndNames.execute(null,null);
+	}
+
 	private void buildListAdapter() {
 		if (resultMapList.size() > 0){
 			ListView listView = this.getListView();
@@ -74,7 +84,7 @@ public class ReportTypesAndNamesActivity extends ListActivity {
 			this.setListAdapter(listAdapter);
 	  }
 	}
-	private class GetReportTypesAndNamesNameData extends AsyncTask<String, Integer, Boolean> {
+	public class GetReportTypesAndNamesNameData extends AsyncTask<String, Integer, Boolean> {
 		private ProgressDialog progress;
 		private HornetDBService sync;
 		private ResultSet result = null;
