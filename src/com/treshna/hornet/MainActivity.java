@@ -245,22 +245,12 @@ public class MainActivity extends NFCActivity {
 	    	startActivity(i);
 	    	return true;
 	    }
-	    case (R.id.report_types_test):{
-	    	this.startReportTypesActivity(this);
-	    	return true;
-	    }
-	    case (R.id.report_names_test):{
-	    	this.startReportNamesActivity(this);
-	    	return true;
-	    }
+
 	    case (R.id.report_types_and_names):{
 	    	this.startReportTypesAndNamesActivity(this);
 	    	return true;
 	    }
-	    case (R.id.report_date_options):{
-	    	this.startReportDateOptionsActivity(this);
-	    	return true;
-	    }
+
 	    default:
 	    	return super.onOptionsItemSelected(item);
 	    }
@@ -351,7 +341,7 @@ public class MainActivity extends NFCActivity {
 	}
 	private void startReportTypesAndNamesActivity (Context view)
 	{
-		Intent intent = new Intent(view,ReportTypesAndNamesActivity.class);
+		Intent intent = new Intent(view,ReportListingActivity.class);
 		this.startActivity(intent);
 	}
 	private void startReportDateOptionsActivity (Context view)

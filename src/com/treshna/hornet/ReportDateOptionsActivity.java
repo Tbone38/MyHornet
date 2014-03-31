@@ -1,5 +1,6 @@
 package com.treshna.hornet;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -7,41 +8,71 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-
-
-
-
-import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
 
 
-public class ReportDateOptionsActivity extends Activity {
+public class ReportDateOptionsActivity extends FragmentActivity implements DatePickerFragment.DatePickerSelectListener{ 
 	private HashMap<String,Object> reportData = new HashMap<String,Object>() ;
-	private DatePicker startDatePicker = null;
-	private DatePicker endDatePicker = null;
+	private DatePickerFragment startDatePicker = null;
+	private Date selectedStartDate = new Date();
+	private Date selectedEndDate = new Date();
+	private DatePickerFragment endDatePicker = null;
+	private TextView startDateText = null;
+	private TextView endDateText = null;
 	private int reportId = 0;
+	private DatePickerFragment datePickerFragment = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		this.setContentView(R.layout.report_user_date_options);
 		super.onCreate(savedInstanceState);
+		this.setContentView(R.layout.report_user_date_options);
 		Intent intent = this.getIntent();
+		//datePickerFragment = new DatePickerFragment();
 		TextView reportNameTxt = (TextView) findViewById(R.id.report_date_options_report_name);
-		startDatePicker = (DatePicker) findViewById(R.id.start_date);
-		endDatePicker = (DatePicker) findViewById(R.id.end_date);
+		startDatePicker =  new  DatePickerFragment();
+		endDatePicker = new  DatePickerFragment();
+		startDateText = (TextView) findViewById(R.id.startDateTxt);
+		this.setDateTextView(startDateText, selectedStartDate);
+		endDateText = (TextView) findViewById(R.id.endDateTxt);
+		this.setDateTextView(endDateText, selectedEndDate);
 		Button createButton =  (Button) findViewById(R.id.btnCreateReport);
 		Button columnOptionsButton =  (Button) findViewById(R.id.btnColumnOptions);
+		Button btnStartButton = (Button) findViewById(R.id.btnSelectStartDate);
+		Button btnEndButton = (Button) findViewById(R.id.btnSelectEndDate);
 		reportNameTxt.setText(intent.getStringExtra("report_name").trim());
 		reportId = Integer.parseInt(intent.getStringExtra("report_id"));
 		reportData.put("report_name", intent.getStringExtra("report_name"));
 		reportData.put("report_function_name", intent.getStringExtra("report_function_name"));
 	
+		
+		btnStartButton.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				startDatePicker.show( ReportDateOptionsActivity.this.getSupportFragmentManager(), "Start Date Picker");
+				
+			}
+			
+		});
+		
+		btnEndButton.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				endDatePicker.show(ReportDateOptionsActivity.this.getSupportFragmentManager(), "End Date Picker");
+				
+			}
+			
+		});
+		
+		
 		
 		createButton.setOnClickListener(new View.OnClickListener() {
 			
@@ -64,13 +95,25 @@ public class ReportDateOptionsActivity extends Activity {
 		
 	}
 	
-	private Date  dateStringFromPicker (DatePicker datePicker) {
-		int day = datePicker.getDayOfMonth();
-		int month = datePicker.getMonth();
-		int year = datePicker.getYear();
-		Calendar cal = Calendar.getInstance();
-		cal.set(year, month, day);
-		return cal.getTime();	
+	private  TextView setDateTextView (TextView dateTextView, Date selectedDate){
+		SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy", Locale.US);
+		dateTextView.setText(formatter.format(selectedDate));
+		return dateTextView;
+	}
+	
+	private Date  dateFromPicker (String selectedDate) {
+		SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy", Locale.US);
+		Date date = null;
+		try {
+			date = format.parse(selectedDate);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//Calendar cal = Calendar.getInstance();
+	
+		return 	date;
 	}
 	
 
@@ -86,8 +129,11 @@ public class ReportDateOptionsActivity extends Activity {
 	}
 	
 	private void loadIntent(String callingActivity, Class<?> activity) {
-		reportData.put("start_date",this.dateStringFromPicker(startDatePicker));
-		reportData.put("end_date", this.dateStringFromPicker(endDatePicker));
+		Log.i("Selected Start Date: ", selectedStartDate+"");
+		Log.i("Selected End Date: ", selectedEndDate+"");
+		
+		reportData.put("start_date",selectedStartDate);
+		reportData.put("end_date",  selectedEndDate);
 		
 		Intent reportMainIntent = new Intent(this.getApplicationContext(), activity);
 		reportMainIntent.putExtra("report_id", reportId);
@@ -105,6 +151,19 @@ public class ReportDateOptionsActivity extends Activity {
 						
 		this.startActivity(reportMainIntent);
 	 }
+
+	@Override
+	public void onDateSelect(String date, DatePickerFragment theDatePicker) {
+		if (theDatePicker == startDatePicker){
+			 selectedStartDate = this.dateFromPicker(date);
+			 this.setDateTextView(startDateText, selectedStartDate);
+		}
+		else if (theDatePicker == endDatePicker){
+			selectedEndDate = this.dateFromPicker(date);
+			this.setDateTextView(endDateText, selectedEndDate);
+		}
+		
+	}
 		
 }
 

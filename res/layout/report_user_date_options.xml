@@ -5,18 +5,8 @@
 	    android:padding="5dp"
 	    android:orientation="vertical"
 	    android:baselineAligned="false" >
-	
 
-	    <ScrollView
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	         >
-	       <LinearLayout
-	           	android:layout_height="wrap_content"
-			    android:layout_width="wrap_content"
-			    android:layout_gravity="center_horizontal" 
-			    android:orientation="vertical"
-			    >
+
 			<TextView
 		       android:id="@+id/report_date_options_title"
 		       android:layout_width="match_parent"
@@ -34,51 +24,57 @@
 			       android:textSize="25sp"
 			       android:textStyle="bold"
 			       android:padding="20dp"
-			       android:gravity="center_horizontal"       
-			/>
-			<LinearLayout
-			    android:layout_height="wrap_content"
-			    android:layout_width="wrap_content"
-			    android:layout_gravity="center"
-			    android:padding="7dp"
-			    android:background="#7DDDF0"
-			    android:orientation="vertical" >
+			       android:layout_gravity="center_horizontal"
+			       android:gravity="center_horizontal"/>
+		<RelativeLayout 
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:padding="10dp"
+				    android:layout_gravity="center"
+				    android:layout_marginTop="20dp"
+				    android:layout_marginBottom="20dp"
+				    android:background="#EEF2A5"
+				    android:orientation="horizontal"
+				    android:baselineAligned="false" >
+			<TextView
+				    android:id="@+id/startDateTxt"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:layout_alignParentLeft="true"
+				    android:layout_alignParentTop="true"
+				    android:textSize="15sp" 
+				    android:textStyle="bold"/>
+
+			   <Button
+			       android:id="@+id/btnSelectStartDate"
+			       android:layout_width="wrap_content"
+			       android:layout_height="wrap_content"
+			       android:layout_below="@id/startDateTxt"
+			       android:layout_marginRight="40dp"
+			       android:padding="20dp"
+			       android:textStyle="bold"
+			       android:text="@string/start_date_btn" />
+		    
 			   <TextView
-			       android:id="@+id/start_date_title"
-			       android:layout_width="match_parent"
+			        android:id="@+id/endDateTxt"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			  		android:layout_toRightOf="@id/btnSelectStartDate"
+			        android:layout_alignParentTop="true"
+			        android:textSize="15sp"
+			        android:textStyle="bold" />
+			   
+			  <Button
+			       android:id="@+id/btnSelectEndDate"
+			       android:layout_width="wrap_content"
 			       android:layout_height="wrap_content"
-			       android:text="@string/start_date_title"
-			       android:textSize="25sp"
+			       android:layout_below="@id/endDateTxt"
+			       android:padding="20dp"
+			       android:layout_toRightOf="@id/btnSelectStartDate"
 			       android:textStyle="bold"
-			       android:gravity="center"       
-			    />
-		        <DatePicker
-		            android:id="@+id/start_date"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content" />
-		   </LinearLayout> 
-		   <LinearLayout
-			    android:layout_height="wrap_content"
-				android:layout_width="wrap_content"
-				android:layout_marginTop="20dp"
-				android:background="#C4C416"
-				android:layout_gravity="center"
-			    android:padding="7dp"
-			    android:orientation="vertical">
-			    <TextView
-			       android:id="@+id/end_date_title"
-			       android:layout_width="match_parent"
-			       android:layout_height="wrap_content"
-			       android:text="@string/end_date_title"
-			       android:textSize="25sp"
-			       android:textStyle="bold"
-			       android:gravity="center"	       
-			       />
-			    <DatePicker
-			            android:id="@+id/end_date"
-			            android:layout_width="wrap_content"
-			            android:layout_height="wrap_content"/>
-		   </LinearLayout>
+			       android:text="@string/end_date_btn" /> 
+   
+		</RelativeLayout>
 		   <LinearLayout 
 				    android:layout_width="match_parent"
 				    android:layout_height="wrap_content"
@@ -112,7 +108,4 @@
 			       android:textStyle="bold"
 			       android:text="@string/report_btn_column_options" />
 		   	 	</LinearLayout>
-		 </LinearLayout>
-	</ScrollView>
 </LinearLayout>
-

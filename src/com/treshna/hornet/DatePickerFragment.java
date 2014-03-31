@@ -59,7 +59,6 @@ public class DatePickerFragment extends DialogFragment
 		cal = Calendar.getInstance();
 		cal.set(year, month, day);
 		
-		
 		SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy", Locale.US);
 		returnValue = format.format(cal.getTime());
 		mCallback.onDateSelect(returnValue, this);
