@@ -63,6 +63,7 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
 		return hasOverview;
 	}
 	
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 		view = inflater.inflate(R.layout.booking_resource, container, false);

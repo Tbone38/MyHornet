@@ -372,7 +372,11 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 									{cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PNAME))}, null);
 					if (cur2.moveToFirst()) {
 						if (!cur2.isNull(0) && cur2.getInt(0)> 0) {
-							value.setText(cur.getString(i)+"/"+cur2.getInt(0));
+							if (cur.isNull(i)) {
+								value.setText("0/"+cur2.getInt(0));
+							} else {
+								value.setText(cur.getString(i)+"/"+cur2.getInt(0));
+							}
 						} else {
 							add_row = false;
 						}

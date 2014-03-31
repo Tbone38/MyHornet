@@ -132,7 +132,7 @@ public class JDBCConnection {
 					+ ") VALUES ('1|'||encode(?,'base64'), ?, ?, ?, ?, ?);");
 			pStatement.setBytes(1, image);
 			pStatement.setInt(2, memberId);
-			pStatement.setTimestamp(3, new Timestamp(date.getTime())); //this isn't inserting correct timestamps.
+			pStatement.setTimestamp(3, new Timestamp(date.getTime()));
 			pStatement.setTimestamp(4, new Timestamp(date.getTime()));
 			pStatement.setString(5, description);
 			pStatement.setBoolean(6, isProfile);
@@ -140,24 +140,7 @@ public class JDBCConnection {
 			return pStatement.executeUpdate();
     }
     
-    public int insertImage(byte[] image, int rowId, Date date, String description, boolean isProfile) throws SQLException, NullPointerException{
-    		int result = -1;
- 
-    		pStatement = con.prepareStatement("insert INTO image (imagedata, memberid, lastupdated, created, description, is_profile ) VALUES ('1|'||encode(?,'base64'),?, ?, ?, ?, ?)");
-    		pStatement.setBytes(1, image);
-    		pStatement.setInt(2,rowId);
-    		pStatement.setDate(3, new java.sql.Date(date.getTime()));
-    		pStatement.setTimestamp(4, new Timestamp(date.getTime()));
-    		pStatement.setString(5, description);
-    		pStatement.setBoolean(6, isProfile);
-    		result = pStatement.executeUpdate();
-    	
-    		return result;
-    }
-	/*
-	 * At some point these will need changed to handle is_profile and description.
-	 */
-    public int deleteImage(int memberId, Date created) throws SQLException, NullPointerException{
+   public int deleteImage(int memberId, Date created) throws SQLException, NullPointerException{
 	    	int result = -1;
 	    	if (memberId == -1 || created == null) return result;
 		    	pStatement = con.prepareStatement("DELETE FROM image WHERE memberid = ? AND created = ?");
@@ -168,6 +151,17 @@ public class JDBCConnection {
 	    	
 	    	return result;
     }
+   
+   public int updateImage( boolean is_profile, String description, int imageid) throws SQLException {
+	   
+	   pStatement = con.prepareStatement("UPDATE IMAGE SET (is_profile, description) = (?, ?) WHERE id = ?;");
+	   
+	   pStatement.setBoolean(1, is_profile);
+	   pStatement.setString(2, description);
+	   pStatement.setInt(3, imageid);
+	   
+	   return pStatement.executeUpdate();
+   }
     
     public ResultSet tagInsert(int door, String serial) throws SQLException, NullPointerException{
 	    	ResultSet result = null;

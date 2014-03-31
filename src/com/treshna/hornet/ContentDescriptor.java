@@ -280,8 +280,8 @@ public class ContentDescriptor {
 	 		public static final int PATH_TOKEN = 170;
 	 		
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
-	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.enquiry";
-	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.enquiry";
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.enquiry";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.enquiry";
 	 		
 	 		public static class Triggers {
 	 			public static final String ON_INSERT = "enquiry_insert";
@@ -373,6 +373,7 @@ public class ContentDescriptor {
 	        
 	        public static class Triggers {
 	        	public static final String ON_INSERT = "image_insert";
+	        	public static final String ON_UPDATE = "image_update";
 	        }
 	        
 	        public static class Cols {
@@ -396,8 +397,8 @@ public class ContentDescriptor {
 	 		public static final int PATH_FOR_ID_TOKEN = 315;
 	 		
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
-	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.time";
-	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.time";
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.time";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.time";
 	 		
 	 		public static final String PATH_FOR_JOIN = "Time_Booking";
 	 		public static final int PATH_FOR_JOIN_TOKEN = 325;
@@ -422,8 +423,8 @@ public class ContentDescriptor {
 	 		public static final Uri BOOKING_TIME_URI = BASE_URI.buildUpon().appendPath(PATH_JOIN_TIME).build();
 	 		
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
-	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.bookings";
-	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.bookings";
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.bookings";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.bookings";
 	 		
 	 		public static class Indexs {
 	 			public static final String BOOKING_ID = "booking_booking_id";
@@ -491,8 +492,8 @@ public class ContentDescriptor {
 	 		public static final Uri JOIN_URI = BASE_URI.buildUpon().appendPath(PATH_FOR_JOIN).build();
 	 		
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
-	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.bookingtime";
-	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.bookingtime";
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.bookingtime";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.bookingtime";
 	 		
 	 		public static class Cols implements BaseColumns {
 	 			public static final String TIMEID = "timeid";
@@ -510,8 +511,8 @@ public class ContentDescriptor {
 	 		public static final int PATH_FOR_ID_TOKEN = 330;
 	 		
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
-	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.bookingtype";
-	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.bookingtype";
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.bookingtype";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.bookingtype";
 	 		
 	 		public static class Cols {
 	 			public static final String ID = BaseColumns._ID;
@@ -533,8 +534,8 @@ public class ContentDescriptor {
 	 		public static final int PATH_FOR_ID_TOKEN = 350;
 	 		
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
-	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.resource";
-	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.resource";
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.resource";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.resource";
 	 		
 	 		public static class Cols {
 	 			public static final String ID = BaseColumns._ID;
@@ -551,7 +552,7 @@ public class ContentDescriptor {
 	 		}
 	 	}
 	 	
-	 	// NOT USED;
+	 	// Only used internally.
 	 	public static class Company {
 	 		public static final String NAME = "company";
 	 		public static final String PATH = "Company";
@@ -560,8 +561,8 @@ public class ContentDescriptor {
 	 		public static final int PATH_FOR_ID_TOKEN = 55;
 	 		
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
-	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.company";
-	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.company";
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.company";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.company";
 	 		
 	 		public static class Cols {
 	 			public static final String ID = BaseColumns._ID;
@@ -585,8 +586,8 @@ public class ContentDescriptor {
 	 		
 	 		public static final Uri GROUP_URI = BASE_URI.buildUpon().appendPath(PATH_FOR_GROUP).build();
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
-	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.programme";
-	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.programme";
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.programme";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.programme";
 	 		
 	 		public static class Indexs {
 	 			public static final String PROGRAMME_ID = "programme_programme_id";
@@ -619,8 +620,8 @@ public class ContentDescriptor {
 	 		public static final int PATH_FOR_ID_TOKEN = 125;
 	 		
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
-	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.membership";
-	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.membership";
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.membership";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.membership";
 	 		
 	 		public static class Indexs {
 	 			public static final String MEMBER_ID = "member_id";
@@ -675,8 +676,8 @@ public class ContentDescriptor {
 	 		public static final int PATH_FOR_ID_TOKEN = 230;
 	 		
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
-	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.swipe";
-	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.swipe";
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.swipe";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.swipe";
 	 		
 	 		public static class Cols {
 	 			public static final String ID = BaseColumns._ID; //cardno
@@ -713,8 +714,8 @@ public class ContentDescriptor {
 	 		public static final int PATH_FOR_ID_TOKEN = 92;
 	 		
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
-	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.opentime";
-	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.opentime";
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.opentime";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.opentime";
 	 		
 	 		public static class Cols implements BaseColumns {
 	 			public static final String DAYOFWEEK = "dayofweek";
@@ -735,8 +736,8 @@ public class ContentDescriptor {
 	 		public static final int PATH_FOR_ID_TOKEN = 94;
 	 		
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
-	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.date";
-	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.date";
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.date";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.date";
 	 		
 	 		public static class Cols implements BaseColumns {
 	 			public static final String DATE = "dates"; //'s' probably because other table has date ?
@@ -752,8 +753,8 @@ public class ContentDescriptor {
 	 		public static final int PATH_FOR_ID_TOKEN = 322;
 	 		
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
-	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.class";
-	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.class";
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.class";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.class";
 	 		
 	 		public static class Indexs {
 	 			public static final String CLASS_ID = "class_class_id";
@@ -792,8 +793,8 @@ public class ContentDescriptor {
 	 		public static final int PATH_FOR_ID_TOKEN = 127;
 	 		
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
-	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.membershipsuspend";
-	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.membershipsuspend";
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.membershipsuspend";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.membershipsuspend";
 	 		
 	 		public static class Triggers {
 	 			public static final String ON_INSERT = "suspend_insert";
@@ -836,8 +837,8 @@ public class ContentDescriptor {
 	 		public static final int PATH_FOR_ID_TOKEN = 401;
 	 		
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
-	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.idcard";
-	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.idcard";
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.idcard";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.idcard";
 	 		
 	 		public static class Cols implements BaseColumns {
 	 			public static final String CARDID = "cardid";
@@ -854,8 +855,8 @@ public class ContentDescriptor {
 	 		public static final int PATH_FOR_ID_TOKEN = 61;
 	 		
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
-	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.paymentmethod";
-	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.paymentmethod";
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.paymentmethod";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.paymentmethod";
 	 		
 	 		public static class Cols implements BaseColumns {
 	 			public static final String PAYMENTID = "paymentid";
@@ -871,8 +872,8 @@ public class ContentDescriptor {
 	 		public static final int PATH_FOR_ID_TOKEN = 63;
 	 		
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
-	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.door";
-	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.door";
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.door";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.door";
 	 		
 	 		public static class Cols implements BaseColumns {
 	 			public static final String DOORID = "doorid";
@@ -888,8 +889,8 @@ public class ContentDescriptor {
 	 		public static final int PATH_FOR_ID_TOKEN = 112;
 	 		
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
-	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.membernotes";
-	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.membernotes";
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.membernotes";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.membernotes";
 	 		
 	 		public static class Triggers {
 	 			public static final String ON_INSERT = "note_insert";
@@ -915,8 +916,8 @@ public class ContentDescriptor {
 	 		public static final int PATH_FOR_ID_TOKEN = 114;
 	 		
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
-	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.memberbalance";
-	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.memberbalance";
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.memberbalance";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.memberbalance";
 	 		
 	 		public static class Cols implements BaseColumns {
 	 			public static final String MID = "memberid";
@@ -947,8 +948,8 @@ public class ContentDescriptor {
 	 		public static final int PATH_FOR_ID_TOKEN = 13;
 	 		
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
-	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.pendinguploads";
-	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.pendinguploads";
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.pendinguploads";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.pendinguploads";
 	 		
 	 		public static class Cols implements BaseColumns {
 	 			public static final String ROWID = "rowid";
@@ -966,8 +967,8 @@ public class ContentDescriptor {
 	 		public static final int PATH_FOR_ID_TOKEN = 15;
 	 		
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
-	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.pendingdownloads";
-	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.pendingdownloads";
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.pendingdownloads";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.pendingdownloads";
 	 		
 	 		public static class Cols implements BaseColumns {
 	 			public static final String ROWID = "rowid";
@@ -983,8 +984,8 @@ public class ContentDescriptor {
 	 		public static final int PATH_FOR_ID_TOKEN = 17;
 	 		
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
-	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.pendingupdates";
-	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.pendingupdates";
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.pendingupdates";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.pendingupdates";
 	 		
 	 		public static class Cols implements BaseColumns {
 	 			public static final String ROWID = "rowid";
@@ -999,8 +1000,8 @@ public class ContentDescriptor {
 	 		public static final int PATH_TOKEN = 18;
 	 		
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
-	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.pendingdeletes";
-	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.pendingdeletes";
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.pendingdeletes";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.pendingdeletes";
 	 		
 	 		public static class Cols implements BaseColumns {
 	 			public static final String ROWID = "rowid";
@@ -1021,8 +1022,8 @@ public class ContentDescriptor {
 	 		public static final int PATH_TOKEN = 20;
 	 		
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
-	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.freeids";
-	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.freeids";
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.freeids";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.freeids";
 	 		
 	 		public static class Cols implements BaseColumns {
 	 			public static final String ROWID = "rowid";
@@ -1038,8 +1039,8 @@ public class ContentDescriptor {
 	 		public static final int PATH_FOR_ID_TOKEN = 11;
 	 		
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
-	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.tableindex";
-	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.tableindex";
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.tableindex";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.tableindex";
 	 		
 	 		public static class Cols implements BaseColumns {
 	 			public static final String NAME = "name";
@@ -1092,8 +1093,8 @@ public class ContentDescriptor {
 	 		public static final int PATH_FOR_ID_TOKEN = 602;
 	 		
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
-	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.roll";
-	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.roll";
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.roll";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.roll";
 	 		
 	 		public static class Triggers {
 	 			public static final String ON_INSERT = "roll_insert";
@@ -1118,8 +1119,8 @@ public class ContentDescriptor {
 	 		public static final int CREATE_ROLL_TOKEN = 604;
 	 		
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
-	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.rollitem";
-	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.rollitem";
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.rollitem";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.rollitem";
 	 		
 	 		public static class Triggers {
 	 			public static final String ON_INSERT = "roll_item_insert";
@@ -1146,8 +1147,8 @@ public class ContentDescriptor {
 	 		public static final int PATH_TOKEN = 128;
 	 		
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
-	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.membership_expiry_reason";
-	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.membership_expiry_reason";
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.membership_expiry_reason";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.membership_expiry_reason";
 	 		
 	 		//don't need any triggers. we can't actually change any of this info from the device.
 	 		
@@ -1164,8 +1165,8 @@ public class ContentDescriptor {
 	 		public static final int PATH_TOKEN = 121;
 	 		
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
-	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.cancellation_fee";
-	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.cancellation_fee";
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.cancellation_fee";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.cancellation_fee";
 	 		
 	 		public static class Cols implements BaseColumns {
 	 			public static final String MEMBERSHIPID = "membershipid";
@@ -1179,8 +1180,8 @@ public class ContentDescriptor {
 	 		public static final int PATH_TOKEN =  56;
 	 		
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
-	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.key_performance_index";
-	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.key_performance_index";
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.key_performance_index";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.key_performance_index";
 	 		
 	 		public static class Cols implements BaseColumns {
 	 			public static final String METRIC = "metric";
@@ -1197,8 +1198,8 @@ public class ContentDescriptor {
 	 		public static final int PATH_TOKEN = 116;
 	 		
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
-	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.member_finance";
-	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.member_finance";
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.member_finance";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.member_finance";
 	 		
 	 		public static class Cols implements BaseColumns {
 	 			public static final String ROWID = "rowid"; //this is either payment.id or debitjournal.id
@@ -1221,8 +1222,8 @@ public class ContentDescriptor {
 	 		public static final int PATH_TOKEN = 117;
 	 		
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
-	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.billing_history";
-	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.billing_history";
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.billing_history";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.billing_history";
 	 		
 	 		public static class Cols implements BaseColumns {
 	 			public static final String ID = "id";
@@ -1247,8 +1248,8 @@ public class ContentDescriptor {
 	 		public static final int PATH_TOKEN = 405;
 	 		
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
-	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.dd_export_format";
-	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.dd_export_format";
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.dd_export_format";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.dd_export_format";
 	 		
 	 		public static class Cols implements BaseColumns {
 	 			public static final String ID = "id";
@@ -1265,8 +1266,8 @@ public class ContentDescriptor {
 	 		public static final int PATH_TOKEN = 9;
 	 		
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
-	 		public static final String CONTENT_TYPE_DIR = "vnd.cursor.dir/vnd.treshna.app_config";
-	 		public static final String CONTENT_ITEM_TYPE = "vnd.cursor.item/vnd.treshna.app_config";
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.app_config";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.app_config";
 	 		
 	 		public static class Cols implements BaseColumns {
 	 			public static final String DB_DEVICEID = "deviceid";

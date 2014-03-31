@@ -823,6 +823,14 @@ public class UpdateDatabase {
 					+ " VALUES (new."+Enquiry.Cols._ID+", "+TableIndex.Values.Prospect.getKey()+");"
 				+" END; ";
 		
+		private static final String SQL6 = "CREATE TRIGGER "+Image.Triggers.ON_UPDATE+" AFTER UPDATE ON "+Image.NAME
+				+" FOR EACH ROW WHEN old."+Image.Cols.IID+" > 0"
+				+" BEGIN "
+					+"INSERT OR REPLACE INTO "+PendingUpdates.NAME
+					+" ("+PendingUpdates.Cols.ROWID+", "+PendingUpdates.Cols.TABLEID+")"
+					+" VALUES (new."+Image.Cols.ID+", "+TableIndex.Values.Image.getKey()+");"
+				+" END; ";
+		
 		public static void patchNinetySix(SQLiteDatabase db) {
 			db.beginTransaction();
 			try {
@@ -836,6 +844,8 @@ public class UpdateDatabase {
 				db.execSQL(SQL4);
 				Log.w(HornetDatabase.class.getName(), "\n"+SQL5);
 				db.execSQL(SQL5);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL6);
+				db.execSQL(SQL6);
 				db.setTransactionSuccessful();
 			/*} catch (SQLException e) {
 			e.printStackTrace();

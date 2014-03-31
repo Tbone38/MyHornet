@@ -56,7 +56,13 @@ public class MemberBookingsFragment extends Fragment implements TagFoundListener
 		cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.MID+" = ? AND "
 		+ContentDescriptor.Booking.Cols.RESULT+" != 5", new String[] {memberID}, ContentDescriptor.Booking.Cols.ARRIVAL+" DESC");
 		LinearLayout list = (LinearLayout) view.findViewById(R.id.booking_list);
-		list.removeAllViews();		
+		list.removeAllViews();
+		
+		if (cur.getCount() <= 0) {
+			TextView heading = (TextView) view.findViewById(R.id.member_booking_H);
+			heading.setText("No Recent Bookings");
+		}
+		
 		while (cur.moveToNext()) {
 			LinearLayout row = (LinearLayout) mInflater.inflate(R.layout.member_booking_row, null);
 			

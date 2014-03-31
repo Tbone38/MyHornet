@@ -25,7 +25,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.treshna.hornet.ContentDescriptor.Membership;
 
@@ -153,7 +152,6 @@ public class HornetDBService extends Service {
 	 	   	
  	   		setDate();
  	   		getPendingDownloads();
- 	   		getPendingUpdates();
 			
 			uploadIdCard();
 			getIdCards(last_sync, null);
@@ -172,9 +170,11 @@ public class HornetDBService extends Service {
 			uploadMember();
 			uploadProspects();
 			uploadMembership();
+			getPendingUpdates();
 			updateMembership();
 			uploadMemberNotes();
 			uploadImage();
+			updateImage();
 			uploadBookings();
 			int classcount = uploadClass();
 			Log.d(TAG, "Uploaded "+classcount+" Classes");
@@ -857,6 +857,8 @@ public class HornetDBService extends Service {
     	
     	String email, medical, suburb, hphone, cphone, gender, dob, add, city, post;
     	int result = 0;
+    	
+    	assignMemberIds();
     	
     	cur = contentResolver.query(ContentDescriptor.PendingUploads.CONTENT_URI, null, 
     			ContentDescriptor.PendingUploads.Cols.TABLEID+" = ?", 
@@ -4520,6 +4522,117 @@ public class HornetDBService extends Service {
     	}
     	cur.close();
     	
+    	
+    	return result;
+    }
+    
+    /**
+     * This function assigns free ids to any pending member's that haven't got an id.
+     * as it's possible to add a member via the signup app, but not get a member id from the
+     * full app if the permissions aren't set.
+     * 
+     *  
+     * @return number of memberids assigned.
+     */
+    private int assignMemberIds() {
+    	int result = 0;
+    	
+    	cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, "m."+ContentDescriptor.Member.Cols.DEVICESIGNUP+" = 't' AND ("
+    			+"m."+ContentDescriptor.Member.Cols.MID+" IS NULL OR m."+ContentDescriptor.Member.Cols.MID+" <= 0)",null, null);
+    	while (cur.moveToNext()) {
+    		Cursor cur2 = contentResolver.query(ContentDescriptor.FreeIds.CONTENT_URI, null, ContentDescriptor.FreeIds.Cols.TABLEID+" = ?",
+    				new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Member.getKey())}, null);
+    		if (!cur2.moveToFirst()) {break;}
+    		int rowid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Member.Cols._ID));
+    		int freeid = cur2.getInt(cur2.getColumnIndex(ContentDescriptor.FreeIds.Cols.ROWID));
+    		
+    		ContentValues values = new ContentValues();
+    		values.put(ContentDescriptor.Member.Cols.MID, freeid);
+    		
+    		result += contentResolver.update(ContentDescriptor.Member.CONTENT_URI, values, ContentDescriptor.Member.Cols._ID+" = ?", 
+    				new String[] {String.valueOf(rowid)});
+    		
+    		contentResolver.delete(ContentDescriptor.FreeIds.CONTENT_URI, ContentDescriptor.FreeIds.Cols.ROWID+" = ? AND "
+    				+ContentDescriptor.FreeIds.Cols.TABLEID+" = ?", new String[] {String.valueOf(freeid), 
+    				String.valueOf(ContentDescriptor.TableIndex.Values.Member.getKey())});
+    		
+    		cur2.close();
+    	}
+    	cur.close();
+    	
+    	return result;
+    }
+    
+    /**
+     * Fix for a single member having multiple primary images. Usually caused by bad code earlier in hornets life-cycle.
+     * @return
+     */
+    private int fixImages() {
+    	Log.d(TAG, "Fixing Images");
+    	int result = 0;
+    	int prev_mid = 0;
+    	
+    	/* SELECT * FROM image 
+    	 * WHERE 
+    	 * ((SELECT count(*) FROM image i1 WHERE image.memberid = i1.memberid) >1) 
+    	 * AND ((SELECT count(is_profile) FROM image i2 WHERE image.memberid = i2.memberid AND is_profile = 1) > 1) 
+    	 * ORDER BY memberid;
+    	 */
+    	
+    	cur = contentResolver.query(ContentDescriptor.Image.CONTENT_URI, null, "((SELECT count(*) FROM "+ContentDescriptor.Image.NAME+" i1 WHERE "
+    			+ContentDescriptor.Image.NAME+"."+ContentDescriptor.Image.Cols.MID+" = i1."+ContentDescriptor.Image.Cols.MID+") > 1) AND (("
+    			+"SELECT count("+ContentDescriptor.Image.Cols.IS_PROFILE+") FROM "+ContentDescriptor.Image.NAME+" i2 WHERE "
+    			+ContentDescriptor.Image.NAME+"."+ContentDescriptor.Image.Cols.MID+" = i2."+ContentDescriptor.Image.Cols.MID+" AND "
+    			+ContentDescriptor.Image.Cols.IS_PROFILE+" = 1) > 1)", null, ContentDescriptor.Image.Cols.MID);
+    			
+    	while (cur.moveToNext()) {
+    		int mid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Image.Cols.MID));
+    		int rowid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Image.Cols.IID));
+    		
+    		if (mid == prev_mid) {
+    			ContentValues values = new ContentValues();
+    			values.put(ContentDescriptor.Image.Cols.IS_PROFILE, 0);
+    			
+    			result += contentResolver.update(ContentDescriptor.Image.CONTENT_URI, values, ContentDescriptor.Image.Cols.IID+" = ?",
+    					new String[] {String.valueOf(rowid)});
+    		} 
+    		prev_mid = mid;
+    	}
+    	Log.d(TAG, "Fixed "+result+" Images");
+    	cur.close();
+    	return result;
+    }
+    
+    private int updateImage() {
+    	Log.d(TAG, "Updating Images");
+    	int result = 0;
+    	fixImages();
+    	
+    	cur = contentResolver.query(ContentDescriptor.PendingUpdates.CONTENT_URI, null, ContentDescriptor.PendingUpdates.Cols.TABLEID+" = ?",
+    			new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Image.getKey())}, null);
+    	
+    	while (cur.moveToNext()) {
+    		int rowid = cur.getInt(cur.getColumnIndex(ContentDescriptor.PendingUpdates.Cols.ROWID));
+    		try {
+	    		Cursor cur2 = contentResolver.query(ContentDescriptor.Image.CONTENT_URI, null, ContentDescriptor.Image.Cols.ID+" = ?",
+	    				new String[] {String.valueOf(rowid)}, null);
+	    		if (!cur2.moveToFirst()) {
+	    			throw new SQLException("Image _id not found in database. removing from pendings..");
+	    		}
+	    		boolean is_profile = (cur2.getInt(cur2.getColumnIndex(ContentDescriptor.Image.Cols.IS_PROFILE)) ==1);
+	    		result += connection.updateImage(is_profile, 
+	    				cur2.getString(cur2.getColumnIndex(ContentDescriptor.Image.Cols.DESCRIPTION)),
+	    				cur2.getInt(cur2.getColumnIndex(ContentDescriptor.Image.Cols.IID)));
+	    		
+    		}catch (SQLException e){ 
+    			statusMessage = e.getLocalizedMessage();
+    			Log.e(TAG, "UpdateImage:", e);
+    		} finally {
+    			contentResolver.delete(ContentDescriptor.PendingUpdates.CONTENT_URI, ContentDescriptor.PendingUpdates.Cols.ROWID+" = ? AND "
+    					+ContentDescriptor.PendingUpdates.Cols.TABLEID+" = ?", new String[] {String.valueOf(rowid),
+    					String.valueOf(ContentDescriptor.TableIndex.Values.Image.getKey())});
+    		}
+    	}
     	
     	return result;
     }

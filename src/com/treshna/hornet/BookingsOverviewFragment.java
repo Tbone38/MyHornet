@@ -1,6 +1,5 @@
 package com.treshna.hornet;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -46,7 +45,16 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
         contentResolver = getActivity().getContentResolver();
         if (cur != null) cur.close();
         	
-    }	
+    }
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		
+		if (mDatePicker != null && mDatePicker.getDialog() != null) {
+			mDatePicker.dismiss();
+		}
+	}
 	
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 	@Override
@@ -180,7 +188,7 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
 		 cur.close();
 		 
 		 LinearLayout list = (LinearLayout) view.findViewById(R.id.booking_resource_list); 
-		 list.removeAllViews();
+		 list.removeAllViews(); //this needs reworked to actually only show the hours that the gym is open..
 		 for (int i=0; i<resource.size(); i++) {
 			 View row = inflater.inflate(R.layout.booking_overview_row, null);
 			 row.setClickable(true);
@@ -223,67 +231,83 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
 								
 					RelativeLayout timeslot1 = (RelativeLayout) row.findViewById(R.id.booking_timeslot_1);
 					TextView timeText1 = (TextView) timeslot1.findViewById(R.id.booking_overview_time);
-					timeText1.setText("5:00");
+					//timeText1.setText("5:00");
+					timeText1.setText("5 am");
 
 					RelativeLayout timeslot2 = (RelativeLayout) row.findViewById(R.id.booking_timeslot_2);
 					TextView timeText2 = (TextView) timeslot2.findViewById(R.id.booking_overview_time);
-					timeText2.setText("6:00");
+					//timeText2.setText("6:00");
+					timeText2.setText("6 am");
 				
 					RelativeLayout timeslot3 = (RelativeLayout) row.findViewById(R.id.booking_timeslot_3);
 					TextView timeText3 = (TextView) timeslot3.findViewById(R.id.booking_overview_time);
-					timeText3.setText("7:00");
+					//timeText3.setText("7:00");
+					timeText3.setText("7 am");
 				
 					RelativeLayout timeslot4 = (RelativeLayout) row.findViewById(R.id.booking_timeslot_4);
 					TextView timeText4 = (TextView) timeslot4.findViewById(R.id.booking_overview_time);
-					timeText4.setText("8:00");
+					//timeText4.setText("8:00");
+					timeText4.setText("8 am");
 				
 					RelativeLayout timeslot5 = (RelativeLayout) row.findViewById(R.id.booking_timeslot_5);
 					TextView timeText5 = (TextView) timeslot5.findViewById(R.id.booking_overview_time);
-					timeText5.setText("9:00");
+					//timeText5.setText("9:00");
+					timeText5.setText("9 am");
 				
 					RelativeLayout timeslot6 = (RelativeLayout) row.findViewById(R.id.booking_timeslot_6);
 					TextView timeText6 = (TextView) timeslot6.findViewById(R.id.booking_overview_time);
-					timeText6.setText("10:00");
+					//timeText6.setText("10:00");
+					timeText6.setText("10 am");
 				
 					RelativeLayout timeslot7 = (RelativeLayout) row.findViewById(R.id.booking_timeslot_7);
 					TextView timeText7 = (TextView) timeslot7.findViewById(R.id.booking_overview_time);
-					timeText7.setText("11:00");
+					//timeText7.setText("11:00");
+					timeText7.setText("11 am");
 				
 					RelativeLayout timeslot8 = (RelativeLayout) row.findViewById(R.id.booking_timeslot_8);
 					TextView timeText8 = (TextView) timeslot8.findViewById(R.id.booking_overview_time);
-					timeText8.setText("12:00");
+					//timeText8.setText("12:00");
+					timeText8.setText("12 pm");
 				
 					RelativeLayout timeslot9 = (RelativeLayout) row.findViewById(R.id.booking_timeslot_9);
 					TextView timeText9 = (TextView) timeslot9.findViewById(R.id.booking_overview_time);
-					timeText9.setText("13:00");
+					//timeText9.setText("13:00");
+					timeText9.setText("1 pm");
 				
 					RelativeLayout timeslot10 = (RelativeLayout) row.findViewById(R.id.booking_timeslot_10);
 					TextView timeText10 = (TextView) timeslot10.findViewById(R.id.booking_overview_time);
-					timeText10.setText("14:00");
+					//timeText10.setText("14:00");
+					timeText10.setText("2 pm");
 				
 					RelativeLayout timeslot11 = (RelativeLayout) row.findViewById(R.id.booking_timeslot_11);
 					TextView timeText11 = (TextView) timeslot11.findViewById(R.id.booking_overview_time);
-					timeText11.setText("15:00");
+					//timeText11.setText("15:00");
+					timeText11.setText("3 pm");
 				
 					RelativeLayout timeslot12 = (RelativeLayout) row.findViewById(R.id.booking_timeslot_12);
 					TextView timeText12 = (TextView) timeslot12.findViewById(R.id.booking_overview_time);
-					timeText12.setText("16:00");
+					//timeText12.setText("16:00");
+					timeText12.setText("4 pm");
 				
 					RelativeLayout timeslot13 = (RelativeLayout) row.findViewById(R.id.booking_timeslot_13);
 					TextView timeText13 = (TextView) timeslot13.findViewById(R.id.booking_overview_time);
-					timeText13.setText("17:00");
+					//timeText13.setText("17:00");
+					timeText13.setText("5 pm");
 				
 					RelativeLayout timeslot14 = (RelativeLayout) row.findViewById(R.id.booking_timeslot_14);
 					TextView timeText14 = (TextView) timeslot14.findViewById(R.id.booking_overview_time);
-					timeText14.setText("18:00");
+					//timeText14.setText("18:00");
+					timeText14.setText("6 pm");
 				
 					RelativeLayout timeslot15 = (RelativeLayout) row.findViewById(R.id.booking_timeslot_15);
 					TextView timeText15 = (TextView) timeslot15.findViewById(R.id.booking_overview_time);
-					timeText15.setText("19:00");
+					//timeText15.setText("19:00");
+					timeText15.setText("7 pm");
 				
 					RelativeLayout timeslot16 = (RelativeLayout) row.findViewById(R.id.booking_timeslot_16);
 					TextView timeText16 = (TextView) timeslot16.findViewById(R.id.booking_overview_time);
-					timeText16.setText("20:00");
+					//timeText16.setText("20:00");
+					timeText16.setText("8 pm");
 				
 				/* for int time in bookingtime list
 				 * 	switch: time

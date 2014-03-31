@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,8 +38,12 @@ public class BookingsListSuperFragment extends Fragment {
 	
 	public void onBackPressed(){
 		FragmentManager fragmentManager = this.getChildFragmentManager();
-        fragmentManager.popBackStackImmediate();
-        cFragment = fragmentManager.findFragmentByTag("OverviewFragment");
+        fragmentManager.popBackStackImmediate(fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount()-2).getId(),
+        		FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        if (this.getCurrentFragment().getTag() == null) {
+        	setFragment();
+        }
+		/*FUNCTIONAL!!!*/
 	}
 	
 	@Override

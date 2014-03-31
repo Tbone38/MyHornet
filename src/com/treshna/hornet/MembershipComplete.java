@@ -193,7 +193,7 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 	 * assign the cardno to the membership.
 	 */
 	@Override
-	public void onNewTag(String serial) {
+	public void onNewTag(String serial) { //TODO WHY IS THIS NOT WORKING?
 		ContentResolver contentResolver = getActivity().getContentResolver();
 		Cursor cur;
 		String message = "";
@@ -273,7 +273,7 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 		values.put(ContentDescriptor.Membership.Cols.PRICE, input.get(5));
 		//payment-date?
 		values.put(ContentDescriptor.Membership.Cols.SIGNUP, input.get(7));
-		if (input.get(8) != null) {
+		if (cardid != null) {
 			values.put(ContentDescriptor.Membership.Cols.CARDNO, cardid);
 		}
 		values.put(ContentDescriptor.Membership.Cols.CREATION, Services.dateFormat(new Date().toString(),

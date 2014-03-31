@@ -62,6 +62,9 @@ KEY:
                 Assign TAG gives a warning when attempting to assign to member with one already.
                 Fixed Connection handling in Flask API. --semi
                 Seperate Sign-Up App. 
+                Fixed image primary image issue (multiple images for a member considering themselves the primary image);
+				Fixed the pop-up from the booking Overview always showing when pushing back.
+				Fixed layout issue on booking Overview.
  
             TODO:
                 Handle permissions/Roles for different staff, to limit what certain staff can see.
@@ -71,7 +74,6 @@ KEY:
                 Booking view showing multiple days for selected resource.
                 get DD working for bluepay..?
                 Cancel Member Hold. --I think adjusting the expiry is better.
-                Fix the Booking Views broken back button.
                 Spacing/padding of Labels & Headings..
                 Improve sync-times/OutOfMemory Issues.
                 Fix Times/(possibly dates?) disappearing everytime we update the app.
@@ -79,12 +81,10 @@ KEY:
                 Test Access Control, does it/can we get it working with the GymMaster Access/Security Control (Using Views?)?
                 Issue with sync table: the servertime isn't being set correctly.
                 Move the app navigation over to a navigation Drawer.
-                Fix the backstack.
                 Fix the PollingHandler running on the UI thread. (blocking etc).
                 Improve Performance of the Booking Overview page.
-                Fix image primary image issue (multiple images for a member considering themselves the primary image);
-                Fix member signup from the signup app when access is restricted (can't get a memberid during signup).
-                    -Instead, assign the memberid during the upload attempt?
+				TODO: membership complete "Add Tag" doesn't work. Find out why...
+
     
     v119:
             Altered the add Member process.
