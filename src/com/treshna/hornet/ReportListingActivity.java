@@ -5,15 +5,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import android.R.attr;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.app.ActionBar.LayoutParams;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -22,6 +28,7 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.SimpleAdapter.ViewBinder;
 import android.widget.TextView;
@@ -42,6 +49,11 @@ public class ReportListingActivity extends ListActivity {
 	}
 	
 	private void buildListAdapter() {
+		
+		TextView titleView = (TextView) this.findViewById(R.id.reports_listing_title);
+		titleView.setText("Reports");
+		titleView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 28);
+		
 		if (resultMapList.size() > 0){
 			ListView listView = this.getListView();
 			
@@ -50,19 +62,19 @@ public class ReportListingActivity extends ListActivity {
 				@Override
 				public void onItemClick(AdapterView<?> parent, View view,
 						int position, long id) {
-					TextView reportName = (TextView) view.findViewById(5);
+					TextView reportName = (TextView) view.findViewById(5);		
+					boolean isName = false;
+					HashMap<String,String> selectedRowData = (HashMap<String, String>) reportName.getTag();
 					
 					//Checking that a report name was clicked on (not a type)
-					/*if (istype.getText().equals("f")){
-						System.out.println("Report ID: " + reportNameId + " Report Name: " + reportName.getText() + "\nFunction Name: " 
-								+ reportFunctionName.getText() );
-						Intent intent = new Intent(view.getContext(),ReportDateOptionsActivity.class);
-						intent.putExtra("report_id", reportNameId.getText().toString());
-						intent.putExtra("report_name", reportName.getText().toString());
-						intent.putExtra("report_function_name", reportFunctionName.getText().toString());
-						startActivity(intent);				
-					}*/
-					
+					 if ((selectedRowData.get("istype").compareTo("f")== 0)){
+							Intent intent = new Intent(view.getContext(),ReportDateOptionsActivity.class);
+							intent.putExtra("report_id", Integer.parseInt(selectedRowData.get("id")));
+							intent.putExtra("report_name" , selectedRowData.get("name").toString());
+							intent.putExtra("report_function_name",selectedRowData.get("function_name").toString());
+							startActivity(intent);
+					 }
+
 				}  
 				
 				
@@ -78,27 +90,52 @@ public class ReportListingActivity extends ListActivity {
 						ViewGroup parent) {
 				//Dynamically binding column names to textView text
 				TextView textView  = null;
-				LinearLayout linLayout = new LinearLayout(ReportListingActivity.this);
-				linLayout.setOrientation(LinearLayout.HORIZONTAL);
+				RelativeLayout linLayout = new RelativeLayout(ReportListingActivity.this);
+				//linLayout.setOrientation(LinearLayout.HORIZONTAL);
 				AbsListView.LayoutParams listLayoutParams = new AbsListView.LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT);
-				LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams( LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT );
+				RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams( LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT );
 				linLayout.setLayoutParams(listLayoutParams);
+				linLayout.setPadding(15, 0, 0, 0);
 				HashMap<String,String> dataRow = this.getItem(position);
-				int idIndex = 1;
 				for (Entry<String,String> col : dataRow.entrySet()){
-						if (col.getKey().compareTo("name")==0){
+						
+						if (col.getKey().compareTo("name")== 0){
 							
-						  	layoutParams = new LinearLayout.LayoutParams( 0,LayoutParams.WRAP_CONTENT,1);
+						  	layoutParams = new RelativeLayout.LayoutParams( LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT );
+						  	layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+						  	layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 							//Dynamically generate text views for each column name..
 							textView =  new TextView(ReportListingActivity.this);
-							layoutParams.setMargins(5, 0, 0, 0);
-							textView.setLayoutParams(layoutParams);
 							textView.setId(5);
+							//To embolden the types listings...
+							if (dataRow.get("istype").compareTo("t")== 0){
+								textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 28);
+							} else {
+								//To highlight names as clickable..
+								textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+								textView.setTypeface(null, Typeface.BOLD);
+								layoutParams.setMargins(35, 0, 0, 0);
+							}
+							textView.setLayoutParams(layoutParams);
 							textView.setTag(dataRow);
 							textView.setText(col.getValue());
 							linLayout.addView(textView);
-							idIndex += 1;
 						}
+						
+						if (col.getKey().compareTo("description")== 0){
+						  	layoutParams = new RelativeLayout.LayoutParams( LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT );
+						  	layoutParams.addRule(RelativeLayout.BELOW, 5);
+						  	layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+							//Dynamically generate text views for each column name..
+							textView =  new TextView(ReportListingActivity.this);
+							layoutParams.setMargins(35, 0, 0, 0);
+							textView.setLayoutParams(layoutParams);
+							textView.setText(col.getValue());
+							linLayout.addView(textView);
+							
+						}
+						
+
 				}	
 					
 					return linLayout;
@@ -137,19 +174,7 @@ public class ReportListingActivity extends ListActivity {
 		protected void onPostExecute(Boolean success) {
 			progress.dismiss();
 			if (success) {
-				
-				/*System.out.println("\nReport_Type_And_Name_Data");
-				
-				System.out.println("Result List Size: " + resultMapList.size());
-				
-				for (HashMap<String,String> resultMap: resultMapList){
-				
-					for (HashMap.Entry entry: resultMap.entrySet()){
-						 System.out.println("Field: " + entry.getKey() + " Value: " + entry.getValue());					 
-					}
-				
-				}*/
-				//Calls back to the owning activity to build the adapter
+
 				ReportListingActivity.this.buildListAdapter();
 				
 			} else {

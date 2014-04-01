@@ -51,6 +51,7 @@ public class ReportMainActivity extends ListActivity {
 	private String finalQuery = null;
 	private Date startDate = null;
 	private Date endDate = null;
+	private boolean stripe = true;
 	private int[] selectedColumnIds = null;
 	
 	@Override
@@ -172,7 +173,7 @@ public class ReportMainActivity extends ListActivity {
 	private void buildListAdapter() {
 		
 		    buildColumnHeaders();
-			
+
 			ListAdapter listAdapter = new ArrayAdapter<HashMap<String,String>>(ReportMainActivity.this,R.layout.report_main_row,
 					this.resultMapList){
 
@@ -183,6 +184,11 @@ public class ReportMainActivity extends ListActivity {
 						//Dynamically binding column names to textView text
 						TextView textView  = null;
 						LinearLayout linLayout = new LinearLayout(ReportMainActivity.this);
+						//Adding zebra striping on alternate rows
+						if (position % 2 == 0){
+							linLayout.setBackgroundColor(ReportMainActivity.this.getResources().getColor(R.color.booking_resource_background));
+						}
+						ReportMainActivity.this.stripe = false;
 						linLayout.setOrientation(LinearLayout.HORIZONTAL);
 						AbsListView.LayoutParams listLayoutParams = new AbsListView.LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT);
 						LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams( LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT );
@@ -224,9 +230,7 @@ public class ReportMainActivity extends ListActivity {
 							}
 							
 							 return colNullCount.get(colName) == resultMapList.size()-1;
-						}
-						
-						
+						}												
 			        };
 			this.setListAdapter(listAdapter);
 	  }

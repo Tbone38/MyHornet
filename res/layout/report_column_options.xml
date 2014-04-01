@@ -3,15 +3,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
+    <LinearLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:gravity="center"   
+	    android:background="#B7F26F"  > 
         <TextView
             android:id="@+id/report_column_options_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
             android:textSize="30sp"
             android:textStyle="bold"
             android:text="@string/report_column_options_title" />
-
+	</LinearLayout>
         <ListView
             android:id="@android:id/list"
             android:layout_width="match_parent"
@@ -21,9 +25,9 @@
 	        android:id="@+id/btnCreateReport"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:textSize="30sp"
-	        android:background="#E1ED5C"
+	        android:textStyle="bold"
 	  		android:layout_gravity="center"
 	  		android:padding="10dp"
 	        android:text="@string/report_create_btn_title" />
+        
 </LinearLayout>

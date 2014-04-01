@@ -1142,8 +1142,8 @@ public class JDBCConnection {
     	return this.pStatement.executeQuery();
     }
     public ResultSet getReportTypesAndNames() throws SQLException {
-    	String query = "SELECT id, '        '||name AS name, function_name, report_type_id AS order, false as istype FROM user_report" 
-    	+" UNION SELECT id, name, view_name, id AS order, true as istype FROM report_type ORDER BY \"order\", \"istype\" DESC, name,id";
+    	String query = "SELECT id, name, function_name, description, report_type_id AS order, false as istype FROM user_report" 
+    	+" UNION SELECT id, name, view_name, NULL::text, id AS order, true as istype FROM report_type ORDER BY \"order\", \"istype\" DESC, name,id";
 	    this.pStatement = con.prepareStatement(query);
 	    return this.pStatement.executeQuery();
     }

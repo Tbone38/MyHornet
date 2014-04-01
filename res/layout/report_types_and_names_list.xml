@@ -2,25 +2,22 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    
     android:orientation="vertical" >
-
-    <RelativeLayout
-        android:layout_width="match_parent"     
-        android:layout_height="wrap_content"       
-        android:layout_gravity="center"
-        android:gravity="center"
-        >
-        
+      <LinearLayout
+        android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:gravity="center"
+    	android:background="#B7F26F">
         <TextView
-            android:id="@+id/report_types_and_names_list"
+            android:id="@+id/reports_listing_title"
             android:layout_width="wrap_content"           
             android:layout_height="wrap_content"
             android:text="@string/report_types_and_names_title"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#0000" />
-               									
-    </RelativeLayout>
-    
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textSize="25sp" />             								
+    </LinearLayout>
     <RelativeLayout
         android:layout_width="match_parent"   
 		android:layout_height="wrap_content">
