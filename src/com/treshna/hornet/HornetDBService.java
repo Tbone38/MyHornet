@@ -3507,6 +3507,8 @@ public class HornetDBService extends Service {
     		return -1;
     	}
     	//handle the member updates.
+    	Log.d(TAG, "Updating Members");
+    	
     	for (int i= 0; i< memberids.size(); i++) {
     		switch ( updateMember(memberids.get(i)) ){
     		case (1): {//success
@@ -3531,7 +3533,9 @@ public class HornetDBService extends Service {
     			});
     			break;
     		}}
+    		result = i;
     	}
+    	Log.d(TAG, "Updated "+result+" Member(s)");
     	
     	for (int i=0; i< suspendids.size(); i++) {
     		switch (updateSuspend(suspendids.get(i))){
@@ -4102,6 +4106,7 @@ public class HornetDBService extends Service {
 	    			contentResolver.delete(ContentDescriptor.PendingUpdates.CONTENT_URI, ContentDescriptor.PendingUpdates.Cols.ROWID+" = ? AND "
 	        				+ContentDescriptor.PendingUpdates.Cols.TABLEID+" = ? ", new String[] {pendingMemberships.get(i),
 	        				String.valueOf(ContentDescriptor.TableIndex.Values.Membership.getKey())});
+	    			continue;
 	    		}
 	    		
 	    		values.put(ContentDescriptor.Membership.Cols.CANCEL_REASON, 
