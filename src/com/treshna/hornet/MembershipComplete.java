@@ -307,6 +307,24 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 		+ContentDescriptor.FreeIds.Cols.TABLEID+" = ?", new String[] {String.valueOf(msid),
 		String.valueOf(ContentDescriptor.TableIndex.Values.Membership.getKey())});
 		
+		
+		/*Update the cardID on the member itself, if it hasn't got a cardid assigned...*/
+		cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, ContentDescriptor.Member.Cols.MID+" = ?", 
+				new String[] {input.get(0)}, null);
+		
+		if (cur.moveToFirst()) {
+			if (cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.MID)) || 
+					cur.getInt(cur.getColumnIndex(ContentDescriptor.Member.Cols.MID)) == 0) {
+				values = new ContentValues();
+				values.put(ContentDescriptor.Member.Cols.CARDNO, cardid);
+				values.put(ContentDescriptor.Member.Cols.DEVICESIGNUP, "t");
+				
+				contentResolver.update(ContentDescriptor.Member.CONTENT_URI, values, ContentDescriptor.Member.Cols.MID+" = ?",
+						new String[] {input.get(0)});
+			}
+		}
+		cur.close();
+		
 		return Integer.parseInt(rowid);
 	}
 	

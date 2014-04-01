@@ -63,8 +63,8 @@ KEY:
                 Fixed Connection handling in Flask API. --semi
                 Seperate Sign-Up App. 
                 Fixed image primary image issue (multiple images for a member considering themselves the primary image);
-				Fixed the pop-up from the booking Overview always showing when pushing back.
-				Fixed layout issue on booking Overview.
+                Fixed the pop-up from the booking Overview always showing when pushing back.
+                Fixed layout issue on booking Overview.
  
             TODO:
                 Handle permissions/Roles for different staff, to limit what certain staff can see.
@@ -83,7 +83,7 @@ KEY:
                 Move the app navigation over to a navigation Drawer.
                 Fix the PollingHandler running on the UI thread. (blocking etc).
                 Improve Performance of the Booking Overview page.
-				TODO: membership complete "Add Tag" doesn't work. Find out why...
+                TODO: membership complete "Add Tag" doesn't work. Find out why...
 
     
     v119:
