@@ -186,7 +186,7 @@ public class ReportMainActivity extends ListActivity {
 						LinearLayout linLayout = new LinearLayout(ReportMainActivity.this);
 						//Adding zebra striping on alternate rows
 						if (position % 2 == 0){
-							linLayout.setBackgroundColor(ReportMainActivity.this.getResources().getColor(R.color.booking_resource_background));
+							linLayout.setBackgroundColor(getResources().getColor(R.color.booking_resource_background));
 						}
 						ReportMainActivity.this.stripe = false;
 						linLayout.setOrientation(LinearLayout.HORIZONTAL);
@@ -209,28 +209,7 @@ public class ReportMainActivity extends ListActivity {
 							
 							return linLayout;
 						}
-						
-						private boolean isColumnAllNull(String colName) {
-							HashMap<String,Integer> colNullCount = new HashMap<String,Integer>();
-							
-							for (HashMap<String,String> dataRow: resultMapList){
-								
-								for (Entry<String,String> col : dataRow.entrySet()){
-
-									if (!colNullCount.containsKey(col.getKey())){
-										colNullCount.put(col.getKey(), 1); 
-									}
-									else
-									{
-										if (col.getValue()== null || col.getValue().isEmpty() ){
-											colNullCount.put(col.getKey(),colNullCount.get(col.getKey() )+ 1 );
-										}																										
-									}														
-								}																
-							}
-							
-							 return colNullCount.get(colName) == resultMapList.size()-1;
-						}												
+													
 			        };
 			this.setListAdapter(listAdapter);
 	  }
@@ -239,40 +218,39 @@ public class ReportMainActivity extends ListActivity {
 	private void buildColumnHeaders() {
 			LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams( LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT );
 			LinearLayout reportColumnHeadingLayout = (LinearLayout) this.findViewById(R.id.report_list_headings);
-			reportColumnHeadingLayout.setBackgroundColor(Color.parseColor("#9FED55"));
+			TextView reportNameTextView = (TextView) findViewById(R.id.report_main_title);
+			reportNameTextView.setText(reportName);
 			
 		if (resultMapList.size() > 0){
 			//Building title header row...
 			HashMap<String,String> dataRow = resultMapList.get(0);
-			TextView reportNameTextView = (TextView) findViewById(R.id.report_main_title);
-			reportNameTextView.setText(reportName);
-			reportNameTextView.setTypeface(null, Typeface.BOLD);
-			reportNameTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+
 			//Building column header row...
 
 			for (Entry<String,String> row : dataRow.entrySet()){
 				
+				
 				 if (!isColumnAllNull(row.getKey().toString())) {
 					 
-					 reportColumnHeadingLayout.addView(buildColumnHeaderTextView(row.getKey(), Gravity.NO_GRAVITY));
+					 reportColumnHeadingLayout.addView(buildColumnHeaderTextView(row.getKey(), Gravity.NO_GRAVITY, 16));
 				}
 			}
 			
 		} else {
 			
-			reportColumnHeadingLayout.addView(buildColumnHeaderTextView("No Data Available", Gravity.CENTER));
+			reportColumnHeadingLayout.addView(buildColumnHeaderTextView("No Data Available", Gravity.CENTER, 22));
 			
 		}
 	}
 	
 	
-	private TextView buildColumnHeaderTextView(String contentString, int layoutGravity) {
+	private TextView buildColumnHeaderTextView(String contentString, int layoutGravity, int textSize) {
 		TextView textView  = null;
 		LinearLayout.LayoutParams layoutParams = null;
 		textView =  new TextView(ReportMainActivity.this);		
 		layoutParams = new LinearLayout.LayoutParams( 0, LayoutParams.WRAP_CONTENT, 1);
 		textView.setTypeface(null, Typeface.BOLD);
-		textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+		textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
 		textView.setGravity(layoutGravity);
 		layoutParams.setMargins(5, 0, 5, 0);
 		textView.setLayoutParams(layoutParams);
@@ -286,10 +264,13 @@ public class ReportMainActivity extends ListActivity {
 		
 		for (HashMap<String,String> dataRow: resultMapList){
 			
+			
+			
 			for (Entry<String,String> col : dataRow.entrySet()){
 
+
 				if (!colNullCount.containsKey(col.getKey())){
-					colNullCount.put(col.getKey(), 1); 
+					colNullCount.put(col.getKey(),0); 
 				}
 				else
 				{
@@ -299,8 +280,7 @@ public class ReportMainActivity extends ListActivity {
 				}														
 			}																
 		}
-		
-		 return colNullCount.get(colName) == resultMapList.size()-1;
+		 return colNullCount.get(colName) == resultMapList.size();
 	}
 	
 	private void getReportData (String finalQuery) {

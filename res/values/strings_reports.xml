@@ -13,7 +13,7 @@
     <string name="btn_report_last_month">Show Last Month</string>
     <string name="btn_report_last_two_months">Show Last 2 Months</string>
     <string name="btn_report_last_six_months">Show Last 6 Months</string>
-    <string name="report_btn_column_options">Customise Columns</string>
+    <string name="report_btn_column_options">Select Columns</string>
     <string name="report_column_options_title">Report Column Options</string>
     <string name="report_create_btn_title">Create Report</string>
              

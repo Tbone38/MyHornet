@@ -52,7 +52,6 @@ public class ReportListingActivity extends ListActivity {
 		
 		TextView titleView = (TextView) this.findViewById(R.id.reports_listing_title);
 		titleView.setText("Reports");
-		titleView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 28);
 		
 		if (resultMapList.size() > 0){
 			ListView listView = this.getListView();

@@ -8,15 +8,14 @@
         android:layout_width="match_parent"
     	android:layout_height="wrap_content"
     	android:gravity="center"
-    	android:background="#B7F26F">
+    	android:background="@color/report_heading_background_green">
         <TextView
             android:id="@+id/reports_listing_title"
             android:layout_width="wrap_content"           
             android:layout_height="wrap_content"
             android:text="@string/report_types_and_names_title"
-            android:textStyle="bold"
             android:layout_gravity="center"
-            android:textSize="25sp" />             								
+            android:textSize="@dimen/report_title_text_size" />             								
     </LinearLayout>
     <RelativeLayout
         android:layout_width="match_parent"   

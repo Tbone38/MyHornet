@@ -39,6 +39,8 @@
     <color name="button_underline_green">#FF8A9B55</color>
     <color name="button_background_red">#FFEBA6A6</color>
     <color name="button_underline_red">#FFAB7777</color>
+    <color name="report_heading_background_green">#B7F26F</color>
+    <color name="report_column_background_blue">#9EE4E8</color>
         
     <color name="overview_timeslot_top_grey">#FFADADAD</color>
     <color name="overview_timeslot_mid_grey">#FFF3F3F3</color>

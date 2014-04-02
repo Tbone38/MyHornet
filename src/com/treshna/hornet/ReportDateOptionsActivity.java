@@ -39,48 +39,27 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 		startDatePicker =  new  DatePickerFragment();
 		endDatePicker = new  DatePickerFragment();
 		startDateText = (TextView) findViewById(R.id.startDateTxt);
-		this.setDateTextView(startDateText, selectedStartDate);
+		selectedStartDate = resetDateByNumOfMonths (-1, startDateText);
 		endDateText = (TextView) findViewById(R.id.endDateTxt);
-		this.setDateTextView(endDateText, selectedEndDate);
+		setDateTextView(endDateText, selectedEndDate);
 		Button createButton =  (Button) findViewById(R.id.btnCreateReport);
 		Button columnOptionsButton =  (Button) findViewById(R.id.btnColumnOptions);
 		Button btnStartButton = (Button) findViewById(R.id.btnSelectStartDate);
 		Button btnEndButton = (Button) findViewById(R.id.btnSelectEndDate);
-		Button btnLastMonth = (Button) findViewById(R.id.btnReportLastMonth);
 		Button btnLastTwoMonths = (Button) findViewById(R.id.btnReportLastTwoMonths);
 		Button btnLastSixMonths = (Button) findViewById(R.id.btnReportLastSixMonths);
 		reportNameTxt.setText(intent.getStringExtra("report_name").trim());
 		reportId = intent.getIntExtra("report_id",0);
 		reportData.put("report_name", intent.getStringExtra("report_name"));
 		reportData.put("report_function_name", intent.getStringExtra("report_function_name"));
-	
-	  btnLastMonth.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				//resets the start-date member to today's date
-				 selectedStartDate = new Date();
-				 
-				 Calendar cal = Calendar.getInstance();
-				 cal.setTime(selectedStartDate);
-				 cal.add(Calendar.MONTH, -1);
-				 selectedStartDate = cal.getTime();
-				 setDateTextView(startDateText, selectedStartDate);
-			}
-			
-		});
 		
+	
 		btnLastTwoMonths.setOnClickListener(new View.OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				//resets the start-date member to today's date
-				 selectedStartDate = new Date();
-				 Calendar cal = Calendar.getInstance();
-				 cal.setTime(selectedStartDate);
-				 cal.add(Calendar.MONTH, -2);
-				 selectedStartDate = cal.getTime();
-				 setDateTextView(startDateText, selectedStartDate);
+
+				 selectedStartDate = resetDateByNumOfMonths ( -2, startDateText);
 			}
 			
 		});
@@ -89,13 +68,8 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 
 			@Override
 			public void onClick(View v) {
-				//resets the start-date member to today's date
-				 selectedStartDate = new Date();
-				 Calendar cal = Calendar.getInstance();
-				 cal.setTime(selectedStartDate);
-				 cal.add(Calendar.MONTH, -6);
-				 selectedStartDate = cal.getTime();
-				 setDateTextView(startDateText, selectedStartDate);
+				
+				selectedStartDate = resetDateByNumOfMonths (-6, startDateText);
 			}
 			
 		});
@@ -141,6 +115,19 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 			}
 		});
 		
+		
+	}
+	
+	
+	private Date  resetDateByNumOfMonths ( int numOfMonths, TextView dateDisplayView) {
+		
+		 Date selectedDate = new Date(); 
+		 Calendar cal = Calendar.getInstance();
+		 cal.setTime(selectedDate);
+		 cal.add(Calendar.MONTH, numOfMonths);
+		 selectedDate = cal.getTime();
+		 setDateTextView(dateDisplayView, selectedDate);
+		 return selectedDate;
 		
 	}
 	
