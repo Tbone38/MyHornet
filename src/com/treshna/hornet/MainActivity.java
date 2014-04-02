@@ -1,27 +1,32 @@
 package com.treshna.hornet;
 
+import java.util.ArrayList;
+import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.TypedArray;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBarActivity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
-
+import android.widget.ListView;
 import com.treshna.hornet.R.color;
+import com.treshna.hornet.navigation.NavDrawerItem;
+import com.treshna.hornet.navigation.NavDrawerListAdapter;
 
 
 public class MainActivity extends NFCActivity {
@@ -33,6 +38,18 @@ public class MainActivity extends NFCActivity {
 	private static int selectedTab;
 	private static Fragment cFragment;
 	
+	private DrawerLayout mDrawerLayout;
+    private ListView mDrawerList;
+    private ActionBarDrawerToggle mDrawerToggle;
+ 
+    // nav drawer title
+    private CharSequence mDrawerTitle;
+    private String[] navMenuTitles;
+    private TypedArray navMenuIcons;
+ 
+    private ArrayList<NavDrawerItem> navDrawerItems;
+    private NavDrawerListAdapter navadapter;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		if (savedInstanceState != null)
@@ -43,18 +60,68 @@ public class MainActivity extends NFCActivity {
 		
 		super.onCreate(savedInstanceState);
 
-		this.setContentView(R.layout.main_activity);
-		/*this.setContentView(R.layout.drawer_layout);
-		LayoutInflater inflater = this.getLayoutInflater();
+		//this.setContentView(R.layout.main_activity);
+		this.setContentView(R.layout.drawer_layout);
 		
-		FrameLayout frame = (FrameLayout) this.findViewById(R.id.content_view);
-		View contents = inflater.inflate(R.layout.main_activity, null);
-		frame.addView(contents);*/
+		
 		
 		this.setTitle("GymMaster");
 		this.setTitleColor(color.gym);
 		context = getApplicationContext();
 		
+		mDrawerTitle = getTitle();
+		 
+        // load slide menu items
+        navMenuTitles = getResources().getStringArray(R.array.nav_drawer_items);
+ 
+        // nav drawer icons from resources
+        navMenuIcons = getResources()
+                .obtainTypedArray(R.array.nav_drawer_icons);
+ 
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerList = (ListView) findViewById(R.id.slider_menu);
+ 
+        navDrawerItems = new ArrayList<NavDrawerItem>();
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], navMenuIcons.getResourceId(0, -1)));
+        // Find People
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons.getResourceId(1, -1)));
+        // Photos
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], navMenuIcons.getResourceId(2, -1)));
+        // Communities, Will add a counter here
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], navMenuIcons.getResourceId(3, -1), true, "22"));
+        // Pages
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[4], navMenuIcons.getResourceId(4, -1)));
+        // What's hot, We  will add a counter here
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[5], navMenuIcons.getResourceId(5, -1), true, "50+"));
+         
+ 
+        // Recycle the typed array
+        navMenuIcons.recycle();
+ 
+        // setting the nav drawer list adapter
+        navadapter = new NavDrawerListAdapter(getApplicationContext(),
+                navDrawerItems);
+        mDrawerList.setAdapter(navadapter);
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
+                R.drawable.ic_action_add_to_queue, //nav menu toggle icon
+                R.string.app_name, // nav drawer open - description for accessibility
+                R.string.app_name // nav drawer close - description for accessibility
+        ){
+            @SuppressLint("NewApi")
+			public void onDrawerClosed(View view) {
+                getActionBar().setTitle(mDrawerTitle);
+                // calling onPrepareOptionsMenu() to show action bar icons
+                invalidateOptionsMenu();
+            }
+ 
+            @SuppressLint("NewApi")
+			public void onDrawerOpened(View drawerView) {
+                getActionBar().setTitle(mDrawerTitle);
+                // calling onPrepareOptionsMenu() to hide action bar icons
+                invalidateOptionsMenu();
+            }
+        };
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
 		
 		ActionBar ab = getSupportActionBar();
 		ab.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -290,12 +357,13 @@ public class MainActivity extends NFCActivity {
 	            // If not, instantiate and add it to the activity
 	            mFragment = Fragment.instantiate(mActivity, mClass.getName());
 	            cFragment = mFragment;
-	            ft.replace(getContentViewCompat(), mFragment, mTag);
-	            //selectedTab = tab.getPosition();
+	            //ft.replace(getContentViewCompat(), mFragment, mTag);
+	            ft.replace(R.id.content_view, mFragment, mTag);
 	        } else {
 	            // If it exists, simply attach it in order to show it
 	        	//ft.replace(getContentViewCompat(), mFragment, mTag);
-	        	ft.attach(mFragment);
+	        	//ft.attach(mFragment);
+	        	ft.add(R.id.content_view, mFragment);
 	        	cFragment = mFragment;
 	        	
 	        }
@@ -305,7 +373,7 @@ public class MainActivity extends NFCActivity {
 	    	mFragment = mActivity.getSupportFragmentManager().findFragmentByTag(mTag);
 	    	if (mFragment != null) {
 	            // Detach the fragment, because another one is being attached	    		
-	    		ft.detach(mFragment);
+	    		//ft.detach(mFragment);
 	        } else {
 	        }
 	    }
