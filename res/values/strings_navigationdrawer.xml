@@ -2,11 +2,10 @@
 <resources>
 	<!-- Nav Drawer Menu Items -->
     <string-array name="nav_drawer_items">
-        <item >Home</item>
         <item >Find Member</item>
         <item >Last Visitors</item>
         <item >Bookings</item>
-        <item >Signup</item>
+        <item >Add Member</item>
         <item >Add Class</item>
         <item >Add Booking</item>
     </string-array>
@@ -14,7 +13,6 @@
     <!-- Nav Drawer List Item Icons -->
     <!-- Keep them in order as the titles are in -->
     <array name="nav_drawer_icons">
-        <item>@drawable/ic_action_warning</item>
         <item>@drawable/ic_action_search</item>
         <item>@drawable/ic_action_group</item>
         <item>@drawable/ic_action_event</item>
