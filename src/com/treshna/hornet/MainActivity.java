@@ -312,7 +312,7 @@ public class MainActivity extends NFCActivity {
 			ab.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 		} else {
 			if (ab.getNavigationMode() != ActionBar.NAVIGATION_MODE_TABS) {
-				//fm.popBackStack(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+				fm.popBackStack(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 				addTabs();
 			}
 			if (tag.compareTo("bookings")== 0) {

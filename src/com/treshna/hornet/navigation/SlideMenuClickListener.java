@@ -63,6 +63,7 @@ public class SlideMenuClickListener implements OnItemClickListener {
         case 8:
         	tag = "kpi";
         	fragment = new KeyPerformanceIndexFragment();
+        	break;
         case 10:
         	fragment = new ClassCreateFragment();
         	tag = "classCreate";

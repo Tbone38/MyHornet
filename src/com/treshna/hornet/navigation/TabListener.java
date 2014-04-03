@@ -26,12 +26,11 @@ public class TabListener<T extends Fragment> implements ActionBar.TabListener {
 	        mFragment = mActivity.getSupportFragmentManager().findFragmentByTag(mTag);
             if (mFragment != null && !mFragment.isDetached()) {
                 FragmentTransaction ft = mActivity.getSupportFragmentManager().beginTransaction();
-                //ft.remove(mFragment);
-                ft.detach(mFragment);
+                ft.remove(mFragment);
+                //ft.detach(mFragment);
                 ft.commit();
-                mFragment = null; //required to avoid recursive generating.. ?
+                mFragment = null; //required to avoid recursive generating.. ?*/
             }
-	        
 	    }
 
 	    /* The following are each of the ActionBar.TabListener callbacks */
@@ -52,12 +51,12 @@ public class TabListener<T extends Fragment> implements ActionBar.TabListener {
 	    }
 
 	    public void onTabUnselected(Tab tab, FragmentTransaction ft) {
-	    	mFragment = mActivity.getSupportFragmentManager().findFragmentByTag(mTag);
-	    	if (mFragment != null) {
+	    	//mFragment = mActivity.getSupportFragmentManager().findFragmentByTag(mTag);
+	    	if (mFragment != null && !mFragment.isDetached()) {
 	            // Detach the fragment, because another one is being attached	    		
 	    		ft.detach(mFragment);
 	        } else {
-	        	ft.detach(mActivity.getCurrentFragment());
+	        	//ft.detach(mActivity.getCurrentFragment());
 	        }
 	    }
 
