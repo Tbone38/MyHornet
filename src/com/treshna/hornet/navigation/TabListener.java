@@ -55,9 +55,9 @@ public class TabListener<T extends Fragment> implements ActionBar.TabListener {
 	    	mFragment = mActivity.getSupportFragmentManager().findFragmentByTag(mTag);
 	    	if (mFragment != null) {
 	            // Detach the fragment, because another one is being attached	    		
-	    		//ft.detach(mFragment);
+	    		ft.detach(mFragment);
 	        } else {
-	        	//ft.detach(cFragment);
+	        	ft.detach(mActivity.getCurrentFragment());
 	        }
 	    }
 

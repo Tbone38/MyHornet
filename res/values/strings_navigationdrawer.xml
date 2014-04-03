@@ -4,16 +4,18 @@
     <string-array name="nav_drawer_main">
         <item> Menu</item>
         <item >Find Member</item>
-        <item >Last Visitors</item>
+        <item >Visitors</item>
         <item >Bookings</item>
         
         <item >Create</item>
         <item >Add Member</item>
-        <item >Add Class</item>
         <item >Add Booking</item>
         
         <item >Reports</item>
         <item>Key Performance Indicators</item>
+        
+        <item >Setup</item>
+        <item >Add Class</item>
     </string-array>
      
     <!-- Nav Drawer List Item Icons -->
@@ -25,10 +27,11 @@
         <item>@drawable/ic_action_event</item>
         <item></item>
         <item>@drawable/ic_action_add_person</item>
-        <item>@drawable/ic_action_add_to_queue</item>
         <item>@drawable/ic_action_new_event</item>
         <item></item>
         <item>@drawable/ic_action_view_as_list</item>
+        <item></item>
+        <item>@drawable/ic_action_add_to_queue</item>
     </array>
      
     <!-- Content Description -->

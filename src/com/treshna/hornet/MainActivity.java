@@ -43,7 +43,7 @@ public class MainActivity extends NFCActivity {
 	private static Tab bookingtab;
 	private static Context context;
 	private static int selectedTab;
-	private static Fragment cFragment;
+	private Fragment cFragment;
 	
 	private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
@@ -99,14 +99,15 @@ public class MainActivity extends NFCActivity {
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], navMenuIcons.getResourceId(3, -1), true, "22"));
         // Header
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[4], navMenuIcons.getResourceId(4, -1), true));
-        // Add x
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[5], navMenuIcons.getResourceId(5, -1)));
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[6], navMenuIcons.getResourceId(6, -1)));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[7], navMenuIcons.getResourceId(7, -1)));
-        //Header
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[8], navMenuIcons.getResourceId(8, -1), true));
         
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[9], navMenuIcons.getResourceId(9, -1)));
+        //header
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[7], navMenuIcons.getResourceId(7, -1), true));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[8], navMenuIcons.getResourceId(8, -1)));
+        
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[9], navMenuIcons.getResourceId(9, -1), true));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[10], navMenuIcons.getResourceId(10, -1)));
  
         // Recycle the typed array
         navMenuIcons.recycle();
@@ -140,7 +141,9 @@ public class MainActivity extends NFCActivity {
         
         if (savedInstanceState == null) { //needs to be done after the super.OnCreate call.
         	try {
+        		FragmentManager fm = this.getSupportFragmentManager();
         		genTabs();
+        		cFragment = fm.findFragmentByTag("findmember");
             	addTabs();
             	ActionBar ab = this.getSupportActionBar();
                 ab.setSelectedNavigationItem(selectedTab);
@@ -323,7 +326,7 @@ public class MainActivity extends NFCActivity {
 		}
 	}
 	
-	private void genTabs() {
+	public void genTabs() {
 		ActionBar ab = getSupportActionBar();
 		
 		membertab = ab.newTab()
@@ -439,5 +442,9 @@ public class MainActivity extends NFCActivity {
 	
 	public ListView getDrawerList() {
 		return this.mDrawerList;
+	}
+	
+	public Fragment getCurrentFragment() {
+		return this.cFragment;
 	}
 }

@@ -12,7 +12,7 @@ import com.treshna.hornet.BookingAddFragment;
 import com.treshna.hornet.ClassCreateFragment;
 import com.treshna.hornet.KeyPerformanceIndexFragment;
 import com.treshna.hornet.MainActivity;
-import com.treshna.hornet.R;
+import com.treshna.hornet.MemberAddFragment;
 
 public class SlideMenuClickListener implements OnItemClickListener {
 
@@ -41,9 +41,11 @@ public class SlideMenuClickListener implements OnItemClickListener {
         switch (position) {
         case 1:
         	//Member Find
+        	activity.genTabs();
         	tag = "findmember";
             break;
         case 2: //last visitors;
+        	activity.genTabs();
         	tag = "lastvisitors";
             break;
         case 3: //bookings
@@ -51,20 +53,20 @@ public class SlideMenuClickListener implements OnItemClickListener {
             break;
         case 5:
         	//TODO: make memberAdd a fragment;
-            //fragment = new MembersAddFragment();
+            fragment = new MemberAddFragment();
         	tag = "memberAdd";
             break;
         case 6:
-        	fragment = new ClassCreateFragment();
-        	tag = "classCreate";
-        	break;
-        case 7:
         	tag = "bookingAdd";
         	fragment = new BookingAddFragment();
         	break;
-        case 9:
+        case 8:
         	tag = "kpi";
         	fragment = new KeyPerformanceIndexFragment();
+        case 10:
+        	fragment = new ClassCreateFragment();
+        	tag = "classCreate";
+        	break;
         default:
             break;
         }
