@@ -14,6 +14,9 @@
         <item >Reports</item>
         <item>Key Performance Indicators</item>
         
+        <item>Other</item>
+        <item>Roll Call</item>
+        
         <item >Setup</item>
         <item >Add Class</item>
     </string-array>
@@ -30,6 +33,8 @@
         <item>@drawable/ic_action_new_event</item>
         <item></item>
         <item>@drawable/ic_action_view_as_list</item>
+        <item></item>
+        <item>@drawable/ic_action_paste</item>
         <item></item>
         <item>@drawable/ic_action_add_to_queue</item>
     </array>

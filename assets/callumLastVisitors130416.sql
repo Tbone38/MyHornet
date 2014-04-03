@@ -4,7 +4,7 @@ SELECT
     member.gender AS gender, 
     entryexit.membershipid,
     entryexit.cardno as cardno,
-    entryexit.time as datetime,
+    EXTRACT(epoch FROM entryexit.time) as datetime,
     to_char(entryexit.time,'DD Mon') AS sdate,
     to_char(entryexit.time,'HH12:MIam') AS stime12,
     to_char(entryexit.time,'HH24:MI') AS stime24,

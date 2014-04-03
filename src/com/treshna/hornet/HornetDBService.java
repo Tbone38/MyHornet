@@ -485,7 +485,9 @@ public class HornetDBService extends Service {
         		val.put(ContentDescriptor.Visitor.Cols.ID, id);
         		val.put(ContentDescriptor.Visitor.Cols.MID, memberid);
         		val.put(ContentDescriptor.Visitor.Cols.MSID, membershipid);
-        		val.put(ContentDescriptor.Visitor.Cols.DATETIME, rs.getString("datetime"));
+        		Double doubledate = rs.getDouble("datetime")*1000d;
+	    		String date = String.valueOf(doubledate);
+        		val.put(ContentDescriptor.Visitor.Cols.DATETIME, date); //we have to convert from secs since epoch to ms since epoch.
         		val.put(ContentDescriptor.Visitor.Cols.DATE, rs.getString("sdate"));
         		val.put(ContentDescriptor.Visitor.Cols.TIME, rs.getString("stime12"));
         		val.put(ContentDescriptor.Visitor.Cols.DENY, rs.getString("denyreason"));

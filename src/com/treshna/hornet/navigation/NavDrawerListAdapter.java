@@ -59,6 +59,12 @@ public class NavDrawerListAdapter extends BaseAdapter {
 	                    context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 	            convertView = mInflater.inflate(R.layout.drawer_list_item, null);
 	        }
+	    	
+	    	if (navDrawerItems.get(position).getTitle() == null) {
+	    		convertView = new View(context);
+	    		convertView.setVisibility(View.GONE);
+	    		return convertView;
+	    	}
 	          
 	        ImageView imgIcon = (ImageView) convertView.findViewById(R.id.icon);
 	        TextView txtTitle = (TextView) convertView.findViewById(R.id.title);

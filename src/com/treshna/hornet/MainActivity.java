@@ -1,17 +1,21 @@
 package com.treshna.hornet;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
+import android.database.Cursor;
 import android.net.wifi.WifiManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -22,7 +26,6 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.Tab;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -57,6 +60,13 @@ public class MainActivity extends NFCActivity {
     private ArrayList<NavDrawerItem> navDrawerItems;
     private NavDrawerListAdapter navadapter;
     private static final String TAG = "MainActivity";
+    
+    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        @Override //when the server sync finishes, it sends out a broadcast.
+        public void onReceive(Context context, Intent intent) {
+            MainActivity.this.receivedBroadcast(intent);
+        }
+    };
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -75,70 +85,8 @@ public class MainActivity extends NFCActivity {
 		this.setTitle("GymMaster");
 		this.setTitleColor(color.gym);
 		context = getApplicationContext();
-		
-		mDrawerTitle = "GymMaster";
-		 
-        // load slide menu items
-        navMenuTitles = getResources().getStringArray(R.array.nav_drawer_main);
- 
-        // nav drawer icons from resources
-        navMenuIcons = getResources()
-                .obtainTypedArray(R.array.nav_drawer_icons);
- 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.slider_menu);
- 
-        navDrawerItems = new ArrayList<NavDrawerItem>();
-        //Header
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], navMenuIcons.getResourceId(0, -1), true));
-        // Find Member
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons.getResourceId(1, -1), true, "50+"));
-        // Last Visitors
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], navMenuIcons.getResourceId(2, -1), true, "50+"));
-        // Bookings
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], navMenuIcons.getResourceId(3, -1), true, "22"));
-        // Header
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[4], navMenuIcons.getResourceId(4, -1), true));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[5], navMenuIcons.getResourceId(5, -1)));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[6], navMenuIcons.getResourceId(6, -1)));
-        
-        //header
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[7], navMenuIcons.getResourceId(7, -1), true));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[8], navMenuIcons.getResourceId(8, -1)));
-        
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[9], navMenuIcons.getResourceId(9, -1), true));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[10], navMenuIcons.getResourceId(10, -1)));
- 
-        // Recycle the typed array
-        navMenuIcons.recycle();
- 
-        // setting the nav drawer list adapter
-        navadapter = new NavDrawerListAdapter(getApplicationContext(),
-                navDrawerItems);
-        mDrawerList.setAdapter(navadapter);
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-                R.drawable.ic_action_add_to_queue, //nav menu toggle icon
-                R.string.app_name, // nav drawer open - description for accessibility
-                R.string.app_name // nav drawer close - description for accessibility
-        ){
-            @SuppressLint("NewApi")
-			public void onDrawerClosed(View view) {
-                getActionBar().setTitle(mDrawerTitle);
-                // calling onPrepareOptionsMenu() to show action bar icons
-                invalidateOptionsMenu();
-            }
- 
-            @SuppressLint("NewApi")
-			public void onDrawerOpened(View drawerView) {
-                getActionBar().setTitle(mDrawerTitle);
-                // calling onPrepareOptionsMenu() to hide action bar icons
-                invalidateOptionsMenu();
-            }
-        };
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
-        
-        mDrawerList.setOnItemClickListener(new SlideMenuClickListener(this.getSupportFragmentManager(), mDrawerLayout, mDrawerList, this));
-        
+		setupNavDrawer();
+		        
         if (savedInstanceState == null) { //needs to be done after the super.OnCreate call.
         	try {
         		FragmentManager fm = this.getSupportFragmentManager();
@@ -168,19 +116,116 @@ public class MainActivity extends NFCActivity {
                 /************************************/
 	}
 	
-	/*@Override
-	protected void onResumeFragments() {
-		super.onResumeFragments();
-		try {
-        	addTabs();
-        	ActionBar ab = this.getSupportActionBar();
-            ab.setSelectedNavigationItem(selectedTab);
-        } catch (IllegalStateException e) {
-        	//we've already attached the tabs.
-        	Log.w(TAG, "IllegalStateException thrown", e);
-        	//this.finish();
+	protected void receivedBroadcast(Intent intent) {
+		setupNavDrawer();
+	}
+
+	//we need to update this after syncs...
+	private void setupNavDrawer() {
+		mDrawerTitle = "GymMaster";
+		int membercount = -1, visitcount = -1, bookingcount = -1;
+		long daystart, dayend;
+		ContentResolver contentResolver = this.getContentResolver();
+		Cursor cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, null, null, null);
+		
+		membercount = cur.getCount();
+		cur.close();
+		
+		Calendar cal = Calendar.getInstance(Locale.US);
+		cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE), 0, 0, 1);
+		daystart = cal.getTimeInMillis();
+		cal.add(Calendar.HOUR, 23);
+		cal.add(Calendar.MINUTE, 59);
+		dayend = cal.getTimeInMillis();
+		cur = contentResolver.query(ContentDescriptor.Visitor.CONTENT_URI, null, ContentDescriptor.Visitor.Cols.DATETIME+" >= ?",
+				new String[] {String.valueOf(daystart)}, null);
+		
+		visitcount = cur.getCount();
+		cur.close();
+		
+		cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.ARRIVAL+" >= ? AND "
+				+ContentDescriptor.Booking.Cols.ARRIVAL+" <= ?",new String[] {String.valueOf(daystart), String.valueOf(dayend)}, null);
+		
+		bookingcount = cur.getCount();
+		cur.close();
+		
+		// load slide menu items
+        navMenuTitles = getResources().getStringArray(R.array.nav_drawer_main);
+ 
+        // nav drawer icons from resources
+        navMenuIcons = getResources()
+                .obtainTypedArray(R.array.nav_drawer_icons);
+ 
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerList = (ListView) findViewById(R.id.slider_menu);
+ 
+        navDrawerItems = new ArrayList<NavDrawerItem>();
+        // Main
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], navMenuIcons.getResourceId(0, -1), true));
+        if (membercount <= 0) {
+        	navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons.getResourceId(1, -1)));         // Find Member
+        } else {
+        	navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons.getResourceId(1, -1), true, String.valueOf(membercount)));         // Find Member
         }
-	}*/
+        if (visitcount <= 0) {
+        	navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], navMenuIcons.getResourceId(2, -1)));         // Last Visitors
+        } else {
+        	navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], navMenuIcons.getResourceId(2, -1), true, String.valueOf(visitcount)));         // Last Visitors
+        }
+        if (bookingcount <= 0) {
+        	navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], navMenuIcons.getResourceId(3, -1)));			 // Bookings
+        } else {
+        	navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], navMenuIcons.getResourceId(3, -1), true, String.valueOf(bookingcount)));			 // Bookings
+        }
+        // Create
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[4], navMenuIcons.getResourceId(4, -1), true));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[5], navMenuIcons.getResourceId(5, -1)));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[6], navMenuIcons.getResourceId(6, -1)));
+        // Reports
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[7], navMenuIcons.getResourceId(7, -1), true));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[8], navMenuIcons.getResourceId(8, -1)));
+        // Other
+        int use_roll = Integer.parseInt(Services.getAppSettings(getApplicationContext(), "use_roll"));
+		if (use_roll > 0) {
+			navDrawerItems.add(new NavDrawerItem(navMenuTitles[9], navMenuIcons.getResourceId(9, -1), true));
+			navDrawerItems.add(new NavDrawerItem(navMenuTitles[10], navMenuIcons.getResourceId(10, -1)));
+		}else {
+			navDrawerItems.add(new NavDrawerItem(null, -1));
+			navDrawerItems.add(new NavDrawerItem(null, -1));
+		}
+		//Setup
+		navDrawerItems.add(new NavDrawerItem(navMenuTitles[11], navMenuIcons.getResourceId(11, -1), true));
+		navDrawerItems.add(new NavDrawerItem(navMenuTitles[12], navMenuIcons.getResourceId(12, -1)));
+ 
+        // Recycle the typed array
+        navMenuIcons.recycle();
+ 
+        // setting the nav drawer list adapter
+        navadapter = new NavDrawerListAdapter(getApplicationContext(),
+                navDrawerItems);
+        mDrawerList.setAdapter(navadapter);
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
+                R.drawable.ic_action_add_to_queue, //nav menu toggle icon
+                R.string.app_name, 
+                R.string.app_name){
+            @SuppressLint("NewApi")
+			public void onDrawerClosed(View view) {
+                getActionBar().setTitle(mDrawerTitle);
+                // calling onPrepareOptionsMenu() to show action bar icons
+                invalidateOptionsMenu();
+            }
+ 
+            @SuppressLint("NewApi")
+			public void onDrawerOpened(View drawerView) {
+                getActionBar().setTitle(mDrawerTitle);
+                // calling onPrepareOptionsMenu() to hide action bar icons
+                invalidateOptionsMenu();
+            }
+        };
+        mDrawerLayout.setDrawerListener(mDrawerToggle);        
+        mDrawerList.setOnItemClickListener(new SlideMenuClickListener(this.getSupportFragmentManager(), mDrawerLayout, mDrawerList, this));
+
+	}
 	
 	private void firstSetup() {
 		//take me to the magic page.
@@ -202,6 +247,11 @@ public class MainActivity extends NFCActivity {
 		if (Services.getProgress() != null) {
     		Services.getProgress().show();
 		}
+		setupNavDrawer();
+		
+		IntentFilter iff = new IntentFilter();
+	    iff.addAction("com.treshna.hornet.serviceBroadcast");
+	    this.registerReceiver(this.mBroadcastReceiver,iff);
 	}
 	
 	@Override
@@ -211,9 +261,11 @@ public class MainActivity extends NFCActivity {
     		Services.getProgress().dismiss();
     		//Services.setProgress(null);
     	}
-		FragmentManager fm = this.getSupportFragmentManager();
+		/*FragmentManager fm = this.getSupportFragmentManager();
 		fm.popBackStackImmediate(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-		fm.beginTransaction().commitAllowingStateLoss();
+		fm.beginTransaction().commitAllowingStateLoss();*/
+		
+		this.unregisterReceiver(this.mBroadcastReceiver);
 	}
 	
 	@Override
@@ -267,8 +319,8 @@ public class MainActivity extends NFCActivity {
         // if nav drawer is opened, hide the action items
         boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
         menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
-        menu.findItem(R.id.action_addMember).setVisible(!drawerOpen);
-        menu.findItem(R.id.action_addMember).setVisible(!drawerOpen);
+        /*menu.findItem(R.id.action_addMember).setVisible(!drawerOpen);
+        menu.findItem(R.id.action_addMember).setVisible(!drawerOpen);*/
         return super.onPrepareOptionsMenu(menu);
     }
 	

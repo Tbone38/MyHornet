@@ -65,6 +65,7 @@ KEY:
                 Fixed image primary image issue (multiple images for a member considering themselves the primary image);
                 Fixed the pop-up from the booking Overview always showing when pushing back.
                 Fixed layout issue on booking Overview.
+		Fixed the broken fragment behaviour, DO NOT BREAK IT AGAIN.
  
             TODO:
                 Handle permissions/Roles for different staff, to limit what certain staff can see.
@@ -84,7 +85,7 @@ KEY:
                 Fix the PollingHandler running on the UI thread. (blocking etc).
                 Improve Performance of the Booking Overview page.
                 TODO: membership complete "Add Tag" doesn't work. Find out why...
-		Fix the broken fragment behaviour...
+		Add Roll items to NavDrawer.
 
     
     v119:
