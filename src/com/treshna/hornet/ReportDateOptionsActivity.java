@@ -13,9 +13,15 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class ReportDateOptionsActivity extends FragmentActivity implements DatePickerFragment.DatePickerSelectListener{ 
@@ -39,22 +45,46 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 		startDatePicker =  new  DatePickerFragment();
 		endDatePicker = new  DatePickerFragment();
 		startDateText = (TextView) findViewById(R.id.startDateTxt);
-		selectedStartDate = resetDateByNumOfMonths (-1, startDateText);
 		endDateText = (TextView) findViewById(R.id.endDateTxt);
 		setDateTextView(endDateText, selectedEndDate);
 		Button createButton =  (Button) findViewById(R.id.btnCreateReport);
 		Button columnOptionsButton =  (Button) findViewById(R.id.btnColumnOptions);
 		Button btnStartButton = (Button) findViewById(R.id.btnSelectStartDate);
 		Button btnEndButton = (Button) findViewById(R.id.btnSelectEndDate);
-		Button btnLastTwoMonths = (Button) findViewById(R.id.btnReportLastTwoMonths);
+		/*Button btnLastTwoMonths = (Button) findViewById(R.id.btnReportLastTwoMonths);
 		Button btnLastSixMonths = (Button) findViewById(R.id.btnReportLastSixMonths);
+		Button btnLastTwelveMonths = (Button) findViewById(R.id.btnReportLastTwelveMonths);*/
 		reportNameTxt.setText(intent.getStringExtra("report_name").trim());
 		reportId = intent.getIntExtra("report_id",0);
 		reportData.put("report_name", intent.getStringExtra("report_name"));
 		reportData.put("report_function_name", intent.getStringExtra("report_function_name"));
+		final Spinner datePresetsSpinner = (Spinner) findViewById(R.id.datePresetsSpinner);
+		String[] spinnerOptions = {"Last Month", "Last Two Months", "Last Six Months", "Last Year"};
+		ArrayAdapter<String> spinnerAdapter = new ArrayAdapter(this, R.layout.report_date_options_spinner , spinnerOptions);
+		datePresetsSpinner.setAdapter(spinnerAdapter);
+		datePresetsSpinner.setPrompt("Select Date Presets");
+		datePresetsSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int position, long id) {
+				
+					String selectedOption =  (String) datePresetsSpinner.getSelectedItem();
+					setSelectedDate(selectedOption);
+				
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+				// TODO Auto-generated method stub
+				
+			}
+
+		});
+
 		
-	
-		btnLastTwoMonths.setOnClickListener(new View.OnClickListener() {
+			
+		/*btnLastTwoMonths.setOnClickListener(new View.OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
@@ -73,6 +103,17 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 			}
 			
 		});
+		
+		
+		btnLastTwelveMonths.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+
+				 selectedStartDate = resetDateByNumOfMonths ( -12, startDateText);
+			}
+			
+		});*/
 		
 		
 		btnStartButton.setOnClickListener(new View.OnClickListener() {
@@ -116,6 +157,25 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 		});
 		
 		
+	}
+	
+	private void setSelectedDate(String selectedOption) {
+		
+		if (selectedOption.compareTo("Last Two Months")== 0){
+			selectedStartDate = resetDateByNumOfMonths ( -2, startDateText);
+			
+		} else if (selectedOption.compareTo("Last Six Months")== 0){
+			
+			selectedStartDate = resetDateByNumOfMonths ( -6, startDateText);
+			
+		} else if (selectedOption.compareTo("Last Year")== 0){
+			
+			selectedStartDate = resetDateByNumOfMonths ( -12, startDateText);
+			
+		} else if (selectedOption.compareTo("Last Month")== 0){
+			
+			selectedStartDate = resetDateByNumOfMonths ( -1, startDateText);
+		} 	
 	}
 	
 	

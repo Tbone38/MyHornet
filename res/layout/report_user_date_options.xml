@@ -30,12 +30,12 @@
 			       android:layout_gravity="center_horizontal"
 			       android:gravity="center_horizontal"/>
 		   <LinearLayout
-		    android:layout_width="match_parent"
+		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
-		    android:gravity="center"
+		    android:layout_gravity="center"
 		    android:orientation="vertical"
 		    >
-		    <Button
+		   <!--   <Button
 		       android:id="@+id/btnReportLastTwoMonths"
 		       android:layout_width="wrap_content"
 		       android:layout_height="wrap_content"
@@ -49,15 +49,37 @@
 		       android:padding="20dp"
 		       android:textStyle="bold"
 		       android:text="@string/btn_report_last_six_months"/>
+		   <Button
+		       android:id="@+id/btnReportLastTwelveMonths"
+		       android:layout_width="wrap_content"
+		       android:layout_height="wrap_content"
+		       android:padding="20dp"
+		       android:textStyle="bold"
+		       android:text="@string/btn_report_last_twelve_months"/>-->
+				
+		       <TextView
+		           android:layout_width="wrap_content"
+		           android:layout_height="wrap_content"
+		           android:textSize="20sp" 
+		           android:textStyle="bold"
+		           android:gravity="center"
+		           android:text="@string/report_date_spinner_title"
+		           />
 		       
-		    </LinearLayout>
+		       <Spinner
+		           android:id="@+id/datePresetsSpinner"
+		           android:layout_width="wrap_content"
+		           android:layout_height="wrap_content"
+		           android:prompt="@string/report_date_spinner_title"
+		           android:gravity="center" />
+		   
+		</LinearLayout>
 		<RelativeLayout 
 				    android:layout_width="wrap_content"
 				    android:layout_height="wrap_content"
 				    android:padding="10dp"
 				    android:layout_gravity="center"
-				    android:layout_marginTop="20dp"
-				    android:layout_marginBottom="20dp"
+				    android:layout_margin="10dp"
 				    android:background="#EEF2A5"
 				    android:orientation="horizontal"
 				    android:baselineAligned="false" >
@@ -99,6 +121,7 @@
 			       android:layout_toRightOf="@id/btnSelectStartDate"
 			       android:textStyle="bold"
 			       android:text="@string/end_date_btn" /> 
+			  
    
 		</RelativeLayout>
 		
@@ -106,8 +129,8 @@
 				    android:layout_width="match_parent"
 				    android:layout_height="wrap_content"
 				    android:padding="5dp"
-				    android:layout_marginTop="30dp"
-				    android:layout_marginBottom="30dp"
+				    android:layout_marginTop="10dp"
+				    android:layout_marginBottom="10dp"
 				    android:orientation="horizontal"
 				    android:baselineAligned="false" >
 		   	 <Button

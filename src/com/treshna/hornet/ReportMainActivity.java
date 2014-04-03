@@ -170,6 +170,7 @@ public class ReportMainActivity extends ListActivity {
 	}
 
 	
+	@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
 	private void buildListAdapter() {
 		
 		    buildColumnHeaders();
@@ -177,12 +178,12 @@ public class ReportMainActivity extends ListActivity {
 			ListAdapter listAdapter = new ArrayAdapter<HashMap<String,String>>(ReportMainActivity.this,R.layout.report_main_row,
 					this.resultMapList){
 
-						@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 						@Override
 						public View getView(int position, View convertView,
 								ViewGroup parent) {
 						//Dynamically binding column names to textView text
 						TextView textView  = null;
+						
 						LinearLayout linLayout = new LinearLayout(ReportMainActivity.this);
 						//Adding zebra striping on alternate rows
 						if (position % 2 == 0){
@@ -196,13 +197,19 @@ public class ReportMainActivity extends ListActivity {
 						HashMap<String,String> dataRow = this.getItem(position);
 						for (Entry<String,String> col : dataRow.entrySet()){
 							if (!isColumnAllNull(col.getKey().toString())) {
-									
 								  	layoutParams = new LinearLayout.LayoutParams( 0,LayoutParams.WRAP_CONTENT,3);
+								  	layoutParams.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
 									//Dynamically generate text views for each column name..
 									textView =  new TextView(ReportMainActivity.this);
+									if (col.getValue() != null &&  col.getValue().toString().matches("[0-9]+")){
+										Log.i("Numeric Column", col.getKey());
+										textView.setMinWidth(col.getKey().toString().length());
+										textView.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_END);
+									}
 									layoutParams.setMargins(5, 0, 0, 0);
 									textView.setLayoutParams(layoutParams);
-									textView.setText(col.getValue());
+									textView.setText(col.getValue());						
+
 									linLayout.addView(textView);
 							}
 						}	
@@ -214,6 +221,7 @@ public class ReportMainActivity extends ListActivity {
 			this.setListAdapter(listAdapter);
 	  }
 	
+
 	
 	private void buildColumnHeaders() {
 			LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams( LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT );
@@ -228,8 +236,7 @@ public class ReportMainActivity extends ListActivity {
 			//Building column header row...
 
 			for (Entry<String,String> row : dataRow.entrySet()){
-				
-				
+						
 				 if (!isColumnAllNull(row.getKey().toString())) {
 					 
 					 reportColumnHeadingLayout.addView(buildColumnHeaderTextView(row.getKey(), Gravity.NO_GRAVITY, 16));
