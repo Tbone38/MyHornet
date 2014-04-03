@@ -61,10 +61,15 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 			 Bundle savedInstanceState) {
 		 // Inflate the layout for this fragment
 		 ctx = getActivity();
-		 String startid = getArguments().getString(Services.Statics.KEY);
-		 if (getArguments().getString(Services.Statics.DATE)!= null) {
-			 curdate = getArguments().getString(Services.Statics.DATE);
-			 //curdate = Services.dateFormat(curdate, "yyyyMMdd", "dd MMM yyyy");
+		 String startid;
+		 if (getArguments() != null) {
+			 startid = getArguments().getString(Services.Statics.KEY);
+			 if (getArguments().getString(Services.Statics.DATE)!= null) {
+				 curdate = getArguments().getString(Services.Statics.DATE);
+				 //curdate = Services.dateFormat(curdate, "yyyyMMdd", "dd MMM yyyy");
+			 }
+		 } else {
+			 startid = "0";
 		 }
 		 
 		 contentResolver = getActivity().getContentResolver();
@@ -89,8 +94,6 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 	@SuppressWarnings("deprecation")
 	@SuppressLint("NewApi")
 	private void setupView(String startid) {		
-		cur = contentResolver.query(ContentDescriptor.Time.CONTENT_URI, null, ContentDescriptor.Time.Cols.ID+" = "+startid, null, null);
-		cur.moveToFirst();
 		
 		TextView date = (TextView) page.findViewById(R.id.bookingDate);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -123,21 +126,32 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		member.setClickable(true);
 		member.setOnClickListener(this);
 		
-		
-		
+		String starttime;
 		TextView start = (TextView) page.findViewById(R.id.bookingStartTime);
-		start.setText(cur.getString(1));
+		cur = contentResolver.query(ContentDescriptor.Time.CONTENT_URI, null, ContentDescriptor.Time.Cols.ID+" = "+startid, null, null);
+		if (cur.moveToFirst()) {
+			starttime = cur.getString(1);
+		} else {
+			starttime = "12:00:00";
+			start.setOnClickListener(this);
+		}
+		start.setTag(starttime);
+		
+		
+		//start.setText(cur.getString(1));
+		start.setText(starttime);
 		start.setClickable(true);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
 			start.setBackground(getResources().getDrawable(R.drawable.button));
 		} else {
 			start.setBackgroundDrawable(getResources().getDrawable(R.drawable.button));
 		}
-		//start.setOnClickListener(this);
+		
 		
 		TextView duration = (TextView) page.findViewById(R.id.bookingEndTime);
 		duration.setClickable(true);
-		duration.setTag(cur.getString(1));
+		//duration.setTag(cur.getString(1));
+		duration.setTag(starttime);
 		duration.setOnClickListener(this);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
 			duration.setBackground(getResources().getDrawable(R.drawable.button));
@@ -335,6 +349,14 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 			newFragment.setArguments(bdl);
 		    newFragment.show(getActivity().getSupportFragmentManager(), "datePicker");
 		    break;
+		}
+		case (R.id.bookingStartTime):{
+			Bundle bdl = new Bundle(1);
+			bdl.putString(Services.Statics.KEY, (String) v.getTag());
+			DialogFragment newFragment = new TimePickerFragment();
+			newFragment.setArguments(bdl);
+		    newFragment.show(getActivity().getSupportFragmentManager(), "stimePicker");
+			break;
 		}
 		case (R.id.bookingEndTime):{
 			Bundle bdl = new Bundle(1);
@@ -790,7 +812,12 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 			cal.set(Calendar.SECOND, 0);
 			//System.out.print("\n\n"+cal.getTime().toString());
 			SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss", Locale.US);
-			TextView time = (TextView) getActivity().findViewById(R.id.bookingEndTime);
+			TextView time;
+			if (this.getTag().toString().compareTo("timePicker")==0) {
+				time = (TextView) getActivity().findViewById(R.id.bookingEndTime);
+			} else {
+				time = (TextView) getActivity().findViewById(R.id.bookingStartTime);
+			}
 			time.setText(format.format(cal.getTime()));
 		}
 	}

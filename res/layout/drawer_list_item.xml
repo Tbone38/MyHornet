@@ -20,7 +20,8 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_toRightOf="@id/icon"
-        android:textColor="@color/visitors_green"
+        android:textSize="13sp"
+        android:textColor="@color/black"
         android:gravity="center_vertical"
         android:paddingRight="40dp"
         android:layout_centerVertical="true"/>
@@ -32,6 +33,6 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="8dp"
-        android:textColor="@color/visitors_green"/>
+        android:textColor="@color/white"/>
  
 </RelativeLayout>

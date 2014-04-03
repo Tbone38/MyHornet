@@ -1,12 +1,14 @@
 package com.treshna.hornet;
 
 import java.util.ArrayList;
+
 import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -14,19 +16,24 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
+
 import com.treshna.hornet.R.color;
 import com.treshna.hornet.navigation.NavDrawerItem;
 import com.treshna.hornet.navigation.NavDrawerListAdapter;
+import com.treshna.hornet.navigation.SlideMenuClickListener;
+import com.treshna.hornet.navigation.TabListener;
 
 
 public class MainActivity extends NFCActivity {
@@ -49,6 +56,7 @@ public class MainActivity extends NFCActivity {
  
     private ArrayList<NavDrawerItem> navDrawerItems;
     private NavDrawerListAdapter navadapter;
+    private static final String TAG = "MainActivity";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +64,7 @@ public class MainActivity extends NFCActivity {
 	    {
 			savedInstanceState.remove ("android:support:fragments");
 			selectedTab = savedInstanceState.getInt("selectedTab");
+			//savedInstanceState.clear();
 	    }
 		
 		super.onCreate(savedInstanceState);
@@ -63,16 +72,14 @@ public class MainActivity extends NFCActivity {
 		//this.setContentView(R.layout.main_activity);
 		this.setContentView(R.layout.drawer_layout);
 		
-		
-		
 		this.setTitle("GymMaster");
 		this.setTitleColor(color.gym);
 		context = getApplicationContext();
 		
-		mDrawerTitle = getTitle();
+		mDrawerTitle = "GymMaster";
 		 
         // load slide menu items
-        navMenuTitles = getResources().getStringArray(R.array.nav_drawer_items);
+        navMenuTitles = getResources().getStringArray(R.array.nav_drawer_main);
  
         // nav drawer icons from resources
         navMenuIcons = getResources()
@@ -82,18 +89,24 @@ public class MainActivity extends NFCActivity {
         mDrawerList = (ListView) findViewById(R.id.slider_menu);
  
         navDrawerItems = new ArrayList<NavDrawerItem>();
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], navMenuIcons.getResourceId(0, -1)));
-        // Find People
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons.getResourceId(1, -1)));
-        // Photos
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], navMenuIcons.getResourceId(2, -1)));
-        // Communities, Will add a counter here
+        //Header
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], navMenuIcons.getResourceId(0, -1), true));
+        // Find Member
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons.getResourceId(1, -1), true, "50+"));
+        // Last Visitors
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], navMenuIcons.getResourceId(2, -1), true, "50+"));
+        // Bookings
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], navMenuIcons.getResourceId(3, -1), true, "22"));
-        // Pages
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[4], navMenuIcons.getResourceId(4, -1)));
-        // What's hot, We  will add a counter here
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[5], navMenuIcons.getResourceId(5, -1), true, "50+"));
-         
+        // Header
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[4], navMenuIcons.getResourceId(4, -1), true));
+        // Add x
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[5], navMenuIcons.getResourceId(5, -1)));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[6], navMenuIcons.getResourceId(6, -1)));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[7], navMenuIcons.getResourceId(7, -1)));
+        //Header
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[8], navMenuIcons.getResourceId(8, -1), true));
+        
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[9], navMenuIcons.getResourceId(9, -1)));
  
         // Recycle the typed array
         navMenuIcons.recycle();
@@ -122,31 +135,22 @@ public class MainActivity extends NFCActivity {
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
-		
-		ActionBar ab = getSupportActionBar();
-		ab.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-		ab.setDisplayShowTitleEnabled(false);
-		
-		membertab = ab.newTab()
-                .setText("Find Member")
-                .setTabListener(new TabListener<MembersFindSuperFragment>(
-                        this, "findmember", MembersFindSuperFragment.class));
-		ab.addTab(membertab);
-		
-		visitortab = ab.newTab()
-				.setText("Last Visitors")
-				.setTabListener(new TabListener<LastVisitorsSuperFragment>(
-						this, "lastvisitors", LastVisitorsSuperFragment.class));
-		ab.addTab(visitortab);
-		
-		bookingtab = ab.newTab()
-				.setText("Bookings")
-				.setTabListener(new TabListener<BookingsListSuperFragment>(
-						this, "bookings", BookingsListSuperFragment.class));
-		ab.addTab(bookingtab);
-		
-		ab.setSelectedNavigationItem(selectedTab);
-		
+        
+        mDrawerList.setOnItemClickListener(new SlideMenuClickListener(this.getSupportFragmentManager(), mDrawerLayout, mDrawerList, this));
+        
+        if (savedInstanceState == null) { //needs to be done after the super.OnCreate call.
+        	try {
+        		genTabs();
+            	addTabs();
+            	ActionBar ab = this.getSupportActionBar();
+                ab.setSelectedNavigationItem(selectedTab);
+            } catch (IllegalStateException e) {
+            	//we've already attached the tabs.
+            	Log.w(TAG, "IllegalStateException thrown", e);
+            	//this.finish();
+            }
+	    }
+        
 		/**the below code needs to run on app start.
          */
 		{
@@ -160,6 +164,20 @@ public class MainActivity extends NFCActivity {
         startReciever();
                 /************************************/
 	}
+	
+	/*@Override
+	protected void onResumeFragments() {
+		super.onResumeFragments();
+		try {
+        	addTabs();
+        	ActionBar ab = this.getSupportActionBar();
+            ab.setSelectedNavigationItem(selectedTab);
+        } catch (IllegalStateException e) {
+        	//we've already attached the tabs.
+        	Log.w(TAG, "IllegalStateException thrown", e);
+        	//this.finish();
+        }
+	}*/
 	
 	private void firstSetup() {
 		//take me to the magic page.
@@ -189,7 +207,10 @@ public class MainActivity extends NFCActivity {
 		if (Services.getProgress() != null && Services.getProgress().isShowing()) {
     		Services.getProgress().dismiss();
     		//Services.setProgress(null);
-    	}		
+    	}
+		FragmentManager fm = this.getSupportFragmentManager();
+		fm.popBackStackImmediate(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+		fm.beginTransaction().commitAllowingStateLoss();
 	}
 	
 	@Override
@@ -209,37 +230,134 @@ public class MainActivity extends NFCActivity {
 		if (cFragment instanceof BookingsListSuperFragment) {
 			BookingsListSuperFragment f = (BookingsListSuperFragment) cFragment;
 			if (f.getCurrentFragment() instanceof BookingsOverviewFragment) {
-				//do normal back pop
 				ActionBar ab = this.getSupportActionBar();
 				ab.setSelectedNavigationItem(0); //just go back to the Find Member View?
 			} else if (f.getCurrentFragment() instanceof BookingsSlideFragment) {
 				BookingsSlideFragment slideFragment = (BookingsSlideFragment) f.getCurrentFragment();
 				if (slideFragment.hasOverView()) {
 					f.onBackPressed();
-					
 				} else {
-					ActionBar ab = this.getSupportActionBar();
-					ab.setSelectedNavigationItem(0); //just go back to the Find Member View?
+					super.onBackPressed();
 				}
 			} else {
+				//what fragment were we displaying??
+				super.onBackPressed();
 			}
 		} else if (cFragment instanceof LastVisitorsSuperFragment){
 			ActionBar ab = this.getSupportActionBar();
-			ab.setSelectedNavigationItem(0); //just go back to the Find Member View?
+			ab.setSelectedNavigationItem(0);
 		} else {
 			super.onBackPressed();
 		}
+		//super.onBackPressed();
 	}
 	
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
-		super.onSaveInstanceState(savedInstanceState);
+		//super.onSaveInstanceState(savedInstanceState);
 		
 		savedInstanceState.putInt("selectedTab", selectedTab);
 	}
 	
-	public void setSelectedTab(int tab) {
+	@Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // if nav drawer is opened, hide the action items
+        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+        menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
+        menu.findItem(R.id.action_addMember).setVisible(!drawerOpen);
+        menu.findItem(R.id.action_addMember).setVisible(!drawerOpen);
+        return super.onPrepareOptionsMenu(menu);
+    }
+	
+	@Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        mDrawerToggle.syncState();
+    }
+ 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Pass any configuration change to the drawer toggls
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+	
+	/*public void setSelectedTab(int tab) {
 		selectedTab = tab;
+		ActionBar ab = getSupportActionBar();
+		if (ab.getNavigationMode() != ActionBar.NAVIGATION_MODE_TABS) {
+			//fm.popBackStack(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+			addTabs();
+		}
+		ab.setSelectedNavigationItem(selectedTab);
+	}*/
+	
+	public void changeFragment(Fragment f, String tag) {
+		FragmentManager fm = this.getSupportFragmentManager();
+		ActionBar ab = getSupportActionBar();
+		
+		
+		if (f != null) {
+			cFragment = f;
+			FragmentTransaction ft = fm.beginTransaction();
+			ft.replace(R.id.content_view, f, tag);
+			ft.addToBackStack(null);
+			ft.commit();
+			
+			ab.removeAllTabs();
+			ab.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+		} else {
+			if (ab.getNavigationMode() != ActionBar.NAVIGATION_MODE_TABS) {
+				//fm.popBackStack(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+				addTabs();
+			}
+			if (tag.compareTo("bookings")== 0) {
+				selectedTab = 2;
+			} else if (tag.compareTo("lastvisitors") ==0) {
+				selectedTab = 1;
+			} else {
+				selectedTab = 0;
+			}
+			ab.setSelectedNavigationItem(selectedTab);
+		}
+	}
+	
+	private void genTabs() {
+		ActionBar ab = getSupportActionBar();
+		
+		membertab = ab.newTab()
+                .setText("Find Member")
+                .setTabListener(new TabListener<MembersFindSuperFragment>(
+                        this, "findmember", MembersFindSuperFragment.class));
+		
+		visitortab = ab.newTab()
+				.setText("Last Visitors")
+				.setTabListener(new TabListener<LastVisitorsSuperFragment>(
+						this, "lastvisitors", LastVisitorsSuperFragment.class));
+		
+		bookingtab = ab.newTab()
+				.setText("Bookings")
+				.setTabListener(new TabListener<BookingsListSuperFragment>(
+						this, "bookings", BookingsListSuperFragment.class));
+	}
+	
+	public void addTabs() {
+		ActionBar ab = getSupportActionBar();
+		if (ab.getNavigationMode() != ActionBar.NAVIGATION_MODE_TABS) {
+			ab.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+			ab.setDisplayShowTitleEnabled(true);
+		}
+
+		if ((membertab != null) && (ab.getTabCount() < 3 || ab.getTabAt(0) != membertab)) {
+			ab.addTab(membertab);
+		}
+		if ((visitortab != null) && (ab.getTabCount() < 3 || ab.getTabAt(1) != visitortab)) {
+			ab.addTab(visitortab);
+		}
+		if ((bookingtab != null) && (ab.getTabCount() < 3 || ab.getTabAt(2) != bookingtab)) {
+			ab.addTab(bookingtab);
+		}
 	}
 	
 	public void startReciever(){
@@ -262,6 +380,9 @@ public class MainActivity extends NFCActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    // Handle item selection
+		if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
 	    switch (item.getItemId()) {
 	    case android.R.id.home:
 			NavUtils.navigateUpFromSameTask(this);
@@ -312,74 +433,11 @@ public class MainActivity extends NFCActivity {
 	    }
 	}
 	
-	public static int getContentViewCompat() {
-	    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH ?
-	               //android.R.id.content : R.id.action_bar_activity_content;
-	    			android.R.id.content : android.R.id.content;
-	}
-	
 	public static Context getContext(){
 		return context;
 	}
 	
-	public static class TabListener<T extends Fragment> implements ActionBar.TabListener {
-	    private Fragment mFragment;
-	    private final ActionBarActivity mActivity;
-	    private final String mTag;
-	    private final Class<T> mClass;
-
-	    /** Constructor used each time a new tab is created.
-	      * @param activity  The host Activity, used to instantiate the fragment
-	      * @param tag  The identifier tag for the fragment
-	      * @param clz  The fragment's Class, used to instantiate the fragment
-	      */
-	    public TabListener(ActionBarActivity activity, String tag, Class<T> clz) {
-	        mActivity = activity;
-	        mTag = tag;
-	        mClass = clz;
-	        mFragment = mActivity.getSupportFragmentManager().findFragmentByTag(mTag);
-            if (mFragment != null && !mFragment.isDetached()) {
-                FragmentTransaction ft = mActivity.getSupportFragmentManager().beginTransaction();
-                //ft.remove(mFragment);
-                ft.detach(mFragment);
-                ft.commit();
-                mFragment = null;
-            }
-	        
-	    }
-
-	    /* The following are each of the ActionBar.TabListener callbacks */
-
-	    public void onTabSelected(Tab tab, FragmentTransaction ft) {
-	        // Check if the fragment is already initialized
-	    	 mFragment = mActivity.getSupportFragmentManager().findFragmentByTag(mTag);
-	         if (mFragment == null) {
-	            // If not, instantiate and add it to the activity
-	            mFragment = Fragment.instantiate(mActivity, mClass.getName());
-	            cFragment = mFragment;
-	            //ft.replace(getContentViewCompat(), mFragment, mTag);
-	            ft.replace(R.id.content_view, mFragment, mTag);
-	        } else {
-	            // If it exists, simply attach it in order to show it
-	        	//ft.replace(getContentViewCompat(), mFragment, mTag);
-	        	//ft.attach(mFragment);
-	        	ft.add(R.id.content_view, mFragment);
-	        	cFragment = mFragment;
-	        	
-	        }
-	    }
-
-	    public void onTabUnselected(Tab tab, FragmentTransaction ft) {
-	    	mFragment = mActivity.getSupportFragmentManager().findFragmentByTag(mTag);
-	    	if (mFragment != null) {
-	            // Detach the fragment, because another one is being attached	    		
-	    		//ft.detach(mFragment);
-	        } else {
-	        }
-	    }
-
-	    public void onTabReselected(Tab tab, FragmentTransaction ft) {
-	        // User selected the already selected tab. Usually do nothing.
-	    }
-	}	
+	public ListView getDrawerList() {
+		return this.mDrawerList;
+	}
 }

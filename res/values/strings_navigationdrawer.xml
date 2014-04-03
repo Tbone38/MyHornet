@@ -1,24 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<!-- Nav Drawer Menu Items -->
-    <string-array name="nav_drawer_items">
+    <string-array name="nav_drawer_main">
+        <item> Menu</item>
         <item >Find Member</item>
         <item >Last Visitors</item>
         <item >Bookings</item>
+        
+        <item >Create</item>
         <item >Add Member</item>
         <item >Add Class</item>
         <item >Add Booking</item>
+        
+        <item >Reports</item>
+        <item>Key Performance Indicators</item>
     </string-array>
      
     <!-- Nav Drawer List Item Icons -->
     <!-- Keep them in order as the titles are in -->
     <array name="nav_drawer_icons">
+        <item></item>
         <item>@drawable/ic_action_search</item>
         <item>@drawable/ic_action_group</item>
         <item>@drawable/ic_action_event</item>
-        <item>@drawable/ic_action_chat</item>
-        <item>@drawable/ic_action_discard</item>
-        <item>@drawable/ic_action_labels</item>
+        <item></item>
+        <item>@drawable/ic_action_add_person</item>
+        <item>@drawable/ic_action_add_to_queue</item>
+        <item>@drawable/ic_action_new_event</item>
+        <item></item>
+        <item>@drawable/ic_action_view_as_list</item>
     </array>
      
     <!-- Content Description -->

@@ -40,29 +40,43 @@ public class NavDrawerListAdapter extends BaseAdapter {
  
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        if (convertView == null) {
-            LayoutInflater mInflater = (LayoutInflater)
+        
+    	if (navDrawerItems.get(position).getHeader()) { //show a header instead of our regular view.
+    		LayoutInflater mInflater = (LayoutInflater)
                     context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-            convertView = mInflater.inflate(R.layout.drawer_list_item, null);
-        }
-          
-        ImageView imgIcon = (ImageView) convertView.findViewById(R.id.icon);
-        TextView txtTitle = (TextView) convertView.findViewById(R.id.title);
-        TextView txtCount = (TextView) convertView.findViewById(R.id.counter);
-          
-        imgIcon.setImageResource(navDrawerItems.get(position).getIcon());        
-        txtTitle.setText(navDrawerItems.get(position).getTitle());
-         
-        // displaying count
-        // check whether it set visible or not
-        if(navDrawerItems.get(position).getCounterVisibility()){
-            txtCount.setText(navDrawerItems.get(position).getCount());
-        }else{
-            // hide the counter view
-            txtCount.setVisibility(View.GONE);
-        }
-         
-        return convertView;
+            convertView = mInflater.inflate(R.layout.drawer_list_header, null);
+            
+            TextView txtTitle = (TextView) convertView.findViewById(R.id.title);
+            txtTitle.setText(navDrawerItems.get(position).getTitle());
+            
+            convertView.setClickable(false);
+            convertView.setEnabled(false);
+            convertView.setOnClickListener(null);
+    	} else {
+    		
+	    	if (convertView == null) {
+	            LayoutInflater mInflater = (LayoutInflater)
+	                    context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+	            convertView = mInflater.inflate(R.layout.drawer_list_item, null);
+	        }
+	          
+	        ImageView imgIcon = (ImageView) convertView.findViewById(R.id.icon);
+	        TextView txtTitle = (TextView) convertView.findViewById(R.id.title);
+	        TextView txtCount = (TextView) convertView.findViewById(R.id.counter);
+	          
+	        imgIcon.setImageResource(navDrawerItems.get(position).getIcon());        
+	        txtTitle.setText(navDrawerItems.get(position).getTitle());
+	         
+	        // displaying count
+	        // check whether it set visible or not
+	        if(navDrawerItems.get(position).getCounterVisibility()){
+	            txtCount.setText(navDrawerItems.get(position).getCount());
+	        }else{
+	            // hide the counter view
+	            txtCount.setVisibility(View.GONE);
+	        }
+    	}
+    	   return convertView;
     }
  
 }

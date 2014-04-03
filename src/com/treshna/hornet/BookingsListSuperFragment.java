@@ -49,7 +49,8 @@ public class BookingsListSuperFragment extends Fragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-		((MainActivity) getActivity()).setSelectedTab(2);
+		//((MainActivity) getActivity()).setSelectedTab(2);
+		((MainActivity) getActivity()).changeFragment(null, "bookings");
 	}
 	
 	

@@ -19,6 +19,7 @@
     <color name="grey_cf">#FF615F5F</color>
     
     <color name="android_blue">#FF33B5E5</color>
+    <color name="android_blue_dark">#FF0099CC</color>
     <color name="visitors_green">#FF8EAD00</color>
     <color name="visitors_red">#FFB74C4C</color>
     <color name="membership_cancelled">#FFCD8282</color>
