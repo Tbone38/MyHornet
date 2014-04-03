@@ -29,7 +29,7 @@ public class TabListener<T extends Fragment> implements ActionBar.TabListener {
                 //ft.remove(mFragment);
                 ft.detach(mFragment);
                 ft.commit();
-                mFragment = null;
+                mFragment = null; //required to avoid recursive generating.. ?
             }
 	        
 	    }
