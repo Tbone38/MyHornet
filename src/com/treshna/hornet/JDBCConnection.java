@@ -20,8 +20,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
-import org.postgresql.ds.PGPoolingDataSource;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.util.Log;
@@ -39,9 +37,12 @@ public class JDBCConnection {
 
     private String Type = "PostgreSQL", Username = "", Password = "", Address = "", Port = "5432";
     private String Database = "";
+    //TODO: set default username & pw = gymmaster/7urb0
+    // Hard-code?
     private Connection con = null;
     private Statement statement;
     private PreparedStatement pStatement;
+    //private static final String TAG = "JDBCConnection";
     private static String TAG = "HORNETSERVICE";
     private Context ctx; //applicationContext(), DO NOT USE activityContext()
     
@@ -92,7 +93,7 @@ public class JDBCConnection {
             Properties properties = new Properties();
             properties.put("user", Username);
             properties.put("password", Password);
-            
+           
             if (Type.compareTo("PostgreSQL") == 0) {
             	Class.forName("org.postgresql.Driver");
             }
@@ -1081,8 +1082,6 @@ public class JDBCConnection {
     	}
     }
     
-    
-    
     public ResultSet getFinance(long lastupdate) throws SQLException {
     	//what our members have payed.
     	String query = "SELECT payment.id AS id, payment.memberid AS memberid, payment.membershipid AS membershipid,"
@@ -1150,7 +1149,6 @@ public class JDBCConnection {
     	return pStatement.executeQuery();
     }
     
-<<<<<<< HEAD
     public ResultSet getDevice(int deviceid) throws SQLException {
     	if (deviceid <= 0) {
     		return null;
@@ -1217,8 +1215,7 @@ public class JDBCConnection {
     	return pStatement.executeUpdate();
     }
     
-=======
-    public ResultSet getReportTypes() throws SQLException {
+public ResultSet getReportTypes() throws SQLException {
     	    this.pStatement = con.prepareStatement("Select id, name, view_name, reportgroup from Report_Type");
     	    return this.pStatement.executeQuery();
     }
@@ -1272,8 +1269,7 @@ public class JDBCConnection {
     		throw new SQLException(e);
     	}
     }
-     
->>>>>>> tony/master
+
     public SQLWarning getWarnings() throws SQLException, NullPointerException {
     	return con.getWarnings();
     }

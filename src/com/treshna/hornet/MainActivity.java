@@ -1,24 +1,14 @@
 package com.treshna.hornet;
 
-<<<<<<< HEAD
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
+import com.treshna.hornet.R;
 import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
-=======
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-
-import android.app.AlertDialog;
-import android.app.PendingIntent;
-import android.app.ProgressDialog;
->>>>>>> tony/master
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -27,11 +17,7 @@ import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.net.wifi.WifiManager;
-<<<<<<< HEAD
-=======
-import android.os.AsyncTask;
 import android.os.Build;
->>>>>>> tony/master
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -46,12 +32,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-<<<<<<< HEAD
 import android.widget.ListView;
-=======
->>>>>>> tony/master
 
-import com.treshna.hornet.R.color;
 import com.treshna.hornet.navigation.NavDrawerItem;
 import com.treshna.hornet.navigation.NavDrawerListAdapter;
 import com.treshna.hornet.navigation.SlideMenuClickListener;
@@ -102,7 +84,7 @@ public class MainActivity extends NFCActivity {
 		this.setContentView(R.layout.drawer_layout);
 		
 		this.setTitle("GymMaster");
-		this.setTitleColor(color.gym);
+		this.setTitleColor(getResources().getColor(R.color.gym));
 		context = getApplicationContext();
 		setupNavDrawer();
 		        
@@ -203,18 +185,19 @@ public class MainActivity extends NFCActivity {
         // Reports
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[7], navMenuIcons.getResourceId(7, -1), true));
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[8], navMenuIcons.getResourceId(8, -1)));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[9], navMenuIcons.getResourceId(9, -1)));
         // Other
         int use_roll = Integer.parseInt(Services.getAppSettings(getApplicationContext(), "use_roll"));
 		if (use_roll > 0) {
-			navDrawerItems.add(new NavDrawerItem(navMenuTitles[9], navMenuIcons.getResourceId(9, -1), true));
-			navDrawerItems.add(new NavDrawerItem(navMenuTitles[10], navMenuIcons.getResourceId(10, -1)));
+			navDrawerItems.add(new NavDrawerItem(navMenuTitles[10], navMenuIcons.getResourceId(10, -1), true));
+			navDrawerItems.add(new NavDrawerItem(navMenuTitles[11], navMenuIcons.getResourceId(11, -1)));
 		}else {
 			navDrawerItems.add(new NavDrawerItem(null, -1));
 			navDrawerItems.add(new NavDrawerItem(null, -1));
 		}
 		//Setup
-		navDrawerItems.add(new NavDrawerItem(navMenuTitles[11], navMenuIcons.getResourceId(11, -1), true));
-		navDrawerItems.add(new NavDrawerItem(navMenuTitles[12], navMenuIcons.getResourceId(12, -1)));
+		navDrawerItems.add(new NavDrawerItem(navMenuTitles[12], navMenuIcons.getResourceId(12, -1), true));
+		navDrawerItems.add(new NavDrawerItem(navMenuTitles[13], navMenuIcons.getResourceId(13, -1)));
  
         // Recycle the typed array
         navMenuIcons.recycle();
@@ -304,12 +287,16 @@ public class MainActivity extends NFCActivity {
 		if (cFragment instanceof BookingsListSuperFragment) {
 			BookingsListSuperFragment f = (BookingsListSuperFragment) cFragment;
 			if (f.getCurrentFragment() instanceof BookingsOverviewFragment) {
+				//do normal back pop
+				Log.v(TAG, "was OverView Fragment");
 				ActionBar ab = this.getSupportActionBar();
 				ab.setSelectedNavigationItem(0); //just go back to the Find Member View?
 			} else if (f.getCurrentFragment() instanceof BookingsSlideFragment) {
+				Log.v(TAG, "was Slider Fragment");
 				BookingsSlideFragment slideFragment = (BookingsSlideFragment) f.getCurrentFragment();
 				if (slideFragment.hasOverView()) {
 					f.onBackPressed();
+					
 				} else {
 					super.onBackPressed();
 				}
@@ -513,81 +500,24 @@ public class MainActivity extends NFCActivity {
 	    }
 	}
 	
+	public static int getContentViewCompat() {
+	    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH ?
+	               //android.R.id.content : R.id.action_bar_activity_content;
+	    			android.R.id.content : android.R.id.content;
+	}
+	
 	public static Context getContext(){
 		return context;
 	}
 	
-<<<<<<< HEAD
 	public ListView getDrawerList() {
 		return this.mDrawerList;
 	}
 	
 	public Fragment getCurrentFragment() {
 		return this.cFragment;
-=======
-	public static class TabListener<T extends Fragment> implements ActionBar.TabListener {
-	    private Fragment mFragment;
-	    private final ActionBarActivity mActivity;
-	    private final String mTag;
-	    private final Class<T> mClass;
-
-	    /** Constructor used each time a new tab is created.
-	      * @param activity  The host Activity, used to instantiate the fragment
-	      * @param tag  The identifier tag for the fragment
-	      * @param clz  The fragment's Class, used to instantiate the fragment
-	      */
-	    public TabListener(ActionBarActivity activity, String tag, Class<T> clz) {
-	        mActivity = activity;
-	        mTag = tag;
-	        mClass = clz;
-	        Log.i("TabListener", "Creating Fragment:"+mTag);
-	        mFragment = mActivity.getSupportFragmentManager().findFragmentByTag(mTag);
-            if (mFragment != null && !mFragment.isDetached()) {
-            	Log.d("TabListener", "Fragment already existsed and was visible.");
-                FragmentTransaction ft = mActivity.getSupportFragmentManager().beginTransaction();
-                //ft.remove(mFragment);
-                ft.detach(mFragment);
-                ft.commit();
-                mFragment = null;
-            }
-	        
-	    }
-
-	    /* The following are each of the ActionBar.TabListener callbacks */
-
-	    public void onTabSelected(Tab tab, FragmentTransaction ft) {
-	        // Check if the fragment is already initialized
-	    	 mFragment = mActivity.getSupportFragmentManager().findFragmentByTag(mTag);
-	         if (mFragment == null) {
-	            // If not, instantiate and add it to the activity
-	            mFragment = Fragment.instantiate(mActivity, mClass.getName());
-	            cFragment = mFragment;
-	            ft.replace(getContentViewCompat(), mFragment, mTag);
-	            //selectedTab = tab.getPosition();
-	        } else {
-	            // If it exists, simply attach it in order to show it
-	        	//ft.replace(getContentViewCompat(), mFragment, mTag);
-	        	ft.attach(mFragment);
-	        	cFragment = mFragment;
-	        	
-	        }
-	    }
-
-	    public void onTabUnselected(Tab tab, FragmentTransaction ft) {
-	    	mFragment = mActivity.getSupportFragmentManager().findFragmentByTag(mTag);
-	    	if (mFragment != null) {
-	            // Detach the fragment, because another one is being attached	    		
-	    		ft.detach(mFragment);
-	        } else {
-	        	Log.i("TabListener", "Fragment not dettached, for tab:"+tab.getText());
-	        }
-	    }
-
-	    public void onTabReselected(Tab tab, FragmentTransaction ft) {
-	        // User selected the already selected tab. Usually do nothing.
-	    }
 	}
-	
+
 	private void startReportTypesActivity (Context view)
 	{
 		Intent intent = new Intent(view,Report_Types_ListActivity.class);
@@ -608,8 +538,5 @@ public class MainActivity extends NFCActivity {
 		Intent intent = new Intent(view,ReportDateOptionsActivity.class);
 		intent.putExtra("report_name", "Expiring Members");
 		this.startActivity(intent);
->>>>>>> tony/master
 	}
 }
-
-	

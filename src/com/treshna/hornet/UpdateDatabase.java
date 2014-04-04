@@ -831,6 +831,11 @@ public class UpdateDatabase {
 					+" VALUES (new."+Image.Cols.ID+", "+TableIndex.Values.Image.getKey()+");"
 				+" END; ";
 		
+		private static final String SQL7 = "DELETE FROM "+Visitor.NAME+" ;"; 
+			/* Clearing out the visit log because we've changed the way the time stamps are used, which won't be
+			 * compatabile with previous timestamps. Shouldn't be an issue though, as we reset sync times/etc when
+			 * we upgrade, so all the recent visits should be downloaded again..*/
+		
 		public static void patchNinetySix(SQLiteDatabase db) {
 			db.beginTransaction();
 			try {
@@ -846,6 +851,8 @@ public class UpdateDatabase {
 				db.execSQL(SQL5);
 				Log.w(HornetDatabase.class.getName(), "\n"+SQL6);
 				db.execSQL(SQL6);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL7);
+				db.execSQL(SQL7);
 				db.setTransactionSuccessful();
 			/*} catch (SQLException e) {
 			e.printStackTrace();

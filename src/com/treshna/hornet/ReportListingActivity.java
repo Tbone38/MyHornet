@@ -5,39 +5,36 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import android.R.attr;
 import android.annotation.TargetApi;
-import android.app.AlertDialog;
-import android.app.ListActivity;
-import android.app.ProgressDialog;
 import android.app.ActionBar.LayoutParams;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.app.ListFragment;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.SimpleAdapter;
-import android.widget.SimpleAdapter.ViewBinder;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
 
-public class ReportListingActivity extends ListActivity {
+//public class ReportListingActivity extends ListActivity {
+public class ReportListingActivity extends ListFragment {
+	private LayoutInflater mInflater;
+	private View view;
 	private ArrayList<HashMap<String,String>> resultMapList = null;
 
-	@Override
+	/*@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
@@ -46,11 +43,21 @@ public class ReportListingActivity extends ListActivity {
 		GetReportTypesAndNamesNameData syncTypesAndNames = new GetReportTypesAndNamesNameData();
 		syncTypesAndNames.execute(null,null);
 		
+	}*/
+	@Override
+	  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+		mInflater = inflater;
+		view = mInflater.inflate(R.layout.report_types_and_names_list, null);
+		GetReportTypesAndNamesNameData syncTypesAndNames = new GetReportTypesAndNamesNameData();
+		syncTypesAndNames.execute(null,null);
+		
+		
+		return view;
 	}
 	
 	private void buildListAdapter() {
 		
-		TextView titleView = (TextView) this.findViewById(R.id.reports_listing_title);
+		TextView titleView = (TextView) view.findViewById(R.id.reports_listing_title);
 		titleView.setText("Reports");
 		
 		if (resultMapList.size() > 0){
@@ -79,7 +86,7 @@ public class ReportListingActivity extends ListActivity {
 				
 			} );
 			
-			ListAdapter listAdapter = new ArrayAdapter<HashMap<String,String>>(ReportListingActivity.this,
+			ListAdapter listAdapter = new ArrayAdapter<HashMap<String,String>>(getActivity(),
 					R.layout.report_types_and_names_row, this.resultMapList)					
 			
 			{
@@ -89,7 +96,7 @@ public class ReportListingActivity extends ListActivity {
 						ViewGroup parent) {
 				//Dynamically binding column names to textView text
 				TextView textView  = null;
-				RelativeLayout linLayout = new RelativeLayout(ReportListingActivity.this);
+				RelativeLayout linLayout = new RelativeLayout(getActivity());
 				//linLayout.setOrientation(LinearLayout.HORIZONTAL);
 				AbsListView.LayoutParams listLayoutParams = new AbsListView.LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT);
 				RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams( LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT );
@@ -104,7 +111,7 @@ public class ReportListingActivity extends ListActivity {
 						  	layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 						  	layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 							//Dynamically generate text views for each column name..
-							textView =  new TextView(ReportListingActivity.this);
+							textView =  new TextView(getActivity());
 							textView.setId(5);
 							//To embolden the types listings...
 							if (dataRow.get("istype").compareTo("t")== 0){
@@ -126,7 +133,7 @@ public class ReportListingActivity extends ListActivity {
 						  	layoutParams.addRule(RelativeLayout.BELOW, 5);
 						  	layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 							//Dynamically generate text views for each column name..
-							textView =  new TextView(ReportListingActivity.this);
+							textView =  new TextView(getActivity());
 							layoutParams.setMargins(35, 0, 0, 0);
 							textView.setLayoutParams(layoutParams);
 							textView.setText(col.getValue());
@@ -159,13 +166,13 @@ public class ReportListingActivity extends ListActivity {
 		}
 		
 		protected void onPreExecute() {
-			progress = ProgressDialog.show(ReportListingActivity.this, "Retrieving..", 
+			progress = ProgressDialog.show(getActivity(), "Retrieving..", 
 					 "Retrieving Report Types And Names List...");
 		}
 		
 		@Override
 		protected Boolean doInBackground(String... params) {
-			resultMapList = sync.getReportNamesAndTypes(ReportListingActivity.this);
+			resultMapList = sync.getReportNamesAndTypes(getActivity());
 	        return true;
 		}
 		
@@ -177,7 +184,7 @@ public class ReportListingActivity extends ListActivity {
 				ReportListingActivity.this.buildListAdapter();
 				
 			} else {
-				AlertDialog.Builder builder = new AlertDialog.Builder(ReportListingActivity.this);
+				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 				builder.setTitle("Error Occurred")
 				.setMessage(sync.getStatus())
 				.setPositiveButton("OK", null)
