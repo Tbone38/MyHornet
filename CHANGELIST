@@ -22,76 +22,121 @@ KEY:
                 Fix is to call SimpleDateFormat.format(Date()) instead of trying to parse the Date().toString().
             Progress Box no longer works. needs to be added back in via a aSync Task for the db_syncing.
                 (had issues trying to attach to windows from the service thread, due to 'Context' complications.)
-            Update Recurssion. (updating the same rows every time they change). (occurs in bookings.)
-            Updating version seems to loose Resources & doors. ?
-	    MAKE SWIPE INDEPENDANT OF THE QUEUE SYSTEM
+            Update Recurssion. (updating the same rows every time they change). (I THINK it occurs in bookings.)
+            Updating version seems to lose Resources & doors. ?
+            SWIPE FUNCTIONS:
+                swipe_findms(doornum, memberid)
+                swipe_verifymembership(doornum,membershipid, boolean manual, cardid)
+                swipe_getmsg(membershipid, boolean docharge, additionalcardname) = msg
+                swipe_checkowing(doornum, cardid, membershipid, memberid, msg) = msg2
+                swipe_checksuspend(doornum, cardid, membershipid, msg) = msg3
+                swipe_checkdoubleswipe(memberid, membershipid, doorid)
+                --Do Charge per visits/insert into debit-journal..
+                swipe_checkbooking(membershipid, memberid)
+                swipe_granted(doornum, cardid, membershipid, memberid, msg, msg2, icons, boolean manual, visits, pending)
     
-    v119:
-        -Done:
-                Altered the add Member process.
-                KPI's (--requires v320).
-				Crazy New SELECT_FUNCTION (--requires v320).
-                Save default-selected trainer for bookings.
-                OnClick Membership shows additional information.
-                Member Finance Details.
-                Payment Method Handling:
-                    async task/progress box to display while we do JSON stuff with the API
-                    When we edit a member we'll be returned a link. link will take us to payment details site.
-                    this occurs from the member.finance fragment
-					Works for Ezidebit.
-                Member Billing Details (dd_export_member) this is slightly(?) different from the members finances??
-				Modified the member_holds to match gymmaster exactly.
-				Edit Member Hold.
-				Changed Member Notes to Member details/add new features.
-				Move Biling Details to seperate window.
-				Booking API is now fixed. (uses te_username).
-				Fixed historic memberships showing up in various places..
-
-        -TODO:
+    v120:
+            DONE:
+                Added Check Billing Status Button.
+                Added sync table functionallity, to allow remote removal of app contents.
+                    -Also tracks when app is syncing/last synced.
+                Fixed Bookings disappearing everytime we update the App.
+                Fixed historic resources showing up.
+                Fix # of connections being used by the app. (still haven't got pooling working..)
+                Fixed Booking sync_times not being cleared
+                the log-file uses the unique id so we know which device has the issues.
+                the log-file is now human readable.
+                Added UI elements to GymMaster for managing the devices in the sync table.
+                Added allowed_access column
+                Added notes column
+                Added staffid column
+                Cancel Membership - date for termination alignment.
+                Tag Assignment should stop after the first tag.
+                Added Member Booking Page (that shows just that members up-coming bookings.)
+                Can no longer add Blank notes.
+                Added better ErrorLog to Flask API.
+                Cancel Membership - Shows that the membership has been cancelled (background set to red)
+                Resolved the weird booking issues, caused by changing arrival to epoch in some places but not other.
+                "Can we Contact you...?" Defaults to ticked.
+                Changed Blue Tick to green.
+                Assign TAG gives a warning when attempting to assign to member with one already.
+                Fixed Connection handling in Flask API. --semi
+                Seperate Sign-Up App. 
+                Fixed image primary image issue (multiple images for a member considering themselves the primary image);
+                Fixed the pop-up from the booking Overview always showing when pushing back.
+                Fixed layout issue on booking Overview.
+ 
+            TODO:
                 Handle permissions/Roles for different staff, to limit what certain staff can see.
-                the log-file needs a unique identifier so we know which device has the issues.
-                Fix Dates (dd MMM yyyy)
-                Add Member Booking Page (that shows just that members up-coming bookings.)
+                Fix Dates (dd MMM yyyy) --Mostly Done.
                 get password encryption working.
                 Format/Default time to 12hr. (?)
                 Booking view showing multiple days for selected resource.
-                check that balance/notes are only being downloaded as often as needed.
-				get DD working for bluepay..?
-				Cancel Member Hold. --Is adjusting the expiry a better option?
-				Fix the Booking Views broken back button.
-				Spacing/padding of Headings..?
-				"Can We Contact You?" Name... #...
+                get DD working for bluepay..?
+                Cancel Member Hold. --I think adjusting the expiry is better.
+                Spacing/padding of Labels & Headings..
+                Improve sync-times/OutOfMemory Issues.
+                Fix Times/(possibly dates?) disappearing everytime we update the app.
+                Record Emails/SMS send from app in gymmaster device.
+                Test Access Control, does it/can we get it working with the GymMaster Access/Security Control (Using Views?)?
+                Issue with sync table: the servertime isn't being set correctly.
+                Move the app navigation over to a navigation Drawer.
+                Fix the PollingHandler running on the UI thread. (blocking etc).
+                Improve Performance of the Booking Overview page.
+                TODO: membership complete "Add Tag" doesn't work. Find out why...
+
+    
+    v119:
+            Altered the add Member process.
+            KPI's (--requires v320).
+            Crazy New SELECT_FUNCTION. 
+            Save default-selected trainer for bookings.
+            OnClick Membership shows additional information.
+            Member Finance Details.
+            Payment Method Handling:
+                async task/progress box to display while we do JSON stuff with the API
+                When we edit a member we'll be returned a link. link will take us to payment details site.
+                this occurs from the member.finance fragment
+                Works for Ezidebit.
+            Member Billing Details (dd_export_member) this is slightly(?) different from the members finances??
+            Modified the member_holds to match gymmaster exactly.
+            Edit Member Hold.
+            Changed Member Notes to Member details/add new features.
+            Move Biling Details to seperate window.
+            Booking API is now fixed. (uses te_username).
+            Fixed historic memberships showing up in various places..
+            "Can We Contact You?" Name... #... **
 
     V118:
         On first run, we prompt for an easy setup/install.
             This easy setup gets there email address, gymname/organisational name, a username, & a location.
                 the username needs to be unique.
-                    the email address needs to be unique.   
-                        is the username used for the web-address (username.SERVERLOCATION.gymmaster.co.nz)?
-                        the username is used for the database name (g_<USERNAME>)
-                        passed to a cental database on sms.treshna.com, which generates a password, and emails said email-address the password.
-                        the username, password, db_name, and server are returned by the API
-                        It's all passed through a JSON (flask) server (api.gymmaster.co.nz).
-                We also generate the actual Database.
-                    this generation can be done prior, at which point the script will rename a free gymmaster db.
-                        see ~api-gymmaster/free_db/ & ~api-gymmaster/scripts for more details.
-                    the database bondfrontend.conf file can be found in ~api-gymmaster/config/<database name>/
-                    the databases can be upgraded via the ./scripts/update_dbs.sh file
-                    Fixed DB's should now be semi-secure. the GymMaster user is still super over all of the DB's though.
-                        Any user with the gm_tableowner privellage will be super-user over all gymmaster dbs.
-                #DATABASE MAINTENANCE:
-                    a number of scripts exists in the ~api-gymmaster/scripts directory for helping with this.
+                the email address needs to be unique.   
+                    is the username used for the web-address (username.SERVERLOCATION.gymmaster.co.nz)?
+                    the username is used for the database name (g_<USERNAME>)
+                    passed to a cental database on sms.treshna.com, which generates a password, and emails said email-address the password.
+                    the username, password, db_name, and server are returned by the API
+                    It's all passed through a JSON (flask) server (api.gymmaster.co.nz).
+            We also generate the actual Database.
+                this generation can be done prior, at which point the script will rename a free gymmaster db.
+                    see ~api-gymmaster/free_db/ & ~api-gymmaster/scripts for more details.
+                the database bondfrontend.conf file can be found in ~api-gymmaster/config/<database name>/
+                the databases can be upgraded via the ./scripts/update_dbs.sh file
+                Fixed DB's should now be semi-secure. the GymMaster user is still super over all of the DB's though.
+                    Any user with the gm_tableowner privellage will be super-user over all gymmaster dbs.
+            #DATABASE MAINTENANCE:
+                a number of scripts exists in the ~api-gymmaster/scripts directory for helping with this.
                         
-                upload the log-file after each sync to our central server,
-                    -we store the schema version, company_name, and te_username as well.
-                    -the log file will only contain warnings and errors.
-                    -it may want manual deletion, or a trigger that truncates data.
-                        (because at the moment the logs are massive and fairly unhelpful).
-                Remove membership Button.
-                Remove member from class Button.
-                No longer able to clear database when changes are pending.
-                Fixed Get Card for new cards.
-                Added cancel membership.
+        upload the log-file after each sync to our central server,
+            -we store the schema version, company_name, and te_username as well.
+            -the log file will only contain warnings and errors.
+            -it may want manual deletion, or a trigger that truncates data.
+                (because at the moment the logs are massive and fairly unhelpful).
+        Remove membership Button.
+        Remove member from class Button.
+        No longer able to clear database when changes are pending.
+        Fixed Get Card for new cards.
+        Added cancel membership.
 
     v116/117:
         minor bug fixes/undocumented.

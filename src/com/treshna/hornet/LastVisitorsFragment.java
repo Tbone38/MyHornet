@@ -13,7 +13,7 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -52,7 +52,6 @@ public class LastVisitorsFragment extends ListFragment implements OnClickListene
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Services.setContext(getActivity());
-        Log.v(TAG, "Creating Last Visitors");
         context = getActivity().getApplicationContext();
         mLoader = this.getLoaderManager();
         if (cur != null) cur.close();
@@ -102,7 +101,6 @@ public class LastVisitorsFragment extends ListFragment implements OnClickListene
 	 public void onResume() {
 		 super.onResume();
 		 Services.setContext(getActivity());
-		 Log.v(TAG, "Resuming Last-Visitors");
 		 IntentFilter iff = new IntentFilter();
 	     iff.addAction("com.treshna.hornet.serviceBroadcast");
 	     getActivity().registerReceiver(this.mBroadcastReceiver,iff);
@@ -147,7 +145,6 @@ public class LastVisitorsFragment extends ListFragment implements OnClickListene
 				break;
 			}
 			LinearLayout theView = (LinearLayout) this.getParentFragment().getView().findViewById(R.id.panel_frame);
-			Log.d(TAG, "The Tag IS:"+theView.getTag());
 			if (theView.getTag().toString().compareTo("single_panel") == 0) {
 				//Single Panel
 				Intent intent = new Intent(getActivity(), EmptyActivity.class);

@@ -5,7 +5,6 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -19,7 +18,6 @@ public class RollItemAdapter extends SimpleCursorAdapter implements OnCheckedCha
 	Context context;
 	String[] FROM;
 	Cursor cursor;
-	private static final String TAG = "RollItemAdapter";
 	
 	@SuppressWarnings("deprecation")
 	public RollItemAdapter(Context context, int layout, Cursor c,
@@ -36,8 +34,6 @@ public class RollItemAdapter extends SimpleCursorAdapter implements OnCheckedCha
 		name_view.setText(cursor.getString(cursor.getColumnIndex(ContentDescriptor.Member.Cols.FNAME))+" "
 				+cursor.getString(cursor.getColumnIndex(ContentDescriptor.Member.Cols.SNAME)));
 		
-		Log.d(TAG, "NAME:"+cursor.getString(cursor.getColumnIndex(ContentDescriptor.Member.Cols.FNAME))+" "
-				+cursor.getString(cursor.getColumnIndex(ContentDescriptor.Member.Cols.SNAME)));
 		
 		CheckBox attended_box = (CheckBox) rowView.findViewById(R.id.roll_item_attended);
 		if (cursor.getString(cursor.getColumnIndex(ContentDescriptor.RollItem.Cols.ATTENDED)).compareToIgnoreCase("f")==0) {

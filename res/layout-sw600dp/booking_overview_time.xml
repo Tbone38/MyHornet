@@ -3,11 +3,12 @@
 	<TextView
 	    android:id="@+id/booking_overview_time"
 	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
+	    android:layout_height="20dp"
 	    android:gravity="center"
-	    android:textSize="13sp"
+	    android:textSize="10sp"
 	    android:text="00:00"
 	    android:padding="2dp" />
+	<!--  TextSize was 13, required height of 45 (was wrap) -->
    <LinearLayout
        android:id="@+id/bookinger_overview_time_slot"
        android:layout_width="match_parent"

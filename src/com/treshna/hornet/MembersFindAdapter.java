@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
@@ -153,7 +152,6 @@ public class MembersFindAdapter extends SimpleCursorAdapter implements OnClickLi
 		switch(v.getId()){
 		case(R.id.listRow):{
 			if (!IS_BOOKING) {
-				Log.v(TAG, "Row Selected, Displaying More Info:");
 				ArrayList<String> tagInfo;
 				if (v.getTag() instanceof ArrayList<?>){
 					tagInfo = (ArrayList<String>) v.getTag();

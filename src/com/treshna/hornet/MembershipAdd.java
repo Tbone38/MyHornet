@@ -209,17 +209,13 @@ public class MembershipAdd extends Fragment implements OnClickListener, DatePick
 						 TextView startdate = (TextView) page.findViewById(R.id.membershipsdate);
 						 startdate.setText(Services.dateFormat(start.toString(), "EEE MMM dd HH:mm:ss zzz yyyy", 
 								 "dd MMM yyyy"));
-						 //startdate.setText(Services.DateToString(start));
 						 
 						 TextView enddate = (TextView) page.findViewById(R.id.membershipedate);
-						 //Log.w(TAG, "Length IS:"+mLength);
 						 if ( mLength > 0) {
 							 enddate.setText(Services.dateFormat(end.toString(), "EEE MMM dd HH:mm:ss zzz yyyy",
 									 "dd MMM yyyy"));
 							 enddate.setTag(Services.dateFormat(end.toString(),
 									 "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd"));
-							 //enddate.setText(Services.DateToString(end));
-							 //enddate.setTag(Services.DateToString(end));
 						 } else {
 							 enddate.setText(getActivity().getString(R.string.membership_add_enddate));
 						 }

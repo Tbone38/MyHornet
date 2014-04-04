@@ -20,7 +20,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
+import org.postgresql.ds.PGPoolingDataSource;
+
 import android.content.ContentValues;
+import android.content.Context;
 import android.util.Log;
 
 /**
@@ -36,15 +39,18 @@ public class JDBCConnection {
 
     private String Type = "PostgreSQL", Username = "", Password = "", Address = "", Port = "5432";
     private String Database = "";
-    //TODO: set default username & pw = gymmaster/7urb0
-    // Hard-code?
     private Connection con = null;
     private Statement statement;
     private PreparedStatement pStatement;
-    //private static final String TAG = "JDBCConnection";
     private static String TAG = "HORNETSERVICE";
+    private Context ctx; //applicationContext(), DO NOT USE activityContext()
     
     private String getConnectionUrl() {
+    	if (Address.isEmpty()||Database.isEmpty()|| Port.isEmpty() && ctx != null) {
+    		Address = Services.getAppSettings(ctx, "address");
+    		Database = Services.getAppSettings(ctx, "database");
+    		Port = Services.getAppSettings(ctx, "port");
+    	}
             return new String("jdbc:postgresql://" + Address + ":" + Port + "/" + Database);
     }
     
@@ -64,6 +70,10 @@ public class JDBCConnection {
     		String password) {
     	this(address, "5432", database, username, password);
     }
+    
+    public JDBCConnection(Context context) {
+    	this.ctx = context;
+    }
 
     public synchronized void openConnection() throws ClassNotFoundException, SQLException {
             if (con != null) {
@@ -75,21 +85,20 @@ public class JDBCConnection {
                         con = null;
                     }
             }
-           
+            if (Username.isEmpty()||Password.isEmpty() && ctx != null) {
+            	Username = Services.getAppSettings(ctx, "username");
+            	Password = Services.getAppSettings(ctx, "password");
+            }
             Properties properties = new Properties();
             properties.put("user", Username);
             properties.put("password", Password);
-           
+            
             if (Type.compareTo("PostgreSQL") == 0) {
             	Class.forName("org.postgresql.Driver");
             }
-            //System.out.println("Start Connection");
+            
             Log.v(TAG, "Starting Connection");
-            try {
-            	con = DriverManager.getConnection(getConnectionUrl(), properties);
-            } catch (SQLException e) {
-            	Log.e(TAG, "ERROR OPENING CONNECTION", e);
-            }
+            con = DriverManager.getConnection(getConnectionUrl(), properties);            
     }
     
     public boolean isConnected() {
@@ -108,8 +117,6 @@ public class JDBCConnection {
     public void closeConnection(){
     	 if (con != null) {
     		 try {
-    			 con.commit();
-            	//System.out.println("Closing Connection");
     			 Log.v(TAG, "Closing Connection");
             	con.close();
              } catch (SQLException e) {
@@ -125,7 +132,7 @@ public class JDBCConnection {
 					+ ") VALUES ('1|'||encode(?,'base64'), ?, ?, ?, ?, ?);");
 			pStatement.setBytes(1, image);
 			pStatement.setInt(2, memberId);
-			pStatement.setTimestamp(3, new Timestamp(date.getTime())); //this isn't inserting correct timestamps.
+			pStatement.setTimestamp(3, new Timestamp(date.getTime()));
 			pStatement.setTimestamp(4, new Timestamp(date.getTime()));
 			pStatement.setString(5, description);
 			pStatement.setBoolean(6, isProfile);
@@ -133,24 +140,7 @@ public class JDBCConnection {
 			return pStatement.executeUpdate();
     }
     
-    public int insertImage(byte[] image, int rowId, Date date, String description, boolean isProfile) throws SQLException, NullPointerException{
-    		int result = -1;
- 
-    		pStatement = con.prepareStatement("insert INTO image (imagedata, memberid, lastupdated, created, description, is_profile ) VALUES ('1|'||encode(?,'base64'),?, ?, ?, ?, ?)");
-    		pStatement.setBytes(1, image);
-    		pStatement.setInt(2,rowId);
-    		pStatement.setDate(3, new java.sql.Date(date.getTime()));
-    		pStatement.setTimestamp(4, new Timestamp(date.getTime()));
-    		pStatement.setString(5, description);
-    		pStatement.setBoolean(6, isProfile);
-    		result = pStatement.executeUpdate();
-    	
-    		return result;
-    }
-	/*
-	 * At some point these will need changed to handle is_profile and description.
-	 */
-    public int deleteImage(int memberId, Date created) throws SQLException, NullPointerException{
+   public int deleteImage(int memberId, Date created) throws SQLException, NullPointerException{
 	    	int result = -1;
 	    	if (memberId == -1 || created == null) return result;
 		    	pStatement = con.prepareStatement("DELETE FROM image WHERE memberid = ? AND created = ?");
@@ -161,6 +151,17 @@ public class JDBCConnection {
 	    	
 	    	return result;
     }
+   
+   public int updateImage( boolean is_profile, String description, int imageid) throws SQLException {
+	   
+	   pStatement = con.prepareStatement("UPDATE IMAGE SET (is_profile, description) = (?, ?) WHERE id = ?;");
+	   
+	   pStatement.setBoolean(1, is_profile);
+	   pStatement.setString(2, description);
+	   pStatement.setInt(3, imageid);
+	   
+	   return pStatement.executeUpdate();
+   }
     
     public ResultSet tagInsert(int door, String serial) throws SQLException, NullPointerException{
 	    	ResultSet result = null;
@@ -264,12 +265,14 @@ public class JDBCConnection {
     		return 0;
 		}
     }
-    public ResultSet getResource() throws SQLException, NullPointerException {
+    public ResultSet getResource(long last_sync) throws SQLException, NullPointerException {
 	    	ResultSet rs = null;
 	    	pStatement = con.prepareStatement("select resource.id as resourceid, resource.name as resourcename, "
 	    			+ "resource.companyid as resourcecompanyid, resourcetype.name as resourcetypename, "
-	    			+ "resourcetype.period as resourcetypeperiod FROM resource LEFT JOIN resourcetype"
-	    			+" ON (resource.resourcetypeid = resourcetype.id) WHERE resource.history = 'f';");
+	    			+ "resourcetype.period as resourcetypeperiod , history "
+	    			+ "FROM resource LEFT JOIN resourcetype"
+	    			+" ON (resource.resourcetypeid = resourcetype.id) WHERE resource.lastupdate > ?;");
+	    	pStatement.setTimestamp(1, new Timestamp(last_sync));
 	    	rs = pStatement.executeQuery();
 	    	return rs;
     }
@@ -285,12 +288,12 @@ public class JDBCConnection {
     
     public ResultSet getBookings(java.sql.Date yesterday, java.sql.Date tomorrow, long last_sync) throws SQLException, NullPointerException{
 	    	ResultSet rs = null;
-	
-			System.out.print("\n\nGetting Bookings with update After "+new java.sql.Date(last_sync));
+
 			Log.v(TAG, "Getting Bookings with update After "+new java.sql.Timestamp(last_sync));
 	    	pStatement = con.prepareStatement("SELECT resourceid, booking.firstname, booking.surname, "
 	    			+"CASE WHEN bookingtype.externalname IS NOT NULL THEN bookingtype.externalname ELSE bookingtype.name END AS bookingname, "
-	    			+"booking.startid, booking.endid, booking.arrival, booking.id AS bookingid, bookingtype.id AS bookingtypeid, booking.endtime, booking.notes, booking.result, "
+	    			+"booking.startid, booking.endid, EXTRACT(epoch FROM booking.arrival) AS arrival, "
+	    			+ "booking.id AS bookingid, bookingtype.id AS bookingtypeid, booking.endtime, booking.notes, booking.result, "
 	    			+"booking.memberid, booking.lastupdate AS bookinglastupdate, booking.membershipid, booking.checkin, "
 	    			+ "booking.classname, booking.classid, booking.parentid FROM booking "
 	    			+"LEFT JOIN bookingtype ON (booking.bookingtypeid = bookingtype.id) "
@@ -464,13 +467,14 @@ public class JDBCConnection {
     public ResultSet getClasses(String lastsync) throws SQLException, NullPointerException {
 	    	ResultSet rs = null;
 	    	String query = "SELECT id, name, max_students,  description, price, onlinebook FROM class "
-	    	+" WHERE lastupdate > ?::TIMESTAMP WITHOUT TIME ZONE";
+	    	+" WHERE lastupdate > ?";
 	   
 	    	Date lastupdate = new Date(Long.valueOf(lastsync));
 	    	Log.d(TAG, "Classes Last-Update:"+lastupdate);
 	    	pStatement = con.prepareStatement(query);
-	    	pStatement.setString(1, Services.dateFormat(lastupdate.toString(),
-	    				"EEE MMM dd HH:mm:ss zzz yyyy", "dd-MM-yyyy HH:mm:ss"));
+	    	/*pStatement.setString(1, Services.dateFormat(lastupdate.toString(),
+	    				"EEE MMM dd HH:mm:ss zzz yyyy", "dd MMM yyyy HH:mm:ss"));*/
+	    	pStatement.setTimestamp(1, new java.sql.Timestamp(Long.parseLong(lastsync)));
 	    	
 	    	rs = pStatement.executeQuery();
 	    	return rs;
@@ -488,28 +492,42 @@ public class JDBCConnection {
 	    	ResultSet rs = null;
 	    	String query ="SELECT membership.id, memberid, membership.startdate, membership.enddate, cardno, membership.notes, " +
 	    			"primarymembership, membership.lastupdate,  membership_state(membership.*, programme.*) as state," +
-	    			" membership.concession, programme.name, programme.id AS programmeid, membership.termination_date, "
-	    			+ "select_column('membership','cancel_reason', membership.*) AS cancel_reason,"
-	    			+ " membership.history, membership.signupfee, membership.paymentdue, membership.nextpayment,"
+	    			" membership.concession, programme.name, programme.id AS programmeid, membership.termination_date, ";
+	    	
+	    	String check_query = "SELECT TRUE from pg_proc WHERE proname = 'select_column' "
+	    			+ "UNION SELECT false FROM pg_proc WHERE 'select_column' NOT IN (SELECT proname FROM pg_proc);";
+	    	pStatement = con.prepareStatement(check_query);
+	    	rs = pStatement.executeQuery();
+	    	
+	    	if (rs.next() && rs.getBoolean(1)) {
+	    			query = query+ "select_column('membership','cancel_reason', membership.*) AS cancel_reason,";
+	    	} else {
+	    		query = query+ "NULL AS cancel_reason,";
+	    	}
+	    	rs.close();
+	    	this.closePreparedStatement();
+	    	
+	    	query = query+ " membership.history, membership.signupfee, membership.paymentdue, membership.nextpayment,"
 	    			+ " membership.firstpayment, membership.upfront"
 	    			+ " FROM membership LEFT JOIN programme ON (membership.programmeid = programme.id)" +
 	    			" WHERE 1=1 ";
-	    	if (ymca > 0) {
+	    	if (ymca > 0) { //ADD YMCA HANDLING.
 	    		query = query + "AND memberid IN (SELECT DISTINCT memberid FROM membership "
 	    				+ "WHERE programmeid IN (SELECT id FROM programme WHERE history = false "
 	    				+ "AND programmegroupid = 0) GROUP BY memberid) ";
 	    	}
 	    	if (lastsync != null) {
-	    		query = query + "AND membership.lastupdate > ?::TIMESTAMP WITHOUT TIME ZONE ;";
+	    		//query = query + "AND membership.lastupdate > ?::TIMESTAMP WITHOUT TIME ZONE ;";
+	    		query = query + "AND membership.lastupdate > ?;";
 	    	} else {
 	    		query = query + "AND membership.history = 'f'";
 	    	}
-	    	//ADD YMCA HANDLING.
-	  
+	    	
 	    	pStatement = con.prepareStatement(query);
 	    	if (lastsync != null) {
-	    		pStatement.setString(1, Services.dateFormat(new Date(Long.parseLong(lastsync)).toString(),
-	    				"EEE MMM dd HH:mm:ss zzz yyyy", "dd-MMM-yyyy HH:mm:ss"));
+	    		/*pStatement.setString(1, Services.dateFormat(new Date(Long.parseLong(lastsync)).toString(),
+	    				"EEE MMM dd HH:mm:ss zzz yyyy", "dd-MMM-yyyy HH:mm:ss"));*/
+	    		pStatement.setTimestamp(1, new java.sql.Timestamp(Long.parseLong(lastsync)));
 	    	}
 	    	
 	    	rs = pStatement.executeQuery();
@@ -755,11 +773,17 @@ public class JDBCConnection {
     	return pStatement.executeUpdate();
     }
     
-    public ResultSet getIdCards() throws SQLException, NullPointerException {
+    public ResultSet getIdCards(long last_sync) throws SQLException, NullPointerException {
 	    	ResultSet rs;
-	    	
-	    	pStatement = con.prepareStatement("SELECT id, serial FROM idcard;");
-	    	rs = pStatement.executeQuery();
+	    	try {
+	    		pStatement = con.prepareStatement("SELECT id, serial, created FROM idcard WHERE created > ?;");
+	    		pStatement.setTimestamp(1, new java.sql.Timestamp(last_sync));
+	    		rs = pStatement.executeQuery();
+	    	} catch (SQLException e) {
+	    		this.closePreparedStatement();
+	    		pStatement = con.prepareStatement("SELECT id, serial FROM idcard;");
+	    		rs = pStatement.executeQuery(); 
+	    	}
 	    	
 	    	return rs;
     }
@@ -1018,7 +1042,7 @@ public class JDBCConnection {
 		
 		pStatement = con.prepareStatement(update_query);
 		pStatement.setInt(1, membershipid);
-		Log.w(TAG, pStatement.toString());
+		//Log.w(TAG, pStatement.toString());
 		pStatement.executeUpdate();
 		
 		if (cancellation_fee != null) {
@@ -1126,6 +1150,7 @@ public class JDBCConnection {
     	return pStatement.executeQuery();
     }
     
+
     public ResultSet getReportTypes() throws SQLException {
     	    this.pStatement = con.prepareStatement("Select id, name, view_name, reportgroup from Report_Type");
     	    return this.pStatement.executeQuery();
@@ -1181,6 +1206,72 @@ public class JDBCConnection {
     	}
     }
      
+    public ResultSet getDevice(int deviceid) throws SQLException {
+    	if (deviceid <= 0) {
+    		return null;
+    	}
+    	pStatement = con.prepareStatement("SELECT id, device, servertime, clienttime, completed, allowed_access FROM sync WHERE id = ?");
+    	pStatement.setInt(1, deviceid);
+    	
+    	return pStatement.executeQuery();
+    }
+    
+    public int insertEnquiry( String surname, String firstname, String gender, String email, String dob,
+    		String street, String suburb, String city, String postal, String hphone, String cphone, String notes) throws SQLException {
+    	
+    	pStatement = con.prepareStatement("INSERT INTO enquiry (surname, firstname, gender, email, dob, addressstreet, addresssuburb, "
+    			+ "addresscity, addressareacode, notes, phonehome, phonecell) VALUES (?, ?, ?, ?, ?::DATE, ?, ?, ?, ?, ?, ?, ?);");
+    	
+    	pStatement.setString(1, surname);
+    	pStatement.setString(2, firstname);
+    	pStatement.setString(3, gender);
+    	
+    	if (email != null) {
+    		pStatement.setString(4, email);
+    	} else {
+    		pStatement.setNull(4, java.sql.Types.VARCHAR);
+    	}
+    	pStatement.setString(5, dob);
+    	
+    	if (street != null) {
+    		pStatement.setString(6, street);
+    	} else {
+    		pStatement.setNull(6, java.sql.Types.VARCHAR);
+    	}
+    	if (suburb != null) {
+    		pStatement.setString(7, suburb);
+    	} else {
+    		pStatement.setNull(7, java.sql.Types.VARCHAR);
+    	}
+    	if (city != null) {
+    		pStatement.setString(8, city);
+    	} else {
+    		pStatement.setNull(8, java.sql.Types.VARCHAR);
+    	}
+    	if (postal != null) {
+    		pStatement.setString(9, postal);
+    	} else {
+    		pStatement.setNull(9, java.sql.Types.VARCHAR);
+    	}
+    	if (notes != null) {
+    		pStatement.setString(10, notes);
+    	} else {
+    		pStatement.setNull(10, java.sql.Types.VARCHAR);
+    	}
+    	if (hphone != null) {
+    		pStatement.setString(11, hphone);
+    	} else {
+    		pStatement.setNull(11, java.sql.Types.VARCHAR);
+    	}
+    	if (cphone != null) {
+    		pStatement.setString(12, cphone);
+    	} else {
+    		pStatement.setNull(12, java.sql.Types.VARCHAR);
+    	}
+    	
+    	return pStatement.executeUpdate();
+    }
+    
     public SQLWarning getWarnings() throws SQLException, NullPointerException {
     	return con.getWarnings();
     }

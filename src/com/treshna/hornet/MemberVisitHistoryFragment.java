@@ -35,7 +35,6 @@ public class MemberVisitHistoryFragment extends Fragment implements TagFoundList
 		Services.setContext(getActivity());
 		contentResolver = getActivity().getContentResolver();
 		memberID = this.getArguments().getString(Services.Statics.MID);
-		//visitDate = this.getArguments().getString(Services.Statics.KEY);
 		mActions = new MemberActions(getActivity());
 	}
 	
@@ -60,6 +59,14 @@ public class MemberVisitHistoryFragment extends Fragment implements TagFoundList
 		Cursor cur = contentResolver.query(ContentDescriptor.Visitor.VISITOR_PROGRAMME_URI, null, 
 				"v."+ContentDescriptor.Visitor.Cols.MID+" = ?", new String[] {memberID}, ContentDescriptor.Visitor.Cols.DATETIME+" DESC");
 		LinearLayout list = (LinearLayout) view.findViewById(R.id.visit_history_list);
+		
+		if (cur.getCount() <= 0) {
+			LinearLayout list_headings = (LinearLayout) view.findViewById(R.id.visit_list_headings);
+			list_headings.setVisibility(View.INVISIBLE);
+			
+			TextView heading = (TextView) view.findViewById(R.id.member_visit_history_H);
+			heading.setText("No Recent Visits");
+		}
 		
 		while (cur.moveToNext()) {
 			

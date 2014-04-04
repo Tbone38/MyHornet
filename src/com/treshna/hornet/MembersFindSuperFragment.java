@@ -2,32 +2,30 @@ package com.treshna.hornet;
 
 import java.util.ArrayList;
 
-import com.treshna.hornet.MembersFindFragment.OnMemberSelectListener;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
+
+import com.treshna.hornet.MembersFindFragment.OnMemberSelectListener;
 
 /*
  * 
  */
 public class MembersFindSuperFragment extends Fragment implements OnMemberSelectListener{
    
-	private static final String TAG = "LastVisitorsFragment";
 	private View view;
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Services.setContext(getActivity());
-        Log.v(TAG, "Creating Last Visitors");
     }
 	
 	@Override
@@ -41,7 +39,10 @@ public class MembersFindSuperFragment extends Fragment implements OnMemberSelect
         ft.replace(R.id.frame_right, f);
         ft.commit();
         ((MainActivity) getActivity()).setSelectedTab(0);
-       
+        if (view.getTag().toString().compareTo("single_panel") != 0) {
+        	TextView empty_glyph = (TextView) view.findViewById(R.id.empty_glyph);
+        	empty_glyph.setTypeface(Services.Typefaces.get(getActivity(), "fonts/glyphicons_regular.ttf"));
+        }
 	}
 	
 	@Override
@@ -68,6 +69,7 @@ public class MembersFindSuperFragment extends Fragment implements OnMemberSelect
 			//redraw the list view
 			ListView theList = (ListView) view.findViewById(android.R.id.list);
 			theList.invalidateViews();
+			
 			//show member details
 			FragmentManager fragmentManager = this.getChildFragmentManager();
 	        FragmentTransaction ft = fragmentManager.beginTransaction();

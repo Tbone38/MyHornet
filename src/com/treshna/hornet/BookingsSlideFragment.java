@@ -14,7 +14,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,9 +37,9 @@ public class BookingsSlideFragment extends Fragment {
         Services.setContext(getActivity());
         
         selectedDate = Services.getAppSettings(getActivity(), "bookings_date");
-    	if (Integer.parseInt(selectedDate) == -1) {
-    		selectedDate = Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");
-    		//selectedDate = Services.DateToString(new Date());
+    	if (selectedDate.compareTo("-1") == 0) {
+    		//selectedDate = Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");
+    		selectedDate = Services.DateToString(new Date());
     	}
     	hasOverview = this.getArguments().getBoolean("hasOverview");
     }
@@ -48,7 +47,6 @@ public class BookingsSlideFragment extends Fragment {
     @Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
     	super.onCreateView(inflater, container, savedInstanceState);
-    	Log.i(TAG, "Creating View");
 	
 		view = inflater.inflate(R.layout.swipe_layout, container, false);
 		// Instantiate a ViewPager and a PagerAdapter.
@@ -74,7 +72,7 @@ public class BookingsSlideFragment extends Fragment {
      */
     private String getDate(int position){
     	selectedDate = Services.getAppSettings(getActivity(), "bookings_date");
-    	SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd", Locale.US);
+    	SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy", Locale.US);
     	Calendar cal = Calendar.getInstance();
     	Date date;
     	
@@ -147,7 +145,6 @@ public class BookingsSlideFragment extends Fragment {
         	Bundle bdl = new Bundle(2);
             bdl.putBoolean("hasOverview", hasOverview);
             String date = BookingsSlideFragment.this.getDate(position);
-            Log.w(TAG, "getItem Date:"+date);
             bdl.putString("bookings_date", date);
             page.setArguments(bdl);
             

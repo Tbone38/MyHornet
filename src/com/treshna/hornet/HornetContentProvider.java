@@ -1,8 +1,6 @@
 package com.treshna.hornet;
 
-
-import java.util.Locale;
-
+import android.annotation.SuppressLint;
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.Context;
@@ -56,6 +54,9 @@ public class HornetContentProvider extends ContentProvider {
 	    	 return ContentDescriptor.Company.CONTENT_TYPE_DIR;
 	     case ContentDescriptor.Company.PATH_FOR_ID_TOKEN:
 	    	 return ContentDescriptor.Company.CONTENT_ITEM_TYPE;
+	     case ContentDescriptor.Enquiry.PATH_TOKEN:{
+	    	 return ContentDescriptor.Enquiry.CONTENT_TYPE_DIR;
+	     }
 	     default:
 	         throw new UnsupportedOperationException ("URI " + uri + " is not supported.");
 	     }
@@ -235,6 +236,16 @@ public class HornetContentProvider extends ContentProvider {
         }
         case ContentDescriptor.DDExportFormat.PATH_TOKEN:{
         	int rows = db.delete(ContentDescriptor.DDExportFormat.NAME, selection, selectionArgs);
+        	getContext().getContentResolver().notifyChange(uri, null);
+        	return rows;
+        }
+        case ContentDescriptor.AppConfig.PATH_TOKEN:{
+        	int rows = db.delete(ContentDescriptor.AppConfig.NAME, selection, selectionArgs);
+        	getContext().getContentResolver().notifyChange(uri, null);
+        	return rows;
+        }
+        case ContentDescriptor.Enquiry.PATH_TOKEN:{
+        	int rows = db.delete(ContentDescriptor.Enquiry.NAME, selection, selectionArgs);
         	getContext().getContentResolver().notifyChange(uri, null);
         	return rows;
         }
@@ -444,6 +455,16 @@ public class HornetContentProvider extends ContentProvider {
             	getContext().getContentResolver().notifyChange(uri, null);
             	return ContentDescriptor.DDExportFormat.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
             }
+            case ContentDescriptor.AppConfig.PATH_TOKEN:{
+            	long id = db.insert(ContentDescriptor.AppConfig.NAME, null, values);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return ContentDescriptor.AppConfig.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
+            }
+            case ContentDescriptor.Enquiry.PATH_TOKEN:{
+            	long id = db.insert(ContentDescriptor.Enquiry.NAME, null, values);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return ContentDescriptor.Enquiry.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
+            }
             default: {
                 throw new UnsupportedOperationException("URI: " + uri + " not supported.");
             }
@@ -589,19 +610,20 @@ public class HornetContentProvider extends ContentProvider {
             					+ContentDescriptor.OpenTime.NAME+" ot LEFT JOIN "
             					+ContentDescriptor.Date.NAME+" d ON (d."+ContentDescriptor.Date.Cols.DAYOFWEEK
             					+" = ot."+ContentDescriptor.OpenTime.Cols.DAYOFWEEK+" ) WHERE "
-            					+" d."+ContentDescriptor.Date.Cols.DATE+" = "+selectionArgs[0]+")"
+            					+" d."+ContentDescriptor.Date.Cols.DATE+" = '"+selectionArgs[0]+"')"
             					+" AND "
             					+"t."+ContentDescriptor.Time.Cols.ID+" <= (" 
             					+"SELECT ot."+ContentDescriptor.OpenTime.Cols.CLOSEID+" FROM "
             					+ContentDescriptor.OpenTime.NAME+" ot LEFT JOIN "
             					+ContentDescriptor.Date.NAME+" d ON (d."+ContentDescriptor.Date.Cols.DAYOFWEEK
             					+" = ot."+ContentDescriptor.OpenTime.Cols.DAYOFWEEK+" ) WHERE "
-            					+" d."+ContentDescriptor.Date.Cols.DATE+" = "+selectionArgs[0]+")"
+            					+" d."+ContentDescriptor.Date.Cols.DATE+" = '"+selectionArgs[0]+"')"
             					;
             	/* If etime is not null, then for each id between current id and etime, show details equal to
             	 * the current details.
             	 *
             	 */
+            	//Log.w("SQL", builder.buildQuery(projection, selection, "_id", null, sortOrder, null));
             	return builder.query(db, projection, selection, null, "_id", null, sortOrder);
             }
             
@@ -621,6 +643,9 @@ public class HornetContentProvider extends ContentProvider {
             case ContentDescriptor.Resource.PATH_TOKEN:{
             	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
             	builder.setTables(ContentDescriptor.Resource.NAME);
+            	selection = (selection.isEmpty()) ?
+            			ContentDescriptor.Resource.Cols.HISTORY+" = 'f'"
+            			: selection+" AND "+ ContentDescriptor.Resource.Cols.HISTORY+" = 'f'";
             	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
             }
             case ContentDescriptor.Resource.PATH_FOR_ID_TOKEN:{
@@ -827,6 +852,16 @@ public class HornetContentProvider extends ContentProvider {
             	builder.setTables(ContentDescriptor.DDExportFormat.NAME);
             	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
             }
+            case ContentDescriptor.AppConfig.PATH_TOKEN:{
+            	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+            	builder.setTables(ContentDescriptor.AppConfig.NAME);
+            	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+            }
+            case ContentDescriptor.Enquiry.PATH_TOKEN:{
+            	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+            	builder.setTables(ContentDescriptor.Enquiry.NAME);
+            	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+            }
             
             default: throw new UnsupportedOperationException("URI: " + uri + " not supported.");
         }
@@ -996,6 +1031,16 @@ public class HornetContentProvider extends ContentProvider {
             }
             case ContentDescriptor.DDExportFormat.PATH_TOKEN:{
             	int result = db.update(ContentDescriptor.DDExportFormat.NAME, values, selection, selectionArgs);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return result;
+            }
+            case ContentDescriptor.AppConfig.PATH_TOKEN:{
+            	int result = db.update(ContentDescriptor.AppConfig.NAME, values, selection, selectionArgs);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return result;
+            }
+            case ContentDescriptor.Enquiry.PATH_TOKEN:{
+            	int result = db.update(ContentDescriptor.Enquiry.NAME, values, selection, selectionArgs);
             	getContext().getContentResolver().notifyChange(uri, null);
             	return result;
             }

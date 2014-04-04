@@ -1,0 +1,40 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" 
+    android:id="@+id/pageLayout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="7dp"
+    tools:context=".MemberDetails" >  
+	<TextView
+	    android:id="@+id/member_booking_H"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:textSize="24sp"
+	    android:text="@string/member_booking_H"
+	    android:textIsSelectable="false"
+	    android:padding="5dp"
+		android:paddingBottom="1dp" />
+	<LinearLayout 
+	    android:id="@+id/booking_list_heading"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal"
+	    android:layout_below="@id/member_booking_H">
+	   
+	</LinearLayout>
+    <LinearLayout
+        android:id="@+id/booking_list"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_below="@id/booking_list_heading"
+        android:orientation="vertical"
+        android:padding="4dp" >
+        
+    </LinearLayout>	
+   	<include 
+	    layout="@layout/member_details_actions"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@id/booking_list"/>
+</RelativeLayout>

@@ -34,9 +34,13 @@ public class DatePickerFragment extends DialogFragment
 		if (date == null || !(date instanceof String) || date.isEmpty()) {
 			SimpleDateFormat format = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
 			date = Services.dateFormat(format.format(new Date()), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");
+		} else {
+			String outdate = Services.dateFormat(date, "dd MMM yyyy", "yyyyMMdd");
+			if (outdate != null) {
+				date = outdate;
+			}
 		}
 		//ensure's 0's are in the correct place.
-		Log.v(TAG, date);
 		if (date.length() <8) {
 			date = date.substring(0, 4)+"0"+date.substring(4);
 		}

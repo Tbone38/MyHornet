@@ -4,6 +4,7 @@ package com.treshna.hornet;
 import java.util.ArrayList;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -14,10 +15,9 @@ import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
+import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -174,7 +174,11 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 			String email="mailto:"+Uri.encode(v.getTag().toString())+"?subject="+Uri.encode("Gym Details");
 			Intent intent = new Intent(Intent.ACTION_SENDTO);
 			intent.setData(Uri.parse(email));
-			ctx.startActivity(intent);
+			try {
+				ctx.startActivity(intent);
+			} catch (ActivityNotFoundException e) { 
+				Toast.makeText(ctx, "Cannot send emails from this device.", Toast.LENGTH_LONG).show();
+			}
 			break;
 		}
 		case (R.id.button_sms):{
@@ -198,7 +202,11 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 				String ph ="tel:"+tag.get(0).substring(tag.get(0).indexOf(":")+1);
 				Intent intent = new Intent(Intent.ACTION_DIAL);
 				intent.setData(Uri.parse(ph));
-				ctx.startActivity(intent);
+				try {
+					ctx.startActivity(intent);
+				} catch(ActivityNotFoundException e) {
+					Toast.makeText(ctx, "Cannot make call's from this device.", Toast.LENGTH_LONG).show();
+				}
 			} 
 			else {
 				//show popup window, let user select the number to call.
@@ -227,7 +235,29 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 			break;
 		}
 		case (R.id.button_tag):{
-			swipeBox();
+			Cursor cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, ContentDescriptor.Member.Cols.MID+" = ?",
+					new String[] {mid}, null);
+			if (!cur.moveToFirst()) break;
+			
+			if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.CARDNO))) {
+				//confirm we want to overwrite.
+				AlertDialog.Builder builder= new AlertDialog.Builder(ctx);
+				builder.setTitle("Overwrite current Tag?")
+				.setMessage("Are you sure you want to overwrite the currently assigned Tag?")
+				.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+						
+						swipeBox();
+					}})
+				.setNegativeButton("Cancel", null)
+				.show();
+				cur.close();
+			} else {
+				cur.close();
+				swipeBox();
+			}
 		}
 		}
 	}
@@ -246,10 +276,13 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 	 */
 	@Override
 	public void onNewTag(String serial) {
+		if (alertDialog == null || !alertDialog.isShowing()) {
+			return;
+		}
 		ContentResolver contentResolver = ctx.getContentResolver();
 		Cursor cur;
 		String message = null;
-		
+
 		cur = contentResolver.query(ContentDescriptor.IdCard.CONTENT_URI, null, ContentDescriptor.IdCard.Cols.SERIAL+" = ?",
 				new String[] {serial}, null);
 		if (!cur.moveToFirst()) { //card not in db, add it.
@@ -265,7 +298,6 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 				values.put(ContentDescriptor.IdCard.Cols.SERIAL, serial);
 				Uri row = contentResolver.insert(ContentDescriptor.IdCard.CONTENT_URI, values);
 				String rowid = row.getLastPathSegment(); 
-				Log.v(TAG, "Adding "+rowid+" to PendingUploads");
 				contentResolver.delete(ContentDescriptor.FreeIds.CONTENT_URI, ContentDescriptor.FreeIds.Cols.ROWID+" = ? AND "+
 						ContentDescriptor.FreeIds.Cols.TABLEID+" = ?",new String[] {cardid, 
 						String.valueOf(ContentDescriptor.TableIndex.Values.Idcard.getKey())});
@@ -279,7 +311,6 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 			} else {
 				cur.close();
 				message = "No Tag ID's available. Please resync the device.";
-				Log.v(TAG, message);
 			}
 			
 		} else { //card in db, get the id.
@@ -293,11 +324,9 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 			if (cur.getCount() > 0) {
 				//id is in use, what should I do?
 				if (message == null) message = "Tag already in use";
-				Log.v(TAG, message);
 				cardid = null;
 			} else {
 				message = "Assigning card No. "+cardid+" to member.";
-				Log.v(TAG, message);
 				if (alertDialog != null){
 					alertDialog.dismiss();
 					alertDialog = null;
@@ -317,7 +346,6 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 		values.put(ContentDescriptor.Member.Cols.CARDNO, cardid);
 		contentResolver.update(ContentDescriptor.Member.CONTENT_URI, values, ContentDescriptor.Member.Cols.MID+" = ?",
 				new String[] {mid});
-		Log.v(TAG, "Updated Member id:"+mid+" with cardno: "+cardid);
 		values = new ContentValues();
 		values.put(ContentDescriptor.PendingUpdates.Cols.TABLEID, ContentDescriptor.TableIndex.Values.Member.getKey());
 		values.put(ContentDescriptor.PendingUpdates.Cols.ROWID, mid);
@@ -409,7 +437,6 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 		cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols.MID+" = ? AND "
 				+ContentDescriptor.Membership.Cols.HISTORY+" = 'f'", new String[] {mid}, null);
 		while (cur.moveToNext()) {
-			//Log.v(TAG, "membership:"+cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PNAME)));
 			membershiplist.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PNAME)));
 		}
 		cur.close();
@@ -448,7 +475,7 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 					cur.close();
 					
 					//parse the details to the Service.
-					Intent updateInt = new Intent(ctx, HornetDBService.class);
+					/*Intent updateInt = new Intent(ctx, HornetDBService.class);
 					Bundle extras = new Bundle(3);
 					extras.putInt("doorid", doorid);
 					extras.putInt("memberid", Integer.parseInt(mid));
@@ -456,7 +483,10 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 					
 					updateInt.putExtras(extras);
 					updateInt.putExtra(Services.Statics.KEY, Services.Statics.MANUALSWIPE);
-				 	ctx.startService(updateInt);
+				 	ctx.startService(updateInt);*/
+					ManualCheckin async = new ManualCheckin();
+					async.execute(doorid, Integer.parseInt(mid), membershipid);
+					
 				 	PollingHandler p = Services.getFreqPollingHandler();
 				 	if (p != null && !p.getConStatus()) {
 				 		Toast.makeText(ctx, "Could not check member in, Check that this device is connected"
@@ -466,4 +496,41 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 	        });
 	        builder.show();
 	}
+	
+	private class ManualCheckin extends AsyncTask<Integer, Integer, Boolean> {
+		private ProgressDialog progress;
+		private HornetDBService sync;
+
+		
+		public ManualCheckin() {
+			sync = new HornetDBService();
+		}
+		
+		protected void onPreExecute() {
+			 progress = ProgressDialog.show(ctx, "Checking In..", 
+					 "Manually checking Member In...");
+		}
+		
+		@Override
+		protected Boolean doInBackground(Integer... params) {
+			int doorid, memberid, membershipid;
+			doorid = params[0];
+			memberid = params[1];
+			membershipid = params[2];
+			return sync.manualCheckin(doorid, memberid, membershipid, ctx);
+		}
+		
+
+		protected void onPostExecute(Boolean success) {
+			progress.dismiss();
+			if (success) {
+			} else {
+				AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+				builder.setTitle("Error Occurred")
+				.setMessage(sync.getStatus())
+				.setPositiveButton("OK", null)
+				.show();
+			}
+	    }
+	 }
 }

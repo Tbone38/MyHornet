@@ -20,7 +20,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -170,7 +169,6 @@ public class EmptyActivity extends NFCActivity{
 		card = i.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 		id = this.getID(card);
 		
-		Log.v(TAG, "\n\n\ncard.serial:"+id);
 		if (tagFoundListener != null) {
 			tagFoundListener.onNewTag(id);
 		} else {

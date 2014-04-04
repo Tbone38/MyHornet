@@ -4,15 +4,25 @@
     android:id="@+id/pageLayout"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:padding="7dp"
     tools:context=".MemberDetails" >
     <LinearLayout
         android:id="@+id/memberDetailsHeadingRow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="@drawable/button"
-        android:clickable="true" >
+        android:background="@drawable/button_block"
+        android:clickable="true"
+        android:padding="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp" >
+        <TextView
+            android:id="@+id/memberDetailsGlyph"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:text="@string/glyph_person_book"
+            android:textColor="@color/grey_cf" />
 	    <TextView
 	        android:id="@+id/memberDetailsLabel"
 	        android:layout_width="0dp"
@@ -28,23 +38,32 @@
 	        android:src="@drawable/ic_action_collapse"
 	        android:contentDescription="@string/hint_emergency_expand" />
 	</LinearLayout>
+
 	<LinearLayout
-        android:id="@+id/memberDetails"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/memberDetailsHeadingRow"
-        android:orientation="vertical" >
+	    android:id="@+id/memberDetails"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@id/memberDetailsHeadingRow"
+	    android:layout_marginLeft="10dp"
+	    android:layout_marginRight="10dp"
+	    android:layout_marginTop="1dp"
+	    android:background="@drawable/button_block"
+	    android:orientation="vertical" >
+
 	    <TextView
 	        android:id="@+id/label_member_address_street"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:textSize="14sp"
 	        android:text="@string/label_member_address_street"
+	        android:textColor="@color/button_block_label"
 	        android:paddingLeft="10dp" />
 	    <EditText
 	        android:id="@+id/member_address_street"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="20dp"
+	        android:textColor="@color/black"
 	        android:enabled="false"
 	        android:editable="false"
 	        android:inputType="none"
@@ -55,11 +74,14 @@
 	        android:layout_height="wrap_content"
 	        android:textSize="14sp"
 	        android:text="@string/label_member_address_suburb"
+	        android:textColor="@color/button_block_label"
 	        android:paddingLeft="10dp"/>
 	    <EditText
 	        android:id="@+id/member_address_suburb"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="20dp"
+	        android:textColor="@color/black"
 	        android:enabled="false"
 	        android:editable="false"
 	        android:inputType="none"
@@ -70,11 +92,14 @@
 	        android:layout_height="wrap_content"
 	        android:textSize="14sp"
 	        android:text="@string/label_member_address_city"
+	        android:textColor="@color/button_block_label"
 	        android:paddingLeft="10dp" />
 	    <EditText
 	        android:id="@+id/member_address_city"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="20dp"
+	        android:textColor="@color/black"
 	        android:enabled="false"
 	        android:editable="false"
 	        android:inputType="none"
@@ -85,26 +110,32 @@
 	        android:layout_height="wrap_content"
 	        android:textSize="14sp"
 	        android:text="@string/label_member_area_code"
+	        android:textColor="@color/button_block_label"
 	        android:paddingLeft="10dp" />
 	    <EditText
 	        android:id="@+id/member_area_code"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="20dp"
 	        android:enabled="false"
 	        android:editable="false"
 	        android:inputType="none"
-	        android:paddingLeft="10dp" />
+	        android:paddingLeft="10dp"
+	        android:textColor="@color/black" />
 	    <TextView
 	        android:id="@+id/label_member_country"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:textSize="14sp"
 	        android:text="@string/label_member_country"
+	        android:textColor="@color/button_block_label"
 	        android:paddingLeft="10dp" />
 	    <EditText
 	        android:id="@+id/member_country"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="20dp"
+	        android:textColor="@color/black"
 	        android:enabled="false"
 	        android:editable="false"
 	        android:inputType="none"
@@ -115,11 +146,14 @@
 	        android:layout_height="wrap_content"
 	        android:textSize="14sp"
 	        android:text="@string/label_member_dateofbirth"
+	        android:textColor="@color/button_block_label"
 	        android:paddingLeft="10dp" />
 	    <EditText
 	        android:id="@+id/member_dateofbirth"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="20dp"
+	        android:textColor="@color/black"
 	        android:enabled="false"
 	        android:editable="false"
 	        android:inputType="none"
@@ -130,11 +164,14 @@
 	        android:layout_height="wrap_content"
 	        android:textSize="14sp"
 	        android:text="@string/label_member_gender"
+	        android:textColor="@color/button_block_label"
 	        android:paddingLeft="10dp" />
 	    <EditText
 	        android:id="@+id/member_gender"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="20dp"
+	        android:textColor="@color/black"
 	        android:enabled="false"
 	        android:editable="false"
 	        android:inputType="none"
@@ -159,6 +196,8 @@
 	        android:id="@+id/memberParentName"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="20dp"
+	        android:textColor="@color/black"
 	        android:enabled="false"
 	        android:editable="false"
 	        android:inputType="none"
@@ -170,8 +209,19 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/memberParentRow"
         android:orientation="horizontal"
-        android:background="@drawable/button"
+        android:background="@drawable/button_block"
+        android:padding="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:clickable="true" >
+        <TextView
+            android:id="@+id/emergencyContactGlyph"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:text="@string/glyph_phone"
+            android:textColor="@color/grey_cf" />
 	    <TextView
 	        android:id="@+id/emergencyContactH"
 	        android:layout_width="0dp"
@@ -194,18 +244,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/emergencyHeadingRow"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/button_block" >
 	    <TextView
 	        android:id="@+id/emergencyContactNameL"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:textSize="14sp"
 	        android:text="@string/label_member_emergency_name"
+	        android:textColor="@color/button_block_label"
 	        android:paddingLeft="10dp" />
 	    <EditText
 	        android:id="@+id/emergencyContactName"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="20dp"
+	        android:textColor="@color/black"
 	        android:enabled="false"
 	        android:editable="false"
 	        android:inputType="none"
@@ -217,11 +275,14 @@
 	        android:layout_height="wrap_content"
 	        android:textSize="14sp"
 	        android:text="@string/label_member_emergency_relationship"
+	        android:textColor="@color/button_block_label"
 	        android:paddingLeft="10dp" />
 	    <EditText
 	        android:id="@+id/emergencyContactRelationship"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="20dp"
+	        android:textColor="@color/black"
 	        android:enabled="false"
 	        android:editable="false"
 	        android:inputType="none"
@@ -233,11 +294,14 @@
 	        android:layout_height="wrap_content"
 	        android:textSize="14sp"
 	        android:text="@string/label_member_emergency_cell"
+	        android:textColor="@color/button_block_label"
 	        android:paddingLeft="10dp" />
 	    <EditText
 	        android:id="@+id/emergencyContactCell"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="20dp"
+	        android:textColor="@color/black"
 	        android:enabled="false"
 	        android:editable="false"
 	        android:inputType="none"
@@ -249,11 +313,14 @@
 	        android:layout_height="wrap_content"
 	        android:textSize="14sp"
 	        android:text="@string/label_member_emergency_work"
+	        android:textColor="@color/button_block_label"
 	        android:paddingLeft="10dp" />
 	    <EditText
 	        android:id="@+id/emergencyContactWork"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="20dp"
+	        android:textColor="@color/black"
 	        android:enabled="false"
 	        android:editable="false"
 	        android:inputType="none"
@@ -265,11 +332,14 @@
 	        android:layout_height="wrap_content"
 	        android:textSize="14sp"
 	        android:text="@string/label_member_emergency_home"
+	        android:textColor="@color/button_block_label"
 	        android:paddingLeft="10dp" />
 	    <EditText
 	        android:id="@+id/emergencyContactHome"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="20dp"
+	        android:textColor="@color/black"
 	        android:enabled="false"
 	        android:editable="false"
 	        android:inputType="none"
@@ -281,8 +351,19 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/emergencyContactDetails"
         android:orientation="horizontal"
-        android:background="@drawable/button"
-        android:clickable="true" >
+        android:background="@drawable/button_block"
+        android:clickable="true"
+        android:padding="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp" >
+	    <TextView
+	        android:id="@+id/memberMedicalGlyph"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="24sp"
+	        android:text="@string/glyph_medical"
+	        android:textColor="@color/grey_cf" />	        
 	    <TextView
 	        android:id="@+id/medicalH"
 	        android:textSize="24sp"
@@ -305,18 +386,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/medicalHeadingRow"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/button_block" >
 	    <TextView
 	        android:id="@+id/medicalConditionsL"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:textSize="14sp"
 	        android:text="@string/label_member_medical_conditions"
+	        android:textColor="@color/button_block_label"
 	        android:paddingLeft="10dp" />
 	    <EditText
 	        android:id="@+id/medicalConditions"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="20dp"
+	        android:textColor="@color/black"
 	        android:enabled="false"
 	        android:editable="false"
 	        android:inputType="none"
@@ -328,11 +417,14 @@
 	        android:layout_height="wrap_content"
 	        android:textSize="14sp"
 	        android:text="@string/label_member_medication"
+	        android:textColor="@color/button_block_label"
 	        android:paddingLeft="10dp" />
 	    <EditText
 	        android:id="@+id/medication"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="20dp"
+	        android:textColor="@color/black"
 	        android:enabled="false"
 	        android:editable="false"
 	        android:inputType="none"
@@ -344,11 +436,14 @@
 	        android:layout_height="wrap_content"
 	        android:textSize="14sp"
 	        android:text="@string/label_member_medication_dosage"
+	        android:textColor="@color/button_block_label"
 	        android:paddingLeft="10dp" />
 	    <EditText
 	        android:id="@+id/medicationDosage"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="20dp"
+	        android:textColor="@color/black"
 	        android:enabled="false"
 	        android:editable="false"
 	        android:inputType="none"
@@ -360,6 +455,7 @@
 	        android:layout_height="wrap_content"
 	        android:textSize="14sp"
 	        android:text="@string/label_member_medication_bystaff"
+	        android:textColor="@color/button_block_label"
 	        android:paddingLeft="10dp" />
     </LinearLayout>
     <LinearLayout
@@ -368,8 +464,19 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/medicalDetails"
         android:orientation="horizontal"
-        android:background="@drawable/button"
-        android:clickable="true" >
+        android:background="@drawable/button_block"
+        android:clickable="true"
+        android:padding="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp" >
+	    <TextView
+	        android:id="@+id/memberNotesGlyph"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="24sp"
+	        android:text="@string/glyph_note"
+	        android:textColor="@color/grey_cf" />
 		<TextView
 	    	android:id="@+id/membernotesH"
 	    	android:textSize="24sp"
@@ -394,7 +501,12 @@
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	    android:layout_below="@id/notesHeadingRow"
-	    android:orientation="vertical" >
+	    android:orientation="vertical"
+	    android:background="@drawable/button_block"
+	    android:layout_marginTop="1dp"
+	    android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp" >
 	</LinearLayout>
 	
 	<TextView
@@ -403,6 +515,8 @@
 	    android:layout_height="wrap_content"
 	    android:layout_below="@id/membernotes"
 	    android:text="@string/member_note_H"
+	    android:paddingLeft="10dp"
+	    android:layout_marginLeft="10dp"
 	    android:textSize="14sp" />
 	<LinearLayout
 	    android:id="@+id/memberaddnotes"
@@ -415,6 +529,8 @@
 	        android:layout_width="0dp"
 	        android:layout_height="wrap_content"
 	        android:layout_weight=".7"
+	        android:layout_marginLeft="30dp"
+	        android:paddingLeft="10dp"
         	android:lines="2"
     		android:gravity="top|left"
     		android:inputType="textMultiLine" />
@@ -424,7 +540,8 @@
 	        android:layout_weight=".3"
 	    	android:orientation="vertical"
 	    	android:layout_gravity="bottom"
-	    	android:layout_marginLeft="5dp">
+	    	android:layout_marginLeft="5dp"
+        	android:layout_marginRight="10dp">
 	    	<TextView
 	        	android:id="@+id/button_add_note"
 	            android:layout_width="match_parent"
@@ -449,8 +566,11 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/memberaddnotes"
         android:orientation="horizontal"
-        android:background="@drawable/button"
-        android:clickable="true" >
+        android:background="@drawable/button_block"
+        android:clickable="true"
+		android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp" >
 		<TextView
 	    	android:id="@+id/membertasksH"
 	    	android:textSize="24sp"
@@ -473,7 +593,12 @@
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	    android:layout_below="@id/tasksHeadingRow"
-	    android:orientation="vertical" >
+	    android:layout_marginTop="1dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:orientation="vertical"
+        android:background="@drawable/button_block" >
 	    
 	</LinearLayout>
 	

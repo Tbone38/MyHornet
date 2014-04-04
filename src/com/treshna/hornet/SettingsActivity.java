@@ -88,10 +88,37 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		// use the older PreferenceActivity APIs.
 
 		// Add 'general' preferences.
+		
 		addPreferencesFromResource(R.xml.pref_general);
 		Preference setup = this.findPreference("setup");
 		setup.setOnPreferenceClickListener(this);
 		
+		Preference uniqueid = this.findPreference("uniqueid");
+		uniqueid.setTitle("Unique ID");
+		uniqueid.setSummary(ApplicationID.id());
+		
+		/**/
+		
+		//Preference collect = createCollectData();
+		//getPreferenceScreen().addPreference(collect);
+		Preference collect = this.findPreference("fullsync");
+		collect.setOnPreferenceClickListener(this);
+
+		
+		createView();
+				
+		PreferenceCategory fakeHeader = new PreferenceCategory(this);
+		fakeHeader.setTitle(R.string.pref_header_display);
+		getPreferenceScreen().addPreference(fakeHeader);
+		addPreferencesFromResource(R.xml.pref_display);
+		Preference doorlist = getDoorList();
+		getPreferenceScreen().addPreference(doorlist);
+
+		
+		fakeHeader = new PreferenceCategory(this);
+		fakeHeader.setTitle(R.string.pref_header_cloud);
+		getPreferenceScreen().addPreference(fakeHeader);
+		addPreferencesFromResource(R.xml.pref_cloud);
 		Preference reset = this.findPreference("resetpassword");
 		reset.setEnabled(false);
 		reset.setShouldDisableView(true);
@@ -104,19 +131,6 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		getconfig.setEnabled(false);
 		getconfig.setShouldDisableView(true);
 		
-		Preference collect = createCollectData();
-		getPreferenceScreen().addPreference(collect);
-		createView();
-		//createView();
-		
-		// Add 'notifications' preferences, and a corresponding header.
-		PreferenceCategory fakeHeader = new PreferenceCategory(this);
-		fakeHeader.setTitle(R.string.pref_header_display);
-		getPreferenceScreen().addPreference(fakeHeader);
-		addPreferencesFromResource(R.xml.pref_display);
-		Preference doorlist = getDoorList();
-		getPreferenceScreen().addPreference(doorlist);
-
 		// Add 'data and sync' preferences, and a corresponding header.
 		fakeHeader = new PreferenceCategory(this);
 		fakeHeader.setTitle(R.string.pref_header_data_sync);
@@ -293,7 +307,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 	
 	private Preference createCollectData(){
 		Preference collectData = new Preference(this);
-		collectData.setKey("collect");
+		collectData.setKey("full_sync");
 		collectData.setTitle("Download Database");
 		collectData.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 			
@@ -357,11 +371,6 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		PreferenceCategory debug = new PreferenceCategory(this);
 		debug.setTitle("Debug Options");
 		getPreferenceScreen().addPreference(debug);
-		
-		Preference version = new Preference(this);
-		version.setTitle(this.getString(R.string.pref_current_version));
-		version.setSelectable(false);
-		debug.addPreference(version);
 		
 		// progress on
 		CheckBoxPreference progress = new CheckBoxPreference(this);
@@ -668,6 +677,10 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		if (preference.getKey().compareTo("setup")==0){
 			Intent i = new Intent(this, SetupActivity.class);
 			this.startActivity(i);
+			return true;
+		} else if (preference.getKey().compareTo("fullsync")==0) {
+			collectData();				
+			return true;
 		}
 		return false;
 	}

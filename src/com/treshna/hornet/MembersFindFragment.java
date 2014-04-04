@@ -17,7 +17,6 @@ import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -53,7 +52,6 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		// Show the Up button in the action bar.
-		Log.v(TAG, "Creating MemberFindFragment");
 		
 		if (savedInstanceState != null) {
 			input = savedInstanceState.getString("input");
@@ -119,7 +117,6 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 	 @Override
 	 public void onResume(){
 		 super.onResume();
-		 Log.v(TAG, "Resuming MemberFindFragment");
 		 loadermanager.restartLoader(0, null, this);
 		 setupView();
 		 
@@ -130,7 +127,7 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 		filterbutton.setOnClickListener(this);
 		
 		ImageView filter_icon = (ImageView) filterbutton.findViewById(R.id.member_find_filter_drawable);
-		filter_icon.setColorFilter(Services.ColorFilterGenerator.setColourGrey());
+		filter_icon.setColorFilter(Services.ColorFilterGenerator.setColour(getResources().getColor(R.color.grey_cf)));
 	}
 
 	@SuppressLint("NewApi")
@@ -348,7 +345,6 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 		if (selectedPos > 0) {
 			membership = selectedMembership.getItemAtPosition(selectedPos).toString();
 			Services.setPreference(getActivity(), "filter_membership", membership);
-			Log.v(TAG, membership);
 		} else {
 			membership = null;
 			Services.setPreference(getActivity(), "filter_membership", "-1");
@@ -359,7 +355,6 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 		if (selectedPos > 0) {
 			programmeGroup = selectedProgrammeGroup.getItemAtPosition(selectedPos).toString();
 			Services.setPreference(getActivity(), "filter_programmegroup", programmeGroup);
-			Log.v(TAG, programmeGroup);
 		} else {
 			programmeGroup = null;
 			Services.setPreference(getActivity(), "filter_programmegroup", "-1");

@@ -26,7 +26,6 @@ public class BookingsListSuperFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Services.setContext(getActivity());
-        Log.v(TAG, "Creating Last Visitors");
     }
 	
 	@Override
@@ -39,8 +38,12 @@ public class BookingsListSuperFragment extends Fragment {
 	
 	public void onBackPressed(){
 		FragmentManager fragmentManager = this.getChildFragmentManager();
-        fragmentManager.popBackStackImmediate();
-        cFragment = fragmentManager.findFragmentByTag("OverviewFragment");
+        fragmentManager.popBackStackImmediate(fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount()-2).getId(),
+        		FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        if (this.getCurrentFragment().getTag() == null) {
+        	setFragment();
+        }
+		/*FUNCTIONAL!!!*/
 	}
 	
 	@Override

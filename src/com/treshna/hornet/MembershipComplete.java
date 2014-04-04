@@ -9,13 +9,13 @@ import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -26,7 +26,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class MembershipComplete extends Fragment implements OnClickListener, TagFoundListener {
-	private static final String TAG ="MembershipComplete";
 	Context ctx;
 	ContentResolver contentResolver;
 	Cursor cur;
@@ -153,7 +152,28 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 			break;
 		}
 		case (R.id.button_addtag_row):{
-			swipeBox();
+			Cursor cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, ContentDescriptor.Member.Cols.MID+" = ?",
+					new String[] {memberid}, null);
+			if (!cur.moveToFirst()) break;
+			
+			if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.CARDNO))) {
+				//confirm we want to overwrite.
+				AlertDialog.Builder builder= new AlertDialog.Builder(ctx);
+				builder.setTitle("Overwrite current Tag?")
+				.setMessage("Are you sure you want to overwrite the currently assigned Tag?")
+				.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+						swipeBox();
+					}})
+				.setNegativeButton("Cancel", null)
+				.show();
+				cur.close();
+			} else {
+				cur.close();
+				swipeBox();
+			}
 			break;
 		}
 		}
@@ -173,10 +193,12 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 	 * assign the cardno to the membership.
 	 */
 	@Override
-	public void onNewTag(String serial) {
+	public void onNewTag(String serial) { //TODO WHY IS THIS NOT WORKING?
 		ContentResolver contentResolver = getActivity().getContentResolver();
 		Cursor cur;
 		String message = "";
+		
+		if (alertDialog == null || !alertDialog.isShowing()) return;
 		
 		cur = contentResolver.query(ContentDescriptor.IdCard.CONTENT_URI, null, ContentDescriptor.IdCard.Cols.SERIAL+" = ?",
 				new String[] {serial}, null);
@@ -195,7 +217,6 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 				values.put(ContentDescriptor.IdCard.Cols.SERIAL, serial);
 				Uri row = contentResolver.insert(ContentDescriptor.IdCard.CONTENT_URI, values);
 				String rowid = row.getLastPathSegment(); 
-				Log.v(TAG, "Adding "+rowid+" to PendingUploads");
 				contentResolver.delete(ContentDescriptor.FreeIds.CONTENT_URI, ContentDescriptor.FreeIds.Cols.ROWID+" = ? AND "+
 						ContentDescriptor.FreeIds.Cols.TABLEID+" = ?",new String[] {cardid, 
 						String.valueOf(ContentDescriptor.TableIndex.Values.Idcard.getKey())});
@@ -209,7 +230,6 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 			} else {
 				cur.close();
 				message = "No Tag ID's available. Please resync the device.";
-				Log.v(TAG, message);
 				cardid = null;
 			}
 		} else { //card in db, get the id.
@@ -223,11 +243,9 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 			if (cur.getCount() > 0) {
 				//id is in use, what should I do?
 				message = "Tag already in use";
-				Log.v(TAG, message);
 				cardid = null;
 			} else {
 				message = "Assigning card No. "+cardid+" to member.";
-				Log.v(TAG, message);
 				if (alertDialog != null){
 					alertDialog.dismiss();
 					alertDialog = null;
@@ -255,7 +273,7 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 		values.put(ContentDescriptor.Membership.Cols.PRICE, input.get(5));
 		//payment-date?
 		values.put(ContentDescriptor.Membership.Cols.SIGNUP, input.get(7));
-		if (input.get(8) != null) {
+		if (cardid != null) {
 			values.put(ContentDescriptor.Membership.Cols.CARDNO, cardid);
 		}
 		values.put(ContentDescriptor.Membership.Cols.CREATION, Services.dateFormat(new Date().toString(),
@@ -289,7 +307,23 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 		+ContentDescriptor.FreeIds.Cols.TABLEID+" = ?", new String[] {String.valueOf(msid),
 		String.valueOf(ContentDescriptor.TableIndex.Values.Membership.getKey())});
 		
-		Log.v(TAG, "insert rowid: "+rowid);
+		
+		/*Update the cardID on the member itself, if it hasn't got a cardid assigned...*/
+		cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, ContentDescriptor.Member.Cols.MID+" = ?", 
+				new String[] {input.get(0)}, null);
+		
+		if (cur.moveToFirst()) {
+			if (cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.MID)) || 
+					cur.getInt(cur.getColumnIndex(ContentDescriptor.Member.Cols.MID)) == 0) {
+				values = new ContentValues();
+				values.put(ContentDescriptor.Member.Cols.CARDNO, cardid);
+				values.put(ContentDescriptor.Member.Cols.DEVICESIGNUP, "t");
+				
+				contentResolver.update(ContentDescriptor.Member.CONTENT_URI, values, ContentDescriptor.Member.Cols.MID+" = ?",
+						new String[] {input.get(0)});
+			}
+		}
+		cur.close();
 		
 		return Integer.parseInt(rowid);
 	}

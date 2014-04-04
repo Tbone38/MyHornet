@@ -1,59 +1,17 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
-
-    <!--<EditTextPreference
-        android:capitalize="words"
-        android:defaultValue="@string/pref_default_server_address"
-        android:inputType="textCapWords"
-        android:key="address"
-        android:maxLines="1"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="@string/pref_title_server_address" />
-
-   <EditTextPreference
-        android:capitalize="words"
-        android:defaultValue="@string/pref_default_server_port"
-        android:inputType="textCapWords"
-        android:key="port"
-        android:maxLines="1"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="@string/pref_title_server_port" />
-   
-   <EditTextPreference
-        android:capitalize="words"
-        android:defaultValue="@string/pref_default_server_database"
-        android:inputType="textCapWords"
-        android:key="database"
-        android:maxLines="1"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="@string/pref_title_server_database" />
-   
-   <EditTextPreference
-        android:capitalize="words"
-        android:defaultValue="@string/pref_default_server_username"
-        android:inputType="textCapWords"
-        android:key="username"
-        android:maxLines="1"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="@string/pref_title_server_username" />
-   
-   <EditTextPreference
-        android:capitalize="words"
-        android:defaultValue="@string/pref_default_server_password"
-        android:inputType="textPassword"
-        android:key="password"
-        android:maxLines="1"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="@string/pref_title_server_password" />-->
-   
+   <PreferenceCategory
+        android:title="@string/pref_header_general" />
+   <Preference
+       android:key="appversion"
+       android:title="@string/pref_current_version"
+       android:selectable="false" />
+   <Preference 
+       android:key="uniqueid"
+       android:title="@string/pref_unique_id"/>
    <Preference
        android:key="setup"
        android:title="@string/pref_title_simple_setup" />
-   <Preference
+   <!-- <Preference
        	android:key="resetpassword"
        	android:title="@string/pref_title_reset_password" />
    	<Preference
@@ -61,12 +19,8 @@
    	    android:title="@string/pref_title_set_password" />
    	<Preference
    	    android:key="getconfig"
-   	    android:title="@string/pref_title_get_config" />
-   
- 
-    <!--
-         NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
-         dismiss it.
-    -->
-    <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
+   	    android:title="@string/pref_title_get_config" /> -->
+	<Preference
+	    android:key="fullsync"
+	    android:title="@string/pref_title_full_sync" /> 
 </PreferenceScreen>

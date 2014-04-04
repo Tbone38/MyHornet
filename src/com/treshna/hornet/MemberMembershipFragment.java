@@ -15,7 +15,6 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -85,6 +84,9 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 	
 	//This needs to filter by active memberships.
 	private View setupView() {
+		if (memberID == null) {
+			return view;
+		}
 		cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, 
 				ContentDescriptor.Membership.Cols.MID+" = ? AND "+ContentDescriptor.Membership.Cols.HISTORY+" = 'f'", new String[] {memberID}, null);
 		
@@ -92,18 +94,25 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 		mslist.removeAllViews();
 		
 		while (cur.moveToNext()) {
-			//Log.e(TAG, "Inflater is:"+mInflater.toString());
+			boolean is_cancelled = false;
+			is_cancelled = (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Membership.Cols.CANCEL_REASON))
+					&& cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.HISTORY)).compareTo("f")==0) ? true : false;
+			
 			RelativeLayout membershipRow = (RelativeLayout) mInflater.inflate(R.layout.member_membership_row, null);
 			membershipRow.setClickable(true);
 			membershipRow.setTag(cur.getInt(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MSID)));
 			membershipRow.setOnClickListener(this);
 			
+			if (is_cancelled) {
+				RelativeLayout content = (RelativeLayout) membershipRow.findViewById(R.id.member_membership_content);
+				content.setBackgroundColor(getActivity().getResources().getColor(R.color.membership_cancelled));
+			}
+			
 			ImageView icon = (ImageView) membershipRow.findViewById(R.id.member_membership_drawable);
-			icon.setColorFilter(Services.ColorFilterGenerator.setColourGrey());
+			icon.setColorFilter(Services.ColorFilterGenerator.setColour(getResources().getColor(R.color.grey_cf)));
 			
 			ImageView cancel_membership = (ImageView) membershipRow.findViewById(R.id.member_membership_cancel);
 			cancel_membership.setTag(cur.getInt(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MSID)));
-			//cancel_membership.setColorFilter(Services.ColorFilterGenerator.setColourRed());
 			cancel_membership.setClickable(true);
 			cancel_membership.setOnClickListener(this);
 			
@@ -195,7 +204,6 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 		values.put(ContentDescriptor.Membership.Cols.CANCEL_REASON, inputs.get(1));
 		values.put(ContentDescriptor.Membership.Cols.TERMINATION_DATE, inputs.get(0));
 		values.put(ContentDescriptor.Membership.Cols.DEVICESIGNUP, "t");
-		Log.d(TAG, "termination_date:"+inputs.get(0));
 		
 		contentResolver.update(ContentDescriptor.Membership.CONTENT_URI, values, ContentDescriptor.Membership.Cols.MSID+" = ?", 
 				new String[] {String.valueOf(membershipid)});
@@ -323,11 +331,12 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 			//show an alert with billing info for the membership...
 			int membershipid = Integer.parseInt(v.getTag().toString());
 			String[] columns = {ContentDescriptor.Membership.Cols.STATE+" AS 'Membership State:'", 
-					ContentDescriptor.Membership.Cols.SIGNUP+" AS 'Signup Fee:'", 
-					ContentDescriptor.Membership.Cols.FIRSTPAYMENT+" AS 'First Payment:'",
-					ContentDescriptor.Membership.Cols.PAYMENTDUE+" AS 'Payment Due:'",
-					ContentDescriptor.Membership.Cols.NEXTPAYMENT+" AS 'Next Payment:'",
+					ContentDescriptor.Membership.Cols.FIRSTPAYMENT+" AS 'First Payment Date:'",
+					ContentDescriptor.Membership.Cols.NEXTPAYMENT+" AS 'Next Payment Date:'",
+					ContentDescriptor.Membership.Cols.SIGNUP+" AS 'Signup Fee:'",
+					ContentDescriptor.Membership.Cols.PAYMENTDUE+" AS 'Payment Due:'",					
 					ContentDescriptor.Membership.Cols.UPFRONT+" AS 'Upfront Fee:'",
+					ContentDescriptor.Membership.Cols.TERMINATION_DATE+" AS 'Termination Date:'",
 					ContentDescriptor.Membership.Cols.VISITS+" AS 'Concession Count:'",
 					ContentDescriptor.Membership.Cols.PNAME};
 			Cursor cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, columns, ContentDescriptor.Membership.Cols.MSID+" = ?",
@@ -363,7 +372,11 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 									{cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PNAME))}, null);
 					if (cur2.moveToFirst()) {
 						if (!cur2.isNull(0) && cur2.getInt(0)> 0) {
-							value.setText(cur.getString(i)+"/"+cur2.getInt(0));
+							if (cur.isNull(i)) {
+								value.setText("0/"+cur2.getInt(0));
+							} else {
+								value.setText(cur.getString(i)+"/"+cur2.getInt(0));
+							}
 						} else {
 							add_row = false;
 						}

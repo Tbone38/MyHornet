@@ -44,8 +44,50 @@
         android:layout_marginLeft="3dp"/>
     
     <!-- Would you like to be contacted By GymMaster Support? -->
+    <CheckBox 
+        android:id="@+id/setup_contactable"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/simple_contactable"
+        android:paddingLeft="5dp"
+        android:paddingTop="5dp"
+        android:checked="true"
+        />
     <!-- What's your name	? -->
+    <TextView
+        android:id="@+id/setup_contact_name_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:text="@string/simple_contact_name"
+        android:padding="5dp"
+         />
+    <EditText
+        android:id="@+id/setup_contact_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textCapWords"
+        android:padding="5dp"
+        android:layout_marginLeft="3dp"
+         />
+    
     <!-- What's your phone #? 	 -->
+    <TextView
+        android:id="@+id/setup_contact_number_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:text="@string/simple_contact_number"
+        android:padding="5dp"
+         />
+    <EditText 
+        android:id="@+id/setup_contact_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="phone"
+        android:padding="5dp"
+        android:layout_marginLeft="3dp"
+        />
     
     <LinearLayout
         android:id="@+id/button_row"

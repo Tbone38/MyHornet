@@ -112,7 +112,7 @@ public class BookingsListAdapter extends SimpleCursorAdapter implements OnClickL
 				}
 				case (21):{ //checked in late
 					drawable.setImageDrawable(context.getResources().getDrawable(R.drawable.glyphicons_clock));
-					drawable.setColorFilter(Services.ColorFilterGenerator.setColourGrey());
+					drawable.setColorFilter(Services.ColorFilterGenerator.setColour(context.getResources().getColor(R.color.grey_cf)));
 					break;
 				}
 				case (15):{ //noshow

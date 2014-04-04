@@ -7,20 +7,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
-import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.http.HttpEntity;
@@ -35,10 +28,7 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.preference.PreferenceManager;
-import android.text.TextUtils;
-import android.util.Base64;
 import android.util.Log;
 
 public class JSONHandler {
@@ -55,8 +45,10 @@ public class JSONHandler {
 	private String session_token = null;
 	private static final String GYMLOGIN = "/gymlogin";
 	private static final String CREATEDDACCT = "/createddaccount";
-	private static final String EDITEZIDEBITDETAILS = "/editezdebitdetails";
+	private static final String EDITDDACCOUNT = "/editddaccount";
 	private static final String CHECKDDSTATUS = "/checkddstatus";
+	private static final String API1 = "http://gmonline-";
+	private static final String API2 = ".gymmaster.co.nz";
 	
 	public JSONHandler(Context context) {
 		
@@ -149,7 +141,6 @@ public class JSONHandler {
 			}
 		}
 		
-		Log.d(TAG, result.toString());
 		//errorcodes 8 = email exists but isn't setup, < 0 is success.
 		return (errorcode <= 0 || errorcode == JSONError.USERNOTSETUP.getKey());
 	}
@@ -166,15 +157,25 @@ public class JSONHandler {
 		return this.signup_url;
 	}
 	
-	public boolean updateUser(String email, String username, String countrycode) {
+	public boolean updateUser(String email, String username, String countrycode, boolean contactable, String contact_name, String contact_number) {
 		byte[] encrypt, decrypt;		
 		/*encrypt = encrypt(" ");
 		try {
 		Log.e(TAG, "TEST STRING ENCRYPTED: "+new String(encrypt, "UTF-8"));
 		} catch (Exception e) {e.printStackTrace();};*/
 
+		//if can contact we add the contact details, other wise ignore.
 		username = username.replace(" ", "%20");
-		String url = HOST+"/updateuser?email="+email+"&username="+username+"&country="+countrycode;
+		String url = HOST+"/updateuser?email="+email+"&username="+username+"&country="+countrycode+"&contactable="+String.valueOf(contactable);
+		
+		if (contactable) {
+			if (contact_name != null) {
+				url = url +"&contactname="+contact_name;	
+			}
+			if (contact_number != null) {
+				url = url +"&contactnumber="+contact_number;
+			}
+		}
 		JSONObject result;
 		String status;
 		errorcode = -1;
@@ -201,7 +202,6 @@ public class JSONHandler {
 				}
 			}
 		} else {
-			Log.d(TAG, result.toString());
 			String server = "-1", dbname= "-1", user = "-1", password= "-1";
 			try {
 				server = result.getString("server");
@@ -225,7 +225,7 @@ public class JSONHandler {
 				errormsg = "please refer to the details in the email that was sent to you, in order to finish the setup.";
 				errorcode = JSONError.BADRETRIEVE.getKey();
 			}
-			SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ctx);
+			SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ctx.getApplicationContext());
 			SharedPreferences.Editor editor = preferences.edit();
 			editor.putString("address", server);
 			editor.putString("port", "5432");
@@ -312,13 +312,15 @@ public class JSONHandler {
 		return false;
 	}
 	
-	public boolean uploadLog(long this_sync, String te_username, String schemaversion, String company_name) {
+	public boolean uploadLog(long this_sync, String te_username, String schemaversion, String company_name, String appid) {
     	String contents = null;
     	FileHandler filehandler = new FileHandler(ctx);
     	contents = filehandler.getLog();
     	
     	if (contents == null) {
     		return false;
+    	} else {
+    		
     	}
     	
     	if (te_username == null || te_username.isEmpty()) {
@@ -326,7 +328,7 @@ public class JSONHandler {
     		return false;
     	}
     	
-    	String url = HOST+"/uploadlog";
+    	String url = HOST+"/uploadlog";	
 		JSONObject result, post;
 		post = new JSONObject();
 		try {
@@ -335,6 +337,7 @@ public class JSONHandler {
 			post.put("time", this_sync);
 			post.put("contents", contents);
 			post.put("company_name", company_name);
+			post.put("application_id", appid);
 			
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -342,7 +345,6 @@ public class JSONHandler {
 		}
     	result = this.postJSON(url, post);
     	if (result != null) {
-    		Log.d(TAG, result.toString());
     	}
     	
     	//filehandler.deleteFile("db_sync.log"); 
@@ -351,12 +353,12 @@ public class JSONHandler {
     }
 	
 	public boolean DDLogin(String te_username, String te_password) {
-		Log.d(TAG, "DD Login");
 		boolean result = false;
 		String status = "";
 		this.signup_url = "api.gymmaster.co.nz/notavailable";
 		JSONObject response, post;
-		String api = "http://gmbooking-"+te_username+".gymmaster.co.nz";
+		String api = API1+te_username+API2;
+		//String api = "http://192.168.2.132:5000";
 				
 		String url = api+GYMLOGIN;
 		post = new JSONObject();
@@ -402,12 +404,12 @@ public class JSONHandler {
 	}
 	
 	public boolean DDAdd(int memberid, String te_username) {
-		Log.d(TAG, "DD Add");
 		boolean result = false;
 		String status = "";
 		JSONObject response, post;
 		
-		String api = "http://gmbooking-"+te_username+".gymmaster.co.nz";
+		String api = API1+te_username+API2;
+		//String api = "http://192.168.2.132:5000";
 		
 		String url = api+CREATEDDACCT;
 		
@@ -461,11 +463,11 @@ public class JSONHandler {
 	}
 	
 	private boolean DDdetails(int memberid, String te_username) {
-		Log.d(TAG, "DD Details");
 		boolean result = false;
 		JSONObject response, post;
-		String api = "http://gmbooking-"+te_username+".gymmaster.co.nz";
-		String url = api+EDITEZIDEBITDETAILS;
+		String api = API1+te_username+API2;
+		//String api = "http://192.168.2.132:5000";
+		String url = api+EDITDDACCOUNT;
 		
 		post = new JSONObject();
 		try {
@@ -506,12 +508,14 @@ public class JSONHandler {
 		String status = "";
 		JSONObject response, post;
 		
-		String api = "http://gmbooking-"+te_username+".gymmaster.co.nz";
-		String url = api+CREATEDDACCT;
+		String api = API1+te_username+API2;
+		//String api = "http://192.168.2.132:5000";
+		String url = api+CHECKDDSTATUS;
 		
 		post = new JSONObject();
 		try {
 			post.put("userid", memberid);
+			session = (session == null) ? this.session_token : session;
 			post.put("session", session);
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -706,7 +710,6 @@ public class JSONHandler {
 			if (!is_post) {
 				httpResponse = httpClient.execute(httpGet);
 			} else if (is_post) {
-				//Log.d(TAG, Arrays.toString(httpPost.getAllHeaders()));
 				httpResponse = httpClient.execute(httpPost);
 			} else {
 				httpResponse = null;

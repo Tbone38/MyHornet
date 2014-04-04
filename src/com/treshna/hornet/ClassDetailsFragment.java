@@ -100,7 +100,6 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 		if (recieved_cid != null && recieved_cid.compareTo(bookingID) == 0) {
 			//the broadcast was for a class-swipe, and the class id matches this class.
 			//refresh the cursor!
-			Log.v(TAG, "Class Swipe Intent Recieved");
 			mLoaderManager.restartLoader(0, null, this);
 		}
 		
@@ -131,7 +130,7 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 		getActivity().setTitle(classname);
 		
 		dateView = (TextView) page.findViewById(R.id.classDate);
-		dateView.setText(Services.dateFormat(date, "yyyyMMdd", "dd MMM yyyy")+", ");
+		dateView.setText(Services.DateToString(new Date(Long.parseLong(date)))+", ");
 		//dateView.setText(date);
 		
 		stimeView = (TextView) page.findViewById(R.id.classSTime);
@@ -290,7 +289,6 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 			String membername, firstname, lastname;
 			membername = findmember.getEditableText().toString();
 			
-			Log.v(TAG, "Got member with name: "+membername);
 			if (membername.compareTo("")==0 || membername.compareTo(" ")==0) {
 				return;
 			}
@@ -301,7 +299,7 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 					, new String[] {"%"+membername+"%"}, null);
 			if (cur.getCount() <= 0) {
 				//not sure what happened.
-				Log.v(TAG, "no members found by that name");
+				Log.e(TAG, "no members found by that name");
 			} else if (cur.getCount() >= 2) {
 				// 2 or more members returned with that name, what should I do?
 				Log.e(TAG, "2 or more members found with that name");
@@ -314,7 +312,7 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 				/*for (int i = 0; i<cur.getColumnCount(); i +=1) {
 					Log.v(TAG, cur.getColumnName(i)+": "+cur.getString(i));
 				}*/
-				Log.v(TAG, "MEMBERID: "+memberid);
+
 				cur.close();
 				// show pop-up to select membership ?
 				// if no memberships exist then complain?
@@ -365,10 +363,9 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 
 	            	int cid = rg.getCheckedRadioButtonId();     	
 	            	RadioButton rb = (RadioButton) rg.findViewById(cid);
-	            	String selectedMS = (String) rb.getText();
 	            	selectedMSID = (String) rb.getTag();
 	            	//System.out.print("\n\nSelected Membership with ID:"+selectedMSID);
-	            	Log.v(TAG, "Selected Membership: "+selectedMS+" with ID"+selectedMSID);
+	            	
 	            	startTransaction(selectedMSID, memberid, firstname, surname);
             	}}
         });
@@ -426,13 +423,10 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 		//bookingid as well.
 		cur = contentResolver.query(ContentDescriptor.FreeIds.CONTENT_URI, null, ContentDescriptor.FreeIds.Cols.TABLEID+" = ?",
 				new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Booking.getKey())}, null);
-		Log.w(TAG, "**FREEID COUNT: "+cur.getCount());
 		if (cur.moveToFirst()) {
 			bookingid = cur.getInt(cur.getColumnIndex(ContentDescriptor.FreeIds.Cols.ROWID));
-			Log.w(TAG, "__BOOKING ID:"+bookingid);
 		} else {
 			//we haven't got any spare booking-id's. what should I do?
-			Log.w(TAG, "CUR.MOVETOFIRST() FAILED!");
 			bookingid = -1;
 		}
 		cur.close();

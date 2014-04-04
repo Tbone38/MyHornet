@@ -7,11 +7,11 @@
         android:id="@+id/text_cancel_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:textSize="18sp"
         android:textColor="@color/android_blue"
         android:text="@string/membership_expire_date"
-        android:padding="5dp"/>
+        android:padding="5dp"
+        android:layout_marginLeft="3dp"/>
     
     <TextView 
         android:id="@+id/text_cancel_reason"

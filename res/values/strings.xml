@@ -40,6 +40,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="cancel">Cancel</string>
     <string name="hint_visitor_time">Visitor Time icon (clock)</string>
-    <string name="title_activity_magic">Setup GymMaster</string>
+    <string name="title_activity_magic">Setup GymMaster</string>   
 
 </resources>

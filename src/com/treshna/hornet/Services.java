@@ -7,7 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Locale;
-
+import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -16,11 +16,13 @@ import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -185,22 +187,32 @@ public class Services {
 	 * This function allows the application to manually set the value of an 
 	 * application property. (setting)
 	 */
+	@SuppressLint("InlinedApi")
 	public static void setPreference(Context context, String key, String value) {
-		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+		SharedPreferences preferences;
+		
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			preferences = context.getSharedPreferences(context.getPackageName()+"_preferences", Context.MODE_MULTI_PROCESS);
+		} else {
+			preferences = PreferenceManager.getDefaultSharedPreferences(context);
+		}
 		Editor e = preferences.edit();
 		e.putString(key, value);
 		e.commit();
 	}
-	
 	 
-	 public static String getAppSettings(Context context, String key){
+	 @SuppressLint("InlinedApi")
+	public static String getAppSettings(Context context, String key){
 		 //Exception e = new Exception();
 		 Log.d(TAG, "Getting App Setting: "+key);
-		 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+		 SharedPreferences preferences;
+		 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			 preferences = context.getSharedPreferences(context.getPackageName() + "_preferences", Context.MODE_MULTI_PROCESS);
+		 } else {
+			 preferences = PreferenceManager.getDefaultSharedPreferences(context);
+		 }
 		 return (preferences.getString(key, "-1"));
 	}
-
-	
 	
 	//converts a DP input into pixels, useful for programmatically setting View margins/padding/etc.
 	public static int convertdpToPxl(Context c, int dp){
@@ -298,8 +310,6 @@ public class Services {
 			handler.post(new Runnable() {  
 					@Override  
 					public void run() {
-						//System.out.print("\n\nContext:"+ctx);
-						Log.v(TAG+".showProgress", "Progress Bar Context:"+ctx);
 						progress = ProgressDialog.show(ctx, "Syncing", message, true);//breaking here.
 			}});
 		}
@@ -375,93 +385,45 @@ public class Services {
 		            lumR + cosVal * (1 - lumR) + sinVal * (-lumR), lumG + cosVal * (-lumG) + sinVal * (-lumG), lumB + cosVal * (-lumB) + sinVal * (1 - lumB), 0, 0, 
 		            lumR + cosVal * (-lumR) + sinVal * (0.143f), lumG + cosVal * (1 - lumG) + sinVal * (0.140f), lumB + cosVal * (-lumB) + sinVal * (-0.283f), 0, 0,
 		            lumR + cosVal * (-lumR) + sinVal * (-(1 - lumR)), lumG + cosVal * (-lumG) + sinVal * (lumG), lumB + cosVal * (1 - lumB) + sinVal * (lumB), 0, 0, 
-		            0f, 0f, 0f, 1f, 0f, 
-		            0f, 0f, 0f, 0f, 1f };
+		            0f, 0f, 0f, 1f, 0f }; 
+		            //0f, 0f, 0f, 0f, 1f };
 		    
 		    cm.postConcat(new ColorMatrix(mat));
 		}
 		
-		public static ColorFilter setColourGreen()
-		{
-		    ColorMatrix cm = new ColorMatrix();
-	
-		    setColourGreen(cm);
-	
-		    return new ColorMatrixColorFilter(cm);
-		}
-		
-		public static void setColourGreen(ColorMatrix cm) {
-			 float[] gMatrix = { 
-			            0, 0, 0, 0, 0, //red
-			            1, 1, 1, 1, 1, //green
-			            0, 0, 0, 0, 0, //blue
-			            1, 1, 1, 1, 1 //alpha
-			        };
-			    
-			    cm.postConcat(new ColorMatrix(gMatrix));
-		}
-		
-		public static ColorFilter setColourRed()
-		{
-		    ColorMatrix cm = new ColorMatrix();
-	
-		    setColourRed(cm);
-	
-		    return new ColorMatrixColorFilter(cm);
-		}
-		
-		public static void setColourRed(ColorMatrix cm) {
-			 float[] gMatrix = { 
-			            1, 1, 1, 1, 1, //red
-			            0, 0, 0, 0, 0, //green
-			            0, 0, 0, 0, 0, //blue
-			            1, 1, 1, 1, 1 //alpha
-			        };
-			    
-			    cm.postConcat(new ColorMatrix(gMatrix));
-		}
-		
-		public static ColorFilter setColourBlue()
-		{
-		    ColorMatrix cm = new ColorMatrix();
-	
-		    setColourBlue(cm);
-	
-		    return new ColorMatrixColorFilter(cm);
-		}
-		
-		public static void setColourBlue(ColorMatrix cm) {
-			 float[] gMatrix = { 
-			            0, 0, 0, 0, 0, //red
-			            0, 0, 0, 0, 0, //green
-			            1, 1, 1, 1, 1, //blue
-			            1, 1, 1, 1, 1 //alpha
-			        };
-			    
-			    cm.postConcat(new ColorMatrix(gMatrix));
-		}
-		
-		public static ColorFilter setColourGrey() {
-		
+		/**
+		 * Returns a colour filter for the given colour. 
+		 * @param color int,
+		 * @return colorFilter ColorFilter,
+		 */
+		public static ColorFilter setColour(int color) {
 			ColorMatrix cm = new ColorMatrix();
-			float[] gMatrix = { 
-					0, 0, 0, 0, 97, //red
-		            0, 0, 0, 0, 95, //green
-		            0, 0, 0, 0, 95, //blue
-		            1, 1, 1, 1, 0 //alpha
-		        };
-		    
-		    cm.postConcat(new ColorMatrix(gMatrix));
-		    return new ColorMatrixColorFilter(cm);
+			
+			int  red, green, blue;
+			//ignore alpha, else we end up with a solid color block.
+			//or write special colours just for this?
+			red = Color.red(color);
+			green = Color.green(color);
+			blue = Color.blue(color);
+			
+			float[] gMatrix = {
+					0, 0, 0, 0, red,
+					0, 0, 0, 0, green,
+					0, 0, 0, 0, blue,
+					1, 1, 1, 1, 0
+			};
+			
+			cm.postConcat(new ColorMatrix(gMatrix));
+			return new ColorMatrixColorFilter(cm);
 		}
-	
+		
 		protected static float cleanValue(float p_val, float p_limit)
 		{
 		    return Math.min(p_limit, Math.max(-p_limit, p_val));
 		}
 	}
 	
-	//doesn't work/can be removed.
+	//IT WORKS!
 	public static class Typefaces {
 		private static final String TAG = "Typefaces";
 

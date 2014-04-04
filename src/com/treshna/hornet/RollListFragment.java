@@ -18,7 +18,6 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -240,7 +239,6 @@ public class RollListFragment extends ListFragment implements OnClickListener, L
 		cur = contentResolver.query(ContentDescriptor.Programme.CONTENT_URI, null, ContentDescriptor.Programme.Cols.GID+" = 0", null, null);
 		cur.moveToPosition(cursorposition);
 		programmeid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Programme.Cols.PID));
-		Log.d(TAG, "ProgrammeID: "+programmeid+" FOR programme:"+cur.getString(cur.getColumnIndex(ContentDescriptor.Programme.Cols.NAME)));
 		cur.close();
 
 	//GET THE ROLLID
@@ -265,14 +263,12 @@ public class RollListFragment extends ListFragment implements OnClickListener, L
 	//GET THE LIST OF MEMBERS TO ADD TO THE ROLL	
 		cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols.PID+" = ?",
 				new String[] {String.valueOf(programmeid)}, null);
-		Log.d(TAG, "Cursor Count:"+cur.getCount());
 		Set<Integer> memberids = new HashSet<Integer>();
 		while (cur.moveToNext()) {
 			memberids.add(cur.getInt(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MID)));
 		}
 		cur.close();
 	//ADD EACH MEMBER TO THE ROLL
-		Log.d(TAG, "Member Count for chosen Programme:"+memberids.size());
 		Iterator<Integer> midsIterator = memberids.iterator();
 		while (midsIterator.hasNext()) {
 			cur = contentResolver.query(ContentDescriptor.FreeIds.CONTENT_URI, null, ContentDescriptor.FreeIds.Cols.TABLEID+" = "
@@ -292,7 +288,6 @@ public class RollListFragment extends ListFragment implements OnClickListener, L
 			values.put(ContentDescriptor.RollItem.Cols.ROLLITEMID, rollitemid);
 			
 			contentResolver.insert(ContentDescriptor.RollItem.CONTENT_URI, values);
-			Log.d(TAG, "Inserting MemberID:"+mid);
 			
 			if (got_id) {
 				contentResolver.delete(ContentDescriptor.FreeIds.CONTENT_URI, ContentDescriptor.FreeIds.Cols.ROWID+" = ? AND "

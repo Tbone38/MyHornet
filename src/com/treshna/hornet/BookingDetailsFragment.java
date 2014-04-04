@@ -103,15 +103,15 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 		TextView name = (TextView) page.findViewById(R.id.bookingname);
 		name.setText(bookingName);
 		
-		date = Services.dateFormat(cur.getString(cur.getColumnIndex(ContentDescriptor.BookingTime.Cols.ARRIVAL)), "yyyyMMdd", "EEEE MMMM yy");
+		date = Services.DateToString(new Date(Long.parseLong(cur.getString(cur.getColumnIndex(ContentDescriptor.BookingTime.Cols.ARRIVAL)))));
 		starttime = Services.dateFormat(cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.STIME)), "HH:mm:ss", "hh:mmaa");
 		
 		TextView time = (TextView) page.findViewById(R.id.bookingtime);
 		time.setText(Services.dateFormat(cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.STIME)), "HH:mm:ss", "hh:mmaa")+" - " //start time is pos 15.
 				+Services.dateFormat(cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.ETIME)), "HH:mm:ss", "hh:mmaa"));
 		
-		TextView date = (TextView) page.findViewById(R.id.bookingdate);
-		date.setText(Services.dateFormat(cur.getString(cur.getColumnIndex(ContentDescriptor.BookingTime.Cols.ARRIVAL)), "yyyyMMdd", "EEEE MMMM yy"));
+		TextView date_view = (TextView) page.findViewById(R.id.bookingdate);
+		date_view.setText(date);
 
 		EditText notes = (EditText) page.findViewById(R.id.bookingnotes);
 		notes.setMinLines(2);

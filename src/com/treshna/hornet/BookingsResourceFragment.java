@@ -1,7 +1,9 @@
 package com.treshna.hornet;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
@@ -12,7 +14,6 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,11 +52,10 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
         mResolver = this.getActivity().getContentResolver();
         selectedDate = this.getArguments().getString("bookings_date");
         selectedResource = Integer.parseInt(Services.getAppSettings(getActivity(), "resourcelist"));
-    	if (Integer.parseInt(selectedDate) == -1) {
-    		selectedDate = Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");
-    		//selectedDate = Services.DateToString(new Date());
+    	if (selectedDate.compareTo("-1") == 0) {
+    		//selectedDate = Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");
+    		selectedDate = Services.DateToString(new Date());
     	}
-    	Log.w(TAG, "Selected Date OnCreate:"+selectedDate);
         hasOverview = this.getArguments().getBoolean("hasOverview");
     }
 	
@@ -63,13 +63,11 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
 		return hasOverview;
 	}
 	
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-		try {
-			view = inflater.inflate(R.layout.booking_resource, container, false);
-		} catch (ClassCastException e) {
-			Log.e(TAG, "OnCreate View, inflate", e);
-		}
+		view = inflater.inflate(R.layout.booking_resource, container, false);
+		
 		setupCalendar();
 		setupSpinner();
 		setupList();
@@ -91,19 +89,20 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
     	
 		if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
 			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			params.addRule(RelativeLayout.RIGHT_OF, 20);
+			params.setMargins(10, 0, 10, 0);
 			mMonth.setTextSize(21);
 			mMonth.setLayoutParams(params);
 			
 			params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 	    	params.addRule(RelativeLayout.CENTER_HORIZONTAL);
-	    	params.addRule(RelativeLayout.RIGHT_OF, 10);
+	    	
 	    	mDay.setTextSize(21);
 	    	mDay.setLayoutParams(params);
 	    	
 	    	params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 	    	params.addRule(RelativeLayout.CENTER_HORIZONTAL);
-	    	params.addRule(RelativeLayout.RIGHT_OF, 20);
-	    	
+	    	params.addRule(RelativeLayout.RIGHT_OF, 10);
 	    	mYear.setTextSize(21);
 	    	mYear.setLayoutParams(params);
 			
@@ -142,8 +141,8 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
     	mYear.setGravity(Gravity.CENTER_HORIZONTAL);
     	
 		if (selectedDate == null) {
-			selectedDate = Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");
-			//selectedDate = Services.DateToString(new Date());
+			//selectedDate = Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");
+			selectedDate = Services.DateToString(new Date());
 		}
     	updateDate();
         calendarwrapper.addView(mMonth);
@@ -156,7 +155,7 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
 	
 	private void updateDate(){
 		if (mMonth != null && mDay != null && mYear != null) {
-			if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+			/*if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
 				//mMonth.setText(Services.dateFormat(selectedDate, "yyyyMMdd", "MMMM")+" ");
 				mMonth.setText(Services.dateFormat(selectedDate, "yyyyMMdd", "MMMM")+" ");
 				mDay.setText(Services.dateFormat(selectedDate, "yyyyMMdd", "dd")+",  ");
@@ -166,7 +165,10 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
 				mMonth.setText(Services.dateFormat(selectedDate, "yyyyMMdd", "MMM"));
 				mDay.setText(Services.dateFormat(selectedDate, "yyyyMMdd", "dd"));
 				mYear.setText(Services.dateFormat(selectedDate, "yyyyMMdd", "yyyy"));
-			}
+			}*/
+			mMonth.setText(Services.dateFormat(selectedDate, "dd MMM yyyy", "MMM"));
+			mDay.setText(Services.dateFormat(selectedDate, "dd MMM yyyy", "dd"));
+			mYear.setText(Services.dateFormat(selectedDate, "dd MMM yyyy", "yyyy"));
 		}
 	}
 	
@@ -267,15 +269,27 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
 		if (getActivity() != null) {
 			//String rid = Services.getAppSettings(getActivity(), "resourcelist");
-			String date = Services.dateFormat(selectedDate, "dd MMM yyyy", "yyyyMMdd");
+			//String date = Services.dateFormat(selectedDate, "dd MMM yyyy", "yyyyMMdd");
+			String date = selectedDate;
 			if (date == null) {
 				date = selectedDate;
 			}
+			
+			Date theDate = Services.StringToDate(date, "dd MMM yyyy");
+			Calendar cal = Calendar.getInstance(Locale.US);
+			cal.setTime(theDate);
+			cal.set(Calendar.HOUR_OF_DAY, 0); 
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			long start, end;
+			start = cal.getTime().getTime();
+			cal.add(Calendar.MINUTE, 1439);
+			end = cal.getTime().getTime();
+			
 			String selection = "bt."+ContentDescriptor.BookingTime.Cols.RID+" = "+selectedResource+" AND "
-	       			+"bt."+ContentDescriptor.BookingTime.Cols.ARRIVAL+" = "+date;
-			String[] where = {date, ContentDescriptor.Booking.Cols.RESULT+" > 5 ", 
+	       			+"bt."+ContentDescriptor.BookingTime.Cols.ARRIVAL+" BETWEEN "+start+" AND "+end;
+			String[] where = {date, ContentDescriptor.Booking.Cols.RESULT+" > 5 ",
 	       			" AND b."+ContentDescriptor.Booking.Cols.PARENTID+" <= 0"};
-	       	Log.v(TAG,"Selected Date:"+date);
 			return new CursorLoader(getActivity(), ContentDescriptor.Time.TIME_BOOKING_URI, null, selection, where, "_id ASC");
 		} else {
 			return null;
@@ -297,7 +311,7 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
 	@Override
 	public void onDateSelect(String date, DatePickerFragment theDatePicker) {
 		selectedDate = date;
-		selectedDate = Services.dateFormat(selectedDate, "dd MMM yyyy", "yyyyMMdd");
+		//selectedDate = Services.dateFormat(selectedDate, "dd MMM yyyy", "yyyyMMdd");
 		Services.setPreference(getActivity(), "bookings_date", selectedDate);
 		((BookingsSlideFragment) this.getParentFragment()).setDate(selectedDate);
 		updateSelection();

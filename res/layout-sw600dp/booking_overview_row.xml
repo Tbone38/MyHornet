@@ -20,7 +20,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/booking_resource_name"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:baselineAligned="false">
         <RelativeLayout 
             android:id="@+id/booking_timeslot_1"
             android:layout_width="0dp"

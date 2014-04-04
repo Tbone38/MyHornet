@@ -7,14 +7,13 @@ import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -32,7 +31,6 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 	ContentResolver contentResolver;
 	String memberID;
 	private View view;
-	private String visitDate;
 	private int selectedFragment;
 	private TagFoundListener tagFoundListener;
 	private static final String TAG = "MemberDetails";
@@ -41,11 +39,9 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Services.setContext(getActivity());
-		Log.i(TAG, "Created At:"+new Date().toString());
 		contentResolver = getActivity().getContentResolver();
 	
 		memberID = this.getArguments().getString(Services.Statics.MID);
-		visitDate = this.getArguments().getString(Services.Statics.KEY);
 	}
 	
 	@Override
@@ -98,12 +94,7 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 		    img.setOnClickListener(this);
 		    img.setTag(2);
 			Drawable imgDrawable = getActivity().getResources().getDrawable(R.drawable.nophotogrey);
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-				img.setBackground(imgDrawable);
-			} else {
-				img.setBackgroundDrawable(imgDrawable);
-			}
-			
+			img.setImageDrawable(imgDrawable);
 		}
 	    
 		String happiness = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.HAPPINESS));
@@ -129,38 +120,32 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 
 		int status = cur.getInt(cur.getColumnIndex(ContentDescriptor.Member.Cols.STATUS));
 		if (status >= 0) {
-			if (status == 0) { //Current
+			if (status == 0|| status == 5) { //Current
 				ImageView statusView;
 				statusView = (ImageView) view.findViewById(R.id.member_status_ok);
 				statusView.setVisibility(View.VISIBLE);
-				statusView.setColorFilter(Services.ColorFilterGenerator.setColourGreen());
+				statusView.setColorFilter(Services.ColorFilterGenerator.setColour(getResources().getColor(R.color.booking_resource_green)));
 			} else if (status == 1) { //on hold
 				ImageView statusView;
 				statusView = (ImageView) view.findViewById(R.id.member_status_hold);
 				statusView.setVisibility(View.VISIBLE);
-				statusView.setColorFilter(Services.ColorFilterGenerator.setColourBlue());
+				statusView.setColorFilter(Services.ColorFilterGenerator.setColour(getResources().getColor(R.color.android_blue)));
 			} else if (status == 2|| status == 3) { //expired
 				ImageView statusView;
 				statusView = (ImageView) view.findViewById(R.id.member_status_expired);
 				statusView.setVisibility(View.VISIBLE);
-				statusView.setColorFilter(Services.ColorFilterGenerator.setColourRed());
+				statusView.setColorFilter(Services.ColorFilterGenerator.setColour(getResources().getColor(R.color.visitors_red)));
 			} else if (status == 4 ) { //promotion
 				ImageView statusView;
 				statusView = (ImageView) view.findViewById(R.id.member_status_casual);
 				statusView.setVisibility(View.VISIBLE);
-				statusView.setColorFilter(Services.ColorFilterGenerator.setColourRed());
-			} else if (status == 5) { //casual ?
-				//what should be shown?
-				ImageView statusView;
-				statusView = (ImageView) view.findViewById(R.id.member_status_ok);
-				statusView.setVisibility(View.VISIBLE);
-				statusView.setColorFilter(Services.ColorFilterGenerator.setColourBlue());
+				statusView.setColorFilter(Services.ColorFilterGenerator.setColour(getResources().getColor(R.color.visitors_red)));
 			}
 		} else {
 			ImageView statusView;
 			statusView = (ImageView) view.findViewById(R.id.member_status_ok);
 			statusView.setVisibility(View.VISIBLE);
-			statusView.setColorFilter(Services.ColorFilterGenerator.setColourGreen());
+			statusView.setColorFilter(Services.ColorFilterGenerator.setColour(Color.GREEN));
 		}
 		
 		cur.close();
@@ -177,10 +162,10 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 				memberBalance.setText("Balance: "+amount);
 			} else if (amount.substring(0, 1).compareTo("-") == 0) { //member in Credit
 				memberBalance.setText("Credit: "+amount.substring(1));
-				memberBalance.setTextColor(getActivity().getResources().getColor(R.color.blue));
+				memberBalance.setTextColor(getActivity().getResources().getColor(R.color.android_blue));
 			} else {
 				memberBalance.setText("Owing: "+amount);
-				memberBalance.setTextColor(getActivity().getResources().getColor(R.color.red));
+				memberBalance.setTextColor(getActivity().getResources().getColor(R.color.visitors_red));
 			}
 		}
 		cur.close();
@@ -194,14 +179,13 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 	    
 	    LinearLayout visits = (LinearLayout) view.findViewById(R.id.button_member_navigation_visits);
 	    visits.setOnClickListener(this);
-	    //visits.setVisibility(View.GONE);
 			    
 	    LinearLayout finance = (LinearLayout) view.findViewById(R.id.button_member_navigation_finance);
 	    finance.setOnClickListener(this);
 	    
 	    LinearLayout bookings = (LinearLayout) view.findViewById(R.id.button_member_navigation_booking);
 	    bookings.setOnClickListener(this);
-	    bookings.setVisibility(View.GONE);
+	    //bookings.setVisibility(View.GONE);
 	    
 	    
 		return view;
@@ -254,7 +238,6 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 			Bundle bdl = new Bundle(2);
 			
 	        bdl.putString(Services.Statics.MID, memberID);
-	        bdl.putString(Services.Statics.KEY, visitDate);
 	        f.setArguments(bdl);
 	        
 	        selectedFragment = R.id.button_member_navigation_notes;
@@ -274,7 +257,6 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 			Fragment f = new MemberVisitHistoryFragment();
 			Bundle bdl = new Bundle(2);
 	        bdl.putString(Services.Statics.MID, memberID);
-	        bdl.putString(Services.Statics.KEY, visitDate);
 	        f.setArguments(bdl);
 	        
 	        selectedFragment = R.id.button_member_navigation_visits;
@@ -307,6 +289,14 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 			selectedFragment = R.id.button_member_navigation_finance;
 			setupFragment(f);
 			break;
+		}
+		case (R.id.button_member_navigation_booking):{
+			selectedFragment = R.id.button_member_navigation_booking;
+			Fragment f = new MemberBookingsFragment();
+			Bundle bdl = new Bundle(1);
+			bdl.putString(Services.Statics.MID, memberID);
+			f.setArguments(bdl);
+			setupFragment(f);
 		}
 		}
 	}

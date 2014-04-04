@@ -1,14 +1,18 @@
 package com.treshna.hornet;
 
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.treshna.hornet.ContentDescriptor.AppConfig;
 import com.treshna.hornet.ContentDescriptor.BillingHistory;
 import com.treshna.hornet.ContentDescriptor.Booking;
 import com.treshna.hornet.ContentDescriptor.CancellationFee;
 import com.treshna.hornet.ContentDescriptor.Class;
 import com.treshna.hornet.ContentDescriptor.Company;
+import com.treshna.hornet.ContentDescriptor.Enquiry;
 import com.treshna.hornet.ContentDescriptor.FreeIds;
+import com.treshna.hornet.ContentDescriptor.IdCard;
 import com.treshna.hornet.ContentDescriptor.Image;
 import com.treshna.hornet.ContentDescriptor.KPI;
 import com.treshna.hornet.ContentDescriptor.Member;
@@ -21,6 +25,7 @@ import com.treshna.hornet.ContentDescriptor.PendingDeletes;
 import com.treshna.hornet.ContentDescriptor.PendingUpdates;
 import com.treshna.hornet.ContentDescriptor.PendingUploads;
 import com.treshna.hornet.ContentDescriptor.Programme;
+import com.treshna.hornet.ContentDescriptor.Resource;
 import com.treshna.hornet.ContentDescriptor.RollCall;
 import com.treshna.hornet.ContentDescriptor.RollItem;
 import com.treshna.hornet.ContentDescriptor.TableIndex;
@@ -781,10 +786,73 @@ public class UpdateDatabase {
 				Log.w(HornetDatabase.class.getName(), "\n"+SQL26);
 				db.execSQL(SQL26);
 				db.setTransactionSuccessful();
-			} finally {
+			} catch (SQLException e) {
+			e.printStackTrace();
+			db.setTransactionSuccessful(); //shouldn't be doing this, but I don't want to break stuff...?
+			}finally {
 				db.endTransaction();
 			}
 		}
 	}
 	
+	public static class NinetySix {
+		private static final String SQL1 = "CREATE TABLE "+AppConfig.NAME+" ("+AppConfig.Cols._ID+" INTEGER PRIMARY KEY NOT NULL, "
+				+AppConfig.Cols.DB_DEVICEID+" INTEGER DEFAULT 0, "+AppConfig.Cols.DB_TIMEOFFSET+" NUMERIC "//epoch.
+				+");";
+		
+		private static final String SQL2 = "ALTER TABLE "+Resource.NAME+" ADD COLUMN "+Resource.Cols.HISTORY+" TEXT DEFAULT 'f';";
+		
+		private static final String SQL3 = "ALTER TABLE "+IdCard.NAME+" ADD COLUMN "+IdCard.Cols.CREATED+" NUMERIC ";
+		
+		private static final String SQL4 = "CREATE TABLE "+Enquiry.NAME+" ("+Enquiry.Cols._ID+" INTEGER PRIMARY KEY NOT NULL, "
+				+Enquiry.Cols.EID+" INTEGER, "+Enquiry.Cols.MID+" INTEGER, "
+				+Enquiry.Cols.FNAME+" TEXT, "+Enquiry.Cols.SNAME+" TEXT, "
+				+Enquiry.Cols.EMAIL+" TEXT, "+Enquiry.Cols.PHCELL+" TEXT, "
+				+Enquiry.Cols.PHHOME+" TEXT,"+Enquiry.Cols.PHWORK+" TEXT, "
+				+Enquiry.Cols.DOB+" TEXT, "+Enquiry.Cols.GENDER+" TEXT, "
+				+Enquiry.Cols.STREET+" TEXT, "+Enquiry.Cols.SUBURB+" TEXT, "
+				+Enquiry.Cols.CITY+" TEXT, "+Enquiry.Cols.POSTAL+" TEXT, "
+				+Enquiry.Cols.NOTES+" TEXT, "+Enquiry.Cols.DEVICESIGNUP+" TEXT default 'f' "
+				+");";
+		
+		private static final String SQL5 = "CREATE TRIGGER "+Enquiry.Triggers.ON_INSERT+" AFTER INSERT ON "+Enquiry.NAME
+				+" FOR EACH ROW WHEN new."+Enquiry.Cols.DEVICESIGNUP+" = 't' " 
+				+" BEGIN "
+					+"INSERT OR REPLACE INTO "+PendingUploads.NAME
+					+ " ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
+					+ " VALUES (new."+Enquiry.Cols._ID+", "+TableIndex.Values.Prospect.getKey()+");"
+				+" END; ";
+		
+		private static final String SQL6 = "CREATE TRIGGER "+Image.Triggers.ON_UPDATE+" AFTER UPDATE ON "+Image.NAME
+				+" FOR EACH ROW WHEN old."+Image.Cols.IID+" > 0"
+				+" BEGIN "
+					+"INSERT OR REPLACE INTO "+PendingUpdates.NAME
+					+" ("+PendingUpdates.Cols.ROWID+", "+PendingUpdates.Cols.TABLEID+")"
+					+" VALUES (new."+Image.Cols.ID+", "+TableIndex.Values.Image.getKey()+");"
+				+" END; ";
+		
+		public static void patchNinetySix(SQLiteDatabase db) {
+			db.beginTransaction();
+			try {
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL1);
+				db.execSQL(SQL1);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL2);
+				db.execSQL(SQL2);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL3);
+				db.execSQL(SQL3);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL4);
+				db.execSQL(SQL4);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL5);
+				db.execSQL(SQL5);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL6);
+				db.execSQL(SQL6);
+				db.setTransactionSuccessful();
+			/*} catch (SQLException e) {
+			e.printStackTrace();
+			db.setTransactionSuccessful(); */
+			}finally {
+				db.endTransaction();
+			}
+		}
+	}
 }

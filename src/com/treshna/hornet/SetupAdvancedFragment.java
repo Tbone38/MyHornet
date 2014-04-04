@@ -48,7 +48,7 @@ public class SetupAdvancedFragment extends Fragment implements OnClickListener {
 		TextView button_cancel = (TextView) view.findViewById(R.id.button_advanced_cancel);
 		button_cancel.setOnClickListener(this);
 		
-		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
 		
 		EditText address = (EditText) view.findViewById(R.id.setup_database_address);
 		if (preferences.getString("address", "-1").compareTo("-1")!=0) {

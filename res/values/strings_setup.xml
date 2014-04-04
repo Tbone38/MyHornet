@@ -8,24 +8,27 @@
     <string name="setup_simple_hint"> <![CDATA[<b>Note:</b>]]> this will generate a gymmaster database for you, if you\'re an existing client,
         or already have a gymmaster database please use the advanced setup.</string>
     <string name="simple_email">Your Email:</string>
-    <string name="simple_company_name">Your Company Name:</string>
+    <string name="simple_company_name">Your Company Name</string>
     <string name="simple_page2_hint">Please fill in your details below to complete the setup</string>
-	<string name="simple_username">Preferred Username:</string>
-    <string name="simple_country">Country of Residence:</string>
+	<string name="simple_username">Preferred Username</string>
+    <string name="simple_country">Country of Residence</string>
+    <string name="simple_contactable">Contact me with details and offers regarding the GymMaster Software.</string>
+    <string name="simple_contact_name">Contact Name</string>
+    <string name="simple_contact_number">Contact Number</string>
     <string name="setup_advanced_hint">Please enter your GymMaster details below. </string>
-    <string name="advanced_address">Database Address/IP:</string>
-    <string name="advanced_port">Port:</string>
+    <string name="advanced_address">Database Address/IP</string>
+    <string name="advanced_port">Port</string>
     <string name="advanced_hint">Leave Blank for default.</string>
     <string name="advanced_username">Username</string>
     <string name="advanced_password">Password</string>
-    <string name="advanced_database_name">Database Name:</string>
+    <string name="advanced_database_name">Database Name</string>
     
     <string name="setup_new_password_hint">Please enter your current username and password.\n\nFollowed by your new password.</string>
-    <string name="setup_current_username">Your Username:</string>
-    <string name="setup_current_password">Current Password:</string>
-    <string name="setup_new_password">New Password:</string>
+    <string name="setup_current_username">Your Username</string>
+    <string name="setup_current_password">Current Password</string>
+    <string name="setup_new_password">New Password</string>
     <string name="setup_reset_password_hint">Please enter the email address you signed up with.</string>
-    <string name="setup_current_email">Your Email:</string>
+    <string name="setup_current_email">Your Email</string>
     
     <string name="buttonContinue">Continue</string>
     <string name="buttonSubmit">Submit</string>

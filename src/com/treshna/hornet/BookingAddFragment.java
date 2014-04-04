@@ -99,9 +99,10 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 			date.setBackgroundDrawable(getResources().getDrawable(R.drawable.button));
 		}
 		date.setClickable(true);
-		date.setText(Services.dateFormat(curdate, "yyyyMMdd", "dd MMM yyyy"));
-		//date.setTag(Services.dateFormat(curdate, "dd MMM yyyy", "yyyyMMdd"));
-		date.setTag(curdate);
+		//date.setText(Services.dateFormat(curdate, "yyyyMMdd", "dd MMM yyyy"));
+		date.setText(curdate);
+		date.setTag(Services.dateFormat(curdate, "dd MMM yyyy", "yyyyMMdd"));
+		//date.setTag(curdate);
 		
 		date.setOnClickListener(this);
 		
@@ -163,8 +164,10 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		TextView typelabel = new TextView(ctx);
 		RelativeLayout.LayoutParams rlparams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		rlparams.addRule(RelativeLayout.BELOW, R.id.bookingResourceRow);
-
+		rlparams.setMargins(3, 3, 3, 3);
+		
 		typelabel.setId(10);
+		typelabel.setPadding(5, 5, 5, 5);
 		typelabel.setLayoutParams(rlparams);
 		typelabel.setText(R.string.bookingTypeH);
 		typelabel.setTextSize(16);
@@ -308,8 +311,8 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 					difference = difference *2;
 					
 					TextView duration = (TextView) page.findViewById(R.id.bookingEndTime);
-					duration.setText(Services.dateFormat(new Date((startdate.getTime()+difference)).toString(), 
-							"EEE MMM dd HH:mm:ss zzz yyyy", "HH:mm:ss"));
+					SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss",Locale.US);
+					duration.setText(format.format(new Date(startdate.getTime()+difference)));
 				}
 
 				@Override
@@ -525,7 +528,9 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 			Log.e(TAG, "Incorrect time amount selected");
 			return -6;
 		}
-		arrival = Services.dateFormat(input.get(1), "dd MMM yyyy", "yyyyMMdd");
+		
+		arrival = String.valueOf(Services.StringToDate(input.get(1), "dd MMM yyyy").getTime());
+		
 		//arrival = input.get(1);
 		
 		//Check if the timeslots are available before attempting to insert bookings.
@@ -586,7 +591,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		
 		values.put(ContentDescriptor.Booking.Cols.DEVICESIGNUP, "t");
 		values.put(ContentDescriptor.Booking.Cols.BID, bookingid);
-		values.put(ContentDescriptor.Booking.Cols.ARRIVAL, Services.dateFormat(input.get(1), "dd MMM yyyy", "yyyyMMdd"));
+		values.put(ContentDescriptor.Booking.Cols.ARRIVAL, arrival);
 		System.out.print("\n\nCreating Booking at:"+System.currentTimeMillis());
 		values.put(ContentDescriptor.Booking.Cols.LASTUPDATE, System.currentTimeMillis()); //new Date().getTime();
 		
@@ -608,7 +613,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		//add the details to the bookingTime composite table.
 			values = new ContentValues();
 			values.put(ContentDescriptor.BookingTime.Cols.BID, bookingid);
-			values.put(ContentDescriptor.BookingTime.Cols.ARRIVAL, Services.dateFormat(input.get(1), "dd MMM yyyy", "yyyyMMdd"));
+			values.put(ContentDescriptor.BookingTime.Cols.ARRIVAL, arrival);
 			cur = contentResolver.query(ContentDescriptor.Resource.CONTENT_URI, null, ContentDescriptor.Resource.Cols.NAME+" = ?", 
 					new String[] {input.get(4)}, null);
 			if (cur.getCount()<=0) {
@@ -649,6 +654,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		
 		TextView date = (TextView) page.findViewById(R.id.bookingDate);
 		input.add(date.getText().toString()); 																// 1
+		Log.w(TAG, "VALUE OF INPUT(1):"+input.get(1));
 		
 		TextView starttime = (TextView) page.findViewById(R.id.bookingStartTime);
 		input.add(starttime.getText().toString()); 															// 2
@@ -690,7 +696,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		}
 		
 		TextView date = (TextView) page.findViewById(R.id.bookingDate);
-		if (date.getText().toString().compareTo(getString(R.string.addbookingDate)) ==0){
+		if (date.getText().toString().compareTo(getString(R.string.addbookingDate)) ==0|| date.getText().toString().isEmpty()){
 			System.out.print("\n\nDATE NOT SET \n");
 			result = false;
 			emptyFields.add(String.valueOf(R.id.bookingDateH));
