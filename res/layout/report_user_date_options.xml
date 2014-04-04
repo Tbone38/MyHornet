@@ -19,13 +19,13 @@
 		       android:padding="10dp"
 		       android:gravity="center_horizontal"       
 			/>
-
-		    </LinearLayout>
+     </LinearLayout>
 		    <TextView
 			       android:id="@+id/report_date_options_report_name"
 			       android:layout_width="match_parent"
 			       android:layout_height="wrap_content"
-			       android:textSize="@dimen/report_title_text_size"
+			       android:textSize="20sp"
+			       android:background="@color/report_column_background_blue"
 			       android:padding="10dp"
 			       android:layout_gravity="center_horizontal"
 			       android:gravity="center_horizontal"/>
@@ -35,27 +35,7 @@
 		    android:layout_gravity="center"
 		    android:orientation="vertical"
 		    >
-		   <!--   <Button
-		       android:id="@+id/btnReportLastTwoMonths"
-		       android:layout_width="wrap_content"
-		       android:layout_height="wrap_content"
-		       android:padding="20dp"
-		       android:textStyle="bold"
-		       android:text="@string/btn_report_last_two_months"/>
-		    <Button
-		       android:id="@+id/btnReportLastSixMonths"
-		       android:layout_width="wrap_content"
-		       android:layout_height="wrap_content"
-		       android:padding="20dp"
-		       android:textStyle="bold"
-		       android:text="@string/btn_report_last_six_months"/>
-		   <Button
-		       android:id="@+id/btnReportLastTwelveMonths"
-		       android:layout_width="wrap_content"
-		       android:layout_height="wrap_content"
-		       android:padding="20dp"
-		       android:textStyle="bold"
-		       android:text="@string/btn_report_last_twelve_months"/>-->
+
 				
 		       <TextView
 		           android:layout_width="wrap_content"

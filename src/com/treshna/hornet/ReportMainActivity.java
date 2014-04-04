@@ -202,11 +202,10 @@ public class ReportMainActivity extends ListActivity {
 									//Dynamically generate text views for each column name..
 									textView =  new TextView(ReportMainActivity.this);
 									if (col.getValue() != null &&  col.getValue().toString().matches("[0-9]+")){
-										Log.i("Numeric Column", col.getKey());
-										textView.setMinWidth(col.getKey().toString().length());
-										textView.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_END);
+										textView.setGravity(Gravity.RIGHT);
+										textView.setPadding(0, 0, 50, 0);									
 									}
-									layoutParams.setMargins(5, 0, 0, 0);
+									layoutParams.setMargins(10, 0, 0, 0);
 									textView.setLayoutParams(layoutParams);
 									textView.setText(col.getValue());						
 
@@ -221,7 +220,15 @@ public class ReportMainActivity extends ListActivity {
 			this.setListAdapter(listAdapter);
 	  }
 	
-
+	private boolean isAnyRowAllNums(String colName){
+		for (HashMap<String,String> dataRow: resultMapList){
+			if (dataRow.get(colName) != null)
+				if (dataRow.get(colName).matches("[0-9]+")){
+					return true;
+				}
+		}
+	  return false;
+	}
 	
 	private void buildColumnHeaders() {
 			LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams( LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT );
@@ -245,7 +252,7 @@ public class ReportMainActivity extends ListActivity {
 			
 		} else {
 			
-			reportColumnHeadingLayout.addView(buildColumnHeaderTextView("No Data Available", Gravity.CENTER, 22));
+			reportColumnHeadingLayout.addView(buildColumnHeaderTextView("No Data Available",  Gravity.CENTER, 22));
 			
 		}
 	}
@@ -256,10 +263,18 @@ public class ReportMainActivity extends ListActivity {
 		LinearLayout.LayoutParams layoutParams = null;
 		textView =  new TextView(ReportMainActivity.this);		
 		layoutParams = new LinearLayout.LayoutParams( 0, LayoutParams.WRAP_CONTENT, 1);
+		//Right aligning columns with all numeric data..
+		if (isAnyRowAllNums(contentString)){
+			textView.setGravity(Gravity.RIGHT);
+			textView.setPadding(0, 0, 50, 0);									
+		}
+		//Centres the no data message
+		if (layoutGravity == Gravity.CENTER){
+			textView.setGravity(layoutGravity);
+		}
 		textView.setTypeface(null, Typeface.BOLD);
 		textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
-		textView.setGravity(layoutGravity);
-		layoutParams.setMargins(5, 0, 5, 0);
+		layoutParams.setMargins(10, 0, 5, 0);
 		textView.setLayoutParams(layoutParams);
 		textView.setText(contentString);
 		return textView;
@@ -287,7 +302,7 @@ public class ReportMainActivity extends ListActivity {
 				}														
 			}																
 		}
-		 return colNullCount.get(colName) == resultMapList.size();
+		 return colNullCount.get(colName) == resultMapList.size()-1;
 	}
 	
 	private void getReportData (String finalQuery) {

@@ -51,9 +51,6 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 		Button columnOptionsButton =  (Button) findViewById(R.id.btnColumnOptions);
 		Button btnStartButton = (Button) findViewById(R.id.btnSelectStartDate);
 		Button btnEndButton = (Button) findViewById(R.id.btnSelectEndDate);
-		/*Button btnLastTwoMonths = (Button) findViewById(R.id.btnReportLastTwoMonths);
-		Button btnLastSixMonths = (Button) findViewById(R.id.btnReportLastSixMonths);
-		Button btnLastTwelveMonths = (Button) findViewById(R.id.btnReportLastTwelveMonths);*/
 		reportNameTxt.setText(intent.getStringExtra("report_name").trim());
 		reportId = intent.getIntExtra("report_id",0);
 		reportData.put("report_name", intent.getStringExtra("report_name"));
@@ -82,40 +79,7 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 
 		});
 
-		
 			
-		/*btnLastTwoMonths.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-
-				 selectedStartDate = resetDateByNumOfMonths ( -2, startDateText);
-			}
-			
-		});
-		
-		btnLastSixMonths.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				
-				selectedStartDate = resetDateByNumOfMonths (-6, startDateText);
-			}
-			
-		});
-		
-		
-		btnLastTwelveMonths.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-
-				 selectedStartDate = resetDateByNumOfMonths ( -12, startDateText);
-			}
-			
-		});*/
-		
-		
 		btnStartButton.setOnClickListener(new View.OnClickListener() {
 
 			@Override
