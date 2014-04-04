@@ -11,4 +11,6 @@
 	<string name="action_gallery">Gallery</string>
 	<string name="action_tag">Assign Tag</string>
 	<string name="action_kpi">KPIs</string>
+	<string name="report_types_test">Test Report Types</string>
+	
 </resources>

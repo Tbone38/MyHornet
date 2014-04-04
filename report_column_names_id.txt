@@ -1,0 +1,5 @@
+ SELECT report_field.*
+                                                                        , (SELECT fieldtype FROM report_source_field WHERE id = report_field.source_field_id) AS fieldtypeid
+                                                                        FROM report_field
+                                                                        WHERE user_report_id = <widget nullalternative="0">report-id</widget>
+                                                                        ORDER BY sort_order, column_name;

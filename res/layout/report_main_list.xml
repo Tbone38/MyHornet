@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+	    
+	    <TextView
+	        android:id="@+id/report_main_title"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:background="@color/report_heading_background_green"
+	        android:gravity="center_horizontal"
+	        android:textSize="@dimen/report_title_text_size" />
+			<LinearLayout
+				android:id="@+id/report_list_headings"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:background="@color/report_column_background_blue"
+				android:orientation="horizontal"
+				>
+				
+			</LinearLayout>
+			<ListView
+			    android:id="@android:id/list"
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content" >
+			</ListView>
+</LinearLayout>

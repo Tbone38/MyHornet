@@ -2,6 +2,16 @@
     xmlns:hornet="http://schemas.android.com/apk/res-auto" >
 	 
 	 <item
+        android:id="@+id/action_addMember"
+        android:orderInCategory="200"
+        android:title="@string/action_add"
+        hornet:showAsAction="ifRoom"/>
+	 <item 
+	    android:id="@+id/action_createclass"
+	    android:orderInCategory="300"
+	    android:title="@string/action_classCreate"
+	    />
+	 <item
         android:id="@+id/action_update"
         android:orderInCategory="400"
         android:title="@string/action_sync"/>
@@ -10,15 +20,12 @@
         android:orderInCategory="500"
         android:title="@string/action_halt"/>
      <item
-<<<<<<< HEAD
-=======
         android:id="@+id/action_kpi"
         android:orderInCategory="600"
         android:title="@string/action_kpi"
         android:showAsAction="never" />
          
      <item
->>>>>>> tony/master
         android:id="@+id/action_settings"
         android:orderInCategory="700"
         android:title="@string/action_settings"

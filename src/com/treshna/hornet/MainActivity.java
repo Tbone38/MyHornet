@@ -1,5 +1,6 @@
 package com.treshna.hornet;
 
+<<<<<<< HEAD
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
@@ -8,6 +9,16 @@ import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
+=======
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+
+import android.app.AlertDialog;
+import android.app.PendingIntent;
+import android.app.ProgressDialog;
+>>>>>>> tony/master
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -16,6 +27,11 @@ import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.net.wifi.WifiManager;
+<<<<<<< HEAD
+=======
+import android.os.AsyncTask;
+import android.os.Build;
+>>>>>>> tony/master
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -30,7 +46,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+<<<<<<< HEAD
 import android.widget.ListView;
+=======
+>>>>>>> tony/master
 
 import com.treshna.hornet.R.color;
 import com.treshna.hornet.navigation.NavDrawerItem;
@@ -483,6 +502,12 @@ public class MainActivity extends NFCActivity {
 	    	startActivity(i);
 	    	return true;
 	    }
+
+	    case (R.id.report_types_and_names):{
+	    	this.startReportTypesAndNamesActivity(this);
+	    	return true;
+	    }
+
 	    default:
 	    	return super.onOptionsItemSelected(item);
 	    }
@@ -492,11 +517,99 @@ public class MainActivity extends NFCActivity {
 		return context;
 	}
 	
+<<<<<<< HEAD
 	public ListView getDrawerList() {
 		return this.mDrawerList;
 	}
 	
 	public Fragment getCurrentFragment() {
 		return this.cFragment;
+=======
+	public static class TabListener<T extends Fragment> implements ActionBar.TabListener {
+	    private Fragment mFragment;
+	    private final ActionBarActivity mActivity;
+	    private final String mTag;
+	    private final Class<T> mClass;
+
+	    /** Constructor used each time a new tab is created.
+	      * @param activity  The host Activity, used to instantiate the fragment
+	      * @param tag  The identifier tag for the fragment
+	      * @param clz  The fragment's Class, used to instantiate the fragment
+	      */
+	    public TabListener(ActionBarActivity activity, String tag, Class<T> clz) {
+	        mActivity = activity;
+	        mTag = tag;
+	        mClass = clz;
+	        Log.i("TabListener", "Creating Fragment:"+mTag);
+	        mFragment = mActivity.getSupportFragmentManager().findFragmentByTag(mTag);
+            if (mFragment != null && !mFragment.isDetached()) {
+            	Log.d("TabListener", "Fragment already existsed and was visible.");
+                FragmentTransaction ft = mActivity.getSupportFragmentManager().beginTransaction();
+                //ft.remove(mFragment);
+                ft.detach(mFragment);
+                ft.commit();
+                mFragment = null;
+            }
+	        
+	    }
+
+	    /* The following are each of the ActionBar.TabListener callbacks */
+
+	    public void onTabSelected(Tab tab, FragmentTransaction ft) {
+	        // Check if the fragment is already initialized
+	    	 mFragment = mActivity.getSupportFragmentManager().findFragmentByTag(mTag);
+	         if (mFragment == null) {
+	            // If not, instantiate and add it to the activity
+	            mFragment = Fragment.instantiate(mActivity, mClass.getName());
+	            cFragment = mFragment;
+	            ft.replace(getContentViewCompat(), mFragment, mTag);
+	            //selectedTab = tab.getPosition();
+	        } else {
+	            // If it exists, simply attach it in order to show it
+	        	//ft.replace(getContentViewCompat(), mFragment, mTag);
+	        	ft.attach(mFragment);
+	        	cFragment = mFragment;
+	        	
+	        }
+	    }
+
+	    public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+	    	mFragment = mActivity.getSupportFragmentManager().findFragmentByTag(mTag);
+	    	if (mFragment != null) {
+	            // Detach the fragment, because another one is being attached	    		
+	    		ft.detach(mFragment);
+	        } else {
+	        	Log.i("TabListener", "Fragment not dettached, for tab:"+tab.getText());
+	        }
+	    }
+
+	    public void onTabReselected(Tab tab, FragmentTransaction ft) {
+	        // User selected the already selected tab. Usually do nothing.
+	    }
+	}
+	
+	private void startReportTypesActivity (Context view)
+	{
+		Intent intent = new Intent(view,Report_Types_ListActivity.class);
+		this.startActivity(intent);
+	}
+	private void startReportNamesActivity (Context view)
+	{
+		Intent intent = new Intent(view,ReportNamesActivity.class);
+		this.startActivity(intent);
+	}
+	private void startReportTypesAndNamesActivity (Context view)
+	{
+		Intent intent = new Intent(view,ReportListingActivity.class);
+		this.startActivity(intent);
+	}
+	private void startReportDateOptionsActivity (Context view)
+	{
+		Intent intent = new Intent(view,ReportDateOptionsActivity.class);
+		intent.putExtra("report_name", "Expiring Members");
+		this.startActivity(intent);
+>>>>>>> tony/master
 	}
 }
+
+	
