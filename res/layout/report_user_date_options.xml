@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:padding="5dp"
+	    android:orientation="vertical"
+	    android:baselineAligned="false" >
+	<LinearLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:background="@color/report_heading_background_green"
+	    android:orientation="vertical">
+			<TextView
+		       android:id="@+id/report_date_options_title"
+		       android:layout_width="match_parent"
+		       android:layout_height="wrap_content"
+		       android:text="@string/report_date_options_title"
+		       android:textSize="@dimen/report_title_text_size"
+		       android:padding="10dp"
+		       android:gravity="center_horizontal"       
+			/>
+
+		    </LinearLayout>
+		    <TextView
+			       android:id="@+id/report_date_options_report_name"
+			       android:layout_width="match_parent"
+			       android:layout_height="wrap_content"
+			       android:textSize="@dimen/report_title_text_size"
+			       android:padding="10dp"
+			       android:layout_gravity="center_horizontal"
+			       android:gravity="center_horizontal"/>
+		   <LinearLayout
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+		    android:orientation="vertical"
+		    >
+		   <!--   <Button
+		       android:id="@+id/btnReportLastTwoMonths"
+		       android:layout_width="wrap_content"
+		       android:layout_height="wrap_content"
+		       android:padding="20dp"
+		       android:textStyle="bold"
+		       android:text="@string/btn_report_last_two_months"/>
+		    <Button
+		       android:id="@+id/btnReportLastSixMonths"
+		       android:layout_width="wrap_content"
+		       android:layout_height="wrap_content"
+		       android:padding="20dp"
+		       android:textStyle="bold"
+		       android:text="@string/btn_report_last_six_months"/>
+		   <Button
+		       android:id="@+id/btnReportLastTwelveMonths"
+		       android:layout_width="wrap_content"
+		       android:layout_height="wrap_content"
+		       android:padding="20dp"
+		       android:textStyle="bold"
+		       android:text="@string/btn_report_last_twelve_months"/>-->
+				
+		       <TextView
+		           android:layout_width="wrap_content"
+		           android:layout_height="wrap_content"
+		           android:textSize="20sp" 
+		           android:textStyle="bold"
+		           android:gravity="center"
+		           android:text="@string/report_date_spinner_title"
+		           />
+		       
+		       <Spinner
+		           android:id="@+id/datePresetsSpinner"
+		           android:layout_width="wrap_content"
+		           android:layout_height="wrap_content"
+		           android:prompt="@string/report_date_spinner_title"
+		           android:gravity="center" />
+		   
+		</LinearLayout>
+		<RelativeLayout 
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:padding="10dp"
+				    android:layout_gravity="center"
+				    android:layout_margin="10dp"
+				    android:background="#EEF2A5"
+				    android:orientation="horizontal"
+				    android:baselineAligned="false" >
+				    
+			<TextView
+				    android:id="@+id/startDateTxt"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:layout_alignParentLeft="true"
+				    android:layout_alignParentTop="true"
+				    android:textSize="20sp" 
+				    android:textStyle="bold"/>
+
+			   <Button
+			       android:id="@+id/btnSelectStartDate"
+			       android:layout_width="wrap_content"
+			       android:layout_height="wrap_content"
+			       android:layout_below="@id/startDateTxt"
+			       android:layout_marginRight="40dp"
+			       android:padding="20dp"
+			       android:textStyle="bold"
+			       android:text="@string/start_date_btn" />
+		    
+			   <TextView
+			        android:id="@+id/endDateTxt"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			  		android:layout_toRightOf="@id/btnSelectStartDate"
+			        android:layout_alignParentTop="true"
+			        android:textSize="20sp"
+			        android:textStyle="bold" />
+			   
+			  <Button
+			       android:id="@+id/btnSelectEndDate"
+			       android:layout_width="wrap_content"
+			       android:layout_height="wrap_content"
+			       android:layout_below="@id/endDateTxt"
+			       android:padding="20dp"
+			       android:layout_toRightOf="@id/btnSelectStartDate"
+			       android:textStyle="bold"
+			       android:text="@string/end_date_btn" /> 
+			  
+   
+		</RelativeLayout>
+		
+		   <LinearLayout 
+				    android:layout_width="match_parent"
+				    android:layout_height="wrap_content"
+				    android:padding="5dp"
+				    android:layout_marginTop="10dp"
+				    android:layout_marginBottom="10dp"
+				    android:orientation="horizontal"
+				    android:baselineAligned="false" >
+		   	 <Button
+			       android:id="@+id/btnCreateReport"
+			       android:layout_width="wrap_content"
+			       android:layout_gravity="right"
+			       android:layout_weight="0.5"
+			       android:padding="20dp"
+			       android:layout_marginLeft="30dp"
+			       android:layout_marginRight="30dp"
+			       android:layout_height="wrap_content"
+			       android:background="@color/button_background_green"
+			       android:textStyle="bold"
+			       android:text="@string/report_create_btn_title" />
+		   	 	<Button
+			       android:id="@+id/btnColumnOptions"
+			       android:layout_width="wrap_content"
+			       android:layout_gravity="left"
+			       android:layout_weight="0.5"
+			       android:layout_marginLeft="30dp"
+			       android:padding="20dp"
+			       android:layout_marginRight="30dp"
+			       android:layout_height="wrap_content"
+			       android:background="@color/button_background_red"
+			       android:textStyle="bold"
+			       android:text="@string/report_btn_column_options" />
+		   	 	</LinearLayout>
+</LinearLayout>

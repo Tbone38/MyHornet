@@ -1,0 +1,18 @@
+		//Test data for report function query..
+		/*
+		SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd");
+		Date testStartDate = null;
+		try {
+			testStartDate = dateFormat.parse("2014-01-01");
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Date testEndDate = null;
+		try {
+			testEndDate = dateFormat.parse("2014-03-01");
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String testFunctionName = "get_pt_performance";*/
