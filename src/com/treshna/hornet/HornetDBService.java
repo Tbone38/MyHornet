@@ -441,7 +441,9 @@ public class HornetDBService extends Service {
         	try {
         	while (rs.next()) {
         		/*Get Last ID, set this ID = ID+1*/
-        		
+        		Double doubledate = rs.getDouble("datetime")*1000d;
+	    		String date = String.valueOf(doubledate); //we have to convert from secs since epoch to ms since epoch.
+	    		
     			cur = contentResolver.query(ContentDescriptor.Visitor.CONTENT_URI, null, null, null,
     					ContentDescriptor.Visitor.Cols.ID+" DESC Limit 1");
     			//this should auto increment anyway?
@@ -457,7 +459,7 @@ public class HornetDBService extends Service {
         		
     			cur = contentResolver.query(ContentDescriptor.Visitor.CONTENT_URI, null, 
 						ContentDescriptor.Visitor.Cols.DATETIME+" = ? AND "+ContentDescriptor.Visitor.Cols.DENY+" = ?", 
-						new String[] {rs.getString("datetime"), rs.getString("denyreason")},null);
+						new String[] {date, rs.getString("denyreason")},null);
 				if (cur.getCount() != 0) {
 					// do nothing, an item exists with this datetime already.
 					Log.i(TAG,"results reached last query");
@@ -484,9 +486,7 @@ public class HornetDBService extends Service {
         		val.put(ContentDescriptor.Visitor.Cols.ID, id);
         		val.put(ContentDescriptor.Visitor.Cols.MID, memberid);
         		val.put(ContentDescriptor.Visitor.Cols.MSID, membershipid);
-        		Double doubledate = rs.getDouble("datetime")*1000d;
-	    		String date = String.valueOf(doubledate);
-        		val.put(ContentDescriptor.Visitor.Cols.DATETIME, date); //we have to convert from secs since epoch to ms since epoch.
+        		val.put(ContentDescriptor.Visitor.Cols.DATETIME, date); 
         		val.put(ContentDescriptor.Visitor.Cols.DATE, rs.getString("sdate"));
         		val.put(ContentDescriptor.Visitor.Cols.TIME, rs.getString("stime12"));
         		val.put(ContentDescriptor.Visitor.Cols.DENY, rs.getString("denyreason"));

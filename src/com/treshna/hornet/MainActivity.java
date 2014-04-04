@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
+import com.treshna.hornet.R;
 import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -16,7 +17,6 @@ import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.net.wifi.WifiManager;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -28,14 +28,12 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.Tab;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 
-import com.treshna.hornet.R.color;
 import com.treshna.hornet.navigation.NavDrawerItem;
 import com.treshna.hornet.navigation.NavDrawerListAdapter;
 import com.treshna.hornet.navigation.SlideMenuClickListener;
@@ -86,7 +84,7 @@ public class MainActivity extends NFCActivity {
 		this.setContentView(R.layout.drawer_layout);
 		
 		this.setTitle("GymMaster");
-		this.setTitleColor(color.gym);
+		this.setTitleColor(getResources().getColor(R.color.gym));
 		context = getApplicationContext();
 		setupNavDrawer();
 		        
@@ -187,18 +185,19 @@ public class MainActivity extends NFCActivity {
         // Reports
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[7], navMenuIcons.getResourceId(7, -1), true));
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[8], navMenuIcons.getResourceId(8, -1)));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[9], navMenuIcons.getResourceId(9, -1)));
         // Other
         int use_roll = Integer.parseInt(Services.getAppSettings(getApplicationContext(), "use_roll"));
 		if (use_roll > 0) {
-			navDrawerItems.add(new NavDrawerItem(navMenuTitles[9], navMenuIcons.getResourceId(9, -1), true));
-			navDrawerItems.add(new NavDrawerItem(navMenuTitles[10], navMenuIcons.getResourceId(10, -1)));
+			navDrawerItems.add(new NavDrawerItem(navMenuTitles[10], navMenuIcons.getResourceId(10, -1), true));
+			navDrawerItems.add(new NavDrawerItem(navMenuTitles[11], navMenuIcons.getResourceId(11, -1)));
 		}else {
 			navDrawerItems.add(new NavDrawerItem(null, -1));
 			navDrawerItems.add(new NavDrawerItem(null, -1));
 		}
 		//Setup
-		navDrawerItems.add(new NavDrawerItem(navMenuTitles[11], navMenuIcons.getResourceId(11, -1), true));
-		navDrawerItems.add(new NavDrawerItem(navMenuTitles[12], navMenuIcons.getResourceId(12, -1)));
+		navDrawerItems.add(new NavDrawerItem(navMenuTitles[12], navMenuIcons.getResourceId(12, -1), true));
+		navDrawerItems.add(new NavDrawerItem(navMenuTitles[13], navMenuIcons.getResourceId(13, -1)));
  
         // Recycle the typed array
         navMenuIcons.recycle();

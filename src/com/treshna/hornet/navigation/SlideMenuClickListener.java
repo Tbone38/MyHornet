@@ -13,6 +13,7 @@ import com.treshna.hornet.ClassCreateFragment;
 import com.treshna.hornet.KeyPerformanceIndexFragment;
 import com.treshna.hornet.MainActivity;
 import com.treshna.hornet.MemberAddFragment;
+import com.treshna.hornet.ReportListingActivity;
 import com.treshna.hornet.RollListFragment;
 
 public class SlideMenuClickListener implements OnItemClickListener {
@@ -65,11 +66,16 @@ public class SlideMenuClickListener implements OnItemClickListener {
         	tag = "kpi";
         	fragment = new KeyPerformanceIndexFragment();
         	break;
-        case 10:
+        case 9:
+        	tag = "reports";
+        	//TODO: convert the reports to a fragment...
+        	fragment = new ReportListingActivity(); 
+        	break;
+        case 11:
         	tag = "rolllist";
         	fragment = new RollListFragment();
         	break;
-        case 12:
+        case 13:
         	fragment = new ClassCreateFragment();
         	tag = "classCreate";
         	break;
