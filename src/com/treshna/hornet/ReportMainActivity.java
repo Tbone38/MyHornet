@@ -203,6 +203,10 @@ public class ReportMainActivity extends ListActivity {
 									textView =  new TextView(ReportMainActivity.this);
 									if (col.getValue() != null &&  col.getValue().toString().matches("[0-9]+")){
 										Log.i("Numeric Column", col.getKey());
+										layoutParams = new LinearLayout.LayoutParams(0,LayoutParams.WRAP_CONTENT,3);
+										
+										textView.setGravity(Gravity.RIGHT);
+										textView.setPadding(0, 0, 50, 0);
 										textView.setMinWidth(col.getKey().toString().length());
 										textView.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_END);
 									}
