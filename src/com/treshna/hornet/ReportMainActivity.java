@@ -29,6 +29,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -79,9 +81,13 @@ public class ReportMainActivity extends ListActivity {
 		StringBuilder queryBuilder = new StringBuilder();
 		queryBuilder.append("SELECT ");
 		boolean isSelected = true;
-	
+		boolean containsMemberColumn = false;
+		boolean isIdAdded = false;
 		for (HashMap<String,String> columnsMap : columnsMapList ){
-			
+			isIdAdded = false;
+			if (columnsMap.get("field").toString().contains("member")){
+				containsMemberColumn = true;
+			}
 			if (callingActivity.compareTo("column_options")== 0) {
 				isSelected = false;
 				for (Map.Entry<String,String> field: columnsMap.entrySet()){
@@ -93,23 +99,28 @@ public class ReportMainActivity extends ListActivity {
 						
 					}
 				}
-			}	
-		for (Map.Entry<String,String> field: columnsMap.entrySet()){
-				//System.out.println(field.getKey() + " : " + field.getValue());
-				if (isSelected){
-					if(field.getKey().toString().compareTo("field")== 0){
-							queryBuilder.append(field.getValue());
-							queryBuilder.append(" AS ");
-							
-					}
-					if(field.getKey().toString().compareTo("column_name")== 0){
-								queryBuilder.append("\"" + field.getValue() + "\"");
-								queryBuilder.append(", ");
-					}				
-
-			   }
+			}
 			
-           }							
+			for (Map.Entry<String,String> field: columnsMap.entrySet()){
+					//System.out.println(field.getKey() + " : " + field.getValue());
+					if (isSelected){
+						if (containsMemberColumn && !isIdAdded){
+							queryBuilder.append("member.id, ");
+							isIdAdded = true;
+						}
+						if(field.getKey().toString().compareTo("field")== 0){
+								queryBuilder.append(field.getValue());
+								queryBuilder.append(" AS ");
+								
+						}
+						if(field.getKey().toString().compareTo("column_name")== 0){
+									queryBuilder.append("\"" + field.getValue() + "\"");
+									queryBuilder.append(", ");
+						}				
+	
+				   }
+				
+	           }							
 		 }
 
 			//remove the last comma...
@@ -173,10 +184,23 @@ public class ReportMainActivity extends ListActivity {
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
 	private void buildListAdapter() {
 		
+				ListView listView = getListView();
+				listView.setOnItemClickListener(new OnItemClickListener () {
+		
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view,
+							int position, long id) {
+						
+						
+					}
+					
+				});
+		
 		    buildColumnHeaders();
 
 			ListAdapter listAdapter = new ArrayAdapter<HashMap<String,String>>(ReportMainActivity.this,R.layout.report_main_row,
 					this.resultMapList){
+
 
 						@Override
 						public View getView(int position, View convertView,
@@ -198,7 +222,6 @@ public class ReportMainActivity extends ListActivity {
 						for (Entry<String,String> col : dataRow.entrySet()){
 							if (!isColumnAllNull(col.getKey().toString())) {
 								  	layoutParams = new LinearLayout.LayoutParams( 0,LayoutParams.WRAP_CONTENT,3);
-								  	layoutParams.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
 									//Dynamically generate text views for each column name..
 									textView =  new TextView(ReportMainActivity.this);
 									if (col.getValue() != null &&  col.getValue().toString().matches("[0-9]+")){
@@ -218,6 +241,7 @@ public class ReportMainActivity extends ListActivity {
 													
 			        };
 			this.setListAdapter(listAdapter);
+
 	  }
 	
 	private boolean isAnyRowAllNums(String colName){
