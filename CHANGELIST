@@ -67,6 +67,7 @@ KEY:
                 Fixed layout issue on booking Overview.
 		Fixed the broken fragment behaviour, DO NOT BREAK IT AGAIN.
 		Added Roll items to NavDrawer.
+		Fixed Bookings..
  
             TODO:
                 Handle permissions/Roles for different staff, to limit what certain staff can see.
@@ -86,6 +87,8 @@ KEY:
                 Fix the PollingHandler running on the UI thread. (blocking etc).
                 Improve Performance of the Booking Overview page.
                 TODO: membership complete "Add Tag" doesn't work. Find out why...
+		Merge EmptyActivity with the MainActivity
+			(so that we only have MainActivity, all fragments go through it..);
 
     
     v119:

@@ -190,6 +190,8 @@ public class SetupSimpleEndFragment extends Fragment implements OnClickListener,
 		protected void onPostExecute(Boolean success) {
 			progress.dismiss();
 			if (success) {
+				//force an update/download.
+				
 				Intent i = new Intent(getActivity(), MainActivity.class);
 				startActivity(i);
 				getActivity().finish();

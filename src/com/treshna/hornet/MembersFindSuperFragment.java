@@ -32,6 +32,10 @@ public class MembersFindSuperFragment extends Fragment implements OnMemberSelect
 	public void onResume(){
 		super.onResume();
 		
+		refresh();
+	}
+	
+	public void refresh(){
 		FragmentManager fragmentManager = this.getChildFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         MembersFindFragment f = new MembersFindFragment();

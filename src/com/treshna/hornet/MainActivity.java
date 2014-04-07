@@ -2,11 +2,12 @@ package com.treshna.hornet;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
-import com.treshna.hornet.R;
 import android.annotation.SuppressLint;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -17,7 +18,7 @@ import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.net.wifi.WifiManager;
-import android.os.Build;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -33,6 +34,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.treshna.hornet.navigation.NavDrawerItem;
 import com.treshna.hornet.navigation.NavDrawerListAdapter;
@@ -56,11 +58,13 @@ public class MainActivity extends NFCActivity {
     // nav drawer title
     private CharSequence mDrawerTitle;
     private String[] navMenuTitles;
-    private TypedArray navMenuIcons;
- 
+    private TypedArray navMenuIcons; 
     private ArrayList<NavDrawerItem> navDrawerItems;
     private NavDrawerListAdapter navadapter;
+    
     private static final String TAG = "MainActivity";
+    private boolean is_syncing = false;
+    private boolean sync_result = false;
     
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override //when the server sync finishes, it sends out a broadcast.
@@ -118,6 +122,8 @@ public class MainActivity extends NFCActivity {
 	}
 	
 	protected void receivedBroadcast(Intent intent) {
+		this.sync_result = intent.getBooleanExtra(Services.Statics.IS_RESTART, false);
+		this.is_syncing = false;
 		setupNavDrawer();
 	}
 
@@ -225,7 +231,8 @@ public class MainActivity extends NFCActivity {
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);        
-        mDrawerList.setOnItemClickListener(new SlideMenuClickListener(this.getSupportFragmentManager(), mDrawerLayout, mDrawerList, this));
+        mDrawerList.setOnItemClickListener(new SlideMenuClickListener(this.getSupportFragmentManager(), mDrawerLayout, mDrawerList, this, 
+        		SlideMenuClickListener.ActivityType.MainActivity));
 
 	}
 	
@@ -244,6 +251,8 @@ public class MainActivity extends NFCActivity {
 		if (prefs.getBoolean("firstrun", true)) {
     		firstSetup();
             prefs.edit().putBoolean("firstrun", false).commit();
+        } else {
+        	doSync();
         }
 		Services.setContext(this);
 		if (Services.getProgress() != null) {
@@ -256,6 +265,24 @@ public class MainActivity extends NFCActivity {
 	    this.registerReceiver(this.mBroadcastReceiver,iff);
 	}
 	
+	private void doSync() {
+		boolean dosync = false;
+		/*ContentResolver contentResolver = this.getContentResolver();
+		Cursor cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, null, null, null);
+		dosync = (cur.getCount() <= 0);
+		cur.close();*/
+		String first_sync = Services.getAppSettings(getApplicationContext(), "first_sync");
+		dosync = (first_sync.compareTo("-1")==0);
+		
+		if (dosync) {
+        	Intent updateInt = new Intent(this, HornetDBService.class);
+    		updateInt.putExtra(Services.Statics.KEY, Services.Statics.FIRSTRUN);
+    	 	this.startService(updateInt);
+        	FullSync task = new FullSync();
+        	task.execute(null, null);
+		}
+	}
+	
 	@Override
 	public void onPause() {
 		super.onPause();
@@ -263,10 +290,6 @@ public class MainActivity extends NFCActivity {
     		Services.getProgress().dismiss();
     		//Services.setProgress(null);
     	}
-		/*FragmentManager fm = this.getSupportFragmentManager();
-		fm.popBackStackImmediate(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-		fm.beginTransaction().commitAllowingStateLoss();*/
-		
 		this.unregisterReceiver(this.mBroadcastReceiver);
 	}
 	
@@ -296,7 +319,6 @@ public class MainActivity extends NFCActivity {
 				BookingsSlideFragment slideFragment = (BookingsSlideFragment) f.getCurrentFragment();
 				if (slideFragment.hasOverView()) {
 					f.onBackPressed();
-					
 				} else {
 					super.onBackPressed();
 				}
@@ -310,7 +332,6 @@ public class MainActivity extends NFCActivity {
 		} else {
 			super.onBackPressed();
 		}
-		//super.onBackPressed();
 	}
 	
 	@Override
@@ -343,16 +364,6 @@ public class MainActivity extends NFCActivity {
         // Pass any configuration change to the drawer toggls
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
-	
-	/*public void setSelectedTab(int tab) {
-		selectedTab = tab;
-		ActionBar ab = getSupportActionBar();
-		if (ab.getNavigationMode() != ActionBar.NAVIGATION_MODE_TABS) {
-			//fm.popBackStack(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-			addTabs();
-		}
-		ab.setSelectedNavigationItem(selectedTab);
-	}*/
 	
 	public void changeFragment(Fragment f, String tag) {
 		FragmentManager fm = this.getSupportFragmentManager();
@@ -500,12 +511,6 @@ public class MainActivity extends NFCActivity {
 	    }
 	}
 	
-	public static int getContentViewCompat() {
-	    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH ?
-	               //android.R.id.content : R.id.action_bar_activity_content;
-	    			android.R.id.content : android.R.id.content;
-	}
-	
 	public static Context getContext(){
 		return context;
 	}
@@ -539,4 +544,47 @@ public class MainActivity extends NFCActivity {
 		intent.putExtra("report_name", "Expiring Members");
 		this.startActivity(intent);
 	}
+	
+	private class FullSync extends AsyncTask<String, Integer, Boolean> {
+		private ProgressDialog progress;
+		private long starttime;
+		private long curtime;
+		private static final long TENMINUTES = 600000;
+		private String message = null;
+		
+		protected void onPreExecute() {
+			 progress = ProgressDialog.show(MainActivity.this, "Syncing..", 
+					 "Syncing your GymMaster Database.", true);
+			 MainActivity.this.is_syncing = true;
+			 starttime = new Date().getTime();
+		}
+		
+		@Override
+		protected Boolean doInBackground(String... params) {
+			while (MainActivity.this.is_syncing) {
+				curtime = new Date().getTime();
+				if ((curtime - starttime) > TENMINUTES) {
+					message = "Syncing took longer than 10 minutes, progress has been hidden.";
+					return false;
+				}
+			}
+			
+			return MainActivity.this.sync_result;
+		}
+		
+
+		@SuppressLint("NewApi")
+		protected void onPostExecute(Boolean success) {
+			progress.dismiss();
+			if (success) {
+				// refresh the page.
+				//MainActivity.this.recreate();
+				((MembersFindSuperFragment) cFragment).refresh();
+				
+			} else {
+				message = (message == null)? "Error Encountered" : message;
+				Toast.makeText(MainActivity.this, "Syncing took longer than 10 minutes, progress has been hidden.",Toast.LENGTH_LONG).show();
+			}
+	    }
+	 }
 }

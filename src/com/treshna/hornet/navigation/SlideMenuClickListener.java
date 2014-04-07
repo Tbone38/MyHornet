@@ -1,5 +1,6 @@
 package com.treshna.hornet.navigation;
 
+import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
@@ -10,6 +11,7 @@ import android.widget.ListView;
 
 import com.treshna.hornet.BookingAddFragment;
 import com.treshna.hornet.ClassCreateFragment;
+import com.treshna.hornet.EmptyActivity;
 import com.treshna.hornet.KeyPerformanceIndexFragment;
 import com.treshna.hornet.MainActivity;
 import com.treshna.hornet.MemberAddFragment;
@@ -21,13 +23,29 @@ public class SlideMenuClickListener implements OnItemClickListener {
 	private FragmentManager fm;
 	private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
-    private MainActivity activity;
+    private Activity activity;
+    private ActivityType activitytype;
 	
-	public SlideMenuClickListener(FragmentManager fragmentManager, DrawerLayout drawerLayout, ListView drawerList, MainActivity ma) {
+    public static enum ActivityType {
+    	MainActivity(1),EmptyActivity(2);
+    	
+    	private final int key;
+		
+		ActivityType(int thekey) {
+			this.key = thekey;
+		}
+		
+		public int getKey() {
+				return this.key;
+			}
+    }
+    
+	public SlideMenuClickListener(FragmentManager fragmentManager, DrawerLayout drawerLayout, ListView drawerList, Activity ma, ActivityType at) {
 		this.fm = fragmentManager;
 		this.mDrawerLayout = drawerLayout;
 		this.mDrawerList = drawerList;
 		this.activity = ma;
+		this.activitytype = at;
 	}
 	
 	@Override
@@ -43,11 +61,15 @@ public class SlideMenuClickListener implements OnItemClickListener {
         switch (position) {
         case 1:
         	//Member Find
-        	activity.genTabs();
+        	if (activitytype == ActivityType.MainActivity) {
+        		((MainActivity)activity).genTabs();
+        	}
         	tag = "findmember";
             break;
         case 2: //last visitors;
-        	activity.genTabs();
+        	if (activitytype == ActivityType.MainActivity) {
+        		((MainActivity)activity).genTabs();
+        	}
         	tag = "lastvisitors";
             break;
         case 3: //bookings
@@ -68,7 +90,6 @@ public class SlideMenuClickListener implements OnItemClickListener {
         	break;
         case 9:
         	tag = "reports";
-        	//TODO: convert the reports to a fragment...
         	fragment = new ReportListingActivity(); 
         	break;
         case 11:
@@ -82,7 +103,11 @@ public class SlideMenuClickListener implements OnItemClickListener {
         default:
             break;
         }
-        activity.changeFragment(fragment, tag);
+        if (activitytype == ActivityType.MainActivity) {
+        	((MainActivity)activity).changeFragment(fragment, tag);
+        } else if (activitytype == ActivityType.EmptyActivity) {
+        	((EmptyActivity)activity).changeFragment(fragment, tag);
+        }
         
         mDrawerList.setItemChecked(position, true);
         mDrawerList.setSelection(position);

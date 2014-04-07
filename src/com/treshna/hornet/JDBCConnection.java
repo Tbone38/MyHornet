@@ -581,7 +581,11 @@ public class JDBCConnection {
 
     	pStatement.setTimestamp(16, new java.sql.Timestamp(Long.valueOf(booking.get(ContentDescriptor.Booking.Cols.LASTUPDATE))));
     	
-    	pStatement.setInt(17, Integer.parseInt(booking.get(ContentDescriptor.Booking.Cols.PARENTID)));
+    	if (Integer.parseInt(booking.get(ContentDescriptor.Booking.Cols.PARENTID))<= 0 ) {
+    		pStatement.setNull(17, java.sql.Types.INTEGER);
+    	} else {
+    		pStatement.setInt(17, Integer.parseInt(booking.get(ContentDescriptor.Booking.Cols.PARENTID)));
+    	}
     	
     	if (booking.get(ContentDescriptor.Booking.Cols.CLASSID) == null) {
     		pStatement.setNull(18, java.sql.Types.INTEGER);

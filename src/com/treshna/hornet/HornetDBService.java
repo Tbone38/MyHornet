@@ -40,6 +40,7 @@ import com.treshna.hornet.ContentDescriptor.Membership;
 
 public class HornetDBService extends Service {
 	
+	public static final String RESULT = "sync_result";
 	private static String TAG = "HORNETSERVICE";
 	private static ContentResolver contentResolver = null;
     private static  Cursor cur = null; 
@@ -66,18 +67,12 @@ public class HornetDBService extends Service {
 	private void setup(Context context) {
 		//SharedPreferences preferences;
 		if (context == null) {
-			//preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 			context = getApplicationContext();
-			//ctx = getApplicationContext();
 		} else {
-			//preferences = PreferenceManager.getDefaultSharedPreferences(context);
-			//ctx = context;
 		}
-		/*connection = new JDBCConnection(preferences.getString("address", "-1"),preferences.getString("port", "-1"),
-				 preferences.getString("database", "-1"), preferences.getString("username", "-1"),
-				 preferences.getString("password", "-1"));*/
+		
 		connection = new JDBCConnection(context);
-	   contentResolver = context.getContentResolver(); //this.getContentResolver();
+		contentResolver = context.getContentResolver();
 	   
 	}
 	@Override  
@@ -135,7 +130,12 @@ public class HornetDBService extends Service {
     	}
     	
     	if (!getDeviceDetails()) {
-	   			return;
+    		
+    		Intent bcIntent = new Intent();
+    		bcIntent.putExtra(RESULT, false);
+			bcIntent.setAction("com.treshna.hornet.serviceBroadcast");
+			sendBroadcast(bcIntent);
+	   		return;
 	   	}
     	
     	switch (currentCall){
@@ -211,6 +211,10 @@ public class HornetDBService extends Service {
 		 	   	logger.writeLog();
 		   	  	uploadLog();
 	 	   		Services.setPreference(getApplicationContext(), "last_freq_sync", String.valueOf(this_sync));
+		 	   	Intent bcIntent = new Intent();
+				bcIntent.putExtra(RESULT, true);
+				bcIntent.setAction("com.treshna.hornet.serviceBroadcast");
+				sendBroadcast(bcIntent);
 	 	   		return;
 			}
 			
@@ -238,6 +242,7 @@ public class HornetDBService extends Service {
 			 * App can now refresh the list. */
 			
 			Intent bcIntent = new Intent();
+			bcIntent.putExtra(RESULT, true);
 			bcIntent.setAction("com.treshna.hornet.serviceBroadcast");
 			sendBroadcast(bcIntent);
 			Log.v(TAG, "Sending Intent, Stopping Service");
@@ -316,6 +321,10 @@ public class HornetDBService extends Service {
 		   	   uploadLog();
 		   	   //Services.stopProgress(handler, currentCall);
 		   	   thread.is_networking = false;
+			   Intent bcIntent = new Intent();
+			   bcIntent.putExtra(RESULT, true);
+			   bcIntent.setAction("com.treshna.hornet.serviceBroadcast");
+			   sendBroadcast(bcIntent);
 		   	   return;
 		   }
 		   
@@ -367,6 +376,7 @@ public class HornetDBService extends Service {
 		   
 		  Intent bcIntent = new Intent();
 		  bcIntent.putExtra(Services.Statics.IS_RESTART, true);
+		  bcIntent.putExtra(RESULT, true);
 		  bcIntent.setAction("com.treshna.hornet.serviceBroadcast");
 		  sendBroadcast(bcIntent);
 		  Log.v(TAG, "Sending Intent, Stopping Service");
@@ -1215,8 +1225,8 @@ public class HornetDBService extends Service {
 			values.put(ContentDescriptor.Booking.Cols.RESULT, cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.RESULT)));
 			values.put(ContentDescriptor.Booking.Cols.MID, cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.MID)));
 			values.put(ContentDescriptor.Booking.Cols.STIME, cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.STIME)));
-			values.put(ContentDescriptor.Booking.Cols.ARRIVAL, Services.dateFormat(cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.ARRIVAL)),
-					"yyyyMMdd","yyyy-MM-dd"));
+			values.put(ContentDescriptor.Booking.Cols.ARRIVAL, Services.DateToString(new Date(
+					cur.getLong(cur.getColumnIndex(ContentDescriptor.Booking.Cols.ARRIVAL)))));
 			values.put(ContentDescriptor.Booking.Cols.RID, cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.RID)));
 			Log.v(TAG, "OFFSET:"+cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.OFFSET)));
 			values.put(ContentDescriptor.Booking.Cols.OFFSET, cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.OFFSET)));
