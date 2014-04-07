@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -375,12 +376,19 @@ public class RollListFragment extends ListFragment implements OnClickListener, L
 		cur.moveToPosition(position);
 		rollid = cur.getInt(cur.getColumnIndex(ContentDescriptor.RollCall.Cols.ROLLID));
 		//change fragments to one which shows the Roll-Items.
-		Bundle bdl = new Bundle(2);
+		
+		Fragment f = new RollItemListFragment();
+		Bundle bdl = new Bundle(1);
+		bdl.putInt(Services.Statics.ROLLID, rollid);
+		f.setArguments(bdl);
+		
+		((MainActivity)getActivity()).changeFragment(f, "RollItem");
+		/*Bundle bdl = new Bundle(2);
 		bdl.putInt(Services.Statics.KEY, Services.Statics.FragmentType.RollItemList.getKey());
 		bdl.putInt(Services.Statics.ROLLID, rollid);
 		Intent i = new Intent(getActivity(), EmptyActivity.class);
 		i.putExtras(bdl);
-		this.startActivity(i);
+		this.startActivity(i);*/
 	}
 
 }

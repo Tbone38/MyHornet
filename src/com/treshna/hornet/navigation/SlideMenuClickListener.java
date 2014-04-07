@@ -11,7 +11,6 @@ import android.widget.ListView;
 
 import com.treshna.hornet.BookingAddFragment;
 import com.treshna.hornet.ClassCreateFragment;
-import com.treshna.hornet.EmptyActivity;
 import com.treshna.hornet.KeyPerformanceIndexFragment;
 import com.treshna.hornet.MainActivity;
 import com.treshna.hornet.MemberAddFragment;
@@ -106,7 +105,7 @@ public class SlideMenuClickListener implements OnItemClickListener {
         if (activitytype == ActivityType.MainActivity) {
         	((MainActivity)activity).changeFragment(fragment, tag);
         } else if (activitytype == ActivityType.EmptyActivity) {
-        	((EmptyActivity)activity).changeFragment(fragment, tag);
+        	//((EmptyActivity)activity).changeFragment(fragment, tag);
         }
         
         mDrawerList.setItemChecked(position, true);

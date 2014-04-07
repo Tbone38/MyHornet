@@ -17,6 +17,8 @@ import android.net.Uri;
 import android.nfc.NfcAdapter;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,8 +32,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.treshna.hornet.BookingPage.TagFoundListener;
 import com.treshna.hornet.ContentDescriptor.Member;
+import com.treshna.hornet.MainActivity.TagFoundListener;
 
 
 public class MemberActions implements OnClickListener, TagFoundListener {
@@ -164,10 +166,12 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 			if (v.getTag() instanceof String) {
 				memberid = (String) v.getTag();
 			}
-			Intent i = new Intent(ctx, EmptyActivity.class);
-			i.putExtra(Services.Statics.KEY, Services.Statics.FragmentType.MembershipAdd.getKey());
-			i.putExtra(Services.Statics.MID, memberid);
-			ctx.startActivity(i);
+			
+			Fragment f = new MembershipAdd();
+			Bundle bdl = new Bundle(1);
+			bdl.putString(Services.Statics.MID, memberid);
+			f.setArguments(bdl);
+			((MainActivity)caller).changeFragment(f, "MembershipAdd");
 			break;
 		}
 		case (R.id.button_email):{
@@ -228,10 +232,11 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 			break;
 		}
 		case (R.id.button_gallery):{
-			Intent i = new Intent(ctx, EmptyActivity.class);
-			i.putExtra(Services.Statics.KEY, Services.Statics.FragmentType.MemberGallery.getKey());
-			i.putExtra(Services.Statics.MID, mid);
-			ctx.startActivity(i);
+			Fragment f = new MemberGalleryFragment();
+			Bundle bdl = new Bundle(1);
+			bdl.putString(Services.Statics.MID, mid);
+			f.setArguments(bdl);
+			((MainActivity)caller).changeFragment(f, "MemberGallery");
 			break;
 		}
 		case (R.id.button_tag):{
@@ -275,9 +280,11 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 	 * assign the cardno to the membership.
 	 */
 	@Override
-	public void onNewTag(String serial) {
+	public boolean onNewTag(String serial) {
 		if (alertDialog == null || !alertDialog.isShowing()) {
-			return;
+			/*((NFCActivity)caller).onNewTag(serial);
+			return true;*/
+			return false;
 		}
 		ContentResolver contentResolver = ctx.getContentResolver();
 		Cursor cur;
@@ -337,7 +344,7 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 		}
 		//TOAST!
 		Toast.makeText(ctx, message, Toast.LENGTH_LONG).show();
-		
+		return true;
 	}
 	
 	private void updateMember(){

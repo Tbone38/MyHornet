@@ -259,7 +259,7 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
        	ListView list = (ListView) view.findViewById(android.R.id.list);
 		
        	mLoader.initLoader(0, null, this);
-		mAdapter = new BookingsListAdapter(getActivity(), R.layout.booking_resource_row, null, from, to, selectedDate, list);
+		mAdapter = new BookingsListAdapter(getActivity(), R.layout.booking_resource_row, null, from, to, selectedDate, list, getActivity());
 		setListAdapter(mAdapter);
 		
 		

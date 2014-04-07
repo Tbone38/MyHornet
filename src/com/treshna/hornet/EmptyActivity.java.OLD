@@ -95,7 +95,6 @@ public class EmptyActivity extends NFCActivity{
 			bdl = new Bundle(1);
 			bdl.putInt(Services.Statics.MID, memberid);
 		}
-		setupNavDrawer();
 		setFragment(view, bdl);
 	}
 	
@@ -189,118 +188,6 @@ public class EmptyActivity extends NFCActivity{
 		ft.commit();
 	}
 	
-	private void setupNavDrawer() {
-		mDrawerTitle = "GymMaster";
-		int membercount = -1, visitcount = -1, bookingcount = -1;
-		long daystart, dayend;
-		ContentResolver contentResolver = this.getContentResolver();
-		Cursor cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, null, null, null);
-		
-		membercount = cur.getCount();
-		cur.close();
-		
-		Calendar cal = Calendar.getInstance(Locale.US);
-		cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE), 0, 0, 1);
-		daystart = cal.getTimeInMillis();
-		cal.add(Calendar.HOUR, 23);
-		cal.add(Calendar.MINUTE, 59);
-		dayend = cal.getTimeInMillis();
-		cur = contentResolver.query(ContentDescriptor.Visitor.CONTENT_URI, null, ContentDescriptor.Visitor.Cols.DATETIME+" >= ?",
-				new String[] {String.valueOf(daystart)}, null);
-		
-		visitcount = cur.getCount();
-		cur.close();
-		
-		cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.ARRIVAL+" >= ? AND "
-				+ContentDescriptor.Booking.Cols.ARRIVAL+" <= ?",new String[] {String.valueOf(daystart), String.valueOf(dayend)}, null);
-		
-		bookingcount = cur.getCount();
-		cur.close();
-		
-		// load slide menu items
-        navMenuTitles = getResources().getStringArray(R.array.nav_drawer_main);
- 
-        // nav drawer icons from resources
-        navMenuIcons = getResources()
-                .obtainTypedArray(R.array.nav_drawer_icons);
- 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.slider_menu);
- 
-        navDrawerItems = new ArrayList<NavDrawerItem>();
-        // Main
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], navMenuIcons.getResourceId(0, -1), true));
-        if (membercount <= 0) {
-        	navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons.getResourceId(1, -1)));         // Find Member
-        } else {
-        	navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons.getResourceId(1, -1), true, String.valueOf(membercount)));         // Find Member
-        }
-        if (visitcount <= 0) {
-        	navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], navMenuIcons.getResourceId(2, -1)));         // Last Visitors
-        } else {
-        	navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], navMenuIcons.getResourceId(2, -1), true, String.valueOf(visitcount)));         // Last Visitors
-        }
-        if (bookingcount <= 0) {
-        	navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], navMenuIcons.getResourceId(3, -1)));			 // Bookings
-        } else {
-        	navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], navMenuIcons.getResourceId(3, -1), true, String.valueOf(bookingcount)));			 // Bookings
-        }
-        // Create
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[4], navMenuIcons.getResourceId(4, -1), true));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[5], navMenuIcons.getResourceId(5, -1)));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[6], navMenuIcons.getResourceId(6, -1)));
-        // Reports
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[7], navMenuIcons.getResourceId(7, -1), true));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[8], navMenuIcons.getResourceId(8, -1)));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[9], navMenuIcons.getResourceId(9, -1)));
-        // Other
-        int use_roll = Integer.parseInt(Services.getAppSettings(getApplicationContext(), "use_roll"));
-		if (use_roll > 0) {
-			navDrawerItems.add(new NavDrawerItem(navMenuTitles[10], navMenuIcons.getResourceId(10, -1), true));
-			navDrawerItems.add(new NavDrawerItem(navMenuTitles[11], navMenuIcons.getResourceId(11, -1)));
-		}else {
-			navDrawerItems.add(new NavDrawerItem(null, -1));
-			navDrawerItems.add(new NavDrawerItem(null, -1));
-		}
-		//Setup
-		navDrawerItems.add(new NavDrawerItem(navMenuTitles[12], navMenuIcons.getResourceId(12, -1), true));
-		navDrawerItems.add(new NavDrawerItem(navMenuTitles[13], navMenuIcons.getResourceId(13, -1)));
- 
-        // Recycle the typed array
-        navMenuIcons.recycle();
- 
-        // setting the nav drawer list adapter
-        navadapter = new NavDrawerListAdapter(getApplicationContext(),
-                navDrawerItems);
-        mDrawerList.setAdapter(navadapter);
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-                R.drawable.ic_action_add_to_queue, //nav menu toggle icon
-                R.string.app_name, 
-                R.string.app_name){
-            @SuppressLint("NewApi")
-			public void onDrawerClosed(View view) {
-                getActionBar().setTitle(mDrawerTitle);
-                // calling onPrepareOptionsMenu() to show action bar icons
-                invalidateOptionsMenu();
-            }
- 
-            @SuppressLint("NewApi")
-			public void onDrawerOpened(View drawerView) {
-                getActionBar().setTitle(mDrawerTitle);
-                // calling onPrepareOptionsMenu() to hide action bar icons
-                invalidateOptionsMenu();
-            }
-        };
-        mDrawerLayout.setDrawerListener(mDrawerToggle);        
-        mDrawerList.setOnItemClickListener(new SlideMenuClickListener(this.getSupportFragmentManager(), mDrawerLayout, mDrawerList, this, 
-        		SlideMenuClickListener.ActivityType.EmptyActivity));
-	}
-
-	
-	public void setTitle(String title) {
-		super.setTitle(title);
-	}
-	
 	@Override
 	public void onNewIntent(Intent i) {
 		String id;
@@ -337,7 +224,6 @@ public class EmptyActivity extends NFCActivity{
 			NfcAdapter mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 			if (mNfcAdapter != null) mNfcAdapter.enableForegroundDispatch(this, pendingIntent, intentFiltersArray, mTechLists);
 		}
-		setupNavDrawer();
 	}
 	
 	@Override

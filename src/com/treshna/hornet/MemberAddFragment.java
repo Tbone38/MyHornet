@@ -105,15 +105,26 @@ public class MemberAddFragment extends Fragment implements OnClickListener, Date
 				ArrayList<String> tag = new ArrayList<String>();
 				tag.add(memberid);
 				tag.add(null);
-				Intent i = new Intent(getActivity(), EmptyActivity.class);
+				
+				Fragment f = new MemberDetailsFragment();
+				Bundle bdl = new Bundle(1);
+				bdl.putStringArrayList(VisitorsViewAdapter.EXTRA_ID, tag);
+				f.setArguments(bdl);
+				((MainActivity)getActivity()).changeFragment(f, "memberDetails");
+				/*Intent i = new Intent(getActivity(), EmptyActivity.class);
 				i.putExtra(Services.Statics.KEY, Services.Statics.FragmentType.MemberDetails.getKey());
 				i.putStringArrayListExtra(VisitorsViewAdapter.EXTRA_ID, tag);
-				this.startActivity(i);
+				this.startActivity(i);*/
 				
-				i = new Intent(getActivity(), EmptyActivity.class);
+				f = new MembershipAdd();
+				bdl = new Bundle(1);
+				bdl.putString(Services.Statics.MID, memberid);
+				f.setArguments(bdl);
+				((MainActivity)getActivity()).changeFragment(f, "MembershipAdd");
+				/*i = new Intent(getActivity(), EmptyActivity.class);
 				i.putExtra(Services.Statics.MID, memberid);
 				i.putExtra(Services.Statics.KEY, Services.Statics.FragmentType.MembershipAdd.getKey());
-				this.startActivity(i);
+				this.startActivity(i);*/
 				
 				
 			}else {

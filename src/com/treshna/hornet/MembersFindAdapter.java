@@ -133,7 +133,7 @@ public class MembersFindAdapter extends SimpleCursorAdapter implements OnClickLi
 		ImageView imageView = (ImageView) rowLayout.findViewById(R.id.rowimage);
 		imageView.setVisibility(View.VISIBLE);
 		if (imgFile.exists() == true){
-			Services.loadBitmap(imgFile,imageView,80,80);
+			new BitmapLoader(imgFile,imageView,80,80);
 		}
 		else {
 			imageView.setVisibility(View.INVISIBLE);

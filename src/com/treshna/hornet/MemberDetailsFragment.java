@@ -1,7 +1,6 @@
 package com.treshna.hornet;
 
 import java.io.File;
-import java.util.Date;
 
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
@@ -23,7 +22,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.treshna.hornet.BookingPage.TagFoundListener;
+import com.treshna.hornet.MainActivity.TagFoundListener;
+
 
 	//TODO: more null handling
 public class MemberDetailsFragment extends Fragment implements OnClickListener, TagFoundListener {
@@ -85,7 +85,7 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 		imgFile = new File(imgDir);
 		if (imgFile.exists() == true){
 			
-			Services.loadBitmap(imgFile,img, 500, 450);
+			new BitmapLoader(imgFile,img, 500, 450);
 		    img.setClickable(true);
 		    img.setOnClickListener(this);
 		    img.setTag(1);
@@ -302,7 +302,7 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 	}
 
 	@Override
-	public void onNewTag(String serial) {
-		tagFoundListener.onNewTag(serial);
+	public boolean onNewTag(String serial) {
+		return tagFoundListener.onNewTag(serial);
 	}	
 }

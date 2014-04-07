@@ -256,7 +256,7 @@ public class HornetDBService extends Service {
 		   int result;
 		   result = swipe();
 		   
-		   if (result > 0) {};//TODO:
+		   if (result >= 0) {/*We didn't swipe anybody in.*/};//TODO:
 		   Services.showToast(getApplicationContext(), statusMessage, handler);
  		   new Thread (new Runnable() { 
  				public void run() { 
@@ -1823,9 +1823,13 @@ public class HornetDBService extends Service {
     		Log.v("NFCActivity", "id:"+id);
     		Log.v("NFCActivity", "door:"+door);
     		if (!openConnection()) {
-    			contentResolver.delete(ContentDescriptor.Swipe.CONTENT_URI, null, null);
-    			statusMessage = "Connection to database failed, Member not swiped in.";
-        		return -1; //connection failed;
+    			contentResolver.delete(ContentDescriptor.Swipe.CONTENT_URI, ContentDescriptor.Swipe.Cols.DOOR+" = ? AND "
+    					+ContentDescriptor.Swipe.Cols.ID+" = ?", new String[] {String.valueOf(door), id});
+    			
+    			statusMessage = "Connection to database failed, Member not swiped in ";
+    			Log.e(TAG, statusMessage+" id:"+id);
+        		//return -1; //connection failed;
+    			continue;
         	}
     		try {
     			ResultSet rs;
@@ -1834,7 +1838,8 @@ public class HornetDBService extends Service {
 	    		rs = connection.tagInsert(door, id);
 	    		rs.close();
 	    		connection.closePreparedStatement();
-	    		
+	    		connection.swipeProcessLog();
+	    		connection.closePreparedStatement();
 	    		rs = connection.getTagUpdate(door);
 	    		tempmess = null;
 	    		if (rs.next()) {

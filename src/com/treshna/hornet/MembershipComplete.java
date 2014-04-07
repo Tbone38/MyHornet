@@ -3,8 +3,6 @@ package com.treshna.hornet;
 import java.util.ArrayList;
 import java.util.Date;
 
-import com.treshna.hornet.BookingPage.TagFoundListener;
-
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -24,6 +22,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.treshna.hornet.MainActivity.TagFoundListener;
 
 public class MembershipComplete extends Fragment implements OnClickListener, TagFoundListener {
 	Context ctx;
@@ -48,7 +48,7 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 		 page = inflater.inflate(R.layout.membership_complete, container, false);
 		 page = setupView();
 		 
-		 ((EmptyActivity) this.getActivity()).setTitle("Confirm Membership");
+		 ((MainActivity) this.getActivity()).setTitle("Confirm Membership");
 		 
 		 return page;
 	}
@@ -193,12 +193,12 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 	 * assign the cardno to the membership.
 	 */
 	@Override
-	public void onNewTag(String serial) { //TODO WHY IS THIS NOT WORKING?
+	public boolean onNewTag(String serial) { //TODO WHY IS THIS NOT WORKING?
 		ContentResolver contentResolver = getActivity().getContentResolver();
 		Cursor cur;
 		String message = "";
 		
-		if (alertDialog == null || !alertDialog.isShowing()) return;
+		if (alertDialog == null || !alertDialog.isShowing()) return false;
 		
 		cur = contentResolver.query(ContentDescriptor.IdCard.CONTENT_URI, null, ContentDescriptor.IdCard.Cols.SERIAL+" = ?",
 				new String[] {serial}, null);
@@ -256,6 +256,7 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 		cur.close();
 		//TOAST!
 		Toast.makeText(ctx, message, Toast.LENGTH_LONG).show();
+		return true;
 	}
 	
 	private int insertMembership(ArrayList<String> input) {

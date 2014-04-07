@@ -21,8 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.treshna.hornet.BookingPage.TagFoundListener;
-
+import com.treshna.hornet.MainActivity.TagFoundListener;
 
 public class MemberFinanceFragment extends Fragment implements TagFoundListener, OnClickListener {
 	Cursor cur;
@@ -176,8 +175,8 @@ public class MemberFinanceFragment extends Fragment implements TagFoundListener,
 	}
 
 	@Override
-	public void onNewTag(String serial) {
-		mActions.onNewTag(serial);
+	public boolean onNewTag(String serial) {
+		return mActions.onNewTag(serial);
 	}
 
 	@Override

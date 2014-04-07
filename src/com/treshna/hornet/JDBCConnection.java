@@ -175,6 +175,12 @@ public class JDBCConnection {
 	    	return result;
     }
     
+    public void swipeProcessLog() throws SQLException {
+    	pStatement = con.prepareStatement("SELECT swipe_processlog(NULL::INTEGER);");
+    	
+    	pStatement.execute();
+    }
+    
     public ResultSet getTagUpdate(int door) throws SQLException, NullPointerException{
 			ResultSet result = null;
 			pStatement = con.prepareStatement("select * from doormsg where doorid = ? ORDER BY id DESC;");

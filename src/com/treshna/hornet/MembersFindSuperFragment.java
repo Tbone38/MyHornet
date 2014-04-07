@@ -66,10 +66,15 @@ public class MembersFindSuperFragment extends Fragment implements OnMemberSelect
 			ArrayList<String> tag = new ArrayList<String>();
 			tag.add(id);
 			tag.add(null);
-			Intent intent = new Intent(getActivity(), EmptyActivity.class);
-			intent.putExtra(Services.Statics.KEY, Services.Statics.FragmentType.MemberDetails.getKey());
-			intent.putStringArrayListExtra(VisitorsViewAdapter.EXTRA_ID, tag);
-			getActivity().startActivity(intent);
+			
+			Fragment f = new MemberDetailsFragment();
+			//Bundle bdl = new Bundle(1);
+			//bdl.putStringArrayList(VisitorsViewAdapter.EXTRA_ID, tag);
+			Bundle bdl = new Bundle(1);
+	        bdl.putString(Services.Statics.MID, id);
+			f.setArguments(bdl);
+			((MainActivity)getActivity()).changeFragment(f, "memberDetails");
+			
 		} else { //double panel
 			//redraw the list view
 			ListView theList = (ListView) view.findViewById(android.R.id.list);

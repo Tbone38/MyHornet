@@ -21,8 +21,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Gravity;
@@ -42,7 +40,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-public class BookingAddFragment extends Fragment implements OnClickListener {
+import com.treshna.hornet.MembersFindFragment.OnMemberSelectListener;
+
+public class BookingAddFragment extends Fragment implements OnClickListener, OnMemberSelectListener {
 	
 	private Cursor cur;
 	private ContentResolver contentResolver;
@@ -85,6 +85,11 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 	public void setName(String fname, String sname) {
 		bookingFName = fname;
 		bookingSName = sname;
+		TextView firstname = (TextView) page.findViewById(R.id.bookingFName);
+		firstname.setText(bookingFName);
+		
+		TextView surname = (TextView) page.findViewById(R.id.bookingSName);
+		surname.setText(bookingSName);
 	}
 	
 	public void setMembership(String msid) {
@@ -473,15 +478,17 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 		}
 		case (R.id.textwrapper):{
 			//show find member, but set onclick to link back here. destroy find member after passed back here.
-			FragmentManager frm = getActivity().getSupportFragmentManager();
-			FragmentTransaction ft = frm.beginTransaction();
+			/*FragmentManager frm = getActivity().getSupportFragmentManager();
+			FragmentTransaction ft = frm.beginTransaction();*/
 			MembersFindFragment f = new MembersFindFragment(); // add a bundle argument, so the code knows what to do.
 			Bundle b = new Bundle(1);
 			b.putBoolean(Services.Statics.IS_BOOKING, true);
 			f.setArguments(b);
-			ft.replace(R.id.empty_layout, f);
+			/*ft.replace(R.id.empty_layout, f);
 			ft.addToBackStack(null);
-			ft.commit();
+			ft.commit();*/
+			((MainActivity)getActivity()).changeFragment(f, "memberFind");
+			f.setMemberSelectListener(this);
 			//this.
 			break;
 		}
@@ -877,4 +884,9 @@ public class BookingAddFragment extends Fragment implements OnClickListener {
 
 		 return result;
 	 }
+
+	@Override
+	public void onMemberSelect(String id) {
+		((BookingDetailsSuperFragment)this.getParentFragment()).onMemberSelect(id);
+	}
 }

@@ -32,7 +32,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.treshna.hornet.BookingPage.TagFoundListener;
+import com.treshna.hornet.MainActivity.TagFoundListener;
 
 
 public class ClassDetailsFragment extends ListFragment implements TagFoundListener, LoaderManager.LoaderCallbacks<Cursor>,
@@ -165,7 +165,7 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 
 
 	@Override
-	public void onNewTag(String serial) {
+	public boolean onNewTag(String serial) {
 		/* we need to look up the serial in the database,
 		 * find the member associated with it (if there is one),
 		 * and then either: Add said member to the list
@@ -192,7 +192,7 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 			Log.e(TAG, "Online:"+online);
 			//can't add members, we're already full (or online booking's are set to false for this class).
 			Toast.makeText(getActivity(), "The class has already reached it's student limit!", Toast.LENGTH_LONG).show();
-			return;
+			return true;
 		}
 		
 		Log.v(TAG, "TAG DISCOVERY, SERIAL: "+serial);
@@ -214,6 +214,7 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 		Intent updateInt = new Intent(getActivity(), HornetDBService.class);
 		updateInt.putExtra(Services.Statics.KEY, Services.Statics.CLASSSWIPE);
 	 	getActivity().startService(updateInt);
+	 	return true;
 	}
 
 

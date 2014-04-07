@@ -13,12 +13,17 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.IntentFilter.MalformedMimeTypeException;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.net.wifi.WifiManager;
+import android.nfc.NfcAdapter;
+import android.nfc.Tag;
+import android.nfc.tech.NfcA;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -50,6 +55,7 @@ public class MainActivity extends NFCActivity {
 	private static Context context;
 	private static int selectedTab;
 	private Fragment cFragment;
+	private TagFoundListener tagFoundListener;
 	
 	private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
@@ -151,7 +157,8 @@ public class MainActivity extends NFCActivity {
 		cur.close();
 		
 		cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.ARRIVAL+" >= ? AND "
-				+ContentDescriptor.Booking.Cols.ARRIVAL+" <= ?",new String[] {String.valueOf(daystart), String.valueOf(dayend)}, null);
+				+ContentDescriptor.Booking.Cols.ARRIVAL+" <= ? AND "+ContentDescriptor.Booking.Cols.CLASSID+" = 0 ",
+				new String[] {String.valueOf(daystart), String.valueOf(dayend)}, null);
 		
 		bookingcount = cur.getCount();
 		cur.close();
@@ -336,7 +343,7 @@ public class MainActivity extends NFCActivity {
 	
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
-		//super.onSaveInstanceState(savedInstanceState);
+		super.onSaveInstanceState(savedInstanceState);
 		
 		savedInstanceState.putInt("selectedTab", selectedTab);
 	}
@@ -364,6 +371,12 @@ public class MainActivity extends NFCActivity {
         // Pass any configuration change to the drawer toggls
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
+    
+    private void setupFragment(Fragment f, String tag) {
+    	if (tag.compareTo("memberDetails")==0) {
+    		tagFoundListener = (TagFoundListener) f;
+    	}
+    }
 	
 	public void changeFragment(Fragment f, String tag) {
 		FragmentManager fm = this.getSupportFragmentManager();
@@ -372,6 +385,7 @@ public class MainActivity extends NFCActivity {
 		
 		if (f != null) {
 			cFragment = f;
+			setupFragment(f, tag);
 			FragmentTransaction ft = fm.beginTransaction();
 			ft.replace(R.id.content_view, f, tag);
 			ft.addToBackStack(null);
@@ -459,11 +473,6 @@ public class MainActivity extends NFCActivity {
 	    case android.R.id.home:
 			NavUtils.navigateUpFromSameTask(this);
 			return true;
-	    case (R.id.action_createclass):{
-	    	Intent i = new Intent(this, ClassCreate.class);
-	    	startActivity(i);
-	    	return true;
-	    }
 	    case (R.id.action_settings):
 	    	Intent settingsIntent = new Intent(this, SettingsActivity.class);
 	    	startActivity(settingsIntent);
@@ -483,24 +492,6 @@ public class MainActivity extends NFCActivity {
 	    	Services.setPreference(this, "sync_frequency", "-1");
 	    	return true;
 	    }
-	    case (R.id.action_addMember):{
-	    	Intent intent = new Intent(this, MemberAdd.class);
-	    	startActivity(intent);
-	    	return true;
-	    }
-	    case (R.id.action_rollcall):{
-	    	Intent i = new Intent(this, EmptyActivity.class);
-	    	i.putExtra(Services.Statics.KEY, Services.Statics.FragmentType.RollList.getKey());
-	    	startActivity(i);
-	    	return true;
-	    }
-	    case (R.id.action_kpi):{
-	    	Intent i = new Intent(this, EmptyActivity.class);
-	    	i.putExtra(Services.Statics.KEY, Services.Statics.FragmentType.KPIs.getKey());
-	    	startActivity(i);
-	    	return true;
-	    }
-
 	    case (R.id.report_types_and_names):{
 	    	this.startReportTypesAndNamesActivity(this);
 	    	return true;
@@ -521,6 +512,21 @@ public class MainActivity extends NFCActivity {
 	
 	public Fragment getCurrentFragment() {
 		return this.cFragment;
+	}
+	
+	@Override
+	public void onNewIntent(Intent i) {
+		boolean tag_used = false;
+		if (tagFoundListener != null) {
+			Tag card = i.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+			String id = this.getID(card);
+			tag_used = tagFoundListener.onNewTag(id);
+			if (!tag_used) {
+				super.onNewIntent(i);
+			}
+		} else {
+			super.onNewIntent(i);
+		}
 	}
 
 	private void startReportTypesActivity (Context view)
@@ -578,13 +584,20 @@ public class MainActivity extends NFCActivity {
 			progress.dismiss();
 			if (success) {
 				// refresh the page.
-				//MainActivity.this.recreate();
-				((MembersFindSuperFragment) cFragment).refresh();
-				
+				//find a way to force refresh the activity.
+				Intent intent = getIntent();
+				intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+			    finish();
+			    startActivity(intent);
 			} else {
 				message = (message == null)? "Error Encountered" : message;
 				Toast.makeText(MainActivity.this, "Syncing took longer than 10 minutes, progress has been hidden.",Toast.LENGTH_LONG).show();
 			}
 	    }
 	 }
+	
+	 public interface TagFoundListener {
+	    public boolean onNewTag(String serial);
+
+	}
 }

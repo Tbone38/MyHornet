@@ -44,7 +44,7 @@ public class GalleryViewAdapter extends SimpleCursorAdapter implements OnClickLi
 		File imgFile = new File(imgDir);
 				
 		if (imgFile.exists() == true) {
-			Services.loadBitmap(imgFile,image,REQ_WIDTH,REQ_HEIGHT);		   
+			new BitmapLoader(imgFile,image,REQ_WIDTH,REQ_HEIGHT);		   
 		    image.setTag(tag);
 		    image.setOnClickListener(this);
 		}

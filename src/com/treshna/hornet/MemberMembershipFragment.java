@@ -28,8 +28,8 @@ import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.treshna.hornet.BookingPage.TagFoundListener;
 import com.treshna.hornet.DatePickerFragment.DatePickerSelectListener;
+import com.treshna.hornet.MainActivity.TagFoundListener;
 
 
 public class MemberMembershipFragment extends Fragment implements TagFoundListener, OnClickListener, DatePickerSelectListener {
@@ -194,8 +194,8 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 	}
 
 	@Override
-	public void onNewTag(String serial) {
-		mActions.onNewTag(serial);
+	public boolean onNewTag(String serial) {
+		return mActions.onNewTag(serial);
 	}
 	
 	private void cancelMembership(ArrayList<String> inputs, int membershipid) {

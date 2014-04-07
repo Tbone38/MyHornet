@@ -157,11 +157,6 @@ public class CameraWrapper extends Activity {
 	    	startActivity(i);
 	    	return true;
 	    }
-	    case (R.id.action_createclass):{
-	    	Intent i = new Intent(this, ClassCreate.class);
-	    	startActivity(i);
-	    	return true;
-	    }
 	    case (R.id.action_settings):
 	    	Intent settingsIntent = new Intent(this, SettingsActivity.class);
 	    	startActivity(settingsIntent);
@@ -181,20 +176,6 @@ public class CameraWrapper extends Activity {
 	    	Services.setPreference(this, "sync_frequency", "-1");
 	    	return true;
 	    }
-	    /*case (R.id.action_bookings):{
-	    	Intent bookings = new Intent(this, HornetDBService.class);
-			bookings.putExtra(Services.Statics.KEY, Services.Statics.BOOKING);
-		 	this.startService(bookings);
-	    	
-		 	Intent intent = new Intent(this, BookingsSlidePager.class);
-	       	startActivity(intent);
-	       	return true;
-	    }*/
-	    case (R.id.action_addMember):{
-	    	Intent intent = new Intent(this, MemberAdd.class);
-	    	startActivity(intent);
-	    	return true;
-	    }	    
 	    default:
 	    	return super.onOptionsItemSelected(item);
 	    }

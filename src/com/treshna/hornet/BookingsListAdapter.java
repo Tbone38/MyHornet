@@ -2,10 +2,12 @@ package com.treshna.hornet;
 
 import java.util.ArrayList;
 
+import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Typeface;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
@@ -22,17 +24,20 @@ public class BookingsListAdapter extends SimpleCursorAdapter implements OnClickL
 	Cursor cursor;
 	String mDate;
 	private ListView mList;
+	private Activity activity;
 	//private static final String TAG = "BookingsListAdapter";
 	
 	@SuppressWarnings("deprecation")
 	public BookingsListAdapter(Context context, int layout, Cursor c,
-			String[] from, int[] to, String date, ListView list) {
+			String[] from, int[] to, String date, ListView list, Activity act) {
 		super(context, layout, c, from, to);
 		this.context = context;
 		this.FROM = from;
 		this.cursor = c;
 		this.mDate = date;
 		this.mList = list;
+		this.activity = act;
+		
 	}
 	
 	public void updateDate(String date) {
@@ -223,10 +228,16 @@ public class BookingsListAdapter extends SimpleCursorAdapter implements OnClickL
 			} else {
 				break;
 			}
-			Intent intent = new Intent(context, BookingPage.class);
 			tagInfo.add(mDate);
+			Fragment f = new BookingDetailsSuperFragment();
+			Bundle bdl = new Bundle(1);
+			bdl.putStringArrayList(Services.Statics.KEY, tagInfo);
+			f.setArguments(bdl);
+			((MainActivity)activity).changeFragment(f, "BookingPage");
+			/*Intent intent = new Intent(context, BookingPage.class);
+			
 			intent.putStringArrayListExtra(Services.Statics.KEY, tagInfo);
-			context.startActivity(intent);
+			context.startActivity(intent);*/
 			break; 
 			}
 		}	

@@ -320,10 +320,14 @@ public class MembershipAdd extends Fragment implements OnClickListener, DatePick
 			} else {
 				ArrayList<String> results = getInput();
 				
+				Fragment f = new MembershipComplete();
 				Bundle bdl = new Bundle(1);
-				bdl.putStringArrayList(Services.Statics.KEY, results);//(Services.Statics.KEY, );
-				EmptyActivity parent = (EmptyActivity) getActivity();
-				parent.setFragment(Services.Statics.FragmentType.MembershipComplete.getKey(), bdl);
+				bdl.putStringArrayList(Services.Statics.KEY, results);
+				f.setArguments(bdl);
+				((MainActivity)getActivity()).changeFragment(f, "MembershipComplete");
+				
+				/*EmptyActivity parent = (EmptyActivity) getActivity();
+				parent.setFragment(Services.Statics.FragmentType.MembershipComplete.getKey(), bdl);*/
 			}
 			break;
 		}

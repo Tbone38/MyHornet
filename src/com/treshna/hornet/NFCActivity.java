@@ -85,41 +85,45 @@ public class NFCActivity extends ActionBarActivity {
     @Override 
     public void onNewIntent(Intent intent){
     	if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1){
-    		int rowid; 
     		Tag tag;
     		String id;
-    		ContentResolver contentResolver;
-    		Date today;
-    		SimpleDateFormat format;
-    		ContentValues values;
     		
 	    	//System.out.print("intent Started");
 	           	// get the tag object for the discovered tag
 	    	tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 	    	
 	    	id = getID(tag);
-	    	contentResolver = getContentResolver();
-	    	today = new Date();
-	    	format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS", Locale.US);       
-	       
-	    	values = new ContentValues();
-	    	values.put(ContentDescriptor.Swipe.Cols.ID, id);
-	    	int door = Integer.parseInt(Services.getAppSettings(this, "door"));
-	    	door =(door < 0)? 1: door; 
-	    	values.put(ContentDescriptor.Swipe.Cols.DOOR, door);
-	    	values.put(ContentDescriptor.Swipe.Cols.DATETIME, format.format(today));
-	    	rowid = Integer.parseInt(contentResolver.insert(ContentDescriptor.Swipe.CONTENT_URI, values).getLastPathSegment());
-
-	    	values = new ContentValues();
-	    	values.put(ContentDescriptor.PendingUploads.Cols.TABLEID, ContentDescriptor.TableIndex.Values.Swipe.getKey());
-	    	values.put(ContentDescriptor.PendingUploads.Cols.ROWID, rowid);
-	    	contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, values);
-	    	//start sync here as well
-
-			Intent updateInt = new Intent(this, HornetDBService.class);
-			updateInt.putExtra(Services.Statics.KEY, Services.Statics.SWIPE);
-			this.startService(updateInt);
-	   		
+	    	onNewTag(id);
     	}
+    }
+    
+    public void onNewTag(String serial) {
+    	int rowid;
+		ContentResolver contentResolver;
+		Date today;
+		SimpleDateFormat format;
+		ContentValues values;
+		
+    	contentResolver = getContentResolver();
+    	today = new Date();
+    	format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS", Locale.US);       
+       
+    	values = new ContentValues();
+    	values.put(ContentDescriptor.Swipe.Cols.ID, serial);
+    	int door = Integer.parseInt(Services.getAppSettings(this, "door"));
+    	door =(door < 0)? 1: door; 
+    	values.put(ContentDescriptor.Swipe.Cols.DOOR, door);
+    	values.put(ContentDescriptor.Swipe.Cols.DATETIME, format.format(today));
+    	rowid = Integer.parseInt(contentResolver.insert(ContentDescriptor.Swipe.CONTENT_URI, values).getLastPathSegment());
+
+    	values = new ContentValues();
+    	values.put(ContentDescriptor.PendingUploads.Cols.TABLEID, ContentDescriptor.TableIndex.Values.Swipe.getKey());
+    	values.put(ContentDescriptor.PendingUploads.Cols.ROWID, rowid);
+    	contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, values);
+    	//start sync here as well
+
+		Intent updateInt = new Intent(this, HornetDBService.class);
+		updateInt.putExtra(Services.Statics.KEY, Services.Statics.SWIPE);
+		this.startService(updateInt);
     }
 }

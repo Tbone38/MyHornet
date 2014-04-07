@@ -9,11 +9,11 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -147,10 +147,13 @@ public class LastVisitorsFragment extends ListFragment implements OnClickListene
 			LinearLayout theView = (LinearLayout) this.getParentFragment().getView().findViewById(R.id.panel_frame);
 			if (theView.getTag().toString().compareTo("single_panel") == 0) {
 				//Single Panel
-				Intent intent = new Intent(getActivity(), EmptyActivity.class);
-				intent.putExtra(Services.Statics.KEY, Services.Statics.FragmentType.MemberDetails.getKey());
-				intent.putStringArrayListExtra(VisitorsViewAdapter.EXTRA_ID, tagInfo);
-				getActivity().startActivity(intent);
+				Fragment f = new MemberDetailsFragment();
+				Bundle bdl = new Bundle(2);
+		        bdl.putString(Services.Statics.MID, tagInfo.get(0));
+		        bdl.putString(Services.Statics.KEY, tagInfo.get(1));
+				f.setArguments(bdl);
+				((MainActivity)getActivity()).changeFragment(f, "memberDetails");
+				
 			} else {
 				//Dual Panel
 				((ViewGroup)getView().getParent()).getId();
