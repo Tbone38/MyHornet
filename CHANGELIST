@@ -94,6 +94,7 @@ KEY:
                 Improve Performance of the Booking Overview page.
                 TODO: membership complete "Add Tag" doesn't work. Find out why...
 				Move MembershipHold to a fragment.
+				Member Details/Pager
 
     
     v119:

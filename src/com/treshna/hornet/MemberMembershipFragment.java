@@ -402,10 +402,16 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 			if (v.getTag() instanceof Integer) {
 				suspendid = (Integer) v.getTag();
 			}
-			Intent i = new Intent(getActivity(), MembershipHold.class);
+			/*Intent i = new Intent(getActivity(), MembershipHold.class);
 			i.putExtra(ContentDescriptor.MembershipSuspend.Cols.SID, suspendid);
 			i.putExtra(Services.Statics.KEY, memberID);
-			getActivity().startActivity(i);
+			getActivity().startActivity(i);*/
+			Fragment f = new MembershipHoldFragment();
+			Bundle bdl = new Bundle(2);
+			bdl.putString(Services.Statics.KEY, memberID);
+			bdl.putInt(ContentDescriptor.MembershipSuspend.Cols.SID, suspendid);
+			f.setArguments(bdl);
+			((MainActivity)getActivity()).changeFragment(f, "MembershipHold");
 			break;
 		}
 		}

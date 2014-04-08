@@ -219,9 +219,14 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 			break;
 		}
 		case (R.id.button_hold):{
-			Intent i = new Intent(ctx, MembershipHold.class);
+			/*Intent i = new Intent(ctx, MembershipHold.class);
 			i.putExtra(Services.Statics.KEY, mid);
-			ctx.startActivity(i);
+			ctx.startActivity(i);*/
+			Fragment f = new MembershipHoldFragment();
+			Bundle bdl = new Bundle(1);
+			bdl.putString(Services.Statics.KEY, mid);
+			f.setArguments(bdl);
+			((MainActivity)caller).changeFragment(f, "MembershipHold");
 			break;
 		}
 		case (R.id.button_manual_checkin):{

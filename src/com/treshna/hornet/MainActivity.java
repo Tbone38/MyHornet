@@ -134,6 +134,7 @@ public class MainActivity extends NFCActivity {
 	}
 
 	//we need to update this after syncs...
+	@SuppressLint("NewApi")
 	private void setupNavDrawer() {
 		mDrawerTitle = "GymMaster";
 		int membercount = -1, visitcount = -1, bookingcount = -1;
@@ -220,7 +221,7 @@ public class MainActivity extends NFCActivity {
                 navDrawerItems);
         mDrawerList.setAdapter(navadapter);
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-                R.drawable.ic_action_add_to_queue, //nav menu toggle icon
+                R.drawable.ic_action_opennav, //nav menu toggle icon
                 R.string.app_name, 
                 R.string.app_name){
             @SuppressLint("NewApi")
@@ -240,6 +241,10 @@ public class MainActivity extends NFCActivity {
         mDrawerLayout.setDrawerListener(mDrawerToggle);        
         mDrawerList.setOnItemClickListener(new SlideMenuClickListener(this.getSupportFragmentManager(), mDrawerLayout, mDrawerList, this, 
         		SlideMenuClickListener.ActivityType.MainActivity));
+        
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
+        getActionBar().setHomeAsUpIndicator(null);
 
 	}
 	
