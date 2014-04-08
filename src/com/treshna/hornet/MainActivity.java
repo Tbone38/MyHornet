@@ -328,27 +328,13 @@ public class MainActivity extends NFCActivity {
 	    }
 	}
 	
-	private void startReportTypesActivity (Context view)
-	{
-		Intent intent = new Intent(view,Report_Types_ListActivity.class);
-		this.startActivity(intent);
-	}
-	private void startReportNamesActivity (Context view)
-	{
-		Intent intent = new Intent(view,ReportNamesActivity.class);
-		this.startActivity(intent);
-	}
+
 	private void startReportTypesAndNamesActivity (Context view)
 	{
 		Intent intent = new Intent(view,ReportListingActivity.class);
 		this.startActivity(intent);
 	}
-	private void startReportDateOptionsActivity (Context view)
-	{
-		Intent intent = new Intent(view,ReportDateOptionsActivity.class);
-		intent.putExtra("report_name", "Expiring Members");
-		this.startActivity(intent);
-	}
+
 }
 
 	

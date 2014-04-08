@@ -17,6 +17,7 @@ import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
@@ -84,28 +85,23 @@ public class ReportMainActivity extends ListActivity {
 		boolean containsMemberColumn = false;
 		boolean isIdAdded = false;
 		for (HashMap<String,String> columnsMap : columnsMapList ){
-			isIdAdded = false;
-			if (columnsMap.get("field").toString().contains("member")){
+			if (columnsMap.get("field").toString().contains("member.")){
 				containsMemberColumn = true;
 			}
+			//Check if coming from column options..
 			if (callingActivity.compareTo("column_options")== 0) {
 				isSelected = false;
-				for (Map.Entry<String,String> field: columnsMap.entrySet()){
-					
-					if (field.getKey().toString().compareTo("column_id")== 0){
-						if (this.isColumnSelected(Integer.parseInt(field.getValue()))){
-							isSelected = true;
-						}
-						
-					}
+				if (this.isColumnSelected(Integer.parseInt(columnsMap.get("column_id")))){
+					isSelected = true;
 				}
 			}
 			
 			for (Map.Entry<String,String> field: columnsMap.entrySet()){
 					//System.out.println(field.getKey() + " : " + field.getValue());
 					if (isSelected){
+						//Adding the member.id column where other columns join the member table
 						if (containsMemberColumn && !isIdAdded){
-							queryBuilder.append("member.id, ");
+							queryBuilder.append("member.id AS \"MemberID\", ");
 							isIdAdded = true;
 						}
 						if(field.getKey().toString().compareTo("field")== 0){
@@ -190,8 +186,14 @@ public class ReportMainActivity extends ListActivity {
 					@Override
 					public void onItemClick(AdapterView<?> parent, View view,
 							int position, long id) {
-						
-						
+						TextView idView = (TextView) view.findViewById(2);
+						ArrayList<String> tag = new ArrayList<String>();
+						tag.add(idView.getText().toString());
+						tag.add(null);
+						Intent intent = new Intent(ReportMainActivity.this, EmptyActivity.class);
+						intent.putExtra(Services.Statics.KEY, Services.Statics.FragmentType.MemberDetails.getKey());
+						intent.putStringArrayListExtra(VisitorsViewAdapter.EXTRA_ID, tag);
+						ReportMainActivity.this.startActivity(intent);
 					}
 					
 				});
@@ -219,14 +221,26 @@ public class ReportMainActivity extends ListActivity {
 						LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams( LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT );
 						linLayout.setLayoutParams(listLayoutParams);
 						HashMap<String,String> dataRow = this.getItem(position);
+						
 						for (Entry<String,String> col : dataRow.entrySet()){
 							if (!isColumnAllNull(col.getKey().toString())) {
 								  	layoutParams = new LinearLayout.LayoutParams( 0,LayoutParams.WRAP_CONTENT,3);
 									//Dynamically generate text views for each column name..
 									textView =  new TextView(ReportMainActivity.this);
-									if (col.getValue() != null &&  col.getValue().toString().matches("[0-9]+")){
-										textView.setGravity(Gravity.RIGHT);
-										textView.setPadding(0, 0, 50, 0);									
+									String field = col.getKey().toString();
+									if (field.compareTo("Member ID")== 0 || field.compareTo("MemberID")== 0) {
+										textView.setId(2);
+									}
+									if (field.compareTo("MemberID")== 0){
+										textView.setVisibility(android.view.View.GONE);
+									}
+									if (col.getValue() != null && col.getValue().toString().matches("[0-9]+")) {
+										textView.setGravity(Gravity.RIGHT);										
+										if ((getApplicationContext().getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE) {
+											textView.setPadding(0, 0, 50, 0);
+										} else {
+											textView.setPadding(0, 0, 10, 0);
+										}										
 									}
 									layoutParams.setMargins(10, 0, 0, 0);
 									textView.setLayoutParams(layoutParams);
@@ -290,11 +304,18 @@ public class ReportMainActivity extends ListActivity {
 		//Right aligning columns with all numeric data..
 		if (isAnyRowAllNums(contentString)){
 			textView.setGravity(Gravity.RIGHT);
-			textView.setPadding(0, 0, 50, 0);									
+			if ((getApplicationContext().getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE) {
+				textView.setPadding(0, 0, 50, 0);
+			} else {
+				textView.setPadding(0, 0, 10, 0);									
+			}
 		}
 		//Centres the no data message
 		if (layoutGravity == Gravity.CENTER){
 			textView.setGravity(layoutGravity);
+		}
+		if (contentString.compareTo("MemberID")==0){
+			textView.setVisibility(android.view.View.GONE);
 		}
 		textView.setTypeface(null, Typeface.BOLD);
 		textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
