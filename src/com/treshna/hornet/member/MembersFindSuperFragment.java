@@ -74,9 +74,9 @@ public class MembersFindSuperFragment extends Fragment implements OnMemberSelect
 			tag.add(id);
 			tag.add(null);
 			
-			Fragment f = new MemberDetailsFragment();
-			//Bundle bdl = new Bundle(1);
-			//bdl.putStringArrayList(VisitorsViewAdapter.EXTRA_ID, tag);
+			//Fragment f = new MemberDetailsFragment();
+			Fragment f = new MemberSlideFragment();
+			
 			Bundle bdl = new Bundle(1);
 	        bdl.putString(Services.Statics.MID, id);
 			f.setArguments(bdl);
@@ -90,7 +90,8 @@ public class MembersFindSuperFragment extends Fragment implements OnMemberSelect
 			//show member details
 			FragmentManager fragmentManager = this.getChildFragmentManager();
 	        FragmentTransaction ft = fragmentManager.beginTransaction();
-	        MemberDetailsFragment f = new MemberDetailsFragment();
+	        //MemberDetailsFragment f = new MemberDetailsFragment();
+	        Fragment f = new MemberSlideFragment();
 	        Bundle bdl = new Bundle(1);
 	        bdl.putString(Services.Statics.MID, id);
 	        f.setArguments(bdl);

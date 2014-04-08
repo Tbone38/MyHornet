@@ -9,8 +9,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import com.treshna.hornet.R;
-import com.treshna.hornet.R.id;
-import com.treshna.hornet.R.layout;
 import com.treshna.hornet.services.Services;
 
 import android.annotation.SuppressLint;

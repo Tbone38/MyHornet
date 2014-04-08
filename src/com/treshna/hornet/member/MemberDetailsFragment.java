@@ -12,8 +12,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -23,23 +23,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.treshna.hornet.MainActivity;
 import com.treshna.hornet.R;
 import com.treshna.hornet.MainActivity.TagFoundListener;
-import com.treshna.hornet.R.color;
-import com.treshna.hornet.R.drawable;
-import com.treshna.hornet.R.id;
-import com.treshna.hornet.R.layout;
 import com.treshna.hornet.services.BitmapLoader;
 import com.treshna.hornet.services.CameraWrapper;
 import com.treshna.hornet.services.Services;
-import com.treshna.hornet.services.Services.ColorFilterGenerator;
-import com.treshna.hornet.services.Services.Statics;
 import com.treshna.hornet.sqlite.ContentDescriptor;
-import com.treshna.hornet.sqlite.ContentDescriptor.Image;
-import com.treshna.hornet.sqlite.ContentDescriptor.Member;
-import com.treshna.hornet.sqlite.ContentDescriptor.MemberBalance;
-import com.treshna.hornet.sqlite.ContentDescriptor.MemberBalance.Cols;
 import com.treshna.hornet.visitor.VisitorsViewAdapter;
 
 
@@ -49,7 +38,7 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 	ContentResolver contentResolver;
 	String memberID;
 	private View view;
-	private int selectedFragment;
+	private int selectedFragment = 0;
 	private TagFoundListener tagFoundListener;
 	private static final String TAG = "MemberDetails";
 	 
@@ -60,6 +49,9 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 		contentResolver = getActivity().getContentResolver();
 	
 		memberID = this.getArguments().getString(Services.Statics.MID);
+		try {
+			selectedFragment = this.getArguments().getInt(Services.Statics.KEY);
+		} catch (Exception e) {};
 	}
 	
 	@Override
@@ -209,14 +201,69 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 		return view;
 	}
 	
-	
-	private void setupFragment(Fragment f) {
-		if (f == null) {
+	private Fragment generateFragment() {
+		/*Log.w(TAG, "WE'RE GENERATING A FRAG");
+		Log.w(TAG, "OUR SELECTED VALUE IS:"+selectedFragment);*/
+		Fragment f = null;
+		switch (selectedFragment){
+		case (R.id.button_member_navigation_notes):{
+			//Log.w(TAG, "NOTES!");
+			f = new MemberNotesFragment();
+			Bundle bdl = new Bundle(2);
+	        bdl.putString(Services.Statics.MID, memberID);
+	        f.setArguments(bdl);
+			break;
+		}
+		case (R.id.button_member_navigation_memberships):{
+			//Log.w(TAG, "Membership!");
 			f = new MemberMembershipFragment();
 			Bundle bdl = new Bundle(1);
 	        bdl.putString(Services.Statics.MID, memberID);
 	        f.setArguments(bdl);
-	        selectedFragment = R.id.button_member_navigation_memberships;
+	        break;
+		}
+		case (R.id.button_member_navigation_visits):{
+			//Log.w(TAG, "Visits!");
+			f = new MemberVisitHistoryFragment();
+			Bundle bdl = new Bundle(2);
+	        bdl.putString(Services.Statics.MID, memberID);
+	        f.setArguments(bdl);
+			break;
+		}
+		case (R.id.button_member_navigation_finance):{
+			//Log.w(TAG, "finance!");
+			f = new MemberFinanceFragment();
+			Bundle bdl = new Bundle(1);
+			bdl.putString(Services.Statics.MID, memberID);
+			f.setArguments(bdl);
+			break;
+		}
+		case (R.id.button_member_navigation_booking):{
+			//Log.w(TAG, "Booking!");
+			f = new MemberBookingsFragment();
+			Bundle bdl = new Bundle(1);
+			bdl.putString(Services.Statics.MID, memberID);
+			f.setArguments(bdl);
+			break;
+		}
+		default:
+			//Log.w(TAG, "NULL?!!");
+		}
+		
+		return f;
+	}
+	
+	public void setupFragment(Fragment f) {
+		if (f == null) {
+			if (selectedFragment > 0) {
+				f = generateFragment();
+			} else {
+				f = new MemberMembershipFragment();
+				Bundle bdl = new Bundle(1);
+		        bdl.putString(Services.Statics.MID, memberID);
+		        f.setArguments(bdl);
+		        selectedFragment = R.id.button_member_navigation_memberships;
+			}
 		}
 		tagFoundListener = (TagFoundListener) f;
 		FragmentManager fm = this.getChildFragmentManager();		
