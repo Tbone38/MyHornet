@@ -4,6 +4,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import com.treshna.hornet.network.HornetDBService;
+import com.treshna.hornet.services.Services;
+import com.treshna.hornet.sqlite.ContentDescriptor;
+
 import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.ContentValues;

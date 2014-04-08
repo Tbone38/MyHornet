@@ -9,13 +9,13 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-import com.treshna.hornet.BookingAddFragment;
-import com.treshna.hornet.ClassCreateFragment;
-import com.treshna.hornet.KeyPerformanceIndexFragment;
 import com.treshna.hornet.MainActivity;
-import com.treshna.hornet.MemberAddFragment;
-import com.treshna.hornet.ReportListingActivity;
-import com.treshna.hornet.RollListFragment;
+import com.treshna.hornet.booking.BookingAddFragment;
+import com.treshna.hornet.booking.ClassCreateFragment;
+import com.treshna.hornet.member.MemberAddFragment;
+import com.treshna.hornet.report.KeyPerformanceIndexFragment;
+import com.treshna.hornet.report.ReportListingActivity;
+import com.treshna.hornet.roll.RollListFragment;
 
 public class SlideMenuClickListener implements OnItemClickListener {
 

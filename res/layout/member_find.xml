@@ -6,7 +6,7 @@
 	
     <fragment 
         android:id="@+id/fragmentList"
-        android:name="com.treshna.hornet.MembersFindFragment"
+        android:name="com.treshna.hornet.member.MembersFindFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     </fragment>

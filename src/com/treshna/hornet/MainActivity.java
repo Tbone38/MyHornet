@@ -41,10 +41,24 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.treshna.hornet.booking.BookingsListSuperFragment;
+import com.treshna.hornet.booking.BookingsOverviewFragment;
+import com.treshna.hornet.booking.BookingsSlideFragment;
+import com.treshna.hornet.member.MembersFindSuperFragment;
 import com.treshna.hornet.navigation.NavDrawerItem;
 import com.treshna.hornet.navigation.NavDrawerListAdapter;
 import com.treshna.hornet.navigation.SlideMenuClickListener;
 import com.treshna.hornet.navigation.TabListener;
+import com.treshna.hornet.network.HornetDBService;
+import com.treshna.hornet.network.PollingHandler;
+import com.treshna.hornet.report.ReportDateOptionsActivity;
+import com.treshna.hornet.report.ReportListingActivity;
+import com.treshna.hornet.report.ReportNamesActivity;
+import com.treshna.hornet.report.Report_Types_ListActivity;
+import com.treshna.hornet.services.Services;
+import com.treshna.hornet.setup.SetupActivity;
+import com.treshna.hornet.sqlite.ContentDescriptor;
+import com.treshna.hornet.visitor.LastVisitorsSuperFragment;
 
 
 public class MainActivity extends NFCActivity {
