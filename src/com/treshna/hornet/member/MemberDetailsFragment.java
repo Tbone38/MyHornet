@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -321,5 +322,6 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 	@Override
 	public boolean onNewTag(String serial) {
 		return tagFoundListener.onNewTag(serial);
-	}	
+	}
+	 
 }

@@ -241,9 +241,6 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 			break;
 		}
 		case (R.id.button_hold):{
-			/*Intent i = new Intent(ctx, MembershipHold.class);
-			i.putExtra(Services.Statics.KEY, mid);
-			ctx.startActivity(i);*/
 			Fragment f = new MembershipHoldFragment();
 			Bundle bdl = new Bundle(1);
 			bdl.putString(Services.Statics.KEY, mid);
