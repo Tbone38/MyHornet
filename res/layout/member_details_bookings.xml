@@ -6,21 +6,11 @@
     android:layout_height="wrap_content"
     android:padding="7dp"
     tools:context=".MemberDetails" >  
-	<TextView
-	    android:id="@+id/member_booking_H"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:textSize="24sp"
-	    android:text="@string/member_booking_H"
-	    android:textIsSelectable="false"
-	    android:padding="5dp"
-		android:paddingBottom="1dp" />
 	<LinearLayout 
 	    android:id="@+id/booking_list_heading"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    android:orientation="horizontal"
-	    android:layout_below="@id/member_booking_H">
+	    android:orientation="horizontal">
 	   
 	</LinearLayout>
     <LinearLayout

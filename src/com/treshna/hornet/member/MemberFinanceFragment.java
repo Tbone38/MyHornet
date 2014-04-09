@@ -145,8 +145,6 @@ public class MemberFinanceFragment extends Fragment implements TagFoundListener,
 		list.removeAllViews();
 		
 		if (cur.getCount() <= 0) {
-			TextView heading = (TextView) view.findViewById(R.id.member_finance_H);
-			heading.setVisibility(View.GONE);
 			LinearLayout heading_row = (LinearLayout) view.findViewById(R.id.member_financeH_row);
 			heading_row.setVisibility(View.GONE);
 		}

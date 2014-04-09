@@ -6,21 +6,11 @@
     android:layout_height="wrap_content"
     android:padding="7dp"
     tools:context=".MemberDetails" >  
-	<TextView
-	    android:id="@+id/member_visit_history_H"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:textSize="24sp"
-	    android:text="@string/member_visit_history2"
-	    android:textIsSelectable="false"
-	    android:padding="5dp"
-		android:paddingBottom="1dp" />
 	<LinearLayout 
 	    android:id="@+id/visit_list_headings"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    android:orientation="horizontal"
-	    android:layout_below="@id/member_visit_history_H">
+	    android:orientation="horizontal">
 	    <View
 	        android:layout_width="10dp"
 	        android:layout_height="wrap_content"

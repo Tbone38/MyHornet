@@ -8,19 +8,22 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import com.treshna.hornet.R;
-import com.treshna.hornet.services.Services;
-
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.treshna.hornet.R;
+import com.treshna.hornet.services.Services;
 
 public class BookingsSlideFragment extends Fragment {
 	private static int NUM_PAGES = 5; //?
@@ -58,8 +61,7 @@ public class BookingsSlideFragment extends Fragment {
 	    mPagerAdapter = new ScreenSlidePagerAdapter(getChildFragmentManager());
 	    mPager.setAdapter(mPagerAdapter);
 	    mPager.setCurrentItem(2);
-	    //mPager.setOffscreenPageLimit(0); //doesn't solve the issue.
-		  
+	      
 		return view;
 
 	  }

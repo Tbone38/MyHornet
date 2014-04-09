@@ -75,9 +75,6 @@ public class MemberVisitHistoryFragment extends Fragment implements TagFoundList
 		if (cur.getCount() <= 0) {
 			LinearLayout list_headings = (LinearLayout) view.findViewById(R.id.visit_list_headings);
 			list_headings.setVisibility(View.INVISIBLE);
-			
-			TextView heading = (TextView) view.findViewById(R.id.member_visit_history_H);
-			heading.setText("No Recent Visits");
 		}
 		
 		while (cur.moveToNext()) {

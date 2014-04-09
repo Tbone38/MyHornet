@@ -68,11 +68,6 @@ public class MemberBookingsFragment extends Fragment implements TagFoundListener
 		LinearLayout list = (LinearLayout) view.findViewById(R.id.booking_list);
 		list.removeAllViews();
 		
-		if (cur.getCount() <= 0) {
-			TextView heading = (TextView) view.findViewById(R.id.member_booking_H);
-			heading.setText("No Recent Bookings");
-		}
-		
 		while (cur.moveToNext()) {
 			LinearLayout row = (LinearLayout) mInflater.inflate(R.layout.member_booking_row, null);
 			

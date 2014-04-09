@@ -49,7 +49,7 @@ public class MembersFindSuperFragment extends Fragment implements OnMemberSelect
         f.setMemberSelectListener(this);
         ft.replace(R.id.frame_right, f);
         ft.commit();
-        //((MainActivity) getActivity()).setSelectedTab(0);
+        
         ((MainActivity) getActivity()).changeFragment(null, "findmember");
         if (view.getTag().toString().compareTo("single_panel") != 0) {
         	TextView empty_glyph = (TextView) view.findViewById(R.id.empty_glyph);

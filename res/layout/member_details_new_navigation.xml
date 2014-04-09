@@ -1,0 +1,122 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/pageLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="7dp"
+    tools:context=".MemberDetails" >
+    <LinearLayout
+        android:id="@+id/name_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+    	<ImageView
+    	    android:id="@+id/member_image"
+    	    android:layout_width="40sp"
+	     	android:layout_height="40sp"
+    	    android:paddingLeft="5dp"
+	     	android:layout_marginRight="5dp" />
+	    <TextView 
+			android:id="@+id/member_navigation_name"
+		    android:layout_width="0dp"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="1"
+		    android:textSize="28sp"
+		    android:text="Name Space"
+		    android:padding="3dp" />
+	    <ImageView
+       		android:id="@+id/member_status_hold"
+			android:layout_width="35dp"
+			android:layout_height="35dp"
+			android:padding="1dp"
+		    android:visibility="gone"
+		    android:src="@drawable/ic_action_pause"/>
+		<ImageView
+		    android:id="@+id/member_status_ok"
+		    android:layout_width="35dp"
+		    android:layout_height="35dp"
+		    android:padding="1dp"
+		    android:visibility="gone" 
+		    android:src="@drawable/ic_action_accept"/>
+		<ImageView
+		    android:id="@+id/member_status_expired"
+		    android:layout_width="35dp"
+		    android:layout_height="35dp"
+		    android:padding="1dp"
+		    android:visibility="gone"
+		    android:src="@drawable/ic_action_cancel" />
+		<ImageView 
+		    android:id="@+id/member_status_casual"
+		    android:layout_width="35dp"
+		    android:layout_height="35dp"
+		    android:padding="1dp"
+		    android:visibility="gone"
+       		android:src="@drawable/glyphicons_heart"/>
+	</LinearLayout>
+    <LinearLayout
+        android:id="@+id/member_navigation_status_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/name_row"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+         > <!-- android:background="@color/member_statusbar_background" -->
+        <ImageView
+            android:id="@+id/member_status_happy"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@drawable/face_smile"
+            android:padding="1dp"
+            android:visibility="gone" />
+	   <ImageView
+            android:id="@+id/member_status_plain"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@drawable/face_plain"
+            android:padding="1dp"
+            android:visibility="gone" />
+	   <ImageView
+            android:id="@+id/member_status_sad"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@drawable/face_sad"
+            android:padding="1dp"
+            android:layout_marginRight="3dp"
+            android:visibility="gone" />
+	   
+	    <TextView
+	        android:id="@+id/member_status_balance"
+	        android:layout_width="0dp"
+	        android:layout_height="match_parent"
+	        android:layout_weight=".75"
+	        android:gravity="center|right"
+	        android:textSize="15sp"
+	        android:text="$6543.21" />
+	    <TextView
+	        android:id="@+id/member_navigation_number"
+	        android:layout_width="0dp"
+	        android:layout_height="match_parent"
+	        android:layout_weight=".25"
+	        android:gravity="center|right"
+	        android:textSize="15sp"
+	        android:text="#12345"
+	        android:textColor="@color/member_number_grey2"
+	        android:paddingRight="4dp" />
+	</LinearLayout>
+	<android.support.v4.view.ViewPager
+    	android:id="@+id/pager"
+    	android:layout_width="match_parent"
+    	android:layout_height="match_parent"
+    	android:layout_below="@id/name_row"
+    	android:layout_marginTop="25dp" >
+	    
+	    <android.support.v4.view.PagerTabStrip
+	        android:id="@+id/pts_main"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="top" />
+	    </android.support.v4.view.ViewPager>
+
+</RelativeLayout>

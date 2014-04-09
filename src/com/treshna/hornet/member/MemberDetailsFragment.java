@@ -58,9 +58,9 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 		  super.onCreateView(inflater, container, savedInstanceState);
 	
-		  view = inflater.inflate(R.layout.member_details, container, false);
+		  view = inflater.inflate(R.layout.member_new_details, container, false);
 	     
-		  view = setupLayout();
+		  //view = setupLayout();
 		  
 		  setupFragment(null);
 		  return view;
@@ -69,7 +69,7 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 	@Override
 	public void onResume() {
 		super.onResume();
-		setupLayout();
+		//setupLayout();
 	}
 	
 	@SuppressLint("NewApi")
@@ -271,8 +271,8 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 
 		ft.replace(R.id.frame_bottom, f);
 		ft.commit();
-		reDrawButtonMember();
-		setSelected();
+		//reDrawButtonMember();
+		//setSelected();
 	}
 	
 	@SuppressWarnings("deprecation")

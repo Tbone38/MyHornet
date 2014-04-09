@@ -7,6 +7,7 @@ import com.treshna.hornet.R;
 import com.treshna.hornet.R.id;
 import com.treshna.hornet.R.layout;
 import com.treshna.hornet.member.MemberDetailsFragment;
+import com.treshna.hornet.member.MemberSlideFragment;
 import com.treshna.hornet.services.Services;
 import com.treshna.hornet.sqlite.ContentDescriptor;
 
@@ -155,10 +156,14 @@ public class LastVisitorsFragment extends ListFragment implements OnClickListene
 			LinearLayout theView = (LinearLayout) this.getParentFragment().getView().findViewById(R.id.panel_frame);
 			if (theView.getTag().toString().compareTo("single_panel") == 0) {
 				//Single Panel
-				Fragment f = new MemberDetailsFragment();
+				/*Fragment f = new MemberDetailsFragment();
 				Bundle bdl = new Bundle(2);
 		        bdl.putString(Services.Statics.MID, tagInfo.get(0));
-		        bdl.putString(Services.Statics.KEY, tagInfo.get(1));
+		        bdl.putString(Services.Statics.KEY, tagInfo.get(1));*/
+				Fragment f = new MemberSlideFragment();
+			    Bundle bdl = new Bundle(2);
+			     bdl.putString(Services.Statics.MID, tagInfo.get(0));
+			     bdl.putString(Services.Statics.KEY, tagInfo.get(1));
 				f.setArguments(bdl);
 				((MainActivity)getActivity()).changeFragment(f, "memberDetails");
 				

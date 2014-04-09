@@ -24,6 +24,7 @@ public class SlideMenuClickListener implements OnItemClickListener {
     private ListView mDrawerList;
     private Activity activity;
     private ActivityType activitytype;
+    private int currentselection = 0;
 	
     public static enum ActivityType {
     	MainActivity(1),EmptyActivity(2);
@@ -55,6 +56,9 @@ public class SlideMenuClickListener implements OnItemClickListener {
 	
 	private void displayView(int position) {
         // update the main content by replacing fragments
+		if (currentselection == position) {
+			return;
+		}
         Fragment fragment = null;
         String tag = null;
         switch (position) {
@@ -73,6 +77,7 @@ public class SlideMenuClickListener implements OnItemClickListener {
             break;
         case 3: //bookings
         	tag = "bookings";
+        	((MainActivity)activity).genTabs();
             break;
         case 5:
         	//TODO: make memberAdd a fragment;
@@ -102,12 +107,10 @@ public class SlideMenuClickListener implements OnItemClickListener {
         default:
             break;
         }
+        currentselection = position;
         if (activitytype == ActivityType.MainActivity) {
         	((MainActivity)activity).changeFragment(fragment, tag);
-        } else if (activitytype == ActivityType.EmptyActivity) {
-        	//((EmptyActivity)activity).changeFragment(fragment, tag);
         }
-        
         mDrawerList.setItemChecked(position, true);
         mDrawerList.setSelection(position);
         mDrawerLayout.closeDrawer(mDrawerList);

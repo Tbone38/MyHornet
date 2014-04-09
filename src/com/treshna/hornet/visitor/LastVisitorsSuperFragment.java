@@ -7,6 +7,7 @@ import com.treshna.hornet.R;
 import com.treshna.hornet.R.id;
 import com.treshna.hornet.R.layout;
 import com.treshna.hornet.member.MemberDetailsFragment;
+import com.treshna.hornet.member.MemberSlideFragment;
 import com.treshna.hornet.services.Services;
 
 import android.database.Cursor;
@@ -52,7 +53,6 @@ public class LastVisitorsSuperFragment extends Fragment {
         LastVisitorsFragment f = new LastVisitorsFragment();
         ft.replace(R.id.frame_right, f);
         ft.commit();
-        //((MainActivity) getActivity()).setSelectedTab(1);
         ((MainActivity) getActivity()).changeFragment(null, "lastvisitors");
         
         if (view.getTag().toString().compareTo("single_panel") != 0) {
@@ -73,7 +73,11 @@ public class LastVisitorsSuperFragment extends Fragment {
 		
 		FragmentManager fragmentManager = this.getChildFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
-        MemberDetailsFragment f = new MemberDetailsFragment();
+        /*MemberDetailsFragment f = new MemberDetailsFragment();
+        Bundle bdl = new Bundle(2);
+        bdl.putString(Services.Statics.MID, tag.get(0));
+        bdl.putString(Services.Statics.KEY, tag.get(1));*/
+        Fragment f = new MemberSlideFragment();
         Bundle bdl = new Bundle(2);
         bdl.putString(Services.Statics.MID, tag.get(0));
         bdl.putString(Services.Statics.KEY, tag.get(1));

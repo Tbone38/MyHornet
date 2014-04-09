@@ -6,22 +6,10 @@
     android:layout_height="match_parent"
     android:padding="7dp"
     tools:context=".MemberDetails" >  
-	<TextView
-    	android:id="@+id/memberinfoH"
-    	android:textSize="24sp"
-        android:text="@string/heading_membership_details"
-        android:layout_width="wrap_content"
-    	android:layout_height="wrap_content"
-        android:textIsSelectable="false"
-        android:padding="5dp"
-        android:paddingBottom="1dp"
-        android:layout_marginLeft="2dp"/>
-	    
 	<LinearLayout
 	    android:id="@+id/member_ms_list"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    android:layout_below="@id/memberinfoH"
 	    android:orientation="vertical" >
 	    
 	</LinearLayout>

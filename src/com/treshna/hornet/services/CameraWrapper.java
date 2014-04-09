@@ -152,45 +152,4 @@ public class CameraWrapper extends Activity {
 			getActionBar().setDisplayHomeAsUpEnabled(true);
 		}
 	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		return Services.createOptionsMenu(getMenuInflater(), menu);
-	}
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-	    // Handle item selection
-	    switch (item.getItemId()) {
-	    case android.R.id.home:
-			NavUtils.navigateUpFromSameTask(this);
-			return true;
-	    case (R.id.action_home):{
-	    	Intent i = new Intent (this, MainActivity.class);
-	    	startActivity(i);
-	    	return true;
-	    }
-	    case (R.id.action_settings):
-	    	Intent settingsIntent = new Intent(this, SettingsActivity.class);
-	    	startActivity(settingsIntent);
-	    	return true;
-	    case (R.id.action_update): {
-	    	SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-		 	if (Integer.parseInt(preferences.getString("sync_frequency", "-1")) == -1) {
-		 		Services.setPreference(this, "sync_frequency", "5");
-		 	}
-		 	PollingHandler polling = Services.getFreqPollingHandler();
-	    	polling.startService();
-	    	return true;
-	    }
-	    case (R.id.action_halt): {
-	    	PollingHandler polling = Services.getFreqPollingHandler();
-	    	polling.stopPolling(false);
-	    	Services.setPreference(this, "sync_frequency", "-1");
-	    	return true;
-	    }
-	    default:
-	    	return super.onOptionsItemSelected(item);
-	    }
-	}
-
 }

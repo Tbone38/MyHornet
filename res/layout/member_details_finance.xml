@@ -6,20 +6,10 @@
     android:layout_height="wrap_content"
     android:padding="7dp"
     tools:context=".MemberDetails" >
-    <TextView
-	    android:id="@+id/member_finance_H"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:textSize="24sp"
-	    android:text="@string/member_finance"
-	    android:textIsSelectable="false"
-	    android:padding="5dp"
-		android:paddingBottom="1dp" />
     <LinearLayout
     	android:id="@+id/member_financeH_row"
     	android:layout_width="match_parent"
     	android:layout_height="wrap_content"
-    	android:layout_below="@id/member_finance_H"
 	    android:padding="2dp"
 	    android:orientation="horizontal"
 	    android:gravity="center_vertical" >

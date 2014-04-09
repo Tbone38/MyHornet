@@ -82,6 +82,7 @@ public class MainActivity extends NFCActivity {
     private ArrayList<NavDrawerItem> navDrawerItems;
     private NavDrawerListAdapter navadapter;
     
+    private ProgressDialog progress;
     private static final String TAG = "MainActivity";
     private boolean is_syncing = false;
     private boolean sync_result = false;
@@ -111,7 +112,7 @@ public class MainActivity extends NFCActivity {
 		this.setTitleColor(getResources().getColor(R.color.gym));
 		context = getApplicationContext();
 		setupNavDrawer();
-		        
+		navadapter.notifyDataSetChanged();
         if (savedInstanceState == null) { //needs to be done after the super.OnCreate call.
         	try {
         		FragmentManager fm = this.getSupportFragmentManager();
@@ -152,28 +153,22 @@ public class MainActivity extends NFCActivity {
 	private void setupNavDrawer() {
 		mDrawerTitle = "GymMaster";
 		int membercount = -1, visitcount = -1, bookingcount = -1;
-		long daystart, dayend;
 		ContentResolver contentResolver = this.getContentResolver();
 		Cursor cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, null, null, null);
 		
 		membercount = cur.getCount();
 		cur.close();
 		
-		Calendar cal = Calendar.getInstance(Locale.US);
-		cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE), 0, 0, 1);
-		daystart = cal.getTimeInMillis();
-		cal.add(Calendar.HOUR, 23);
-		cal.add(Calendar.MINUTE, 59);
-		dayend = cal.getTimeInMillis();
-		cur = contentResolver.query(ContentDescriptor.Visitor.CONTENT_URI, null, ContentDescriptor.Visitor.Cols.DATETIME+" >= ?",
-				new String[] {String.valueOf(daystart)}, null);
+		cur = contentResolver.query(ContentDescriptor.Visitor.CONTENT_URI, null, ContentDescriptor.Visitor.Cols.DATETIME+" >= "
+				+ "strftime('%s', current_date)*1000",null, null);
 		
 		visitcount = cur.getCount();
 		cur.close();
 		
-		cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.ARRIVAL+" >= ? AND "
-				+ContentDescriptor.Booking.Cols.ARRIVAL+" <= ? AND "+ContentDescriptor.Booking.Cols.CLASSID+" = 0 ",
-				new String[] {String.valueOf(daystart), String.valueOf(dayend)}, null);
+		cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.ARRIVAL+" >= "
+				+ "strftime('%s', current_date)*1000 AND "+ContentDescriptor.Booking.Cols.ARRIVAL+" <= "
+				+ "strftime('%s', current_date, '+1 day', '-1 minute')*1000 AND "+ContentDescriptor.Booking.Cols.CLASSID+" = 0 ",
+				null, null);
 		
 		bookingcount = cur.getCount();
 		cur.close();
@@ -187,7 +182,8 @@ public class MainActivity extends NFCActivity {
  
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.slider_menu);
- 
+        mDrawerList.removeAllViewsInLayout();
+        
         navDrawerItems = new ArrayList<NavDrawerItem>();
         // Main
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], navMenuIcons.getResourceId(0, -1), true));
@@ -234,6 +230,7 @@ public class MainActivity extends NFCActivity {
         navadapter = new NavDrawerListAdapter(getApplicationContext(),
                 navDrawerItems);
         mDrawerList.setAdapter(navadapter);
+        
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
                 R.drawable.ic_action_opennav, //nav menu toggle icon
                 R.string.app_name, 
@@ -259,7 +256,6 @@ public class MainActivity extends NFCActivity {
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
         getActionBar().setHomeAsUpIndicator(null);
-
 	}
 	
 	private void firstSetup() {
@@ -284,11 +280,13 @@ public class MainActivity extends NFCActivity {
 		if (Services.getProgress() != null) {
     		Services.getProgress().show();
 		}
-		setupNavDrawer();
+		//setupNavDrawer();
 		
 		IntentFilter iff = new IntentFilter();
 	    iff.addAction("com.treshna.hornet.serviceBroadcast");
 	    this.registerReceiver(this.mBroadcastReceiver,iff);
+	    
+	    //changeFragment(cFragment, "onResume");
 	}
 	
 	private void doSync() {
@@ -365,6 +363,7 @@ public class MainActivity extends NFCActivity {
 		super.onSaveInstanceState(savedInstanceState);
 		
 		savedInstanceState.putInt("selectedTab", selectedTab);
+		//savedInstanceState.putString("selectedFragment", cFragment.getClass().getName());
 	}
 	
 	@Override
@@ -473,12 +472,7 @@ public class MainActivity extends NFCActivity {
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		int use_roll = Integer.parseInt(Services.getAppSettings(getContext(), "use_roll"));
-		if (use_roll > 0) {
-			getMenuInflater().inflate(R.menu.main_roll, menu);
-		} else {
-			getMenuInflater().inflate(R.menu.main, menu);
-		}
+		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
 	
@@ -511,11 +505,6 @@ public class MainActivity extends NFCActivity {
 	    	Services.setPreference(this, "sync_frequency", "-1");
 	    	return true;
 	    }
-	    case (R.id.report_types_and_names):{
-	    	this.startReportTypesAndNamesActivity(this);
-	    	return true;
-	    }
-
 	    default:
 	    	return super.onOptionsItemSelected(item);
 	    }
@@ -547,31 +536,9 @@ public class MainActivity extends NFCActivity {
 			super.onNewIntent(i);
 		}
 	}
-
-	private void startReportTypesActivity (Context view)
-	{
-		Intent intent = new Intent(view,Report_Types_ListActivity.class);
-		this.startActivity(intent);
-	}
-	private void startReportNamesActivity (Context view)
-	{
-		Intent intent = new Intent(view,ReportNamesActivity.class);
-		this.startActivity(intent);
-	}
-	private void startReportTypesAndNamesActivity (Context view)
-	{
-		Intent intent = new Intent(view,ReportListingActivity.class);
-		this.startActivity(intent);
-	}
-	private void startReportDateOptionsActivity (Context view)
-	{
-		Intent intent = new Intent(view,ReportDateOptionsActivity.class);
-		intent.putExtra("report_name", "Expiring Members");
-		this.startActivity(intent);
-	}
 	
 	private class FullSync extends AsyncTask<String, Integer, Boolean> {
-		private ProgressDialog progress;
+		
 		private long starttime;
 		private long curtime;
 		private static final long TENMINUTES = 600000;
@@ -606,7 +573,8 @@ public class MainActivity extends NFCActivity {
 				//find a way to force refresh the activity.
 				Intent intent = getIntent();
 				intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-			    finish();
+				MainActivity.this.onPause();
+			    MainActivity.this.finish();
 			    startActivity(intent);
 			} else {
 				message = (message == null)? "Error Encountered" : message;

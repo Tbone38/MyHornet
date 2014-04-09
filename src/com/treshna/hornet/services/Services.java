@@ -302,16 +302,6 @@ public class Services {
 		progress = prog;
 	}
 	
-	public static boolean createOptionsMenu(MenuInflater inflater, Menu menu) {
-		int use_roll = Integer.parseInt(Services.getAppSettings(getContext(), "use_roll"));
-		if (use_roll > 0) {
-			inflater.inflate(R.menu.not_main_roll, menu);
-		} else {
-			inflater.inflate(R.menu.not_main, menu);
-		}
-		return true;
-	}
-	
 	public static class ColorFilterGenerator {
 		/**
 		 * Creates a HUE ajustment ColorFilter
