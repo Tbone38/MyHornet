@@ -17,6 +17,7 @@ import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -179,14 +180,15 @@ public class ReportMainActivity extends ListActivity {
 	
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
 	private void buildListAdapter() {
-		
-				ListView listView = getListView();
-				listView.setOnItemClickListener(new OnItemClickListener () {
-		
-					@Override
-					public void onItemClick(AdapterView<?> parent, View view,
-							int position, long id) {
-						TextView idView = (TextView) view.findViewById(2);
+	
+			ListView listView = getListView();
+			listView.setOnItemClickListener(new OnItemClickListener () {
+	
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view,
+						int position, long id) {
+					TextView idView = (TextView) view.findViewById(2);
+					if (idView != null){
 						ArrayList<String> tag = new ArrayList<String>();
 						tag.add(idView.getText().toString());
 						tag.add(null);
@@ -195,66 +197,72 @@ public class ReportMainActivity extends ListActivity {
 						intent.putStringArrayListExtra(VisitorsViewAdapter.EXTRA_ID, tag);
 						ReportMainActivity.this.startActivity(intent);
 					}
+				}
+				
+			});
+	
+	    buildColumnHeaders();
+
+		ListAdapter listAdapter = new ArrayAdapter<HashMap<String,String>>(ReportMainActivity.this,R.layout.report_main_row,
+				this.resultMapList){
+
+
+					@Override
+					public View getView(int position, View convertView,
+							ViewGroup parent) {
+					//Dynamically binding column names to textView text
+					TextView textView  = null;
 					
-				});
-		
-		    buildColumnHeaders();
-
-			ListAdapter listAdapter = new ArrayAdapter<HashMap<String,String>>(ReportMainActivity.this,R.layout.report_main_row,
-					this.resultMapList){
-
-
-						@Override
-						public View getView(int position, View convertView,
-								ViewGroup parent) {
-						//Dynamically binding column names to textView text
-						TextView textView  = null;
-						
-						LinearLayout linLayout = new LinearLayout(ReportMainActivity.this);
-						//Adding zebra striping on alternate rows
-						if (position % 2 == 0){
-							linLayout.setBackgroundColor(getResources().getColor(R.color.booking_resource_background));
-						}
-						ReportMainActivity.this.stripe = false;
-						linLayout.setOrientation(LinearLayout.HORIZONTAL);
-						AbsListView.LayoutParams listLayoutParams = new AbsListView.LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT);
-						LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams( LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT );
-						linLayout.setLayoutParams(listLayoutParams);
-						HashMap<String,String> dataRow = this.getItem(position);
-						
-						for (Entry<String,String> col : dataRow.entrySet()){
-							if (!isColumnAllNull(col.getKey().toString())) {
-								  	layoutParams = new LinearLayout.LayoutParams( 0,LayoutParams.WRAP_CONTENT,3);
-									//Dynamically generate text views for each column name..
-									textView =  new TextView(ReportMainActivity.this);
-									String field = col.getKey().toString();
-									if (field.compareTo("Member ID")== 0 || field.compareTo("MemberID")== 0) {
-										textView.setId(2);
-									}
-									if (field.compareTo("MemberID")== 0){
-										textView.setVisibility(android.view.View.GONE);
-									}
-									if (col.getValue() != null && col.getValue().toString().matches("[0-9]+")) {
-										textView.setGravity(Gravity.RIGHT);										
-										if ((getApplicationContext().getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE) {
-											textView.setPadding(0, 0, 50, 0);
-										} else {
-											textView.setPadding(0, 0, 10, 0);
-										}										
-									}
-									layoutParams.setMargins(10, 0, 0, 0);
-									textView.setLayoutParams(layoutParams);
-									textView.setText(col.getValue());						
-
-									linLayout.addView(textView);
+					LinearLayout linLayout = new LinearLayout(ReportMainActivity.this);
+					//Adding zebra striping on alternate rows
+					if (position % 2 == 0){
+						linLayout.setBackgroundColor(getResources().getColor(R.color.booking_resource_background));
+					}
+					ReportMainActivity.this.stripe = false;
+					linLayout.setOrientation(LinearLayout.HORIZONTAL);
+					AbsListView.LayoutParams listLayoutParams = new AbsListView.LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT);
+					LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams( LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT );
+					linLayout.setLayoutParams(listLayoutParams);
+					HashMap<String,String> dataRow = this.getItem(position);
+					int columnIndex = 0;
+					for (Entry<String,String> col : dataRow.entrySet()){
+						if (!isColumnAllNull(col.getKey().toString())) {
+						  	layoutParams = new LinearLayout.LayoutParams( 0,LayoutParams.WRAP_CONTENT,3);
+							//Dynamically generate text views for each column name..
+							textView =  new TextView(ReportMainActivity.this);
+							String field = col.getKey().toString();
+							if (field.compareTo("Member ID")== 0 || field.compareTo("MemberID")== 0) {
+								textView.setId(2);
 							}
-						}	
-							
-							return linLayout;
+							if (field.compareTo("MemberID")== 0){
+								textView.setVisibility(android.view.View.GONE);
+							}
+							if (col.getValue() != null && col.getValue().toString().matches("[0-9]+")) {
+								textView.setGravity(Gravity.RIGHT);										
+								if ((getApplicationContext().getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE) {
+									textView.setPadding(0, 0, 50, 0);
+								} else {
+									textView.setPadding(0, 0, 10, 0);
+								}										
+							}
+							layoutParams.setMargins(10, 0, 0, 0);									
+							textView.setLayoutParams(layoutParams);
+							textView.setText(col.getValue());
+							if (columnIndex % 2 == 0){
+								textView.setBackgroundColor(getResources().getColor(R.color.report_column_pale_red));
+							}
+							if (textView.getVisibility() == View.VISIBLE){
+								columnIndex++;
+							}
+							linLayout.addView(textView);									
 						}
-													
-			        };
-			this.setListAdapter(listAdapter);
+					}	
+						
+						return linLayout;
+					}
+												
+		        };
+		this.setListAdapter(listAdapter);
 
 	  }
 	
@@ -268,6 +276,35 @@ public class ReportMainActivity extends ListActivity {
 	  return false;
 	}
 	
+	
+ private void setOrientation(HashMap<String,String> dataRow) {
+	 
+		//Forcing landscape view for reports with greater than 5 columns..
+		int maxProtraitColumns = 5;
+		int maxSelectedPortraitColumns = maxProtraitColumns;
+		//Compensating for a hidden column in the main data set..
+		if (dataRow.containsKey("MemberID")){
+			maxProtraitColumns += 1;
+		}
+		
+		//Launched from column options UI..
+		if (selectedColumnIds != null){
+			
+			if (dataRow.size() > maxProtraitColumns && selectedColumnIds.length > maxSelectedPortraitColumns){
+				this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+			}
+			
+		} else {
+			
+			//Launched from date options UI..
+			if (dataRow.size() > maxProtraitColumns){
+				this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+			}
+			
+		}
+		
+	}
+	
 	private void buildColumnHeaders() {
 			LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams( LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT );
 			LinearLayout reportColumnHeadingLayout = (LinearLayout) this.findViewById(R.id.report_list_headings);
@@ -277,7 +314,10 @@ public class ReportMainActivity extends ListActivity {
 		if (resultMapList.size() > 0){
 			//Building title header row...
 			HashMap<String,String> dataRow = resultMapList.get(0);
-
+			
+			//Forcing landscape view for reports with greater than 5 columns..
+			setOrientation(dataRow);
+			
 			//Building column header row...
 
 			for (Entry<String,String> row : dataRow.entrySet()){
@@ -328,26 +368,28 @@ public class ReportMainActivity extends ListActivity {
 	
 	private boolean isColumnAllNull(String colName) {
 		HashMap<String,Integer> colNullCount = new HashMap<String,Integer>();
+		 //Bug fix blocking of all collumns with a single row of data.
+		 if (resultMapList.size() != 1){
+			for (HashMap<String,String> dataRow: resultMapList){
+						
+				for (Entry<String,String> col : dataRow.entrySet()){
 		
-		for (HashMap<String,String> dataRow: resultMapList){
-			
-			
-			
-			for (Entry<String,String> col : dataRow.entrySet()){
-
-
-				if (!colNullCount.containsKey(col.getKey())){
-					colNullCount.put(col.getKey(),0); 
-				}
-				else
-				{
-					if (col.getValue()== null || col.getValue().isEmpty() ){
-						colNullCount.put(col.getKey(),colNullCount.get(col.getKey() )+ 1 );
-					}																										
-				}														
-			}																
-		}
-		 return colNullCount.get(colName) == resultMapList.size()-1;
+					if (!colNullCount.containsKey(col.getKey())){
+						colNullCount.put(col.getKey(),0); 
+					}
+					
+					else
+						
+					{
+						if (col.getValue()== null || col.getValue().isEmpty() ){
+							colNullCount.put(col.getKey(),colNullCount.get(col.getKey() )+ 1 );
+						}																										
+					}														
+				}																
+			 }
+			return colNullCount.get(colName) == resultMapList.size()-1;
+		  }
+		 return false; 
 	}
 	
 	private void getReportData (String finalQuery) {
@@ -400,6 +442,18 @@ public class ReportMainActivity extends ListActivity {
 		protected void onPostExecute(Boolean success) {
 			progress.dismiss();
 			if (success) {
+				
+				System.out.println("\nReport-Type_Data");
+				
+				System.out.println("Result List Size: " + resultMapList.size());
+				
+				for (HashMap<String,String> resultMap: resultMapList){
+				
+					for (HashMap.Entry entry: resultMap.entrySet()){
+						 System.out.println("Field: " + entry.getKey() + " Value: " + entry.getValue());					 
+					}
+				
+				}
 
 				ReportMainActivity.this.buildListAdapter();
 				
@@ -484,6 +538,7 @@ public class ReportMainActivity extends ListActivity {
 			if (success) {
 				//Calls back to the owning activity to build the adapter
 				ReportMainActivity.this.buildQuery();
+				
 				
 			} else {
 				AlertDialog.Builder builder = new AlertDialog.Builder(ReportMainActivity.this);
