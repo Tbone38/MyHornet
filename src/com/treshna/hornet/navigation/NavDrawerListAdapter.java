@@ -24,6 +24,10 @@ public class NavDrawerListAdapter extends BaseAdapter {
         this.navDrawerItems = navDrawerItems;
     }
  
+    public void updateItems(ArrayList<NavDrawerItem> navDrawerItems) {
+    	this.navDrawerItems = navDrawerItems;
+    }
+    
     @Override
     public int getCount() {
         return navDrawerItems.size();
@@ -46,9 +50,9 @@ public class NavDrawerListAdapter extends BaseAdapter {
      */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        if (parent.findViewById(position) != null) {
+        /*if (parent.findViewById(position) != null) {
         	parent.removeView(parent.findViewById(position));
-        }
+        }*/
     	if (navDrawerItems.get(position).getHeader()) { //show a header instead of our regular view.
     		LayoutInflater mInflater = (LayoutInflater)
                     context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);

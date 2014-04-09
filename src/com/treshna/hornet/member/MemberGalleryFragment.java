@@ -1,31 +1,28 @@
 package com.treshna.hornet.member;
 
 
-import com.treshna.hornet.R;
-import com.treshna.hornet.R.id;
-import com.treshna.hornet.R.layout;
-import com.treshna.hornet.services.CameraWrapper;
-import com.treshna.hornet.services.Services;
-import com.treshna.hornet.services.Services.Statics;
-import com.treshna.hornet.sqlite.ContentDescriptor;
-import com.treshna.hornet.sqlite.ContentDescriptor.Image;
-import com.treshna.hornet.sqlite.ContentDescriptor.Image.Cols;
-import com.treshna.hornet.visitor.VisitorsViewAdapter;
-
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.GridView;
 import android.widget.LinearLayout;
+
+import com.treshna.hornet.R;
+import com.treshna.hornet.services.CameraWrapper;
+import com.treshna.hornet.services.Services;
+import com.treshna.hornet.sqlite.ContentDescriptor;
+import com.treshna.hornet.visitor.VisitorsViewAdapter;
 
 
 public class MemberGalleryFragment extends Fragment implements OnClickListener, 
@@ -71,20 +68,32 @@ public class MemberGalleryFragment extends Fragment implements OnClickListener,
 		
 		GridView gallery = (GridView) view.findViewById(R.id.member_gallery);
 		mAdapter = new GalleryViewAdapter(getActivity(), R.layout.member_gallery_row, null,
-				new String[] {}, new int[] {});
+				new String[] {}, new int[] {}, 130);
 		gallery.setAdapter(mAdapter);
-		gallery.setColumnWidth(130);
-		gallery.setNumColumns(2);
+		
+		Resources r = getResources();
+        float padding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                9, r.getDisplayMetrics());
+ 
+        int columnWidth = (int) ((Services.getScreenWidth(getActivity()) - ((3 + 1) * padding)) / 3);
+ 
+        gallery.setNumColumns(3);
+        gallery.setColumnWidth(columnWidth);
+        gallery.setStretchMode(GridView.NO_STRETCH);
+        gallery.setPadding((int) padding, (int) padding, (int) padding,
+                (int) padding);
+        gallery.setHorizontalSpacing((int) padding);
+        gallery.setVerticalSpacing((int) padding);
 		mLoader.initLoader(0, null, this);
 		
 		LinearLayout addPhoto = (LinearLayout) view.findViewById(R.id.button_add_photo);
 		addPhoto.setOnClickListener(this);
 		
-		LinearLayout ok = (LinearLayout) view.findViewById(R.id.button_return);
-		ok.setOnClickListener(this);
-		
 		return view;
 	}
+	
+	 private void InitilizeGridLayout() {
+	           }
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
@@ -107,10 +116,6 @@ public class MemberGalleryFragment extends Fragment implements OnClickListener,
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case (R.id.button_return):{
-			getActivity().finish();
-			break;
-		}
 		case (R.id.button_add_photo):{
 			Intent camera = new Intent(getActivity(), CameraWrapper.class);
 			camera.putExtra(VisitorsViewAdapter.EXTRA_ID,memberID);

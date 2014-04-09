@@ -1,24 +1,25 @@
 package com.treshna.hornet.member;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
-
-import com.treshna.hornet.R;
-import com.treshna.hornet.R.id;
-import com.treshna.hornet.services.BitmapLoader;
-import com.treshna.hornet.services.Services;
-import com.treshna.hornet.sqlite.ContentDescriptor;
-import com.treshna.hornet.sqlite.ContentDescriptor.Image;
-import com.treshna.hornet.sqlite.ContentDescriptor.Image.Cols;
 
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
+
+import com.treshna.hornet.R;
+import com.treshna.hornet.services.BitmapLoader;
+import com.treshna.hornet.services.Services;
+import com.treshna.hornet.sqlite.ContentDescriptor;
 
 
 public class GalleryViewAdapter extends SimpleCursorAdapter implements OnClickListener{
@@ -27,22 +28,21 @@ public class GalleryViewAdapter extends SimpleCursorAdapter implements OnClickLi
 	Context context;
 	String[] FROM;
 	Cursor cursor;
-	private static int REQ_WIDTH = 130;
-	private static int REQ_HEIGHT = 130;
-	
+	private int imageWidth; //was 130.
 	
 	@SuppressWarnings("deprecation")
 	public GalleryViewAdapter(Context context, int layout, Cursor c,
-			String[] from, int[] to ) {
+			String[] from, int[] to, int imageWidth ) {
 		super(context, layout, c, from, to);
 		this.context = context;
 		this.FROM = from;
-		
+		this.imageWidth = imageWidth;
 	}
 	
 	@Override
 	public void bindView(View rowView, Context context, Cursor cursor) {
 		ImageView image = (ImageView) rowView.findViewById(R.id.member_gallery_image);
+		
 
 	    ArrayList<String> tag = new ArrayList<String>();
 	    tag.add(cursor.getString(cursor.getColumnIndex(ContentDescriptor.Image.Cols.DISPLAYVALUE)));
@@ -52,7 +52,7 @@ public class GalleryViewAdapter extends SimpleCursorAdapter implements OnClickLi
 		File imgFile = new File(imgDir);
 				
 		if (imgFile.exists() == true) {
-			new BitmapLoader(imgFile,image,REQ_WIDTH,REQ_HEIGHT);		   
+			new BitmapLoader(imgFile,image,imageWidth,imageWidth);		   
 		    image.setTag(tag);
 		    image.setOnClickListener(this);
 		}
@@ -79,6 +79,4 @@ public class GalleryViewAdapter extends SimpleCursorAdapter implements OnClickLi
 		}
 		}
 	}
-	
-	
 }

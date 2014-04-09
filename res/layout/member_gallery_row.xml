@@ -11,4 +11,8 @@
 	    android:layout_width="130dp"
 	    android:layout_height="130dp"
 	    android:scaleType="centerCrop" />
+	<CheckBox 
+	    android:id="@+id/member_image_profile"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"/>
 </RelativeLayout>

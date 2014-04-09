@@ -53,7 +53,7 @@ public class LastVisitorsSuperFragment extends Fragment {
         LastVisitorsFragment f = new LastVisitorsFragment();
         ft.replace(R.id.frame_right, f);
         ft.commit();
-        ((MainActivity) getActivity()).changeFragment(null, "lastvisitors");
+        //((MainActivity) getActivity()).changeFragment(null, "lastvisitors");
         
         if (view.getTag().toString().compareTo("single_panel") != 0) {
         	TextView empty_glyph = (TextView) view.findViewById(R.id.empty_glyph);

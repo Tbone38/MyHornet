@@ -23,29 +23,14 @@ public class SlideMenuClickListener implements OnItemClickListener {
 	private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private Activity activity;
-    private ActivityType activitytype;
     private int currentselection = 0;
 	
-    public static enum ActivityType {
-    	MainActivity(1),EmptyActivity(2);
-    	
-    	private final int key;
-		
-		ActivityType(int thekey) {
-			this.key = thekey;
-		}
-		
-		public int getKey() {
-				return this.key;
-			}
-    }
     
-	public SlideMenuClickListener(FragmentManager fragmentManager, DrawerLayout drawerLayout, ListView drawerList, Activity ma, ActivityType at) {
+	public SlideMenuClickListener(FragmentManager fragmentManager, DrawerLayout drawerLayout, ListView drawerList, Activity ma) {
 		this.fm = fragmentManager;
 		this.mDrawerLayout = drawerLayout;
 		this.mDrawerList = drawerList;
 		this.activity = ma;
-		this.activitytype = at;
 	}
 	
 	@Override
@@ -56,23 +41,19 @@ public class SlideMenuClickListener implements OnItemClickListener {
 	
 	private void displayView(int position) {
         // update the main content by replacing fragments
-		if (currentselection == position) {
+		/*if (currentselection == position) {
 			return;
-		}
+		}*/
         Fragment fragment = null;
         String tag = null;
         switch (position) {
         case 1:
         	//Member Find
-        	if (activitytype == ActivityType.MainActivity) {
-        		((MainActivity)activity).genTabs();
-        	}
+        	((MainActivity)activity).genTabs();
         	tag = "findmember";
             break;
         case 2: //last visitors;
-        	if (activitytype == ActivityType.MainActivity) {
-        		((MainActivity)activity).genTabs();
-        	}
+    		((MainActivity)activity).genTabs();
         	tag = "lastvisitors";
             break;
         case 3: //bookings
@@ -108,9 +89,8 @@ public class SlideMenuClickListener implements OnItemClickListener {
             break;
         }
         currentselection = position;
-        if (activitytype == ActivityType.MainActivity) {
-        	((MainActivity)activity).changeFragment(fragment, tag);
-        }
+    	((MainActivity)activity).changeFragment(fragment, tag);
+
         mDrawerList.setItemChecked(position, true);
         mDrawerList.setSelection(position);
         mDrawerLayout.closeDrawer(mDrawerList);

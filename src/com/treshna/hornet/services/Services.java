@@ -1,16 +1,11 @@
 package com.treshna.hornet.services;
 
 import java.io.File;
-import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Locale;
-
-import com.treshna.hornet.R;
-import com.treshna.hornet.R.menu;
-import com.treshna.hornet.network.PollingHandler;
 
 import android.annotation.SuppressLint;
 import android.app.PendingIntent;
@@ -25,17 +20,18 @@ import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Point;
 import android.graphics.Typeface;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.widget.ImageView;
+import android.view.Display;
+import android.view.WindowManager;
 import android.widget.Toast;
+
+import com.treshna.hornet.network.PollingHandler;
 
 public class Services {
 	
@@ -128,6 +124,10 @@ public class Services {
 			// a final image with both dimensions larger than or equal to the
 			// requested height and width.
 			inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+		} else if (height < reqHeight && width < reqWidth) {
+			 while (options.outWidth / inSampleSize / 2 >= reqWidth
+	                    && options.outHeight / inSampleSize / 2 >= reqHeight)
+	                inSampleSize *= 2;
 		}
 		return inSampleSize;
 	}
@@ -181,7 +181,8 @@ public class Services {
 		 return (preferences.getString(key, "-1"));
 	}
 	
-	//converts a DP input into pixels, useful for programmatically setting View margins/padding/etc.
+	//converts a DP input into pixels
+	 //not used for anything?
 	public static int convertdpToPxl(Context c, int dp){
 		int pxl = 0;
 		Resources r = c.getResources();
@@ -192,6 +193,25 @@ public class Services {
 		);
 		return pxl;
 	}
+	
+	@SuppressWarnings("deprecation")
+	public static int getScreenWidth(Context _context) {
+        int columnWidth;
+        WindowManager wm = (WindowManager) _context
+                .getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+ 
+        final Point point = new Point();
+        try {
+            display.getSize(point);
+        } catch (java.lang.NoSuchMethodError ignore) { // Older device
+            point.x = display.getWidth();
+            point.y = display.getHeight();
+        }
+        columnWidth = point.x;
+        return columnWidth;
+    }
+	
 	//used for the is_profile column in the Image Table.
 	public static int booltoInt(boolean input){
 		return (input == true)? 1 : 0;

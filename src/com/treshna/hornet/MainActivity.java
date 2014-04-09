@@ -98,7 +98,7 @@ public class MainActivity extends NFCActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		if (savedInstanceState != null)
 	    {
-			savedInstanceState.remove ("android:support:fragments");
+			//savedInstanceState.remove ("android:support:fragments");
 			selectedTab = savedInstanceState.getInt("selectedTab");
 			//savedInstanceState.clear();
 	    }
@@ -227,8 +227,14 @@ public class MainActivity extends NFCActivity {
         navMenuIcons.recycle();
  
         // setting the nav drawer list adapter
-        navadapter = new NavDrawerListAdapter(getApplicationContext(),
-                navDrawerItems);
+        if (mDrawerList.getAdapter() != null) {
+        	navadapter = (NavDrawerListAdapter) mDrawerList.getAdapter();
+        	navadapter.updateItems(navDrawerItems);
+        	navadapter.notifyDataSetChanged();
+        } else {
+        	navadapter = new NavDrawerListAdapter(getApplicationContext(),
+        			navDrawerItems);
+        }
         mDrawerList.setAdapter(navadapter);
         
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
@@ -250,8 +256,7 @@ public class MainActivity extends NFCActivity {
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);        
-        mDrawerList.setOnItemClickListener(new SlideMenuClickListener(this.getSupportFragmentManager(), mDrawerLayout, mDrawerList, this, 
-        		SlideMenuClickListener.ActivityType.MainActivity));
+        mDrawerList.setOnItemClickListener(new SlideMenuClickListener(this.getSupportFragmentManager(), mDrawerLayout, mDrawerList, this));
         
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
@@ -269,6 +274,10 @@ public class MainActivity extends NFCActivity {
 	public void onResume() {
 		super.onResume();
 		//add back in at a later date.
+		IntentFilter iff = new IntentFilter();
+	    iff.addAction("com.treshna.hornet.serviceBroadcast");
+	    this.registerReceiver(this.mBroadcastReceiver,iff);
+	    
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		if (prefs.getBoolean("firstrun", true)) {
     		firstSetup();
@@ -280,13 +289,8 @@ public class MainActivity extends NFCActivity {
 		if (Services.getProgress() != null) {
     		Services.getProgress().show();
 		}
-		//setupNavDrawer();
-		
-		IntentFilter iff = new IntentFilter();
-	    iff.addAction("com.treshna.hornet.serviceBroadcast");
-	    this.registerReceiver(this.mBroadcastReceiver,iff);
-	    
-	    //changeFragment(cFragment, "onResume");
+		setupNavDrawer();
+		//changeFragment(cFragment, "onResume");
 	}
 	
 	private void doSync() {

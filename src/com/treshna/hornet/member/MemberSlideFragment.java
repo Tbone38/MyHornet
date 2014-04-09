@@ -49,14 +49,16 @@ public class MemberSlideFragment extends Fragment implements TagFoundListener{
 		//view = inflater.inflate(R.layout.swipe_layout, container, false);
     	view = inflater.inflate(R.layout.member_details_new_navigation, null);
 		// Instantiate a ViewPager and a PagerAdapter.
-    	 TextView glyph = (TextView)container.findViewById(R.id.empty_glyph);
-    	 TextView glyphtext = (TextView) container.findViewById(R.id.empty_text);
-    	 if (glyph != null) {
-    		 glyph.setVisibility(View.GONE);
-    	 }
-    	 if (glyphtext != null) {
-    		 glyphtext.setVisibility(View.GONE);
-    	 }
+    	if (container != null) {
+	    	 TextView glyph = (TextView)container.findViewById(R.id.empty_glyph);
+	    	 TextView glyphtext = (TextView) container.findViewById(R.id.empty_text);
+	    	 if (glyph != null) {
+	    		 glyph.setVisibility(View.GONE);
+	    	 }
+	    	 if (glyphtext != null) {
+	    		 glyphtext.setVisibility(View.GONE);
+	    	 }
+    	}
 	    mPager = (ViewPager) view.findViewById(R.id.pager);
 	    mPagerAdapter = new MemberDetailsPagerAdapter(getChildFragmentManager());
 	    mPager.setAdapter(mPagerAdapter);
