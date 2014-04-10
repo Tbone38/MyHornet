@@ -123,7 +123,7 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		db.execSQL("CREATE TABLE "+ContentDescriptor.Image.NAME+" ("+ContentDescriptor.Image.Cols.ID+" INTEGER PRIMARY KEY, "
 				+ContentDescriptor.Image.Cols.MID+ " INTEGER, "+ContentDescriptor.Image.Cols.DATE+" DATETIME, "
 				+ContentDescriptor.Image.Cols.DESCRIPTION+" TEXT , "+ContentDescriptor.Image.Cols.IS_PROFILE+" INTEGER, "//IS_PROFILE row contains text. change the datattype.
-				+ContentDescriptor.Image.Cols.DISPLAYVALUE+" INTEGER, "
+				+ContentDescriptor.Image.OldCols.DISPLAYVALUE+" INTEGER, "
 				+"FOREIGN KEY("+ContentDescriptor.Image.Cols.MID
 				+") REFERENCES "+ContentDescriptor.Member.NAME+"("+ContentDescriptor.Member.Cols.MID+") "
 				+");");

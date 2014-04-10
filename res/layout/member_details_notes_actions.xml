@@ -1,0 +1,127 @@
+<LinearLayout 
+	xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/member_actions_list"
+    android:tag="single_list"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+    <TextView
+        android:id="@+id/memberActionsH"
+        android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:text="@string/action"
+        android:textIsSelectable="false"
+        android:padding="5dp"
+        android:paddingBottom="1dp"
+        android:layout_marginLeft="2dp"/>
+    <LinearLayout
+        android:layout_width="215dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+	    android:layout_marginRight="10dp"
+    	android:orientation="vertical">
+	    <LinearLayout
+	        android:id="@+id/button_call"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="horizontal"
+	        android:clickable="true"
+	        android:background="@drawable/button_large" >
+	        <ImageView
+	            android:id="@+id/button_call_drawable"
+	            android:layout_width="50dp"
+	            android:layout_height="50dp"
+	            android:background="@drawable/ic_action_call"
+	            android:padding="3dp" />
+	        <TextView
+	            android:id="@+id/button_call_text"
+	            android:layout_width="wrap_content"
+	            android:layout_height="match_parent"
+	            android:gravity="center"
+	            android:textSize="18sp"
+	            android:text="@string/action_call"
+	            android:padding="3dp" />
+	    </LinearLayout>
+    	<View
+	        android:layout_width="match_parent"
+		    android:layout_height="2dp"
+		    android:paddingLeft="5dp"
+	    	android:paddingRight="5dp"
+		    android:background="@color/button_underline_grey" />
+	</LinearLayout>
+	    
+    <LinearLayout
+        android:layout_width="215dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+	    android:layout_marginRight="10dp"
+    	android:orientation="vertical">
+	    <LinearLayout
+	        android:id="@+id/button_sms"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="horizontal"
+	        android:clickable="true"
+	        android:background="@drawable/button_large" >
+	        <ImageView
+	            android:id="@+id/button_sms_drawable"
+	            android:layout_width="50dp"
+	            android:layout_height="50dp"
+	            android:background="@drawable/ic_action_chat"
+	            android:padding="3dp" />
+	        <TextView 
+	            android:id="@+id/button_sms_text"
+	            android:layout_width="wrap_content"
+	            android:layout_height="match_parent"
+	            android:gravity="center"
+	            android:textSize="18sp"
+	            android:text="@string/action_sms"
+	            android:padding="3dp" />
+	    </LinearLayout>
+    	<View
+	        android:layout_width="match_parent"
+		    android:layout_height="2dp"
+		    android:paddingLeft="5dp"
+	    	android:paddingRight="5dp"
+		    android:background="@color/button_underline_grey" />
+	</LinearLayout>
+	    
+	<LinearLayout
+        android:layout_width="215dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+	    android:layout_marginRight="10dp"
+    	android:orientation="vertical">
+	    <LinearLayout
+	        android:id="@+id/button_email"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="horizontal"
+	        android:clickable="true"
+	        android:background="@drawable/button_large">
+	        <ImageView
+	            android:id="@+id/button_email_drawable"
+	            android:layout_width="50dp"
+	            android:layout_height="50dp"
+	            android:background="@drawable/ic_action_email"
+	            android:padding="3dp" />
+	        <TextView
+	            android:id="@+id/button_email_text"
+	            android:layout_width="wrap_content"
+	            android:layout_height="match_parent"
+	            android:gravity="center"
+	            android:textSize="18sp"
+	            android:text="@string/action_email"
+	            android:padding="3dp" />        
+    	</LinearLayout>
+    	<View
+	        android:layout_width="match_parent"
+		    android:layout_height="2dp"
+		    android:paddingLeft="5dp"
+	    	android:paddingRight="5dp"
+		    android:background="@color/button_underline_grey" />
+	</LinearLayout>
+	
+</LinearLayout>

@@ -577,7 +577,6 @@ public class MainActivity extends NFCActivity {
 				//find a way to force refresh the activity.
 				Intent intent = getIntent();
 				intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-				MainActivity.this.onPause();
 			    MainActivity.this.finish();
 			    startActivity(intent);
 			} else {

@@ -78,7 +78,8 @@ KEY:
                 Member Details/Pager
                 ReDesigned member Details Layout.
                 Moved MembershipHold to a fragment.
-				ReDesign the way the images work..
+                ReDesign the way the images work..
+                Fixed Image capturing, so you can still add photos!
  
             TODO:
                 Handle permissions/Roles for different staff, to limit what certain staff can see.
@@ -91,15 +92,15 @@ KEY:
                 Spacing/padding of Labels & Headings..
                 Improve sync-times/OutOfMemory Issues.
                 Fix Times/(possibly dates?) disappearing everytime we update the app.
-                Record Emails/SMS send from app in gymmaster device.
+                Record Emails/SMS sent from app in gymmaster device.
                 Test Access Control, does it/can we get it working with the GymMaster Access/Security Control (Using Views?)?
                 Issue with sync table: the servertime isn't being set correctly.
                 Fix the PollingHandler running on the UI thread. (blocking etc).
                 Improve Performance of the Booking Overview page.
                 Membership complete "Add Tag" doesn't work. Find out why...
-				Fix Member Gallery.
-				Add Last Sync time to the bottom of the nav drawer.
-				Fix Image capturing, so you can still add photos!
+                Fix Member Gallery.
+                Add Last Sync time to the bottom of the nav drawer.
+		Work out why Member Gallery keeps wrapping height.
 
     
     v119:

@@ -603,7 +603,7 @@
 	</LinearLayout>
 	
 	<include 
-	    layout="@layout/member_details_actions"
+	    layout="@layout/member_details_notes_actions"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	    android:layout_below="@id/membertasks"/>

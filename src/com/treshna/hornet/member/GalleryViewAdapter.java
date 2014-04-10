@@ -130,7 +130,7 @@ public class GalleryViewAdapter extends SimpleCursorAdapter implements OnClickLi
 			@SuppressWarnings("unchecked")
 			ArrayList<String> tag = (ArrayList<String>) v.getTag();
 			ContentResolver contentResolver = context.getContentResolver();
-			String selection = ContentDescriptor.Image.Cols.DISPLAYVALUE+" = "+tag.get(0)
+			String selection = ContentDescriptor.Image.Cols.IID+" = "+tag.get(0)
 					+" AND "+ContentDescriptor.Image.Cols.MID+" = "+tag.get(1);
 			cur = contentResolver.query(ContentDescriptor.Image.CONTENT_URI, null, selection, null, null);
 			if (cur.getCount() <= 0) break;

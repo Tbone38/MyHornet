@@ -839,6 +839,19 @@ public class UpdateDatabase {
 		private static final String SQL8 = "DELETE FROM "+Image.NAME+" ;";
 		
 		private static final String SQL9 = "ALTER TABLE "+Image.NAME+" ADD COLUMN "+Image.Cols.LASTUPDATE+" NUMERIC;";
+		private static final String SQL10 = "ALTER TABLE "+Image.NAME+" ADD COLUMN "+Image.Cols.DEVICESIGNUP+" TEXT DEFAULT 'f';";
+		
+		//drop trigger.
+		private static final String SQL11 = "DROP TRIGGER "+Image.Triggers.ON_INSERT+";";
+		
+		private static final String SQL12 = "CREATE TRIGGER "+Image.Triggers.ON_INSERT+
+				" AFTER INSERT ON "+Image.NAME
+				+" FOR EACH ROW WHEN new."+Image.Cols.DEVICESIGNUP +" = 't' " 
+				+"BEGIN "
+					+"INSERT OR REPLACE INTO "+PendingUploads.NAME
+					+ " ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
+					+ " VALUES (new."+Image.Cols.ID+", "+TableIndex.Values.Image.getKey()+");"
+				+" END; ";
 		
 		public static void patchNinetySix(SQLiteDatabase db) {
 			db.beginTransaction();
@@ -861,6 +874,12 @@ public class UpdateDatabase {
 				db.execSQL(SQL8);
 				Log.w(HornetDatabase.class.getName(), "\n"+SQL9);
 				db.execSQL(SQL9);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL10);
+				db.execSQL(SQL10);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL11);
+				db.execSQL(SQL11);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL12);
+				db.execSQL(SQL12);
 				db.setTransactionSuccessful();
 			/*} catch (SQLException e) {
 			e.printStackTrace();

@@ -204,6 +204,7 @@ public class HornetDBService extends Service {
 			getBookingID();
 			getMembershipID();
 			getIdCardID();
+			getImageID();
 			int sid_count = getSuspendID();
 			if (sid_count < 0) {
 				Services.showToast(getApplicationContext(), statusMessage, handler);
@@ -324,8 +325,6 @@ public class HornetDBService extends Service {
  		  }
  		  
  		  this_sync = System.currentTimeMillis();
-		  //Services.showProgress(Services.getContext(), "Syncing Local Database setting from Server", handler, currentCall, true);
-		   //the above box should probably always show. & should be controlled by an async task.
  		  
 		   //config
 		   int rcount = getResource(0);
@@ -340,6 +339,7 @@ public class HornetDBService extends Service {
 		   getProgrammes(0);
 		   getBookings(0);
 		   getClasses(-1);
+		   getImageID();
 		   
 		   int use_roll = Integer.parseInt(Services.getAppSettings(getApplicationContext(), "use_roll"));
 		   if (use_roll > 0) {
@@ -357,13 +357,11 @@ public class HornetDBService extends Service {
 			   getRoll(0);
 	 	   	   getRollItem(0);
 			   
-			   //Services.stopProgress(handler, currentCall);
 			   Services.setPreference(getApplicationContext(), "last_freq_sync", String.valueOf(this_sync));
-			   //Services.showProgress(Services.getContext(), "Setting up resource", handler, currentCall, false);
 		   	   //rebuild times, then update the reference in date.
 			   logger.writeLog();
 		   	   uploadLog();
-		   	   //Services.stopProgress(handler, currentCall);
+		   	   
 		   	   thread.is_networking = false;
 			   Intent bcIntent = new Intent();
 			   bcIntent.putExtra(RESULT, true);
@@ -646,17 +644,10 @@ public class HornetDBService extends Service {
     }
     
     private void visitorImages() {
-    	/*String lastsync = Services.getAppSettings(getApplicationContext(), "lastsync");
-    	cur = contentResolver.query(ContentDescriptor.Visitor.CONTENT_URI, null, ContentDescriptor.Visitor.Cols.LASTUPDATE+" >= ?",
-    			new String[] {lastsync}, null);
-    	
-    	queryServerForImage(cur, 1);*/
     	getImages(last_sync);
     }
     
     private void memberImages() {
-    	/*cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, null, null, null);
-    	queryServerForImage(cur, 1);*/
     	getImages(last_sync);
     }
     
@@ -684,6 +675,7 @@ public class HornetDBService extends Service {
     			if (cur.moveToFirst()) {
     				rowid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Image.Cols.ID));
     			}
+    			cur.close();
     			
     			ContentValues values = new ContentValues();
     			values.put(ContentDescriptor.Image.Cols.DESCRIPTION, rs.getString("description"));
@@ -712,191 +704,38 @@ public class HornetDBService extends Service {
     	}
     	return result;
     }
-    /*
-     * Image ID's are set such that id 0 for membership is always the profile picture.
-     * this means that getting the profile picture from the sdcard should be 0_<memberid>.jpg
-     */
-  //TODO: rewrite this with consideration to last_sync.
     
-    /**
-     * cursor = a cursor with which to look up the memberid for image download.
-     * index = the position in the cursor at which the memberid can be found.
-     * @param cursor
-     * @param index
-     */
-    private void queryServerForImage(Cursor cursor, int index) {
-    	Log.v(TAG, "Querying Server for images");
-    	boolean oldQuery;
-    	ResultSet rs;
-    	FileHandler fileHandler;
-    	String query;
-    	ContentValues val;
-    	byte[] is;
-    	SimpleDateFormat dateFormat;
+    private int getImageID() {
+    	int result = 0;
+    	int free_count = 0; //we should probably get like, 50. and grab more whenever we can.
     	
-    	oldQuery = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("image", false);
-    	ArrayList<String> imagelist = new ArrayList<String>();
-    	while (cursor.moveToNext()){
-    		imageWhereQuery = imageWhereQuery + " "+ cursor.getString(index) + ",";
-    		imagelist.add(cursor.getString(index));
+    	cur = contentResolver.query(ContentDescriptor.FreeIds.CONTENT_URI, null, ContentDescriptor.FreeIds.Cols.TABLEID+" = ?",
+    			new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Image.getKey())}, null);
+    	
+    	free_count = cur.getCount();
+    	cur.close();
+    	
+    	for (int i=(50-free_count); i> 0; i--) {
+    		try {
+    			ResultSet rs = connection.startStatementQuery("select nextval('image_id_seq');");
+    			
+    			rs.next(); 	
+    			ContentValues values = new ContentValues();
+    			values.put(ContentDescriptor.FreeIds.Cols.ROWID, rs.getInt("nextval"));
+    			values.put(ContentDescriptor.FreeIds.Cols.TABLEID, 
+    					ContentDescriptor.TableIndex.Values.Image.getKey());
+    			
+    			contentResolver.insert(ContentDescriptor.FreeIds.CONTENT_URI, values);
+    			result +=1;
+    		} catch (SQLException e) {
+    			statusMessage = e.getLocalizedMessage();
+    			Log.e(TAG, "", e);
+    			continue;
+    		}
     	}
-    	cursor.close();
-		//System.out.println("\nQuerying server for image");
-		
-		query ="";
-    	if (oldQuery != true){ 
-        	query = "SELECT decode(substring(imagedata from 3),'base64'), memberid, lastupdate, description, is_profile, "
-					+"created, id FROM IMAGE where substring(imagedata,1,2) = '1|'" //and length(imagedata)>200
-					+" AND memberid = '";
-        
-		} else if (oldQuery == true) { //the table doesn't have description or is_profile
-			query = "SELECT decode(substring(imagedata from 3),'base64'), memberid, lastupdate, "
-					+"created, id FROM IMAGE where substring(imagedata,1,2) = '1|'" //and length(imagedata)>200
-					+" AND memberid = '";
-		}
     	
-    	
-    	
-    	if (!openConnection()) {
-    		return ; //connection failed;
-    	}
-    	fileHandler = new FileHandler(this);
-    	for (int i=0; i< imagelist.size(); i+=1) {
-    		val = new ContentValues();
-        	dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-        	String theQuery;
-        	theQuery = query+imagelist.get(i)+"';";
-        	
-    		rs = null;
-        	try {
-        		rs = connection.startStatementQuery(theQuery);
-        	} catch (SQLException e) {
-        		statusMessage = e.getLocalizedMessage();
-        		Log.e(TAG, "", e);
-        		return;
-        	}
-        	try {
-	        	while (rs.next()) {
-	        		List<String> dates;
-	        		Date cacheDate, sDate;
-	        		boolean imgExists = false, hasid = true;
-	        		int rowid = -1;
-	        		
-	        		cur = contentResolver.query(ContentDescriptor.Image.CONTENT_URI, null, ContentDescriptor.Image.Cols.MID
-	                		+" = "+rs.getString("memberid"), null, null); //imagelist.get(i)
-	            	cur.moveToFirst();
-	            	
-	            	//do some date checking. rather than rewriting images every time.
-	            	dates = new ArrayList<String>();
-	            	cacheDate = null;
-	            	sDate = dateFormat.parse(rs.getString("lastupdate"));
-	        		while(!cur.isAfterLast()){
-	        			if ( cur.getCount() > 0 && cur.isNull(cur.getColumnIndex(ContentDescriptor.Image.Cols.DATE)) == false) {
-	        				String cDate = Services.dateFormat(cur.getString(cur.getColumnIndex(ContentDescriptor.Image.Cols.DATE)),
-	        						"dd MMM yy hh:mm:ss aa", "yyyy-MM-dd");
-	        				cacheDate = dateFormat.parse(cDate);
-		            		if (cacheDate.compareTo(sDate) == 0) { //dates match, check if we already have the id from the db.
-		            			rowid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Image.Cols.ID));
-		            			imgExists = true;
-		            			int iid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Image.Cols.IID)); 
-		            			if ( iid <= 0 || cur.isNull(cur.getColumnIndex(ContentDescriptor.Image.Cols.IID))) {
-		            				hasid = false;
-		            			}
-		            		}
-	            		}
-	        			cur.moveToNext();
-	            	}
-	            	
-	            	for (String date : dates){
-	            		cacheDate = dateFormat.parse(date);
-	            		if (cacheDate.compareTo(sDate) == 0) imgExists = true;
-	            	}
-	            	//if the image isn't found: add it!
-	            	if (imgExists == false){
-	            		int imgCount = 0, isProfile;
-		            	imgCount = cur.getCount();
-		            	String ssDate, description;
-		            	
-		            	if (oldQuery != true) {
-			            	if (rs.getBoolean("is_profile") == true) { //isProfile
-			            		imgCount = 0;
-			            		//TODO: if re-arranging image order, I need to tell previous image that it is no longer the profile.
-			            		if (cur.getCount() > 0) {
-			            			val = new ContentValues();
-			            			val.put(ContentDescriptor.Image.Cols.DISPLAYVALUE, cur.getCount());
-			            			contentResolver.update(ContentDescriptor.Image.CONTENT_URI, val, ContentDescriptor.Image.Cols.DISPLAYVALUE +" = "+imgCount
-			            					+" AND "+ContentDescriptor.Image.Cols.MID+" = "+rs.getString("memberid"), null);
-			            			fileHandler.renameFile("0_"+rs.getString("memberid"), cur.getCount()+"_"+rs.getString("memberid"));
-			            		}
-			            	}
-		            	}
-		            	else {
-		            		imgCount = 0;
-		            		if (cur.getCount() > 0) {
-		            			val = new ContentValues();
-		            			val.put(ContentDescriptor.Image.Cols.DISPLAYVALUE, cur.getCount());
-		            			contentResolver.update(ContentDescriptor.Image.CONTENT_URI, val, ContentDescriptor.Image.Cols.DISPLAYVALUE +" = "+imgCount
-		            					+" AND "+ContentDescriptor.Image.Cols.MID+" = "+rs.getString("memberid"), null);
-		            			fileHandler.renameFile("0_"+rs.getString("memberid"), cur.getCount()+"_"+rs.getString("memberid"));
-		            		}
-		            	}  		
-			            	//Add some null handling as well.
-		            	is = rs.getBytes(1); //imagedata
-		            	
-		        		fileHandler.writeFile(is, imgCount+"_"+rs.getString("memberid")+".jpg");
-		        		is = null;
-		        		val.put(ContentDescriptor.Image.Cols.IID, rs.getString("id"));
-		        		val.put(ContentDescriptor.Image.Cols.DISPLAYVALUE, imgCount);
-		        		val.put(ContentDescriptor.Image.Cols.MID, rs.getString("memberid"));
-		        		ssDate = Services.dateFormat(rs.getString("lastupdate"), "yyyy-MM-dd", "dd MMM yy hh:mm:ss aa");
-		        		val.put(ContentDescriptor.Image.Cols.DATE, ssDate);
-		        		description = null;
-		        		if (oldQuery != true) {
-		        			description = rs.getString("description");
-		        		}
-		        		if (description == null || description.length() < 2 || description.compareTo(" ") == 0) {
-		        			description = ""; //leave it empty.
-		        		}
-		        		val.put(ContentDescriptor.Image.Cols.DESCRIPTION, description);
-		        		isProfile = 0;
-		        		if (oldQuery != true){
-		        			isProfile = Services.booltoInt(rs.getBoolean("is_profile"));
-		        		} else {
-		        			isProfile = Services.booltoInt(rs.getBoolean(1)); //rs.getBoolean returns 'true'. 
-		        		}
-		        		val.put(ContentDescriptor.Image.Cols.IS_PROFILE, isProfile);
-		        		contentResolver.insert(ContentDescriptor.Image.CONTENT_URI, val);
-	            	} 
-	            	else if (!hasid) { //update the new image with the id returned by postgres.
-	            		val.put(ContentDescriptor.Image.Cols.IID, rs.getString("id"));
-		        		val.put(ContentDescriptor.Image.Cols.MID, rs.getString("memberid"));
-		        		String ssDate = Services.dateFormat(rs.getString("lastupdate"), "yyyy-MM-dd", "dd MMM yy hh:mm:ss aa");
-		        		val.put(ContentDescriptor.Image.Cols.DATE, ssDate);
-		        		
-		        		contentResolver.update(ContentDescriptor.Image.CONTENT_URI, val, ContentDescriptor.Image.Cols.ID+" = ?",
-		        				new String[] {String.valueOf(rowid)});
-	            	}
-	            	cur.close();
-	        	}
-	        	rs.close();
-        	} catch (SQLException e) {
-        		statusMessage = e.getLocalizedMessage();
-        		Log.e(TAG, "", e);
-        		closeConnection();
-        		return;
-        	} catch (ParseException e) {
-        		//date formatted incorrectly.
-        		statusMessage = e.getLocalizedMessage();
-        		Log.e(TAG, "", e);
-        		closeConnection();
-        		return;
-        	}
-    	}
-    	imagelist = null;
-    	
-    	closeConnection();
+    	return result;
     }
-    
     
     private int uploadImage() {
     	int result = 0;
@@ -921,30 +760,26 @@ public class HornetDBService extends Service {
     			contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, ContentDescriptor.PendingUploads.Cols.TABLEID+" = ? "
     					+ "AND "+ContentDescriptor.PendingUploads.Cols.ROWID+" = ?", new String[] {
     					String.valueOf(ContentDescriptor.TableIndex.Values.Image.getKey()), String.valueOf(rowList.get(i))});
+    			cur.close();
     			continue;
     		}
     		
-    		SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yy hh:mm:ss aa", Locale.US);
-    		String cDate = cur.getString(cur.getColumnIndex(ContentDescriptor.Image.Cols.DATE));
-        	Date cacheImageDate = null;
-        	try {
-        		cacheImageDate = dateFormat.parse(cDate);
-        	} catch (ParseException e) {
-        		cacheImageDate = new Date();
-        	}
-    		
+    		long cDate = cur.getLong(cur.getColumnIndex(ContentDescriptor.Image.Cols.DATE));
+        	
         	FileHandler fileHandler = new FileHandler(getApplicationContext());
         	int imageSize = 20000;
-        	byte[] image = fileHandler.readImage(imageSize, Integer.toString(cur.getInt(cur.getColumnIndex(ContentDescriptor.Image.Cols.DISPLAYVALUE)))+
-        			"_"+Integer.toString(cur.getInt
-        			(cur.getColumnIndex(ContentDescriptor.Image.Cols.MID))));
+        	byte[] image = fileHandler.readImage(imageSize, cur.getString(cur.getColumnIndex(ContentDescriptor.Image.Cols.IID))+
+        			"_"+cur.getString(cur.getColumnIndex(ContentDescriptor.Image.Cols.MID)));
         	
         	try {
         		connection.uploadImage(image, 
         				cur.getInt(cur.getColumnIndex(ContentDescriptor.Image.Cols.MID)), 
-        				cacheImageDate,
+        				cDate,
         				cur.getString(cur.getColumnIndex(ContentDescriptor.Image.Cols.DESCRIPTION)), 
-        				Services.isProfile(cur.getInt(cur.getColumnIndex(ContentDescriptor.Image.Cols.IS_PROFILE))));
+        				Services.isProfile(cur.getInt(cur.getColumnIndex(ContentDescriptor.Image.Cols.IS_PROFILE))),
+        				cur.getInt(cur.getColumnIndex(ContentDescriptor.Image.Cols.IID)));
+        		
+        		cur.close();
         		result +=1;
         	} catch (SQLException e) {
         		statusMessage = e.getLocalizedMessage();
@@ -987,6 +822,7 @@ public class HornetDBService extends Service {
     				"m."+ContentDescriptor.Member.Cols._ID+" = ?", new String[] {rows.get(i)}, null);
     		if (!cur.moveToFirst()) {
     			Log.e(TAG, "COUD NOT FIND ROW ID :"+rows.get(i));
+    			cur.close();
     			contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, 
     					ContentDescriptor.PendingUploads.Cols.TABLEID+" = ? AND "
     					+ContentDescriptor.PendingUploads.Cols.ROWID+" = ?", new String[] {
@@ -1166,7 +1002,7 @@ public class HornetDBService extends Service {
     			Log.e(TAG, "", e);
     			return 0;
     		}
-    		
+
     	}
     	closeConnection();
     	return count;

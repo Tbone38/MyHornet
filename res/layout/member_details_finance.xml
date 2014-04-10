@@ -151,9 +151,10 @@
 		        android:background="@color/button_underline_green" />
 		</LinearLayout>
 	</LinearLayout>
-   	<include 
+   	<!-- <include 
 	    layout="@layout/member_details_actions"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	    android:layout_below="@id/button_row2"/>
+	     -->
 </RelativeLayout>

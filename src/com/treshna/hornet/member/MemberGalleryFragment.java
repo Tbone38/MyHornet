@@ -83,12 +83,12 @@ public class MemberGalleryFragment extends Fragment implements OnClickListener,
         int columnWidth = (int) ((Services.getScreenWidth(getActivity()) - ((2 + 1) * padding)) / 2);
  
         gallery.setNumColumns(2);
-        gallery.setColumnWidth(columnWidth);
+        /*gallery.setColumnWidth(columnWidth);
         gallery.setStretchMode(GridView.NO_STRETCH);
         gallery.setPadding((int) padding, (int) padding, (int) padding,
                 (int) padding);
         gallery.setHorizontalSpacing((int) padding);
-        gallery.setVerticalSpacing((int) padding);
+        gallery.setVerticalSpacing((int) padding);*/
 		mLoader.initLoader(0, null, this);
 		
 		LinearLayout addPhoto = (LinearLayout) view.findViewById(R.id.button_add_photo);

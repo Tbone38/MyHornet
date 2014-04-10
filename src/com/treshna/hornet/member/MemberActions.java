@@ -70,13 +70,13 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 	private Context ctx;
 	private FragmentActivity caller;
 	
-	private static final String TAG = "MemberActions";
-	
 	public MemberActions(FragmentActivity a) {
 		this.caller = a;
 		this.ctx = a;
 	}
-			
+
+	//This needs significant changes!.
+	
 	public void setupActions(View view, String memberID) {
 		this.mid = memberID;
 		Uri uri = Uri.withAppendedPath(ContentDescriptor.Image.IMAGE_JOIN_MEMBER_URI,
@@ -158,11 +158,7 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 		LinearLayout manualcheckin = (LinearLayout) view.findViewById(R.id.button_manual_checkin);
 		manualcheckin.setOnClickListener(this);
 		
-		LinearLayout gallery = (LinearLayout) view.findViewById(R.id.button_gallery);
-		gallery.setOnClickListener(this);
-		gallery.setTag(memberID);
-
-		
+				
 		LinearLayout addtag = (LinearLayout) view.findViewById(R.id.button_tag);
 		if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1 &&
 				NfcAdapter.getDefaultAdapter(ctx) != null) {
@@ -175,9 +171,10 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 		}
 		
 		cur.close();
-		
 		return ;
 	}
+	
+	
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -253,14 +250,6 @@ public class MemberActions implements OnClickListener, TagFoundListener {
 			//						lets the user select a door to check in at.
 			//						(shows the user the member name?)
 			showCheckinWindow();
-			break;
-		}
-		case (R.id.button_gallery):{
-			Fragment f = new MemberGalleryFragment();
-			Bundle bdl = new Bundle(1);
-			bdl.putString(Services.Statics.MID, mid);
-			f.setArguments(bdl);
-			((MainActivity)caller).changeFragment(f, "MemberGallery");
 			break;
 		}
 		case (R.id.button_tag):{

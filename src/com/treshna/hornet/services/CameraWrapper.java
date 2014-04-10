@@ -35,6 +35,7 @@ import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.Toast;
 /*
  * This class handles the camera input/output
  * as well as passing the correct data onto the
@@ -45,6 +46,7 @@ public class CameraWrapper extends Activity {
 	private ContentResolver contentResolver = null;
 	private static final int PICTURE_RESULT = 1;
 	public String id;
+	private int iid = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +83,17 @@ public class CameraWrapper extends Activity {
 	}	
 	
 	private void setDescription(final Bundle b){
+		
+		Cursor cur = contentResolver.query(ContentDescriptor.FreeIds.CONTENT_URI, null, ContentDescriptor.FreeIds.Cols.TABLEID+" = ?",
+       		 new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Image.getKey())}, null);
+        if (!cur.moveToFirst()) {
+       	 Toast.makeText(this, "Image could not be created, Please try syncing the app.", Toast.LENGTH_LONG).show();
+       	 finish();
+       	 return;
+        } else {
+       	 iid = cur.getInt(cur.getColumnIndex(ContentDescriptor.FreeIds.Cols.ROWID));
+        }
+		
 		final EditText input = new EditText(this);
 		input.setId(1);
 		 AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -108,32 +121,25 @@ public class CameraWrapper extends Activity {
          pic.compress(Bitmap.CompressFormat.PNG, 100, stream);
          byte[] byteArray = stream.toByteArray();
          
-         Cursor cur = contentResolver.query(ContentDescriptor.Image.CONTENT_URI, null, ContentDescriptor.Image.Cols.MID
-         		+" = "+id, null, null);
-         int imgCount = 0;
-             cur.moveToLast();                
-             if (cur.getPosition() == -1) {
-             	imgCount = 0;
-             } else {
-             	imgCount = cur.getInt(cur.getColumnIndex(ContentDescriptor.Image.Cols.DISPLAYVALUE));
-             	imgCount +=1;
-             }
-         cur.close();
          
-        
-         SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yy hh:mm:ss aa", Locale.US);
+         
+         ContentValues val = new ContentValues();
  		 java.util.Date date = new Date();
- 		 ContentValues val = new ContentValues();
- 		 val.put(ContentDescriptor.Image.Cols.DISPLAYVALUE, imgCount);
+ 		 
+ 		 val.put(ContentDescriptor.Image.Cols.IID, iid);
          val.put(ContentDescriptor.Image.Cols.MID, id);
-         val.put(ContentDescriptor.Image.Cols.DATE, dateFormat.format(date));
-         val.put(ContentDescriptor.Image.Cols.IS_PROFILE, (imgCount==0));
+         val.put(ContentDescriptor.Image.Cols.DATE, date.getTime());
+         val.put(ContentDescriptor.Image.Cols.IS_PROFILE, 0);
          val.put(ContentDescriptor.Image.Cols.DESCRIPTION, description);
+         val.put(ContentDescriptor.Image.Cols.DEVICESIGNUP, "t"); 	// This never gets unset, it's OK though,
+         															// because we don't check it when we're updating anyway.
          contentResolver.insert(ContentDescriptor.Image.CONTENT_URI, val);
+         contentResolver.delete(ContentDescriptor.FreeIds.CONTENT_URI, ContentDescriptor.FreeIds.Cols.TABLEID+" = ? AND "
+        		 +ContentDescriptor.FreeIds.Cols.ROWID+" = ?", new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Image.getKey()),
+        		 String.valueOf(iid)});
          
          FileHandler fileHandler = new FileHandler(this);
-         System.out.print("\n\n**Writing "+imgCount+"_"+id);
-         fileHandler.writeFile(byteArray, imgCount+"_"+id+".jpg");
+         fileHandler.writeFile(byteArray, iid+"_"+id+".jpg");
          
          contentResolver.notifyChange(ContentDescriptor.Image.CONTENT_URI, null);
          Intent intent = new Intent(this, HornetDBService.class);

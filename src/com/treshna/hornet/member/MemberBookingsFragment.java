@@ -32,7 +32,7 @@ public class MemberBookingsFragment extends Fragment implements TagFoundListener
 	String memberID;
 	private View view;
 	LayoutInflater mInflater;
-	private MemberActions mActions;
+	//private MemberActions mActions;
 	
 	//private static final String TAG = "MemberVisitHistory";
 	
@@ -42,7 +42,7 @@ public class MemberBookingsFragment extends Fragment implements TagFoundListener
 		Services.setContext(getActivity());
 		contentResolver = getActivity().getContentResolver();
 		memberID = this.getArguments().getString(Services.Statics.MID);
-		mActions = new MemberActions(getActivity());
+		//mActions = new MemberActions(getActivity());
 	}
 	
 	@Override
@@ -57,9 +57,9 @@ public class MemberBookingsFragment extends Fragment implements TagFoundListener
 		return view;
 	}
 	
-	public MemberActions getMemberActions(){
+	/*public MemberActions getMemberActions(){
 		return this.mActions;
-	}
+	}*/
 	
 	private View setupView() {
 		//we inflate the list here.
@@ -103,12 +103,13 @@ public class MemberBookingsFragment extends Fragment implements TagFoundListener
 			list.addView(row);
 		}
 				
-		mActions.setupActions(view, memberID);
+		//mActions.setupActions(view, memberID);
 		return view;
 	}
 
 	@Override
 	public boolean onNewTag(String serial) {
-		return mActions.onNewTag(serial);
+		//return mActions.onNewTag(serial);
+		return false;
 	}	
 }

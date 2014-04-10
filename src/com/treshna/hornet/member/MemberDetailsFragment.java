@@ -148,8 +148,6 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 
 		ft.replace(R.id.frame_bottom, f);
 		ft.commit();
-		//reDrawButtonMember();
-		//setSelected();
 	}
 	
 	@Override
@@ -159,14 +157,7 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 		case (R.id.member_navigation_image):{
 			int state = Integer.parseInt(v.getTag().toString());
 			if (state == 1) {
-				String selection = ContentDescriptor.Image.Cols.DISPLAYVALUE+" = 0"
-						+" AND "+ContentDescriptor.Image.Cols.MID+" = "+memberID;
-				cur = contentResolver.query(ContentDescriptor.Image.CONTENT_URI, null, selection, null, null);
-				if (cur.getCount() <= 0) break;
-				cur.moveToFirst();
-				String date = Services.dateFormat(cur.getString(2), "dd MMM yy hh:mm:ss aa", "yyyy-MM-dd");
-				String message = "Image Taken: "+date+ "\nImage Description: "+cur.getString(3);
-					Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+				//do nothing.
 			} else {
 				Intent camera = new Intent(getActivity(), CameraWrapper.class);
 				camera.putExtra(VisitorsViewAdapter.EXTRA_ID,memberID);

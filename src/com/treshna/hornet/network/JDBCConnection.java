@@ -144,15 +144,16 @@ public class JDBCConnection {
     	return pStatement.executeQuery();
     }
     
-    public int uploadImage( byte[] image, int memberId, Date date, String description, boolean isProfile) throws SQLException, NullPointerException {
-			pStatement = con.prepareStatement("INSERT INTO image (imagedata, memberid, lastupdate, created, description, is_profile"
-					+ ") VALUES ('1|'||encode(?,'base64'), ?, ?, ?, ?, ?);");
+    public int uploadImage( byte[] image, int memberId, long date, String description, boolean isProfile, int rowid) throws SQLException, NullPointerException {
+			pStatement = con.prepareStatement("INSERT INTO image (imagedata, memberid, lastupdate, created, description, is_profile, id"
+					+ ") VALUES ('1|'||encode(?,'base64'), ?, ?, ?, ?, ?, ?);");
 			pStatement.setBytes(1, image);
 			pStatement.setInt(2, memberId);
-			pStatement.setTimestamp(3, new Timestamp(date.getTime()));
-			pStatement.setTimestamp(4, new Timestamp(date.getTime()));
+			pStatement.setTimestamp(3, new Timestamp(date));
+			pStatement.setTimestamp(4, new Timestamp(date));
 			pStatement.setString(5, description);
 			pStatement.setBoolean(6, isProfile);
+			pStatement.setInt(7, rowid);
 			
 			return pStatement.executeUpdate();
     }

@@ -42,7 +42,7 @@ public class MemberFinanceFragment extends Fragment implements TagFoundListener,
 	String memberID;
 	private View view;
 	LayoutInflater mInflater;
-	private MemberActions mActions;
+	//private MemberActions mActions;
 	
 	private String final_session = null;
 	
@@ -53,7 +53,7 @@ public class MemberFinanceFragment extends Fragment implements TagFoundListener,
 		contentResolver = getActivity().getContentResolver();
 		memberID = this.getArguments().getString(Services.Statics.MID);
 		//visitDate = this.getArguments().getString(Services.Statics.KEY);
-		mActions = new MemberActions(getActivity());
+		//mActions = new MemberActions(getActivity());
 	}
 	
 	@Override
@@ -69,9 +69,9 @@ public class MemberFinanceFragment extends Fragment implements TagFoundListener,
 		return view;
 	}
 	
-	public MemberActions getMemberActions(){
+	/*public MemberActions getMemberActions(){
 		return this.mActions;
-	}
+	}*/
 	
 	private View setupButton() {
 		TextView billing_add = (TextView) view.findViewById(R.id.button_billing_add_text);
@@ -181,13 +181,14 @@ public class MemberFinanceFragment extends Fragment implements TagFoundListener,
 		}
 		cur.close();
 		
-		mActions.setupActions(view, memberID);
+		//mActions.setupActions(view, memberID);
 		return view;
 	}
 
 	@Override
 	public boolean onNewTag(String serial) {
-		return mActions.onNewTag(serial);
+		//return mActions.onNewTag(serial);
+		return false;
 	}
 
 	@Override

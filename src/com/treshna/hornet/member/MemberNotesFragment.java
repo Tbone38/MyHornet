@@ -2,12 +2,18 @@ package com.treshna.hornet.member;
 
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
+import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -18,6 +24,8 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,11 +52,12 @@ import com.treshna.hornet.sqlite.ContentDescriptor.TableIndex.Values;
 public class MemberNotesFragment extends Fragment implements OnClickListener, TagFoundListener {
 	Cursor cur;
 	ContentResolver contentResolver;
+	RadioGroup rg;
 	String memberID;
 	
 	private View view;
 	LayoutInflater mInflater;
-	private MemberActions mActions;
+	//private MemberActions mActions;
 	
 	//private static final String TAG = "MemberNotes";
 	
@@ -58,7 +67,7 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 		Services.setContext(getActivity());
 		contentResolver = getActivity().getContentResolver();
 		memberID = this.getArguments().getString(Services.Statics.MID);
-		mActions = new MemberActions(getActivity());
+		//mActions = new MemberActions(getActivity());
 	}
 	
 	@Override
@@ -73,8 +82,77 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 		return view;
 	}
 	
-	public MemberActions getMemberActions(){
+	/*public MemberActions getMemberActions(){
 		return this.mActions;
+	}*/
+	
+	private View setupActions() {
+		cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, ContentDescriptor.Member.Cols.MID+" = ?",
+				new String[] {memberID}, null);
+		if (!cur.moveToFirst()) {
+			return view;
+		}
+		
+		LinearLayout email = (LinearLayout) view.findViewById(R.id.button_email);
+		if (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMAIL)) != null) {
+			if (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMAIL)).compareTo("null") != 0) {
+				email.setOnClickListener(this);
+				email.setTag(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMAIL)));
+			} else {
+				email.setBackgroundColor(getActivity().getResources().getColor(R.color.white));
+				email.setClickable(false);
+				TextView text = (TextView) email.findViewById(R.id.button_email_text);
+				text.setTextColor(getActivity().getResources().getColor(R.color.grey));
+			}
+		} else {
+			email.setBackgroundColor(getActivity().getResources().getColor(R.color.white));
+			email.setClickable(false);
+			TextView text = (TextView) email.findViewById(R.id.button_email_text);
+			text.setTextColor(getActivity().getResources().getColor(R.color.grey));
+		}
+		
+		LinearLayout call = (LinearLayout) view.findViewById(R.id.button_call);
+		LinearLayout sms = (LinearLayout) view.findViewById(R.id.button_sms);
+		ArrayList<String> callTag = new ArrayList<String>();
+		boolean has_number = false;
+		
+		if (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHHOME)) != null &&
+				cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHHOME)).compareTo("null") != 0) {
+			
+			callTag.add("Home: "+cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHHOME)));
+			has_number = true;
+		}
+		if (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHWORK)) != null &&
+				cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHWORK)).compareTo("null") != 0) {
+			
+			callTag.add("Work: "+cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHWORK)));
+			has_number = true;
+		}
+		if (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHCELL)) != null &&
+				cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHCELL)).compareTo("null") !=0) {
+			
+			sms.setTag(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHCELL)));
+			sms.setOnClickListener(this);
+			
+			callTag.add("Cell: "+cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHCELL)));
+			has_number = true;
+		} else {
+			sms.setBackgroundColor(getActivity().getResources().getColor(R.color.white));
+			sms.setClickable(false);
+			TextView text = (TextView) sms.findViewById(R.id.button_sms_text);
+			text.setTextColor(getActivity().getResources().getColor(R.color.grey));
+		}
+		
+		if (has_number) {
+			call.setTag(callTag);
+			call.setOnClickListener(this);
+		} else {
+			call.setBackgroundColor(getActivity().getResources().getColor(R.color.white));
+			call.setClickable(false);
+			TextView text = (TextView) call.findViewById(R.id.button_call_text);
+			text.setTextColor(getActivity().getResources().getColor(R.color.grey));
+		}
+		return view;
 	}
 	
 	private View setupEmergency() {
@@ -235,6 +313,7 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 		setupDetails();
 		setupEmergency();
 		setupMedical();
+		setupActions();
 		
 		cur = contentResolver.query(ContentDescriptor.MemberNotes.CONTENT_URI, null, 
 				ContentDescriptor.MemberNotes.Cols.MID+" = ?", new String[] {memberID}, 
@@ -316,7 +395,7 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 		TextView add_note = (TextView) view.findViewById(R.id.button_add_note);
 		add_note.setOnClickListener(this);
 		
-		mActions.setupActions(view, memberID);
+		//mActions.setupActions(view, memberID);
 		return view;
 	}
 	
@@ -361,6 +440,7 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 		setupView();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void onClick(View v) {
 		switch(v.getId()) {
@@ -434,14 +514,105 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 			}
 			break;
 		}
-		default:
-			mActions.onClick(v);
+		case (R.id.button_email):{
+			String email="mailto:"+Uri.encode(v.getTag().toString())+"?subject="+Uri.encode("Gym Details");
+			Intent intent = new Intent(Intent.ACTION_SENDTO);
+			intent.setData(Uri.parse(email));
+			try {
+				getActivity().startActivity(intent);
+			} catch (ActivityNotFoundException e) { 
+				Toast.makeText(getActivity(), "Cannot send emails from this device.", Toast.LENGTH_LONG).show();
+			}
 			break;
 		}
+		case (R.id.button_sms):{
+			String smsNo = (String) v.getTag();
+			Intent smsIntent = new Intent(Intent.ACTION_VIEW);
+			smsIntent.setType("vnd.android-dir/mms-sms");
+			smsIntent.putExtra("address",smsNo);
+			try {
+				getActivity().startActivity(smsIntent);
+			} catch (ActivityNotFoundException e) {
+				Toast.makeText(getActivity(), "Cannot send SMS from this device.", Toast.LENGTH_LONG).show();
+			}
+			break;
+		}
+		case (R.id.button_call):{
+			ArrayList<String> tag = null;
+			if (v.getTag() instanceof ArrayList<?>) {
+				tag = (ArrayList<String>) v.getTag();
+			}
+			if (tag.size() == 1) {
+				String ph ="tel:"+tag.get(0).substring(tag.get(0).indexOf(":")+1);
+				Intent intent = new Intent(Intent.ACTION_DIAL);
+				intent.setData(Uri.parse(ph));
+				try {
+					getActivity().startActivity(intent);
+				} catch(ActivityNotFoundException e) {
+					Toast.makeText(getActivity(), "Cannot make call's from this device.", Toast.LENGTH_LONG).show();
+				}
+			} 
+			else {
+				//show popup window, let user select the number to call.
+				showPhoneWindow(tag);
+			}
+			break;
+		}
+		default:
+			//mActions.onClick(v);
+			break;
+		}
+	}
+	
+	private void showPhoneWindow(ArrayList<String> phones) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		LayoutInflater inflater = getActivity().getLayoutInflater();
+		View layout = inflater.inflate(R.layout.alert_select_call, null);
+		
+		//do for loop, create and append radio option
+		rg = (RadioGroup) layout.findViewById(R.id.alertrg);
+		
+		
+		for (int i=0; i< phones.size(); i +=1) {
+			RadioButton rb = new RadioButton(getActivity());
+			rb.setText(phones.get(i));
+			rb.setTag(phones.get(i).substring(phones.get(i).indexOf(":")+1));
+			rg.addView(rb);
+		}	
+        builder.setView(layout);
+        builder.setTitle("Select Number to Call");
+        builder.setPositiveButton("Call", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+            		
+            		String selectedNo = null;
+	            	int cid = rg.getCheckedRadioButtonId();  
+	            	if (cid == -1) {
+	            		Toast.makeText(getActivity(), "Select a Phone Number", Toast.LENGTH_LONG).show();
+	            		
+	            	} else {
+		            	RadioButton rb = (RadioButton) rg.findViewById(cid);
+		            	selectedNo = (String) rb.getTag();
+		    
+		            	String ph ="tel:"+selectedNo;
+						Intent intent = new Intent(Intent.ACTION_DIAL);
+						intent.setData(Uri.parse(ph));
+						getActivity().startActivity(intent);
+	            	}
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        	@Override
+            public void onClick(DialogInterface dialog, int id) {
+        		dialog.dismiss();
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
 	}
 
 	@Override
 	public boolean onNewTag(String serial) {
-	return mActions.onNewTag(serial);
+	return false;
 	}
 }

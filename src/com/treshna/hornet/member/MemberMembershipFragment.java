@@ -10,9 +10,13 @@ import java.util.Locale;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.net.Uri;
+import android.nfc.NfcAdapter;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -27,6 +31,7 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.treshna.hornet.MainActivity;
 import com.treshna.hornet.R;
@@ -35,7 +40,9 @@ import com.treshna.hornet.R.color;
 import com.treshna.hornet.R.id;
 import com.treshna.hornet.R.layout;
 import com.treshna.hornet.R.string;
+import com.treshna.hornet.membership.MembershipAdd;
 import com.treshna.hornet.membership.MembershipHoldFragment;
+import com.treshna.hornet.network.HornetDBService;
 import com.treshna.hornet.services.DatePickerFragment;
 import com.treshna.hornet.services.Services;
 import com.treshna.hornet.services.DatePickerFragment.DatePickerSelectListener;
@@ -64,6 +71,9 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 	private int membershipid;
 	private View alert_cancel_ms;
 	private AlertDialog dialog;
+	private AlertDialog alertDialog = null;
+	
+	private String cardid;
 	
 	private final String TAG = MemberMembershipFragment.class.getName();
 	private DatePickerFragment datePicker;
@@ -76,7 +86,7 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 		Services.setContext(getActivity());
 		contentResolver = getActivity().getContentResolver();
 		memberID = this.getArguments().getString(Services.Statics.MID);
-		mActions = new MemberActions(getActivity());
+		//mActions = new MemberActions(getActivity());
 		datePicker = new DatePickerFragment();
 		datePicker.setDatePickerSelectListener(this);
 	}
@@ -90,7 +100,28 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 		mInflater = getActivity().getLayoutInflater();
 		view = setupView();
 		
+		setupActions();
 		return view;
+	}
+	
+	private void setupActions() {
+		LinearLayout addMembership = (LinearLayout) view.findViewById(R.id.button_add_membership);
+		addMembership.setTag(memberID);
+		addMembership.setOnClickListener(this);
+
+		LinearLayout hold = (LinearLayout) view.findViewById(R.id.button_hold);
+		hold.setOnClickListener(this);
+		
+		LinearLayout addtag = (LinearLayout) view.findViewById(R.id.button_tag);
+		if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1 &&
+				NfcAdapter.getDefaultAdapter(getActivity()) != null) {
+			addtag.setOnClickListener(this);
+		} else {
+			addtag.setBackgroundColor(getActivity().getResources().getColor(R.color.white));
+			addtag.setClickable(false);
+			TextView text = (TextView) addtag.findViewById(R.id.button_tag_text);
+			text.setTextColor(getActivity().getResources().getColor(R.color.grey));
+		}
 	}
 	
 	@Override
@@ -100,9 +131,11 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 		setupView();
 	}
 	
-	public MemberActions getMemberActions(){
+	/*public MemberActions getMemberActions(){
 		return this.mActions;
-	}
+	}*/
+	
+	
 	
 	//This needs to filter by active memberships.
 	private View setupView() {
@@ -211,13 +244,92 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 			holdlist.addView(row);
 		}
 		
-		mActions.setupActions(view, memberID);
 		return view;
 	}
 
 	@Override
 	public boolean onNewTag(String serial) {
-		return mActions.onNewTag(serial);
+		if (alertDialog == null || !alertDialog.isShowing()) {
+			/*((NFCActivity)caller).onNewTag(serial);
+			return true;*/
+			return false;
+		}
+		ContentResolver contentResolver = getActivity().getContentResolver();
+		Cursor cur;
+		String message = null;
+
+		cur = contentResolver.query(ContentDescriptor.IdCard.CONTENT_URI, null, ContentDescriptor.IdCard.Cols.SERIAL+" = ?",
+				new String[] {serial}, null);
+		if (!cur.moveToFirst()) { //card not in db, add it.
+			cur.close();
+			cur = contentResolver.query(ContentDescriptor.FreeIds.CONTENT_URI, null, ContentDescriptor.FreeIds.Cols.TABLEID+" = ?",
+					new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Idcard.getKey())},null);
+			if (cur.moveToFirst()) {
+				cardid = cur.getString(cur.getColumnIndex(ContentDescriptor.FreeIds.Cols.ROWID));
+				cur.close();
+				
+				ContentValues values = new ContentValues();
+				values.put(ContentDescriptor.IdCard.Cols.CARDID, cardid);
+				values.put(ContentDescriptor.IdCard.Cols.SERIAL, serial);
+				Uri row = contentResolver.insert(ContentDescriptor.IdCard.CONTENT_URI, values);
+				String rowid = row.getLastPathSegment(); 
+				contentResolver.delete(ContentDescriptor.FreeIds.CONTENT_URI, ContentDescriptor.FreeIds.Cols.ROWID+" = ? AND "+
+						ContentDescriptor.FreeIds.Cols.TABLEID+" = ?",new String[] {cardid, 
+						String.valueOf(ContentDescriptor.TableIndex.Values.Idcard.getKey())});
+				
+				//normally we'd use a trigger. but we haven't got a timestamp column, and I'm feeling lazy..
+				values = new ContentValues();
+				values.put(ContentDescriptor.PendingUploads.Cols.ROWID, rowid);
+				values.put(ContentDescriptor.PendingUploads.Cols.TABLEID, ContentDescriptor.TableIndex.Values.Idcard.getKey());
+				contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, values);
+				
+			} else {
+				cur.close();
+				message = "No Tag ID's available. Please resync the device.";
+			}
+			
+		} else { //card in db, get the id.
+			cardid = cur.getString(cur.getColumnIndex(ContentDescriptor.IdCard.Cols.CARDID));
+			cur.close();
+		}
+		
+		if (cardid != null) {
+			cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols.CARDNO+" = ?",
+					new String[] {cardid}, null);
+			if (cur.getCount() > 0) {
+				//id is in use, what should I do?
+				if (message == null) message = "Tag already in use";
+				cardid = null;
+			} else {
+				message = "Assigning card No. "+cardid+" to member.";
+				if (alertDialog != null){
+					alertDialog.dismiss();
+					alertDialog = null;
+				}
+				updateMember();
+			}
+			cur.close();
+		}
+		//TOAST!
+		Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+		return true;
+	}
+	
+	private void updateMember(){
+		ContentValues values = new ContentValues();
+		
+		values.put(ContentDescriptor.Member.Cols.CARDNO, cardid);
+		contentResolver.update(ContentDescriptor.Member.CONTENT_URI, values, ContentDescriptor.Member.Cols.MID+" = ?",
+				new String[] {memberID});
+		values = new ContentValues();
+		values.put(ContentDescriptor.PendingUpdates.Cols.TABLEID, ContentDescriptor.TableIndex.Values.Member.getKey());
+		values.put(ContentDescriptor.PendingUpdates.Cols.ROWID, memberID);
+		
+		contentResolver.insert(ContentDescriptor.PendingUpdates.CONTENT_URI, values);
+		
+		Intent i = new Intent(getActivity(), HornetDBService.class);
+		i.putExtra(Services.Statics.KEY, Services.Statics.FREQUENT_SYNC);
+		getActivity().startService(i);
 	}
 	
 	private void cancelMembership(ArrayList<String> inputs, int membershipid) {
@@ -432,7 +544,61 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 			((MainActivity)getActivity()).changeFragment(f, "MembershipHold");
 			break;
 		}
+		case (R.id.button_add_membership):{
+			String memberid = null;
+			if (v.getTag() instanceof String) {
+				memberid = (String) v.getTag();
+			}
+			
+			Fragment f = new MembershipAdd();
+			Bundle bdl = new Bundle(1);
+			bdl.putString(Services.Statics.MID, memberID);
+			f.setArguments(bdl);
+			((MainActivity)getActivity()).changeFragment(f, "MembershipAdd");
+			break;
 		}
+		case (R.id.button_hold):{
+			Fragment f = new MembershipHoldFragment();
+			Bundle bdl = new Bundle(1);
+			bdl.putString(Services.Statics.KEY, memberID);
+			f.setArguments(bdl);
+			((MainActivity)getActivity()).changeFragment(f, "MembershipHold");
+			break;
+		}
+		case (R.id.button_tag):{
+			Cursor cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, ContentDescriptor.Member.Cols.MID+" = ?",
+					new String[] {memberID}, null);
+			if (!cur.moveToFirst()) break;
+			
+			if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.CARDNO))) {
+				//confirm we want to overwrite.
+				AlertDialog.Builder builder= new AlertDialog.Builder(getActivity());
+				builder.setTitle("Overwrite current Tag?")
+				.setMessage("Are you sure you want to overwrite the currently assigned Tag?")
+				.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+						
+						swipeBox();
+					}})
+				.setNegativeButton("Cancel", null)
+				.show();
+				cur.close();
+			} else {
+				cur.close();
+				swipeBox();
+			}
+		}
+		}
+	}
+	
+	private void swipeBox(){
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		builder.setTitle("Swipe Tag")
+		.setMessage("Please Swipe a tag against the device");
+		alertDialog = builder.create();
+		alertDialog.show();
 	}
 	
 	private void updateView(ArrayList<String> emptyFields) {
