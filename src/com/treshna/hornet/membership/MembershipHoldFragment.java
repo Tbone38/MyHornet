@@ -424,7 +424,7 @@ public class MembershipHoldFragment extends Fragment implements OnClickListener,
 		boolean validated = true;
 		
 		TextView startdate = (TextView) view.findViewById(R.id.startdate);
-		if (startdate.getText().toString().compareTo(this.getString(R.string.membership_default_startdate)) == 0) {
+		if (startdate.getText().toString().compareTo(this.getString(R.string.defaultStartDate)) == 0) {
 			emptyViews.add(String.valueOf(R.id.startdateL));
 			validated = false;
 		} else {
@@ -433,7 +433,7 @@ public class MembershipHoldFragment extends Fragment implements OnClickListener,
 		}
 		
 		TextView enddate = (TextView) view.findViewById(R.id.hold_enddate);
-		if (enddate.getText().toString().compareTo(getString(R.string.membership_default_enddate)) == 0) {
+		if (enddate.getText().toString().compareTo(getString(R.string.defaultEndDate)) == 0) {
 			emptyViews.add(String.valueOf(R.id.hold_enddateL));
 			validated = false;
 		} else {

@@ -488,7 +488,11 @@ public class HornetContentProvider extends ContentProvider {
                 builder.setTables(ContentDescriptor.Member.NAME+" m "
                 		+"LEFT OUTER JOIN "+ContentDescriptor.Membership.NAME+" ms "
                 		+"ON (m."+ContentDescriptor.Member.Cols.MID+" = ms."+ContentDescriptor.Membership.Cols.MID
-                		+") AND ms."+ContentDescriptor.Membership.Cols.HISTORY+" = 'f'");
+                		+") AND ms."+ContentDescriptor.Membership.Cols.HISTORY+" = 'f'"
+                		+" LEFT JOIN "+ContentDescriptor.Image.NAME+" i "
+            			+ "ON (i."+ContentDescriptor.Image.Cols.MID+" = m."+ContentDescriptor.Member.Cols.MID
+            			+") AND i."+ContentDescriptor.Image.Cols.IS_PROFILE+" = 1"
+            			);
                 if (selection.isEmpty()) {
                 	selection = "("+ContentDescriptor.Member.Cols.STATUS+" >= 0 OR "+ContentDescriptor.Member.Cols.STATUS
                 			+" IS NULL)";
@@ -496,6 +500,8 @@ public class HornetContentProvider extends ContentProvider {
                 	selection = selection+" AND ("+ContentDescriptor.Member.Cols.STATUS+" >= 0 OR "+ContentDescriptor.Member.Cols.STATUS
                 			+" IS NULL)";
                 }
+                
+                //Log.w("TAG", builder.buildQuery( null, null, null, null, null, null));
                 return builder.query(db, projection, selection, selectionArgs, "m."+ContentDescriptor.Member.Cols.MID, null, sortOrder);
             }
  
@@ -508,6 +514,9 @@ public class HornetContentProvider extends ContentProvider {
             			+ "LEFT JOIN "+ContentDescriptor.Membership.NAME+" ms "
             			+ "ON (ms."+ContentDescriptor.Membership.Cols.MID+" = m."+ContentDescriptor.Member.Cols.MID
             			+ ") AND ms."+ContentDescriptor.Membership.Cols.HISTORY+" = 'f'"
+            			+" LEFT JOIN "+ContentDescriptor.Image.NAME+" i "
+            			+ "ON (i."+ContentDescriptor.Image.Cols.MID+" = m."+ContentDescriptor.Member.Cols.MID
+            			+") AND i."+ContentDescriptor.Image.Cols.IS_PROFILE+" = 1"
             			);
             	if (selection.isEmpty()) {
             		selection = "("+ContentDescriptor.Member.Cols.STATUS+" >= 0 OR "+ContentDescriptor.Member.Cols.STATUS
@@ -516,6 +525,7 @@ public class HornetContentProvider extends ContentProvider {
             		selection = selection+" AND ("+ContentDescriptor.Member.Cols.STATUS+" >= 0 OR "+ContentDescriptor.Member.Cols.STATUS
                 			+" IS NULL)";
             	}
+            	//Log.w("TAG", builder.buildQuery( null, null, null, null, null, null));
             	return builder.query(db, projection, selection, selectionArgs, "m."+ContentDescriptor.Member.Cols.MID, null, sortOrder);
             }
             case ContentDescriptor.Member.PATH_FOR_ID_TOKEN:{
@@ -555,7 +565,12 @@ public class HornetContentProvider extends ContentProvider {
             			+" = m."+ContentDescriptor.Member.Cols.MID+")"
             			+" LEFT JOIN "+ContentDescriptor.Membership.NAME
             			+" ms ON (v."+ContentDescriptor.Visitor.Cols.MSID+" = "
-            			+"ms."+ContentDescriptor.Membership.Cols.MSID+")");
+            			+"ms."+ContentDescriptor.Membership.Cols.MSID+")"
+            			+" LEFT JOIN "+ContentDescriptor.Image.NAME+" i "
+            			+ "ON (i."+ContentDescriptor.Image.Cols.MID+" = m."+ContentDescriptor.Member.Cols.MID
+            			+") AND i."+ContentDescriptor.Image.Cols.IS_PROFILE+" = 1");
+            	
+            	//Log.w("VISITOR JOIN QUERY", builder.buildQuery(null, null, null, null, null, null));
             	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
             }
             case ContentDescriptor.Image.PATH_FOR_JOIN_ID_TOKEN:{

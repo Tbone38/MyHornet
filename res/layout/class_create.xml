@@ -62,7 +62,7 @@
 		        android:layout_width="wrap_content"
 		        android:layout_height="match_parent"
 		        android:gravity="center_vertical"
-		        android:text="@string/classresourcedefault"
+		        android:text="@string/defaultResource"
 		        android:textSize="18sp" />
 
 	    </LinearLayout>
@@ -95,7 +95,7 @@
 		        android:layout_height="match_parent"
 		        android:gravity="center_vertical"
 		    	android:textSize="18sp"
-		    	android:text="@string/classdatedefault" />
+		    	android:text="@string/defaultDate" />
 	    </LinearLayout>
 	    
 	    <TextView
@@ -132,7 +132,7 @@
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
 			        android:textSize="18sp"
-			        android:text="@string/classstarttimedefault"
+			        android:text="@string/defaultStartTime"
 			        android:gravity="center"
 			        android:padding="2dp"
 			        android:layout_marginTop="2dp" />
@@ -152,7 +152,7 @@
 		        android:layout_height="wrap_content"
 		        android:layout_weight="1"
 		        android:textSize="18sp"
-		        android:text="@string/classendtimedefault"
+		        android:text="@string/defaultEndTime"
 		        android:gravity="center"
 		        android:padding="1dp"
 		        android:clickable="true" />

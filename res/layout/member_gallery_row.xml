@@ -2,17 +2,29 @@
 <RelativeLayout 
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/gallery_row"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="3dp"
     android:padding="5dp">
 	<ImageView
 	    android:id="@+id/member_gallery_image"
-	    android:layout_width="130dp"
-	    android:layout_height="130dp"
+	    android:layout_width="230dp"
+	    android:layout_height="230dp"
 	    android:scaleType="centerCrop" />
-	<CheckBox 
-	    android:id="@+id/member_image_profile"
+	<TextView
+	    android:id="@+id/date"
 	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"/>
+	    android:layout_height="wrap_content"
+	    android:layout_below="@id/member_gallery_image"
+	    android:layout_alignLeft="@id/member_gallery_image"
+	    android:textSize="13sp"/>
+	<CheckBox 
+	    android:id="@+id/is_profile"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@id/date"
+	    android:layout_alignLeft="@id/date"
+	    android:textSize="13sp"
+	    android:text="@string/profile"/>
 </RelativeLayout>

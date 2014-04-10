@@ -250,6 +250,16 @@
     		        android:padding="1dp"
     		        android:layout_marginLeft="3dp" />
     		</LinearLayout>
+    		<LinearLayout
+    		    android:id="@+id/button_member_navigation_gallery"
+    		    android:layout_width="match_parent"
+    		    android:layout_height="wrap_content"
+    		    android:orientation="horizontal"
+    		    android:padding="3dp"
+    		    android:background="@drawable/button"
+    		    android:clickable="true"
+    		    android:layout_marginBottom="2dp" >
+    		</LinearLayout>
     		    
     	</LinearLayout>
     </LinearLayout>

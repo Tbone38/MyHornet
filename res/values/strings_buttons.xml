@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Bookings -->
+    <string name="buttonCheckIn">Check In</string> 
+    <string name="buttonNoShow">No Show</string>
+    <string name="buttonReschedule">Reschedule</string>
+    <string name="buttonSendReminder">Send Reminder</string>
+    
+  	<!-- Add Member -->
+    <string name="buttonAccept">Accept</string>
+	<string name="buttonCancel">Cancel</string>
+	<string name="buttonClear">Clear</string>
+	<string name="buttonAddTag">Get Tag</string>
+	<string name="buttonAddPhoto">Add Photo</string>
+	<string name="buttonContinue">Continue</string>
+    <string name="buttonSubmit">Submit</string>
+    <string name="buttonOK">OK</string>
+    <string name="buttonExpire">Expire</string>
+    <string name="buttonComplete">Complete</string>
+    <string name="buttonSMS">SMS</string>
+    <string name="buttonCall">Call</string>
+	
+	<!--  Defaults -->
+	<string name="defaultDoB">Select Birth-Date</string>
+	<string name="defaultEndTime">Select End Time</string>
+  	<string name="defaultStartTime">Select Start Time</string>
+  	<string name="defaultDate">Select Date</string>
+  	<string name="defaultResource">Select Resource</string>
+  	<string name="defaultStartDate">Select Start Date</string>
+  	<string name="defaultEndDate">Select End Date</string>
+  	<string name="defaultMember">Select Member</string>
+  	
+	
+	<!--  Filter -->
+	<string name="buttonApplyFilter">Apply Filter</string>
+    <string name="buttonReset">Reset</string>
+  	
+  	<!--  KPI -->
+  	<string name="buttonUpdateKPI">Update KPI</string>
+  	
+  	<!--  Membership -->
+  	<string name="buttonSaveContinue">Save &amp; Continue</string>
+  	
+	<!--  Roll -->
+	<string name="buttonAddRoll">Add Roll</string>
+    <string name="buttonAddRollCall">Add Roll-Call</string>
+    
+    <!--  Setup -->
+    <string name="buttonSimpleSetup">Simple Setup</string>
+    <string name="buttonAdvancedSetup">Advanced Setup</string>
+    
+</resources>

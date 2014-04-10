@@ -161,7 +161,7 @@
 				        android:layout_height="match_parent"
 				        android:gravity="center"
 				        android:textSize="18sp"
-				        android:text="@string/cancel" />
+				        android:text="@string/buttonCancel" />
 				</LinearLayout>
 				<View
 			        android:layout_width="match_parent"
@@ -195,7 +195,7 @@
 				        android:layout_height="match_parent"
 				        android:gravity="center"
 				        android:textSize="18sp"
-				        android:text="@string/membership_add_complete" />
+				        android:text="@string/buttonSaveContinue" />
 				</LinearLayout>
 				<View
 			        android:layout_width="match_parent"

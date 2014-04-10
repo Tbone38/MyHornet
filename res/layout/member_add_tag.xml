@@ -76,7 +76,7 @@
 		            android:layout_height="45dp"
 		            android:gravity="center"
 		            android:textSize="18sp"
-		            android:text="@string/member_add_photo"
+		            android:text="@string/buttonAddPhoto"
 		            android:paddingLeft="5dp"
 		            android:paddingRight="5dp"
 		            android:clickable="true"

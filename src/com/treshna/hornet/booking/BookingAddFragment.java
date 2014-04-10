@@ -255,7 +255,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener, OnM
 		cancel.setLayoutParams(params);
 		cancel.setPadding(5, 5, 5, 5);
 		cancel.setTextSize(22);
-		cancel.setText(R.string.bookingcancel);
+		cancel.setText(R.string.buttonCancel);
 		cancel.setGravity(Gravity.CENTER);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
 			cancel.setBackground(getResources().getDrawable(R.drawable.button_large_cancel));
@@ -287,7 +287,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener, OnM
 		accept.setLayoutParams(params);
 		accept.setPadding(5, 5, 5, 5);
 		accept.setTextSize(22);
-		accept.setText(R.string.bookingaccept);
+		accept.setText(R.string.buttonAccept);
 		accept.setGravity(Gravity.CENTER);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
 			accept.setBackground(getResources().getDrawable(R.drawable.button_large_accept));
@@ -746,7 +746,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener, OnM
 		}
 		
 		TextView date = (TextView) page.findViewById(R.id.bookingDate);
-		if (date.getText().toString().compareTo(getString(R.string.addbookingDate)) ==0|| date.getText().toString().isEmpty()){
+		if (date.getText().toString().compareTo(getString(R.string.defaultDate)) ==0|| date.getText().toString().isEmpty()){
 			System.out.print("\n\nDATE NOT SET \n");
 			result = false;
 			emptyFields.add(String.valueOf(R.id.bookingDateH));
@@ -757,7 +757,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener, OnM
 		
 		TextView endtime = (TextView) page.findViewById(R.id.bookingEndTime);
 		System.out.print("\n\nEnd Time::"+endtime.getText().toString());
-		if (endtime.getText().toString().compareTo(getString(R.string.bookingEndTime)) ==0){
+		if (endtime.getText().toString().compareTo(getString(R.string.defaultEndTime)) ==0){
 			result = false;
 			emptyFields.add(String.valueOf(R.id.bookingEndTimeH));
 		} else {

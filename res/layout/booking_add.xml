@@ -59,7 +59,7 @@
 		        android:layout_toRightOf="@+id/bookingNameDrawable"
 		        android:gravity="center"
 		        android:padding="5dp"
-		        android:text="@string/addBookingName"
+		        android:text="@string/defaultMember"
 		        android:textSize="18sp" />
 		    
 		    <TextView 
@@ -109,7 +109,7 @@
 	        android:layout_height="wrap_content"
 	        android:layout_below="@id/bookingDateH"
 	        android:textSize="20sp"
-	        android:text="@string/addbookingDate"
+	        android:text="@string/defaultDate"
 	        android:padding="5dp"
 	        android:layout_margin="3dp" />
 	    <LinearLayout
@@ -161,7 +161,7 @@
 		        android:layout_weight=".5"
 		        android:gravity="center"
 		        android:textSize="20sp"
-		        android:text="@string/bookingEndTime"
+		        android:text="@string/defaultEndTime"
 		        android:padding="5dp"
 		        android:layout_margin="3dp" />
 		</LinearLayout>

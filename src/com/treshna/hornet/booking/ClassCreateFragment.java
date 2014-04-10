@@ -336,7 +336,7 @@ public class ClassCreateFragment extends Fragment implements OnClickListener, Da
 		}
 		
 		date = (TextView) view.findViewById(R.id.classDate);
-		if (date.getText().toString().compareTo(this.getString(R.string.classdatedefault)) == 0)
+		if (date.getText().toString().compareTo(this.getString(R.string.defaultDate)) == 0)
 		{ //no date set.
 			emptyViews.add(String.valueOf(R.id.classDateL));
 			validated = false;
@@ -348,8 +348,8 @@ public class ClassCreateFragment extends Fragment implements OnClickListener, Da
 		
 		stime = (TextView) view.findViewById(R.id.classStartTime);
 		etime = (TextView) view.findViewById(R.id.classEndTime);
-		if ((stime.getText().toString().compareTo(this.getString(R.string.classstarttimedefault)) == 0)
-				|| (etime.getText().toString().compareTo(this.getString(R.string.classendtimedefault)) == 0))
+		if ((stime.getText().toString().compareTo(this.getString(R.string.defaultStartTime)) == 0)
+				|| (etime.getText().toString().compareTo(this.getString(R.string.defaultEndTime)) == 0))
 		{
 			emptyViews.add(String.valueOf(R.id.classTimeL));
 			validated = false;
@@ -374,7 +374,7 @@ public class ClassCreateFragment extends Fragment implements OnClickListener, Da
 		
 		
 		resource = (TextView) view.findViewById(R.id.classResource);
-		if (resource.getText().toString().compareTo(this.getString(R.string.classresourcedefault)) == 0)
+		if (resource.getText().toString().compareTo(this.getString(R.string.defaultResource)) == 0)
 		{
 			emptyViews.add(String.valueOf(R.id.classResourceL));
 			validated = false;

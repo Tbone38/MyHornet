@@ -40,7 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"
-            android:text="@string/button_kpi_get"
+            android:text="@string/buttonUpdateKPI"
             android:textSize="18sp"
             android:padding="7dp"
             android:background="@drawable/button_large"/>

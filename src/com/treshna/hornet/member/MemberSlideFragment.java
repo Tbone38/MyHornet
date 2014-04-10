@@ -94,7 +94,8 @@ public class MemberSlideFragment extends Fragment implements TagFoundListener{
 		
 		
 		ImageView img = (ImageView) view.findViewById(R.id.member_image);
-		String imgDir = getActivity().getExternalFilesDir(null)+"/0_"+memberID+".jpg";
+		String imgDir = getActivity().getExternalFilesDir(null)+"/"+cur.getInt(cur.getColumnIndex(ContentDescriptor.Image.Cols.IID))
+				+"_"+cur.getString(1)+".jpg";
 		File imgFile = null;
 		imgFile = new File(imgDir);
 		if (imgFile.exists() == true){
@@ -238,6 +239,16 @@ public class MemberSlideFragment extends Fragment implements TagFoundListener{
 		selectedFragment = R.id.button_member_navigation_booking;
 		return f;
 	}
+	
+	private Fragment galleryFragment() {
+		Fragment f = new MemberGalleryFragment();
+		Bundle bdl = new Bundle(1);
+		bdl.putString(Services.Statics.MID, memberID);
+		f.setArguments(bdl);
+		
+		selectedFragment = R.id.button_member_navigation_gallery;
+		return f;
+	}
 	/**
 	 * Changes the Current Fragment to match the selection.
 	 * @param position
@@ -250,9 +261,9 @@ public class MemberSlideFragment extends Fragment implements TagFoundListener{
 	
 	class MemberDetailsPagerAdapter extends FragmentStatePagerAdapter{
     	FragmentManager fragManager;
-    	private static final int NUM_PAGES = 5;
+    	private static final int NUM_PAGES = 6;
     	
-    	private String[] titles = {"Membership Information", "Member Details", "Visit History", "Bookings", "Finance"};
+    	private String[] titles = {"Membership Information", "Member Details", "Visit History", "Bookings", "Finance", "Gallery"};
     	
         public MemberDetailsPagerAdapter(FragmentManager fragmentManager) {
             super(fragmentManager);
@@ -266,26 +277,37 @@ public class MemberSlideFragment extends Fragment implements TagFoundListener{
         	bdl.putString(Services.Statics.MID, memberID);
         	
         	
-        	Fragment f = null;
+        	//Fragment f = null;
         	
         	switch (position){
         		case(0):
-        			f = membershipFragment();
+        			//f = membershipFragment();
+        			membershipFragment();
         			break;
         		case (1):
-        			f = noteFragment();
+        			//f = noteFragment();
+        			noteFragment();
         			break;
         		case (2):
-        			f = visitFragment();
+        			//f = visitFragment();
+        			visitFragment();
         			break;
         		case (3):
-        			f = bookingFragment();
+        			//f = bookingFragment();
+        			bookingFragment();
         			break;
         		case(4):
-        			f = financeFragment();
+        			//f = financeFragment();
+        			financeFragment();
+        			break;
+        		case (5):
+        			//f = galleryFragment();
+        			galleryFragment();
         			break;
         		default:
-        			f = membershipFragment();
+        			//f = membershipFragment();
+        			membershipFragment();
+        			break;
         	}
         	
         	mTagListener = (TagFoundListener) mainFragment;

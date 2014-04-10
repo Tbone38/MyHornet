@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import com.treshna.hornet.R;
 import com.treshna.hornet.R.color;
 import com.treshna.hornet.R.id;
+import com.treshna.hornet.services.BitmapLoader;
 import com.treshna.hornet.services.CameraWrapper;
 import com.treshna.hornet.services.Services;
 import com.treshna.hornet.sqlite.ContentDescriptor;
@@ -21,13 +22,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
-public class VisitorsViewAdapter extends SimpleCursorAdapter implements OnClickListener {
+public class VisitorsViewAdapter extends SimpleCursorAdapter {
 	
 	public final static String EXTRA_ID = "com.treshna.hornet.ID";
 	Context context;
@@ -72,7 +74,7 @@ public class VisitorsViewAdapter extends SimpleCursorAdapter implements OnClickL
 		if (theClicker != null) {
 			rowView.setOnClickListener(theClicker);
 		} else {
-			rowView.setOnClickListener(this);
+			//rowView.setOnClickListener(this);
 		}
 		if (cursor.isNull(cursor.getColumnIndex(ContentDescriptor.Member.Cols.MID))) {
 			rowView.setClickable(false);
@@ -109,38 +111,17 @@ public class VisitorsViewAdapter extends SimpleCursorAdapter implements OnClickL
 			Bitmap sm = BitmapFactory.decodeStream(is);
 			smileView.setImageBitmap(sm);
 		}
-		
-		//TODO: move this to a asynchronous task. (it's causing memory issues on large db's).
-		//0 is default/first image.
-		String imgDir = context.getExternalFilesDir(null)+"/0_"+cursor.getString(cursor.getColumnIndex(ContentDescriptor.Visitor.Cols.MID))+".jpg"; //or column 6
+		String imgDir = context.getExternalFilesDir(null)+"/"+cursor.getInt(cursor.getColumnIndex(ContentDescriptor.Image.Cols.IID))
+				+"_"+cursor.getString(cursor.getColumnIndex(ContentDescriptor.Visitor.Cols.MID))+".jpg";
 		File imgFile = new File(imgDir);
 		
 		if (imgFile.exists() == true){
 			imageView.bringToFront();
-			//imageText.setVisibility(View.GONE);
-		} else {
-			//imageText.bringToFront();
-			imageView.setClickable(false);
+			imageView.setVisibility(View.VISIBLE);
+			new BitmapLoader(imgFile,imageView,110,110);
 		}
-		if (imgFile.exists() == true) {
-			final BitmapFactory.Options options = new BitmapFactory.Options();
-		    options.inJustDecodeBounds = true;
-		 
-		    BitmapFactory.decodeFile(imgFile.getAbsolutePath(), options);
-		    // Calculate inSampleSize
-		    options.inSampleSize = Services.calculateInSampleSize(options,REQ_WIDTH, REQ_HEIGHT);
-		    // Decode bitmap with inSampleSize set
-		    options.inJustDecodeBounds = false;
-		    Bitmap bm = null;
-		    try {
-		    	bm = BitmapFactory.decodeFile(imgFile.getAbsolutePath(), options);
-		    } catch (OutOfMemoryError e) {
-		    	bm = null;
-		    }
-		
-		    imageView.setImageBitmap(bm);
-		} else {
-			imageView.setImageBitmap(null);
+		else {
+			imageView.setVisibility(View.INVISIBLE);
 		}
 		    
 	    String displayText = "";
@@ -174,24 +155,4 @@ public class VisitorsViewAdapter extends SimpleCursorAdapter implements OnClickL
 		}
 		
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see android.view.View.OnClickListener#onClick(android.view.View)
-	 * Handles Photos
-	 */
-	@Override
-	public void onClick(View v) {
-		//do Photo taking stuff here.
-		switch(v.getId()){
-		case(R.id.image):{ //addphoto
-			String id = v.getTag().toString();
-	        System.out.println("Add Photo for ID: "+id+" Pushed");
-	        Intent camera = new Intent(context, CameraWrapper.class);
-	        camera.putExtra(EXTRA_ID,id);
-	        context.startActivity(camera);
-	        break;} 
-		}
-    }
-	
 }

@@ -2,8 +2,7 @@
 <resources>
     <string name="first_time_text">Welcome to the GymMaster Mobile Experience.
         \n\nPlease select one of the setup procedures:</string>
-    <string name="simple_setup">Simple Setup</string>
-    <string name="advanced_setup">Advanced Setup</string>
+    
     <string name="setup_simple_text">Please Enter your details below</string>
     <string name="setup_simple_hint"> <![CDATA[<b>Note:</b>]]> this will generate a gymmaster database for you, if you\'re an existing client,
         or already have a gymmaster database please use the advanced setup.</string>
@@ -29,7 +28,4 @@
     <string name="setup_new_password">New Password</string>
     <string name="setup_reset_password_hint">Please enter the email address you signed up with.</string>
     <string name="setup_current_email">Your Email</string>
-    
-    <string name="buttonContinue">Continue</string>
-    <string name="buttonSubmit">Submit</string>
 </resources>

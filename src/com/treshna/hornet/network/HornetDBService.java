@@ -646,18 +646,72 @@ public class HornetDBService extends Service {
     }
     
     private void visitorImages() {
-    	String lastsync = Services.getAppSettings(getApplicationContext(), "lastsync");
+    	/*String lastsync = Services.getAppSettings(getApplicationContext(), "lastsync");
     	cur = contentResolver.query(ContentDescriptor.Visitor.CONTENT_URI, null, ContentDescriptor.Visitor.Cols.LASTUPDATE+" >= ?",
     			new String[] {lastsync}, null);
     	
-    	queryServerForImage(cur, 1);
+    	queryServerForImage(cur, 1);*/
+    	getImages(last_sync);
     }
     
     private void memberImages() {
-    	cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, null, null, null);
-    	queryServerForImage(cur, 1);
+    	/*cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, null, null, null);
+    	queryServerForImage(cur, 1);*/
+    	getImages(last_sync);
     }
     
+    
+    /** 
+     * images are written to file as <image id from psql>_<member id>.jpg
+     * @param lastsync
+     * @return
+     */
+    private int getImages(long lastsync) {
+    	int result = 0;
+    	
+    	if (!openConnection()) {
+    		return result; //connection failed;
+    	}
+    	
+    	ResultSet rs = null;
+    	try {
+    		rs = connection.getImages(lastsync);
+    		
+    		while (rs.next()) {
+    			int rowid = -1;
+    			cur = contentResolver.query(ContentDescriptor.Image.CONTENT_URI, null, ContentDescriptor.Image.Cols.IID+" = ?",
+    					new String[] {String.valueOf(rs.getInt("id"))}, null);
+    			if (cur.moveToFirst()) {
+    				rowid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Image.Cols.ID));
+    			}
+    			
+    			ContentValues values = new ContentValues();
+    			values.put(ContentDescriptor.Image.Cols.DESCRIPTION, rs.getString("description"));
+    			values.put(ContentDescriptor.Image.Cols.IID, rs.getInt("id"));
+    			values.put(ContentDescriptor.Image.Cols.IS_PROFILE, Services.booltoInt(rs.getBoolean("is_profile")));
+    			values.put(ContentDescriptor.Image.Cols.MID, rs.getInt("memberid"));
+    			values.put(ContentDescriptor.Image.Cols.DATE, rs.getTimestamp("created").getTime());
+    			values.put(ContentDescriptor.Image.Cols.LASTUPDATE, rs.getTimestamp("lastupdate").getTime());
+    			
+    			byte[] is = rs.getBytes("imagedata");
+            	logger.writeFile(is, rs.getInt("id")+"_"+rs.getString("memberid")+".jpg");
+            	
+            	if (rowid > 0) {
+            		contentResolver.update(ContentDescriptor.Image.CONTENT_URI, values, ContentDescriptor.Image.Cols.ID+" = ?",
+            				new String[] {String.valueOf(rowid)});
+            		result +=1;
+            	} else {
+            		contentResolver.insert(ContentDescriptor.Image.CONTENT_URI, values);
+            		result += 1;
+            	}
+    		}
+    	} catch (SQLException e) {
+    		statusMessage = e.getLocalizedMessage();
+    		Log.e(TAG, "", e);
+    		return -1;
+    	}
+    	return result;
+    }
     /*
      * Image ID's are set such that id 0 for membership is always the profile picture.
      * this means that getting the profile picture from the sdcard should be 0_<memberid>.jpg
@@ -1839,11 +1893,11 @@ public class HornetDBService extends Service {
     private void bookingImages(){
     	String b_lastsync;
     	
-    	b_lastsync = Services.getAppSettings(getApplicationContext(), "b_lastsync");
+    	/*b_lastsync = Services.getAppSettings(getApplicationContext(), "b_lastsync");
     	cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.LASTUPDATE+" > ?", 
     			new String[] {b_lastsync}, null);
     	queryServerForImage(cur, 12);
-    	cur.close();
+    	cur.close();*/
     }
     
     private int swipe(){

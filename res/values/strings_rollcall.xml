@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="action_roll">Roll Call</string>
+
     <string name="roll_add_name">Roll Name</string>
     <string name="roll_set_date">Set Date</string>
     <string name="roll_set_time">Set Time</string>
     <string name="roll_select_membership">Roll Membership</string>
-    <string name="roll_add_roll">Add Roll</string>
-    <string name="button_add_rollcall">Add Roll-Call</string>
+    
     <string name="roll_heading_name">Name</string>
     <string name="roll_heading_attended">Attended</string>
 </resources>

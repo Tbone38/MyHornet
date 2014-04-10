@@ -135,6 +135,15 @@ public class JDBCConnection {
     	 }
     }
     
+    public ResultSet getImages(long lastsync) throws SQLException {
+    	pStatement = con.prepareStatement("SELECT decode(substring(imagedata from 3),'base64') AS imagedata, memberid, lastupdate, description, is_profile, "
+				+ "created, id FROM IMAGE where substring(imagedata,1,2) = '1|' AND memberid NOT IN (SELECT id FROM member WHERE status = 3)"
+				+ "AND lastupdate > ?");
+    	
+    	pStatement.setTimestamp(1, new Timestamp(lastsync));
+    	return pStatement.executeQuery();
+    }
+    
     public int uploadImage( byte[] image, int memberId, Date date, String description, boolean isProfile) throws SQLException, NullPointerException {
 			pStatement = con.prepareStatement("INSERT INTO image (imagedata, memberid, lastupdate, created, description, is_profile"
 					+ ") VALUES ('1|'||encode(?,'base64'), ?, ?, ?, ?, ?);");

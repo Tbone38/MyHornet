@@ -256,7 +256,9 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 					null, where, whereArgs, null);
 		} else {
 			LinearLayout filter_message_box = (LinearLayout) view.findViewById(R.id.filter_message);
-			filter_message_box.setVisibility(View.GONE);
+			if (filter_message_box != null) {
+				filter_message_box.setVisibility(View.GONE);
+			}
 
 			return new CursorLoader( getActivity(), ContentDescriptor.Member.CONTENT_URI,
 					null, null, null, null );

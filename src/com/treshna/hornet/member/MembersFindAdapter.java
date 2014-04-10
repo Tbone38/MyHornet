@@ -135,7 +135,8 @@ public class MembersFindAdapter extends SimpleCursorAdapter implements OnClickLi
 			memberName.setTextColor(Color.BLACK);
 		}
 		
-		String imgDir = context.getExternalFilesDir(null)+"/0_"+cursor.getString(1)+".jpg"; //cursor.getColumnIndex(ContentDescriptor.Member.Cols.MID)
+		String imgDir = context.getExternalFilesDir(null)+"/"+cursor.getInt(cursor.getColumnIndex(ContentDescriptor.Image.Cols.IID))
+				+"_"+cursor.getString(1)+".jpg"; //cursor.getColumnIndex(ContentDescriptor.Member.Cols.MID)
 		File imgFile = new File(imgDir);
 		ImageView imageView = (ImageView) rowLayout.findViewById(R.id.rowimage);
 		imageView.setVisibility(View.VISIBLE);

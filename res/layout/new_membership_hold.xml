@@ -129,7 +129,7 @@
 	 	    android:layout_below="@id/startdateL"
 	 	    android:gravity="center_vertical"
 	 	    android:textSize="18sp"
-	 	    android:text="@string/membership_default_startdate"
+	 	    android:text="@string/defaultStartDate"
 	 	    android:padding="5dp"
 	 	    android:layout_margin="3dp"
 	 	    android:background="@drawable/button" />
@@ -152,7 +152,7 @@
 	 	    android:layout_below="@id/hold_enddateL"
 	 	    android:gravity="center_vertical"
 	 	    android:textSize="18sp"
-	 	    android:text="@string/membership_default_enddate"
+	 	    android:text="@string/defaultEndDate"
 	 	    android:padding="5dp"
 	 	    android:layout_margin="3dp"
 	 	    android:background="@drawable/button" />

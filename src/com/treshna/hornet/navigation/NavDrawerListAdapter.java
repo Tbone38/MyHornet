@@ -65,13 +65,10 @@ public class NavDrawerListAdapter extends BaseAdapter {
             convertView.setEnabled(false);
             convertView.setOnClickListener(null);
     	} else {
-    		
-	    	if (convertView == null) {
-	            LayoutInflater mInflater = (LayoutInflater)
-	                    context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-	            convertView = mInflater.inflate(R.layout.drawer_list_item, null);
-	        }
-	    	
+		    LayoutInflater mInflater = (LayoutInflater)
+                    context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+            convertView = mInflater.inflate(R.layout.drawer_list_item, null);
+            
 	    	if (navDrawerItems.get(position).getTitle() == null) {
 	    		convertView = new View(context);
 	    		convertView.setVisibility(View.GONE);

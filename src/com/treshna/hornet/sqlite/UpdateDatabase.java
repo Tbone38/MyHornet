@@ -836,6 +836,10 @@ public class UpdateDatabase {
 			 * compatabile with previous timestamps. Shouldn't be an issue though, as we reset sync times/etc when
 			 * we upgrade, so all the recent visits should be downloaded again..*/
 		
+		private static final String SQL8 = "DELETE FROM "+Image.NAME+" ;";
+		
+		private static final String SQL9 = "ALTER TABLE "+Image.NAME+" ADD COLUMN "+Image.Cols.LASTUPDATE+" NUMERIC;";
+		
 		public static void patchNinetySix(SQLiteDatabase db) {
 			db.beginTransaction();
 			try {
@@ -853,6 +857,10 @@ public class UpdateDatabase {
 				db.execSQL(SQL6);
 				Log.w(HornetDatabase.class.getName(), "\n"+SQL7);
 				db.execSQL(SQL7);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL8);
+				db.execSQL(SQL8);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL9);
+				db.execSQL(SQL9);
 				db.setTransactionSuccessful();
 			/*} catch (SQLException e) {
 			e.printStackTrace();

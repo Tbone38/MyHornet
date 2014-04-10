@@ -72,135 +72,6 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 		//setupLayout();
 	}
 	
-	@SuppressLint("NewApi")
-	private View setupLayout() {
-		Uri uri = Uri.withAppendedPath(ContentDescriptor.Image.IMAGE_JOIN_MEMBER_URI,
-				memberID);
-		cur = contentResolver.query(uri, null, null, null, null);
-		if (!cur.moveToFirst()) {
-			return view;
-		}
-		
-		TextView memberName = (TextView) view.findViewById(R.id.member_navigation_name);
-		memberName.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.FNAME))
-					+" "+cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.SNAME)));
-		
-		TextView memberNumber = (TextView) view.findViewById(R.id.member_navigation_number);
-		memberNumber.setText("#"+memberID);
-		
-		
-		ImageView img = (ImageView) view.findViewById(R.id.member_navigation_image);
-		String imgDir = getActivity().getExternalFilesDir(null)+"/0_"+memberID+".jpg";
-		File imgFile = null;
-		imgFile = new File(imgDir);
-		if (imgFile.exists() == true){
-			
-			new BitmapLoader(imgFile,img, 500, 450);
-		    img.setClickable(true);
-		    img.setOnClickListener(this);
-		    img.setTag(1);
-		} else {
-			img.setClickable(true);
-		    img.setOnClickListener(this);
-		    img.setTag(2);
-			Drawable imgDrawable = getActivity().getResources().getDrawable(R.drawable.nophotogrey);
-			img.setImageDrawable(imgDrawable);
-		}
-	    
-		String happiness = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.HAPPINESS));
-		if (happiness != null) {
-			if (happiness.compareTo(":(") == 0) {
-				ImageView sad;
-				sad = (ImageView) view.findViewById(R.id.member_status_sad);
-				sad.setVisibility(View.VISIBLE);
-			} else if (happiness.compareTo(":|") == 0) {
-				ImageView plain;
-				plain = (ImageView) view.findViewById(R.id.member_status_plain);
-				plain.setVisibility(View.VISIBLE);
-			} else if (happiness.compareTo(":)") == 0) {
-				ImageView happy;
-				happy = (ImageView) view.findViewById(R.id.member_status_happy);
-				happy.setVisibility(View.VISIBLE);
-			}
-		} else {
-			ImageView happy;
-			happy = (ImageView) view.findViewById(R.id.member_status_happy);
-			happy.setVisibility(View.VISIBLE);
-		}
-
-		int status = cur.getInt(cur.getColumnIndex(ContentDescriptor.Member.Cols.STATUS));
-		if (status >= 0) {
-			if (status == 0|| status == 5) { //Current
-				ImageView statusView;
-				statusView = (ImageView) view.findViewById(R.id.member_status_ok);
-				statusView.setVisibility(View.VISIBLE);
-				statusView.setColorFilter(Services.ColorFilterGenerator.setColour(getResources().getColor(R.color.booking_resource_green)));
-			} else if (status == 1) { //on hold
-				ImageView statusView;
-				statusView = (ImageView) view.findViewById(R.id.member_status_hold);
-				statusView.setVisibility(View.VISIBLE);
-				statusView.setColorFilter(Services.ColorFilterGenerator.setColour(getResources().getColor(R.color.android_blue)));
-			} else if (status == 2|| status == 3) { //expired
-				ImageView statusView;
-				statusView = (ImageView) view.findViewById(R.id.member_status_expired);
-				statusView.setVisibility(View.VISIBLE);
-				statusView.setColorFilter(Services.ColorFilterGenerator.setColour(getResources().getColor(R.color.visitors_red)));
-			} else if (status == 4 ) { //promotion
-				ImageView statusView;
-				statusView = (ImageView) view.findViewById(R.id.member_status_casual);
-				statusView.setVisibility(View.VISIBLE);
-				statusView.setColorFilter(Services.ColorFilterGenerator.setColour(getResources().getColor(R.color.visitors_red)));
-			}
-		} else {
-			ImageView statusView;
-			statusView = (ImageView) view.findViewById(R.id.member_status_ok);
-			statusView.setVisibility(View.VISIBLE);
-			statusView.setColorFilter(Services.ColorFilterGenerator.setColour(Color.GREEN));
-		}
-		
-		cur.close();
-		
-		TextView memberBalance = (TextView) view.findViewById(R.id.member_status_balance);
-		cur = contentResolver.query(ContentDescriptor.MemberBalance.CONTENT_URI, null, 
-				ContentDescriptor.MemberBalance.Cols.MID+" = ?", new String[] {memberID}, null);
-		
-		if (!cur.moveToNext()) {
-			memberBalance.setVisibility(View.GONE);
-		} else {
-			String amount = cur.getString(cur.getColumnIndex(ContentDescriptor.MemberBalance.Cols.BALANCE));
-			if (amount.compareTo("$0.00") == 0) {
-				memberBalance.setText("Balance: "+amount);
-			} else if (amount.substring(0, 1).compareTo("-") == 0) { //member in Credit
-				memberBalance.setText("Credit: "+amount.substring(1));
-				memberBalance.setTextColor(getActivity().getResources().getColor(R.color.android_blue));
-			} else {
-				memberBalance.setText("Owing: "+amount);
-				memberBalance.setTextColor(getActivity().getResources().getColor(R.color.visitors_red));
-			}
-		}
-		cur.close();
-		
-	    //onclick listeners
-	    LinearLayout memberships = (LinearLayout) view.findViewById(R.id.button_member_navigation_memberships);
-	    memberships.setOnClickListener(this);
-	    
-	    LinearLayout notes = (LinearLayout) view.findViewById(R.id.button_member_navigation_notes);
-	    notes.setOnClickListener(this);
-	    
-	    LinearLayout visits = (LinearLayout) view.findViewById(R.id.button_member_navigation_visits);
-	    visits.setOnClickListener(this);
-			    
-	    LinearLayout finance = (LinearLayout) view.findViewById(R.id.button_member_navigation_finance);
-	    finance.setOnClickListener(this);
-	    
-	    LinearLayout bookings = (LinearLayout) view.findViewById(R.id.button_member_navigation_booking);
-	    bookings.setOnClickListener(this);
-	    //bookings.setVisibility(View.GONE);
-	    
-	    
-		return view;
-	}
-	
 	private Fragment generateFragment() {
 		/*Log.w(TAG, "WE'RE GENERATING A FRAG");
 		Log.w(TAG, "OUR SELECTED VALUE IS:"+selectedFragment);*/
@@ -246,6 +117,12 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 			f.setArguments(bdl);
 			break;
 		}
+		case (R.id.button_member_navigation_gallery):{
+			f = new MemberGalleryFragment();
+			Bundle bdl = new Bundle(1);
+			bdl.putString(Services.Statics.MID, memberID);
+			f.setArguments(bdl);
+		}
 		default:
 			//Log.w(TAG, "NULL?!!");
 		}
@@ -275,59 +152,10 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 		//setSelected();
 	}
 	
-	@SuppressWarnings("deprecation")
-	private void reDrawButtonMember(){
-		int[] layouts = {R.id.button_member_navigation_booking, R.id.button_member_navigation_finance,
-				R.id.button_member_navigation_memberships, R.id.button_member_navigation_notes,
-				R.id.button_member_navigation_visits};
-		
-		for (int i=0; i <layouts.length; i++) {
-			LinearLayout button = (LinearLayout) view.findViewById(layouts[i]);
-			button.setBackgroundColor(this.getResources().getColor(android.R.color.background_light));
-			button.setBackgroundDrawable(this.getResources().getDrawable(R.drawable.button));
-		}
-	}
-	
-	private void setSelected(){
-		LinearLayout selectedView = (LinearLayout) view.findViewById(selectedFragment);
-		selectedView.setBackgroundColor(this.getResources().getColor(R.color.android_blue));
-	}
-
-	
 	@Override
 	public void onClick(View v) {
 		
 		switch(v.getId()) {
-		case (R.id.button_member_navigation_notes):{
-			Fragment f = new MemberNotesFragment();
-			Bundle bdl = new Bundle(2);
-			
-	        bdl.putString(Services.Statics.MID, memberID);
-	        f.setArguments(bdl);
-	        
-	        selectedFragment = R.id.button_member_navigation_notes;
-	        setupFragment(f);
-			break;
-		}
-		case (R.id.button_member_navigation_memberships):{
-			Fragment f = new MemberMembershipFragment();
-			Bundle bdl = new Bundle(1);
-	        bdl.putString(Services.Statics.MID, memberID);
-	        f.setArguments(bdl);
-	        selectedFragment = R.id.button_member_navigation_memberships;
-	        setupFragment(f);
-	        break;
-		}
-		case (R.id.button_member_navigation_visits):{
-			Fragment f = new MemberVisitHistoryFragment();
-			Bundle bdl = new Bundle(2);
-	        bdl.putString(Services.Statics.MID, memberID);
-	        f.setArguments(bdl);
-	        
-	        selectedFragment = R.id.button_member_navigation_visits;
-	        setupFragment(f);
-			break;
-		}
 		case (R.id.member_navigation_image):{
 			int state = Integer.parseInt(v.getTag().toString());
 			if (state == 1) {
@@ -345,23 +173,6 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 				getActivity().startActivity(camera);
 			}
 			break;
-		}
-		case (R.id.button_member_navigation_finance):{
-			Fragment f = new MemberFinanceFragment();
-			Bundle bdl = new Bundle(1);
-			bdl.putString(Services.Statics.MID, memberID);
-			f.setArguments(bdl);
-			selectedFragment = R.id.button_member_navigation_finance;
-			setupFragment(f);
-			break;
-		}
-		case (R.id.button_member_navigation_booking):{
-			selectedFragment = R.id.button_member_navigation_booking;
-			Fragment f = new MemberBookingsFragment();
-			Bundle bdl = new Bundle(1);
-			bdl.putString(Services.Statics.MID, memberID);
-			f.setArguments(bdl);
-			setupFragment(f);
 		}
 		}
 	}

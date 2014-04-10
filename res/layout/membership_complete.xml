@@ -128,7 +128,7 @@
 		        android:layout_height="match_parent"
 		        android:gravity="center"
 		        android:textSize="18sp"
-		        android:text="@string/membership_add_tag" />
+		        android:text="@string/buttonAddTag" />
 		</LinearLayout>
 		<LinearLayout
 		    android:id="@+id/button_addphoto_row"
@@ -149,7 +149,7 @@
 		        android:layout_height="match_parent"
 		        android:gravity="center"
 		        android:textSize="18sp"
-		        android:text="@string/membership_add_photo" />
+		        android:text="@string/buttonAddPhoto" />
 		    
 		</LinearLayout>
 	    	   
@@ -184,7 +184,7 @@
 				        android:layout_height="match_parent"
 				        android:gravity="center"
 				        android:textSize="18sp"
-				        android:text="@string/cancel" />
+				        android:text="@string/buttonCancel" />
 				</LinearLayout>
 				<View
 			        android:layout_width="match_parent"
@@ -217,7 +217,7 @@
 				        android:layout_height="wrap_content"
 				        android:layout_margin="5dp"
 				        android:gravity="center"
-				        android:text="@string/membership_complete"
+				        android:text="@string/buttonComplete"
 				        android:textSize="18sp" />
 				</LinearLayout>
 				<View

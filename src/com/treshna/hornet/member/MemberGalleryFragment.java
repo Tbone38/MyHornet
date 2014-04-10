@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 
+import com.treshna.hornet.MainActivity.TagFoundListener;
 import com.treshna.hornet.R;
 import com.treshna.hornet.services.CameraWrapper;
 import com.treshna.hornet.services.Services;
@@ -26,7 +27,7 @@ import com.treshna.hornet.visitor.VisitorsViewAdapter;
 
 
 public class MemberGalleryFragment extends Fragment implements OnClickListener, 
-		LoaderManager.LoaderCallbacks<Cursor> {
+		LoaderManager.LoaderCallbacks<Cursor>, TagFoundListener {
 	Cursor cur;
 	ContentResolver contentResolver;
 	String memberID;
@@ -63,21 +64,25 @@ public class MemberGalleryFragment extends Fragment implements OnClickListener,
 		super.onResume();
 		mLoader.restartLoader(0, null, this);
 	}
+	
+	public LoaderManager getLoader() {
+		return this.mLoader;
+	}
 		
 	private View setupView() {
 		
 		GridView gallery = (GridView) view.findViewById(R.id.member_gallery);
-		mAdapter = new GalleryViewAdapter(getActivity(), R.layout.member_gallery_row, null,
-				new String[] {}, new int[] {}, 130);
+		mAdapter = new GalleryViewAdapter(this, R.layout.member_gallery_row, null,
+				new String[] {}, new int[] {}, 230, gallery);
 		gallery.setAdapter(mAdapter);
 		
 		Resources r = getResources();
         float padding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                9, r.getDisplayMetrics());
+                4, r.getDisplayMetrics());
  
-        int columnWidth = (int) ((Services.getScreenWidth(getActivity()) - ((3 + 1) * padding)) / 3);
+        int columnWidth = (int) ((Services.getScreenWidth(getActivity()) - ((2 + 1) * padding)) / 2);
  
-        gallery.setNumColumns(3);
+        gallery.setNumColumns(2);
         gallery.setColumnWidth(columnWidth);
         gallery.setStretchMode(GridView.NO_STRETCH);
         gallery.setPadding((int) padding, (int) padding, (int) padding,
@@ -92,9 +97,6 @@ public class MemberGalleryFragment extends Fragment implements OnClickListener,
 		return view;
 	}
 	
-	 private void InitilizeGridLayout() {
-	           }
-
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
 		return new CursorLoader( getActivity(), ContentDescriptor.Image.CONTENT_URI,
@@ -123,6 +125,11 @@ public class MemberGalleryFragment extends Fragment implements OnClickListener,
 			break;
 		}
 		}
+	}
+
+	@Override
+	public boolean onNewTag(String serial) {
+		return false;
 	}
 	
 }

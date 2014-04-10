@@ -6,22 +6,14 @@
     <string name="action_settings">Settings</string>
     <string name="action_sync">Start Sync</string>
     <string name="action_halt">Halt auto-Sync</string>
-    <string name="action_scan">Scan Tag</string>
-    <string name="action_visitors">Last Visitors</string>
-    <string name="action_bookings">Bookings</string>
-    <string name="action_add">Add Member</string>
-    <string name="action_findMember">Find Member</string>
     <string name="button_content_query">Show Last Access</string>
     <string name="button_scan_tag">Scan Tag</string>
     <string name="title_activity_display_results">Displaying Results</string>
     <string name="image_description">Image of the Member</string>
     <string name="smiley_description">smiley representing the Members happiness</string>
     <string name="task_description">indicates if the member has a task or booking</string>
-    <string name="button_add_picture">Add Photo</string>
+    
     <string name="title_activity_camera_wrapper">Camera Wrapper</string>
-    <string name="title_activity_rfid_reader">Tag Reader</string>
-    <string name="welcome">Welcome, Please Select the feature you would like to use:</string>
-    <string name="rfidwelcome">Waiting for a Tag.</string>
     <string name="title_activity_member_info">Member Information</string>
     <string name="filler_text">filler Text, Filler Text!</string>
     <string name="heading_member_info">Member</string>
@@ -38,7 +30,7 @@
     <string name="title_activity_membership_hold">Hold Membership</string>
     <string name="title_activity_membership_add">Add Membership</string>
     <string name="hello_world">Hello world!</string>
-    <string name="cancel">Cancel</string>
+    
     <string name="hint_visitor_time">Visitor Time icon (clock)</string>
     <string name="title_activity_magic">Setup GymMaster</string>   
 

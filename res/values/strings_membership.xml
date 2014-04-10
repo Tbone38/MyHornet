@@ -6,7 +6,7 @@
   <string name="membership_gifttime_description">Can the member use the gym through the period?</string>
   <string name="membership_startdate">Start Date</string>
   <string name="membership_enddate">End Date</string>
-  <string name="membership_default_enddate">Select End Date</string>
+  
   <string name="membership_length">Duration</string>
   <string name="membership_reason">Reason For Hold</string>
   <string name="membership_holdfee">Hold Fee</string>
@@ -27,7 +27,6 @@
   <string name="hold_fee_initial">Initial Setup Fee</string>
   <string name="hold_fee_ongoing">Ongoing Fee Charged</string>
   
-  <string name="membership_default_startdate">Select Start Date</string>
   <string name="action_halt_membership">Membership Hold</string>
   <string-array name="membership_length_titles">
       <item>1 week</item>
@@ -50,9 +49,7 @@
 	<string name="membership_add_payment_date">First Payment Date</string>
 	<string name="membership_add_signup_fee">Signup Fee</string>
 	<string name="membership_add_actions">Actions</string>
-	<string name="membership_add_tag">Assign Tag</string>
-	<string name="membership_add_photo">Add Photo</string>
-	<string name="membership_add_complete">Save &amp; Continue</string>
+	
 	
 	<string name="membership_complete_pname">Programme Name</string>
 	<string name="membership_complete_tag">Card Number</string>
@@ -61,7 +58,6 @@
 	<string name="membership_complete_price">Programme Price</string>
 	<string name="membership_complete_signup_fee">Signup Fee</string>
 	<string name="membership_amount_outstanding">Amount Outstanding</string>
-	<string name="membership_complete">Complete</string>
 	<string name="membership_complete_desc">Please Confirm the below Details are correct:</string>
 	
 	<!-- 			EXPIRE MEMBERSHIP		  -->
@@ -69,7 +65,6 @@
 	<string name="membership_expire_reason">Reason </string>
   	<string name="membership_cancel_fee">Cancelation Fee </string>
   	<string name="membership_expire_date">Date</string>
-  	<string name="button_membership_expire">Expire</string>
-  	<string name="button_ok">OK</string>
+  	
 	
 </resources>
