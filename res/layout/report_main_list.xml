@@ -11,6 +11,14 @@
 	        android:background="@color/report_heading_background_green"
 	        android:gravity="center_horizontal"
 	        android:textSize="@dimen/report_title_text_size" />
+
+	    <Button
+	        android:id="@+id/btnEmail"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:gravity="right"
+	        android:text="@string/report_btn_email" />
+
 			<LinearLayout
 				android:id="@+id/report_list_headings"
 				android:layout_width="match_parent"

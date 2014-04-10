@@ -29,6 +29,7 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -50,7 +51,8 @@ public class ReportMainActivity extends ListActivity {
 	private ArrayList<HashMap<String,String>> joiningTablesMapList =  null;
 	private String reportName = null;
 	private String reportFunctionName = null;
-	private String queryFunctionParamsCut = null; 
+	private String queryFunctionParamsCut = null;
+	private String numValueRegex = "(^\\$?[0-9]+\\.?[0-9]+)|([0-9]+)";
 	private String callingActivity = null;
 	private String finalQuery = null;
 	private Date startDate = null;
@@ -74,6 +76,19 @@ public class ReportMainActivity extends ListActivity {
 		reportName = intent.getStringExtra("report_name");
 		reportFunctionName = intent.getStringExtra("report_function_name");
 		queryFunctionParamsCut = reportFunctionName.substring(0,reportFunctionName.indexOf('('));
+		Button btnEmail = (Button) findViewById(R.id.btnEmail);
+		btnEmail.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				String [] emailRecipients = {"antonygunn@yahoo.co.nz"};
+				String subject = "Test";
+				String message = "Testing 123, this is a test";
+				EmailSender email = new EmailSender(ReportMainActivity.this, emailRecipients, subject, message);
+			}
+			
+		});
+		
 		this.getColumnData(reportId);
 	    
 	}
@@ -224,9 +239,11 @@ public class ReportMainActivity extends ListActivity {
 					LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams( LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT );
 					linLayout.setLayoutParams(listLayoutParams);
 					HashMap<String,String> dataRow = this.getItem(position);
+					removeSpacesFromPhoneNumbers(dataRow);
 					int columnIndex = 0;
 					for (Entry<String,String> col : dataRow.entrySet()){
 						if (!isColumnAllNull(col.getKey().toString())) {
+							
 						  	layoutParams = new LinearLayout.LayoutParams( 0,LayoutParams.WRAP_CONTENT,3);
 							//Dynamically generate text views for each column name..
 							textView =  new TextView(ReportMainActivity.this);
@@ -237,10 +254,10 @@ public class ReportMainActivity extends ListActivity {
 							if (field.compareTo("MemberID")== 0){
 								textView.setVisibility(android.view.View.GONE);
 							}
-							if (col.getValue() != null && col.getValue().toString().matches("[0-9]+")) {
+							if (col.getValue() != null && col.getValue().toString().matches(numValueRegex)) {
 								textView.setGravity(Gravity.RIGHT);										
 								if ((getApplicationContext().getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE) {
-									textView.setPadding(0, 0, 50, 0);
+									textView.setPadding(0, 0, 60, 0);
 								} else {
 									textView.setPadding(0, 0, 10, 0);
 								}										
@@ -266,15 +283,29 @@ public class ReportMainActivity extends ListActivity {
 
 	  }
 	
-	private boolean isAnyRowAllNums(String colName){
+ private boolean isAnyRowAllNums(String colName){
 		for (HashMap<String,String> dataRow: resultMapList){
 			if (dataRow.get(colName) != null)
-				if (dataRow.get(colName).matches("[0-9]+")){
+				if (dataRow.get(colName).matches(numValueRegex)){
 					return true;
 				}
 		}
 	  return false;
-	}
+ }
+ 
+ private void removeSpacesFromPhoneNumbers(HashMap<String,String> dataRow){
+		//Remove spaces from phone numbers..
+		if (dataRow.containsKey("Mobile") && dataRow.get("Mobile")!= null) {
+			if (dataRow.get("Mobile").toString().contains(" ")) {
+				dataRow.put("Mobile", dataRow.get("Mobile").toString().replace(" ", ""));
+			}
+		}
+		if (dataRow.containsKey("Home Phone") && dataRow.get("Home Phone")!= null) {
+			if (dataRow.get("Home Phone").toString().contains(" ")) {
+				dataRow.put("Home Phone", dataRow.get("Home Phone").toString().replace(" ", ""));
+			}
+		} 
+ }
 	
 	
  private void setOrientation(HashMap<String,String> dataRow) {
@@ -305,7 +336,7 @@ public class ReportMainActivity extends ListActivity {
 		
 	}
 	
-	private void buildColumnHeaders() {
+private void buildColumnHeaders() {
 			LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams( LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT );
 			LinearLayout reportColumnHeadingLayout = (LinearLayout) this.findViewById(R.id.report_list_headings);
 			TextView reportNameTextView = (TextView) findViewById(R.id.report_main_title);
