@@ -6,18 +6,19 @@
     android:layout_height="wrap_content"
     android:padding="7dp"
     tools:context=".MemberDetails" >
+    <ImageView
+    	    android:id="@+id/member_image"
+    	    android:layout_width="80sp"
+	     	android:layout_height="80sp"
+    	    android:paddingLeft="5dp"
+	     	android:layout_marginRight="5dp" />
     <LinearLayout
         android:id="@+id/name_row"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center">
-    	<ImageView
-    	    android:id="@+id/member_image"
-    	    android:layout_width="40sp"
-	     	android:layout_height="40sp"
-    	    android:paddingLeft="5dp"
-	     	android:layout_marginRight="5dp" />
+        android:gravity="center"
+        android:layout_toRightOf="@id/member_image">
 	    <TextView 
 			android:id="@+id/member_navigation_name"
 		    android:layout_width="0dp"
@@ -60,45 +61,51 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/name_row"
+        android:layout_toRightOf="@id/member_image"
         android:gravity="center_vertical"
-        android:orientation="horizontal"
-         > <!-- android:background="@color/member_statusbar_background" -->
-        <ImageView
-            android:id="@+id/member_status_happy"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:background="@drawable/face_smile"
-            android:padding="1dp"
-            android:visibility="gone" />
-	   <ImageView
-            android:id="@+id/member_status_plain"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:background="@drawable/face_plain"
-            android:padding="1dp"
-            android:visibility="gone" />
-	   <ImageView
-            android:id="@+id/member_status_sad"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:background="@drawable/face_sad"
-            android:padding="1dp"
-            android:layout_marginRight="3dp"
-            android:visibility="gone" />
+        android:orientation="horizontal">
+		<LinearLayout
+		    android:id="@+id/status_wrapper"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content">
+			<ImageView
+	            android:id="@+id/member_status_happy"
+	            android:layout_width="25dp"
+	            android:layout_height="25dp"
+	            android:background="@drawable/face_smile"
+	            android:padding="1dp"
+	            android:visibility="gone" />
+		   <ImageView
+	            android:id="@+id/member_status_plain"
+	            android:layout_width="25dp"
+	            android:layout_height="25dp"
+	            android:background="@drawable/face_plain"
+	            android:padding="1dp"
+	            android:visibility="gone" />
+		   <ImageView
+	            android:id="@+id/member_status_sad"
+	            android:layout_width="25dp"
+	            android:layout_height="25dp"
+	            android:background="@drawable/face_sad"
+	            android:padding="1dp"
+	            android:layout_marginRight="3dp"
+	            android:visibility="gone" />
+		</LinearLayout>
 	   
 	    <TextView
 	        android:id="@+id/member_status_balance"
 	        android:layout_width="0dp"
 	        android:layout_height="match_parent"
-	        android:layout_weight=".75"
-	        android:gravity="center|right"
+	        android:layout_weight=".65"
+	        android:gravity="center_vertical"
 	        android:textSize="15sp"
+	        android:paddingLeft="5dp"
 	        android:text="$6543.21" />
 	    <TextView
 	        android:id="@+id/member_navigation_number"
 	        android:layout_width="0dp"
 	        android:layout_height="match_parent"
-	        android:layout_weight=".25"
+	        android:layout_weight=".35"
 	        android:gravity="center|right"
 	        android:textSize="15sp"
 	        android:text="#12345"
@@ -109,8 +116,7 @@
     	android:id="@+id/pager"
     	android:layout_width="match_parent"
     	android:layout_height="match_parent"
-    	android:layout_below="@id/name_row"
-    	android:layout_marginTop="25dp" >
+    	android:layout_below="@id/member_image">
 	    
 	    <android.support.v4.view.PagerTabStrip
 	        android:id="@+id/pts_main"

@@ -7,55 +7,32 @@
     android:paddingLeft="7dp"
     android:paddingRight="7dp"
     android:paddingTop="7dp" >
-
-	<GridView
-	    android:id="@+id/member_gallery"
-	    android:layout_width="match_parent"
-	    android:layout_height="match_parent"
-	    
-	    
-	    android:stretchMode="columnWidth" >
- 
-	</GridView>
-	<LinearLayout
-	    android:id="@+id/button_row"
+	<RelativeLayout
+	    android:id="@+id/booking_list"
 	    android:layout_width="match_parent"
 	    android:layout_height="0dp"
-	    android:layout_weight=".2"	    
-	    android:orientation="horizontal">
-	    <LinearLayout
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	    	android:orientation="vertical">
-		    <LinearLayout 
-		        android:id="@+id/button_add_photo"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:orientation="horizontal"
-		        android:padding="5dp"
-		        android:background="@drawable/button_large"
-		        android:clickable="true" >
-		        <ImageView
-		            android:id="@+id/add_photo_drawable"
-		            android:layout_width="35dp"
-		            android:layout_height="35dp"
-		            android:background="@drawable/ic_action_camera"
-		            android:padding="2dp" />
-		        <TextView
-		            android:id="@+id/add_photo_text"
-		            android:layout_width="wrap_content"
-		            android:layout_height="match_parent"
-		            android:gravity="center"
-		            android:textSize="18sp"
-		            android:text="@string/button_gallery_add_photo"
-		            android:padding="5dp" />
-		    </LinearLayout>
-		    <View
-		        android:layout_width="match_parent"
-			    android:layout_height="2dp"
-			    android:paddingLeft="5dp"
-		    	android:paddingRight="5dp"
-			    android:background="@color/member_number_grey2" />
-		</LinearLayout>
-	</LinearLayout>
+	    android:layout_weight=".8" >
+		<GridView
+		    android:id="@+id/member_gallery"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:animateLayoutChanges="false"
+	        android:clipChildren="false"
+	        android:clipToPadding="false"
+	        android:drawSelectorOnTop="true"
+	        android:gravity="center"
+	        android:horizontalSpacing="10dp"
+	        android:numColumns="2"
+	        android:scrollingCache="false"
+	        android:stretchMode="columnWidth"
+	        android:verticalSpacing="10dp"
+	        >
+		</GridView> 
+	</RelativeLayout>
+	<include 
+	    layout="@layout/member_details_gallery_actions"
+	    android:layout_width="match_parent"
+	    android:layout_height="0dp"
+	    android:layout_weight=".2"
+	    />
 </LinearLayout>

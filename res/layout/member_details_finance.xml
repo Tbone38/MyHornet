@@ -63,7 +63,14 @@
         android:paddingTop="4dp"
         android:paddingBottom="4dp" >
     </LinearLayout>
-    <LinearLayout
+    <include 
+	    layout="@layout/member_details_finance_actions"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@id/finance_history_list"
+	    />
+	
+   <!--  <LinearLayout
 	    android:id="@+id/button_row1"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
@@ -150,11 +157,5 @@
 		        android:layout_height="2dp"
 		        android:background="@color/button_underline_green" />
 		</LinearLayout>
-	</LinearLayout>
-   	<!-- <include 
-	    layout="@layout/member_details_actions"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:layout_below="@id/button_row2"/>
-	     -->
-</RelativeLayout>
+	</LinearLayout> -->
+ </RelativeLayout>

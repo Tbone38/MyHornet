@@ -8,11 +8,13 @@ import java.util.Hashtable;
 import java.util.Locale;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -41,6 +43,9 @@ public class Services {
 	private static ProgressDialog progress;
 	private static Context theCtx;
 	private static final String TAG = "Services";
+	
+	private static Activity theActivity;
+	private static boolean activityVisible = false;
 	
 	
 	/** Always returns date format as "dd MMM yyyy"
@@ -208,7 +213,13 @@ public class Services {
             point.x = display.getWidth();
             point.y = display.getHeight();
         }
-        columnWidth = point.x;
+        
+        if (_context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+        	columnWidth = point.x;
+        } else {
+        	columnWidth = point.y/2; //we could be in the fragment view, so 1/2 the screen ?
+        }
+        
         return columnWidth;
     }
 	
@@ -227,6 +238,28 @@ public class Services {
 	
 	public static PollingHandler getFreqPollingHandler(){
 		return pollingFreqHandler;
+	}
+	
+	public static void setActivityVisible(boolean isVisible) {
+		activityVisible = isVisible;
+	}
+	
+	public static boolean getActivityVisible() {
+		return activityVisible;
+	}
+	
+	public static void setActivity(Activity activity) {
+		theActivity = activity;
+	}
+	
+	public static Activity getActivity() {
+		if (Services.getActivityVisible()) {
+			Log.w("SERVICES", "THE ACTIVITY IS VISIBLE");
+			return theActivity;
+		} else {
+			Log.w("SERVICES", "THE ACTIVITY IS NOT VISIBLE");
+			return null;
+		}
 	}
 	
 	public static byte[] hexStringToByteArray(String s) {

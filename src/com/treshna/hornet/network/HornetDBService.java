@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
@@ -27,51 +26,13 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.treshna.hornet.MainActivity;
 import com.treshna.hornet.R;
-import com.treshna.hornet.R.string;
 import com.treshna.hornet.services.ApplicationID;
 import com.treshna.hornet.services.FileHandler;
 import com.treshna.hornet.services.Services;
 import com.treshna.hornet.sqlite.ContentDescriptor;
-import com.treshna.hornet.sqlite.ContentDescriptor.AppConfig;
-import com.treshna.hornet.sqlite.ContentDescriptor.BillingHistory;
-import com.treshna.hornet.sqlite.ContentDescriptor.Booking;
-import com.treshna.hornet.sqlite.ContentDescriptor.BookingTime;
-import com.treshna.hornet.sqlite.ContentDescriptor.Bookingtype;
-import com.treshna.hornet.sqlite.ContentDescriptor.CancellationFee;
-import com.treshna.hornet.sqlite.ContentDescriptor.Class;
-import com.treshna.hornet.sqlite.ContentDescriptor.Company;
-import com.treshna.hornet.sqlite.ContentDescriptor.DeletedRecords;
-import com.treshna.hornet.sqlite.ContentDescriptor.Door;
-import com.treshna.hornet.sqlite.ContentDescriptor.Enquiry;
-import com.treshna.hornet.sqlite.ContentDescriptor.FreeIds;
-import com.treshna.hornet.sqlite.ContentDescriptor.IdCard;
-import com.treshna.hornet.sqlite.ContentDescriptor.Image;
-import com.treshna.hornet.sqlite.ContentDescriptor.KPI;
-import com.treshna.hornet.sqlite.ContentDescriptor.Member;
-import com.treshna.hornet.sqlite.ContentDescriptor.MemberBalance;
-import com.treshna.hornet.sqlite.ContentDescriptor.MemberFinance;
-import com.treshna.hornet.sqlite.ContentDescriptor.MemberNotes;
 import com.treshna.hornet.sqlite.ContentDescriptor.Membership;
-import com.treshna.hornet.sqlite.ContentDescriptor.MembershipExpiryReason;
-import com.treshna.hornet.sqlite.ContentDescriptor.MembershipSuspend;
-import com.treshna.hornet.sqlite.ContentDescriptor.OpenTime;
-import com.treshna.hornet.sqlite.ContentDescriptor.PaymentMethod;
-import com.treshna.hornet.sqlite.ContentDescriptor.PendingDeletes;
-import com.treshna.hornet.sqlite.ContentDescriptor.PendingDownloads;
-import com.treshna.hornet.sqlite.ContentDescriptor.PendingUpdates;
-import com.treshna.hornet.sqlite.ContentDescriptor.PendingUploads;
-import com.treshna.hornet.sqlite.ContentDescriptor.Programme;
-import com.treshna.hornet.sqlite.ContentDescriptor.Resource;
-import com.treshna.hornet.sqlite.ContentDescriptor.ResultStatus;
-import com.treshna.hornet.sqlite.ContentDescriptor.RollCall;
-import com.treshna.hornet.sqlite.ContentDescriptor.RollItem;
-import com.treshna.hornet.sqlite.ContentDescriptor.Swipe;
-import com.treshna.hornet.sqlite.ContentDescriptor.TableIndex;
-import com.treshna.hornet.sqlite.ContentDescriptor.Time;
-import com.treshna.hornet.sqlite.ContentDescriptor.Visitor;
-import com.treshna.hornet.sqlite.ContentDescriptor.KPI.Cols;
-import com.treshna.hornet.sqlite.ContentDescriptor.TableIndex.Values;
 
 /* TODO: refactor this service out into:
  * 		- initial Getting/querying 
@@ -169,6 +130,7 @@ public class HornetDBService extends Service {
      */
     public synchronized void startNetworking(int currentcall, Bundle bundle){
     	String first_sync = Services.getAppSettings(getApplicationContext(), "first_sync");
+    	
     	if (first_sync.compareTo("-1")==0 && currentCall == Services.Statics.FREQUENT_SYNC) {
     		currentCall = Services.Statics.FIRSTRUN;
     	}
@@ -185,6 +147,12 @@ public class HornetDBService extends Service {
     	switch (currentCall){
  	   	case (Services.Statics.FREQUENT_SYNC): { //this should be run frequently
  	   		thread.is_networking = true;
+	 	   	if (Services.getActivity()!= null) {
+	 	   		Log.d(TAG, "SETTINGS IS_SYNC=TRUE");
+	    		((MainActivity) Services.getActivity()).is_syncing = true;
+	    		((MainActivity) Services.getActivity()).setupNavDrawer();
+	    	}
+    	
 			if (first_sync.compareTo("-1")==0) {
 				SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy", Locale.US);
 				Services.setPreference(getApplicationContext(), "first_sync", format.format(new Date()));
@@ -255,6 +223,13 @@ public class HornetDBService extends Service {
 		 	   		
 		 	   	logger.writeLog();
 		   	  	uploadLog();
+		   	  	
+		   	  	if (Services.getActivity()!= null) {
+		    		((MainActivity) Services.getActivity()).is_syncing = false;
+		    		((MainActivity) Services.getActivity()).setupNavDrawer();
+		    	}
+		    	
+		   	  	
 	 	   		Services.setPreference(getApplicationContext(), "last_freq_sync", String.valueOf(this_sync));
 		 	   	Intent bcIntent = new Intent();
 				bcIntent.putExtra(RESULT, true);
@@ -279,6 +254,11 @@ public class HornetDBService extends Service {
 			logger.writeLog();
 	   	  	uploadLog();
 	   	  	
+	   	  	if (Services.getActivity()!= null) {
+	    		((MainActivity) Services.getActivity()).is_syncing = false;
+	    		((MainActivity) Services.getActivity()).setupNavDrawer();
+	    	}
+	    	
 	   	  	//Finish.
 			Services.setPreference(getApplicationContext(), "last_freq_sync", String.valueOf(this_sync));
 			//Services.showToast(getApplicationContext(), statusMessage, handler);

@@ -7,6 +7,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.treshna.hornet.MainActivity;
@@ -22,14 +23,16 @@ public class SlideMenuClickListener implements OnItemClickListener {
 	private FragmentManager fm;
 	private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
+    private LinearLayout mDrawerView;
     private Activity activity;
     private int currentselection = 0;
 	
     
-	public SlideMenuClickListener(FragmentManager fragmentManager, DrawerLayout drawerLayout, ListView drawerList, Activity ma) {
+	public SlideMenuClickListener(FragmentManager fragmentManager, DrawerLayout drawerLayout, ListView drawerList, Activity ma, LinearLayout drawer) {
 		this.fm = fragmentManager;
 		this.mDrawerLayout = drawerLayout;
 		this.mDrawerList = drawerList;
+		this.mDrawerView = drawer;
 		this.activity = ma;
 	}
 	
@@ -93,6 +96,7 @@ public class SlideMenuClickListener implements OnItemClickListener {
 
         mDrawerList.setItemChecked(position, true);
         mDrawerList.setSelection(position);
-        mDrawerLayout.closeDrawer(mDrawerList);
+        //mDrawerLayout.closeDrawer(mDrawerList);
+        mDrawerLayout.closeDrawer(mDrawerView);
     }
 }

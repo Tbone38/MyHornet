@@ -66,16 +66,16 @@ public class GalleryViewAdapter extends SimpleCursorAdapter implements OnClickLi
 		super.changeCursorAndColumns(c, from, to);
 	}
 	
-	@Override
+	/*@Override
     public View getView(int position, View convertView, ViewGroup parent) {
+		Log.d(TAG, "CALLED GET VIEW");
 		LayoutInflater mInflater = (LayoutInflater)
                 context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 		
 		cur.moveToPosition(position);
 		Cursor cursor = cur;
 		
-		
-		convertView = mInflater.inflate(R.layout.member_gallery_row, null);
+		convertView = mInflater.inflate(R.layout.member_gallery_row, parent, false);
 		
 		ImageView image = (ImageView) convertView.findViewById(R.id.member_gallery_image);
 		TextView takenView = (TextView) convertView.findViewById(R.id.date);
@@ -92,7 +92,6 @@ public class GalleryViewAdapter extends SimpleCursorAdapter implements OnClickLi
 			
 			if (cursor.getInt(cursor.getColumnIndex(ContentDescriptor.Image.Cols.IS_PROFILE)) == 1) {
 				checkbox.setChecked(true);
-				
 			}
 		}
 		if (takenView == null) {
@@ -120,6 +119,52 @@ public class GalleryViewAdapter extends SimpleCursorAdapter implements OnClickLi
 		}
 		
 		return convertView;
+	}*/
+	
+	@Override
+	public void bindView(View rowLayout, Context context, Cursor cursor){
+		super.bindView(rowLayout, context, cursor);
+		
+		ImageView image = (ImageView) rowLayout.findViewById(R.id.member_gallery_image);
+		TextView takenView = (TextView) rowLayout.findViewById(R.id.date);
+		CheckBox checkbox = (CheckBox) rowLayout.findViewById(R.id.is_profile);
+		
+		if (checkbox == null) {
+			/*Log.e("GALLERY", "COULD NOT FIND CHECKBOX");
+			Log.e("GALLERY", "view parent ID: "+rowLayout.getId());
+			Log.e("GALLERY", "ACTUAL ROW ID:"+R.id.gallery_row);*/
+		} else {
+			checkbox.setId(cursor.getInt(cursor.getColumnIndex(ContentDescriptor.Image.Cols.ID)));
+			checkbox.setTag(cursor.getInt(cursor.getColumnIndex(ContentDescriptor.Image.Cols.MID)));
+			checkbox.setOnCheckedChangeListener(this);
+			
+			if (cursor.getInt(cursor.getColumnIndex(ContentDescriptor.Image.Cols.IS_PROFILE)) == 1) {
+				checkbox.setChecked(true);
+			}
+		}
+		if (takenView == null) {
+			//Log.e("GALLERY", "TEXT VIEW NULL TOO ... ?");
+		} else {
+			if (!cursor.isNull(cursor.getColumnIndex(ContentDescriptor.Image.Cols.DATE))) {
+				Date date = new Date(cursor.getLong(cursor.getColumnIndex(ContentDescriptor.Image.Cols.DATE)));
+				takenView.setText("Taken: "+Services.DateToString(date));
+			} else {
+				takenView.setVisibility(View.GONE);
+			}
+		}
+		
+	    ArrayList<String> tag = new ArrayList<String>();
+	    tag.add(cursor.getString(cursor.getColumnIndex(ContentDescriptor.Image.Cols.IID)));
+	    tag.add(cursor.getString(cursor.getColumnIndex(ContentDescriptor.Image.Cols.MID)));
+	    
+		String imgDir = context.getExternalFilesDir(null)+"/"+tag.get(0)+"_"+tag.get(1)+".jpg";
+		File imgFile = new File(imgDir);
+				
+		if (imgFile.exists() == true) {
+			new BitmapLoader(imgFile,image,imageWidth,imageWidth);		   
+		    image.setTag(tag);
+		    image.setOnClickListener(this);
+		}
 	}
 
 	@Override
@@ -135,8 +180,8 @@ public class GalleryViewAdapter extends SimpleCursorAdapter implements OnClickLi
 			cur = contentResolver.query(ContentDescriptor.Image.CONTENT_URI, null, selection, null, null);
 			if (cur.getCount() <= 0) break;
 			cur.moveToFirst();
-			String date = Services.dateFormat(cur.getString(2), "dd MMM yy hh:mm:ss aa", "dd MMM yyyy");
-			String message = "Image Taken: "+date+ "\nImage Description: "+cur.getString(3);
+			String date = Services.DateToString(new Date(cur.getLong(cur.getColumnIndex(ContentDescriptor.Image.Cols.DATE))));
+			String message = "Image Taken: "+date+ "\nImage Description: "+cur.getString(cur.getColumnIndex(ContentDescriptor.Image.Cols.DESCRIPTION));
 				Toast.makeText(context, message, Toast.LENGTH_LONG).show();
 			break;	
 		}
@@ -187,5 +232,6 @@ public class GalleryViewAdapter extends SimpleCursorAdapter implements OnClickLi
 				buttonView.setChecked(true);
 			}
 		}
+		cur.close();
 	}
 }

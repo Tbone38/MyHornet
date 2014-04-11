@@ -10,13 +10,16 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.GridView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.treshna.hornet.MainActivity.TagFoundListener;
 import com.treshna.hornet.R;
@@ -72,23 +75,25 @@ public class MemberGalleryFragment extends Fragment implements OnClickListener,
 	private View setupView() {
 		
 		GridView gallery = (GridView) view.findViewById(R.id.member_gallery);
+		//ExpandableHeightGridView gallery = (ExpandableHeightGridView) view.findViewById(R.id.member_gallery);
 		mAdapter = new GalleryViewAdapter(this, R.layout.member_gallery_row, null,
 				new String[] {}, new int[] {}, 230, gallery);
 		gallery.setAdapter(mAdapter);
 		
 		Resources r = getResources();
         float padding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                4, r.getDisplayMetrics());
+                3, r.getDisplayMetrics());
+		//int padding = 5;
  
         int columnWidth = (int) ((Services.getScreenWidth(getActivity()) - ((2 + 1) * padding)) / 2);
  
         gallery.setNumColumns(2);
-        /*gallery.setColumnWidth(columnWidth);
+        gallery.setColumnWidth(columnWidth);
         gallery.setStretchMode(GridView.NO_STRETCH);
         gallery.setPadding((int) padding, (int) padding, (int) padding,
                 (int) padding);
         gallery.setHorizontalSpacing((int) padding);
-        gallery.setVerticalSpacing((int) padding);*/
+        gallery.setVerticalSpacing((int) padding);
 		mLoader.initLoader(0, null, this);
 		
 		LinearLayout addPhoto = (LinearLayout) view.findViewById(R.id.button_add_photo);

@@ -1,9 +1,8 @@
 package com.treshna.hornet;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.app.PendingIntent;
@@ -13,7 +12,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.IntentFilter.MalformedMimeTypeException;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
@@ -21,9 +19,7 @@ import android.database.Cursor;
 import android.net.wifi.WifiManager;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
-import android.nfc.tech.NfcA;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -38,7 +34,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.treshna.hornet.booking.BookingsListSuperFragment;
@@ -51,10 +50,6 @@ import com.treshna.hornet.navigation.SlideMenuClickListener;
 import com.treshna.hornet.navigation.TabListener;
 import com.treshna.hornet.network.HornetDBService;
 import com.treshna.hornet.network.PollingHandler;
-import com.treshna.hornet.report.ReportDateOptionsActivity;
-import com.treshna.hornet.report.ReportListingActivity;
-import com.treshna.hornet.report.ReportNamesActivity;
-import com.treshna.hornet.report.Report_Types_ListActivity;
 import com.treshna.hornet.services.Services;
 import com.treshna.hornet.setup.SetupActivity;
 import com.treshna.hornet.sqlite.ContentDescriptor;
@@ -73,6 +68,7 @@ public class MainActivity extends NFCActivity {
 	
 	private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
+    private LinearLayout mDrawerView;
     private ActionBarDrawerToggle mDrawerToggle;
  
     // nav drawer title
@@ -84,8 +80,8 @@ public class MainActivity extends NFCActivity {
     
     private ProgressDialog progress;
     private static final String TAG = "MainActivity";
-    private boolean is_syncing = false;
-    private boolean sync_result = false;
+    public boolean is_syncing = false;
+    public boolean sync_result = false;
     
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override //when the server sync finishes, it sends out a broadcast.
@@ -102,7 +98,8 @@ public class MainActivity extends NFCActivity {
 			selectedTab = savedInstanceState.getInt("selectedTab");
 			//savedInstanceState.clear();
 	    }
-		
+		Services.setActivity(this);
+		Services.setActivityVisible(true);
 		super.onCreate(savedInstanceState);
 
 		//this.setContentView(R.layout.main_activity);
@@ -147,10 +144,49 @@ public class MainActivity extends NFCActivity {
 		this.is_syncing = false;
 		setupNavDrawer();
 	}
+	
+	private void setNavSync() {
+		TextView sync_text = (TextView) mDrawerView.findViewById(R.id.app_sync_time);
+		ImageView sync_drawable = (ImageView) mDrawerView.findViewById(R.id.app_sync_drawable);
+		if (is_syncing) {
+			sync_text.setText(getString(R.string.sync_now));
+			sync_drawable.setImageDrawable(getResources().getDrawable(R.drawable.animation_sync));
+		} else {
+			sync_drawable.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_refresh));
+			long last_sync = Long.parseLong(Services.getAppSettings(this, "last_freq_sync"));
+			long current_time = new Date().getTime(); 
+			long interval = (current_time - last_sync);
+			
+			if ( interval < 600000) { //less than 10 minutes
+				sync_text.setText(getString(R.string.sync_just_now));
+			} else 
+			if (interval < 1200000) { //less than 20 minutes ago
+				sync_text.setText(getString(R.string.sync_twenty_minutes));
+			} else
+			if (interval < 2400000) { //less than 40 minutes ago
+				sync_text.setText(getString(R.string.sync_fourty_minutes));
+			} else 
+			if (interval < 3600000) { //less than an hour ago
+				sync_text.setText(getString(R.string.sync_one_hour));
+			} else
+			if (interval < 86400000) { //less than a day, mod the hours value so we can set it.
+				double hours = Double.valueOf(new DecimalFormat("#").format(
+						(((interval/1000)/60)/60)));
+				sync_text.setText(String.format(getString(R.string.sync_hours), hours));
+			} else 
+			if (interval < 172800000) { //less than two days!
+				sync_text.setText(getString(R.string.sync_one_day));
+			} else { //it's been forever!
+				double days = Double.valueOf(new DecimalFormat("#").format(
+						(interval/86400000)));
+				sync_text.setText(String.format(getString(R.string.sync_days), days));
+			}
+		}
+	}
 
 	//we need to update this after syncs...
 	@SuppressLint("NewApi")
-	private void setupNavDrawer() {
+	public void setupNavDrawer() {
 		mDrawerTitle = "GymMaster";
 		int membercount = -1, visitcount = -1, bookingcount = -1;
 		ContentResolver contentResolver = this.getContentResolver();
@@ -181,6 +217,8 @@ public class MainActivity extends NFCActivity {
                 .obtainTypedArray(R.array.nav_drawer_icons);
  
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerView = (LinearLayout) findViewById(R.id.slider_wrapper);
+        setNavSync();
         mDrawerList = (ListView) findViewById(R.id.slider_menu);
         mDrawerList.removeAllViewsInLayout();
         
@@ -256,7 +294,8 @@ public class MainActivity extends NFCActivity {
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);        
-        mDrawerList.setOnItemClickListener(new SlideMenuClickListener(this.getSupportFragmentManager(), mDrawerLayout, mDrawerList, this));
+        mDrawerList.setOnItemClickListener(new SlideMenuClickListener(this.getSupportFragmentManager(), mDrawerLayout, mDrawerList, this,
+        		mDrawerView));
         
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
@@ -273,6 +312,8 @@ public class MainActivity extends NFCActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
+		Services.setActivityVisible(true);
+		Services.setActivity(this);
 		//add back in at a later date.
 		IntentFilter iff = new IntentFilter();
 	    iff.addAction("com.treshna.hornet.serviceBroadcast");
@@ -295,10 +336,7 @@ public class MainActivity extends NFCActivity {
 	
 	private void doSync() {
 		boolean dosync = false;
-		/*ContentResolver contentResolver = this.getContentResolver();
-		Cursor cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, null, null, null);
-		dosync = (cur.getCount() <= 0);
-		cur.close();*/
+
 		String first_sync = Services.getAppSettings(getApplicationContext(), "first_sync");
 		dosync = (first_sync.compareTo("-1")==0);
 		
@@ -314,6 +352,7 @@ public class MainActivity extends NFCActivity {
 	@Override
 	public void onPause() {
 		super.onPause();
+		Services.setActivityVisible(false);
 		if (Services.getProgress() != null && Services.getProgress().isShowing()) {
     		Services.getProgress().dismiss();
     		//Services.setProgress(null);
@@ -373,10 +412,9 @@ public class MainActivity extends NFCActivity {
 	@Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         // if nav drawer is opened, hide the action items
-        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+        //boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+		boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerView);
         menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
-        /*menu.findItem(R.id.action_addMember).setVisible(!drawerOpen);
-        menu.findItem(R.id.action_addMember).setVisible(!drawerOpen);*/
         return super.onPrepareOptionsMenu(menu);
     }
 	
@@ -494,7 +532,9 @@ public class MainActivity extends NFCActivity {
 	    	Intent settingsIntent = new Intent(this, SettingsActivity.class);
 	    	startActivity(settingsIntent);
 	    	return true;
+	    case (R.id.button_lastsync):
 	    case (R.id.action_update): {
+	    	setupNavDrawer();
 	    	SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 		 	if (Integer.parseInt(preferences.getString("sync_frequency", "-1")) == -1) {
 		 		Services.setPreference(this, "sync_frequency", "5");

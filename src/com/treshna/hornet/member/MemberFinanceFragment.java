@@ -74,13 +74,13 @@ public class MemberFinanceFragment extends Fragment implements TagFoundListener,
 	}*/
 	
 	private View setupButton() {
-		TextView billing_add = (TextView) view.findViewById(R.id.button_billing_add_text);
+		LinearLayout billing_add = (LinearLayout) view.findViewById(R.id.button_add_billing);
 		billing_add.setOnClickListener(this);
 		
-		TextView billing_show = (TextView) view.findViewById(R.id.button_billing_view_text);
+		LinearLayout billing_show = (LinearLayout) view.findViewById(R.id.button_show_billing);
 		billing_show.setOnClickListener(this);
 		
-		TextView billing_check = (TextView) view.findViewById(R.id.button_billing_check_text);
+		LinearLayout billing_check = (LinearLayout) view.findViewById(R.id.button_check_billing);
 		billing_check.setOnClickListener(this);
 		
 		return view;
@@ -194,17 +194,17 @@ public class MemberFinanceFragment extends Fragment implements TagFoundListener,
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case (R.id.button_billing_add_text):{
+		case (R.id.button_add_billing):{
 			//start async task.
 			AddBilling sync = new AddBilling(false);
 			sync.execute(null, null);
 			break;
 		}
-		case (R.id.button_billing_view_text):{
+		case (R.id.button_show_billing):{
 			setupBilling();
 			break;
 		}
-		case (R.id.button_billing_check_text):{
+		case (R.id.button_check_billing):{
 			AddBilling sync = new AddBilling(true);
 			sync.execute(null, null);
 			break;

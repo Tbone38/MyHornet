@@ -58,9 +58,11 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 		  super.onCreateView(inflater, container, savedInstanceState);
 	
-		  view = inflater.inflate(R.layout.member_new_details, container, false);
-	     
-		  //view = setupLayout();
+		  if (selectedFragment != R.id.button_member_navigation_gallery) {
+			  view = inflater.inflate(R.layout.member_new_details_scroll, container, false);
+		  } else {
+			  view = inflater.inflate(R.layout.member_new_details, container, false);
+		  }
 		  
 		  setupFragment(null);
 		  return view;
