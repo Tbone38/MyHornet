@@ -2943,6 +2943,31 @@ public class HornetDBService extends Service {
 	
     }
   
+  public ArrayList<HashMap<String, String>> getEmailAddressesByIds(Context context, Integer []ids, String tableName) {
+	  
+	  	this.setup(context);
+	  	ArrayList<HashMap<String, String>> resultMapList  = null;
+	  	ResultSet result = null;
+	  	
+	  	if (!this.openConnection()){
+	  		Log.e(TAG, "no Connection");
+	  	}
+	  	
+	  	try {
+				result = this.connection.getEmailAddressesByIds(ids, tableName);
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+	  	
+	  	
+	  		resultMapList = this.resultSetToMapList(result);
+			   
+	  		this.closeConnection();
+	  	
+			return resultMapList;  
+  }
+  
   public ArrayList<HashMap<String, String>>  getReportDataByDateRange(Context context, String finalQuery){
   	
   	this.setup(context);

@@ -1,5 +1,6 @@
 package com.treshna.hornet;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -49,8 +50,10 @@ public class ReportMainActivity extends ListActivity {
 	private ArrayList<HashMap<String,String>> resultMapList = null;
 	private ArrayList<HashMap<String,String>> columnsMapList =  null;
 	private ArrayList<HashMap<String,String>> joiningTablesMapList =  null;
+	private ArrayList<HashMap<String,String>> emailsMapList =  null;
 	private String reportName = null;
 	private String reportFunctionName = null;
+	private boolean emailSyncComplete = false;
 	private String queryFunctionParamsCut = null;
 	private String numValueRegex = "(^\\$?[0-9]+\\.?[0-9]+)|([0-9]+)";
 	private String callingActivity = null;
@@ -81,10 +84,11 @@ public class ReportMainActivity extends ListActivity {
 
 			@Override
 			public void onClick(View v) {
-				String [] emailRecipients = {"antonygunn@yahoo.co.nz"};
+				getEmailAddressesByIds();
+				/*String [] emailRecipients = {"antonygunn@yahoo.co.nz"};
 				String subject = "Test";
 				String message = "Testing 123, this is a test";
-				EmailSender email = new EmailSender(ReportMainActivity.this, emailRecipients, subject, message);
+				EmailSender email = new EmailSender(ReportMainActivity.this, emailRecipients, subject, message);*/
 			}
 			
 		});
@@ -93,17 +97,82 @@ public class ReportMainActivity extends ListActivity {
 	    
 	}
 	
+	private Integer[] getIdsFromReportData () {
+		Integer[] reportIds = null;
+	
+		reportIds = new Integer[resultMapList.size()];
+		int count = 0;
+		for (HashMap<String,String> columnsMap : resultMapList ){
+			if (columnsMap.containsKey("Member ID")){
+				reportIds[count] = Integer.parseInt(columnsMap.get("Member ID")); 	
+			} 
+			else if (columnsMap.containsKey("MemberID")){
+				reportIds[count] = Integer.parseInt(columnsMap.get("MemberID")); 	
+			}
+			else if (columnsMap.containsKey("Enquiry Id")){
+				reportIds[count] = Integer.parseInt(columnsMap.get("Enquiry Id")); 	
+			}	
+			count += 1;
+		}
+	   return reportIds;
+	}
+	
+	private boolean columnsFieldsContainsTable(String tableName) {
+		
+		for (HashMap<String,String> columnsMap : columnsMapList ){
+			if (columnsMap.get("field").toString().contains(tableName + ".")){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private void  getEmailAddressesByIds() {
+		String tableName = null;
+		
+		if (columnsFieldsContainsTable("member")) {
+			tableName = "member";
+		} 
+		else if (columnsFieldsContainsTable("enquiry")) {
+			tableName = "enquiry";
+		}
+		
+		Integer[] ids = getIdsFromReportData();
+    	//System.out.println("Ids Length: " +ids.length);
+    	//System.out.println("Table Name: " +tableName);
+		GetEmailAddressesByIds emailsSync = new GetEmailAddressesByIds(ids, tableName);
+		emailsSync.execute();
+		
+	}
+	
+	private String[] getEmailsAddressesAsArray() {
+		String[] addresses = null;
+		addresses = new String[emailsMapList.size()];
+		int index = 0;
+		for (HashMap<String,String > emailMap : emailsMapList) {
+			
+			if (emailMap.get("email")!= null) {
+				addresses[index] = 	emailMap.get("email");
+				index += 1;
+			}
+			
+		}
+		return addresses;	
+	}
+	
+	
 	private void buildQuery(){
 		
 		StringBuilder queryBuilder = new StringBuilder();
 		queryBuilder.append("SELECT ");
 		boolean isSelected = true;
-		boolean containsMemberColumn = false;
-		boolean isIdAdded = false;
+		//boolean containsMemberColumn = false;
+		boolean isMemberIdAdded = false;
+		boolean isEnquiryIdAdded = false;
 		for (HashMap<String,String> columnsMap : columnsMapList ){
-			if (columnsMap.get("field").toString().contains("member.")){
+			/*if (columnsMap.get("field").toString().contains("member.")){
 				containsMemberColumn = true;
-			}
+			}*/
 			//Check if coming from column options..
 			if (callingActivity.compareTo("column_options")== 0) {
 				isSelected = false;
@@ -114,25 +183,31 @@ public class ReportMainActivity extends ListActivity {
 			
 			for (Map.Entry<String,String> field: columnsMap.entrySet()){
 					//System.out.println(field.getKey() + " : " + field.getValue());
-					if (isSelected){
-						//Adding the member.id column where other columns join the member table
-						if (containsMemberColumn && !isIdAdded){
-							queryBuilder.append("member.id AS \"MemberID\", ");
-							isIdAdded = true;
-						}
-						if(field.getKey().toString().compareTo("field")== 0){
-								queryBuilder.append(field.getValue());
-								queryBuilder.append(" AS ");
-								
-						}
-						if(field.getKey().toString().compareTo("column_name")== 0){
-									queryBuilder.append("\"" + field.getValue() + "\"");
-									queryBuilder.append(", ");
-						}				
-	
-				   }
+				if (isSelected){
+					//Adding the member.id column where other columns join the member table
+					if (columnsFieldsContainsTable("member") && !isMemberIdAdded){
+						queryBuilder.append("member.id AS \"MemberID\", ");
+						isMemberIdAdded = true;
+					}
+					//Adding the enquiry.id column where other columns join the enquiry table
+					if (columnsFieldsContainsTable("enquiry") && !isEnquiryIdAdded){
+						queryBuilder.append("enquiry.enquiry_id AS \"Enquiry Id\", ");
+						isEnquiryIdAdded = true;
+					}
+					
+					if(field.getKey().toString().compareTo("field")== 0){
+							queryBuilder.append(field.getValue());
+							queryBuilder.append(" AS ");
+							
+					}
+					if(field.getKey().toString().compareTo("column_name")== 0){
+								queryBuilder.append("\"" + field.getValue() + "\"");
+								queryBuilder.append(", ");
+					}				
+
+			   }
 				
-	           }							
+	        }							
 		 }
 
 			//remove the last comma...
@@ -543,6 +618,63 @@ private void buildColumnHeaders() {
 	    }
 	 }
 	
+	protected class GetEmailAddressesByIds extends AsyncTask<String, Integer, Boolean> {
+		protected ProgressDialog progress;
+		protected HornetDBService sync;
+		private Integer[] reportIds = null;
+		private String tableName = null;
+		
+		public GetEmailAddressesByIds() {
+			sync = new HornetDBService();
+		}
+			
+		public GetEmailAddressesByIds (Integer[] reportIds, String tableName) {
+			sync = new HornetDBService();
+			this.reportIds = reportIds;
+			this.tableName = tableName;
+
+		}
+		
+		protected void onPreExecute() {
+			progress = ProgressDialog.show(ReportMainActivity.this, "Retrieving..", 
+					 "Retrieving Email Addresses...");
+			emailSyncComplete = false;
+		}
+		
+		@Override
+		protected Boolean doInBackground(String... params) {
+			emailsMapList = sync.getEmailAddressesByIds(ReportMainActivity.this, reportIds, tableName);
+	        return true;
+		}
+		
+
+		protected void onPostExecute(Boolean success) {
+			progress.dismiss();
+			if (success) {
+				emailSyncComplete = true;
+				//Calls back to the owning activity to call the thread to retrieve the joining tables
+				System.out.println("Email List Size: " + emailsMapList.size());
+				
+				for (HashMap<String,String> resultMap: emailsMapList){
+				
+					for (HashMap.Entry entry: resultMap.entrySet()){
+						 System.out.println("Field: " + entry.getKey() + " Value: " + entry.getValue());					 
+					}
+				
+				}
+				EmailSender email = new EmailSender(ReportMainActivity.this,getEmailsAddressesAsArray(),"","");
+				
+				
+			} else {
+				AlertDialog.Builder builder = new AlertDialog.Builder(ReportMainActivity.this);
+				builder.setTitle("Error Occurred")
+				.setMessage(sync.getStatus())
+				.setPositiveButton("OK", null)
+				.show();
+			}
+	    }
+	 }
+	
 	private class GetJoiningTablesByFunctionName extends GetReportColumnsFieldsByReportId {
 		private String functionName = null;
 
@@ -567,9 +699,7 @@ private void buildColumnHeaders() {
 		protected void onPostExecute(Boolean success) {
 			progress.dismiss();
 			if (success) {
-				//Calls back to the owning activity to build the adapter
-				ReportMainActivity.this.buildQuery();
-				
+				buildQuery();
 				
 			} else {
 				AlertDialog.Builder builder = new AlertDialog.Builder(ReportMainActivity.this);

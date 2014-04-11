@@ -3,6 +3,7 @@
  */
 package com.treshna.hornet;
 
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -1160,6 +1161,27 @@ public class JDBCConnection {
     	this.pStatement.setInt(1,report_type_id);
     	return this.pStatement.executeQuery();
     }
+    public ResultSet getEmailAddressesByIds(Integer []ids, String tableName) throws SQLException {
+    	String query = "Select email from " + tableName + " where id in (";
+    	for (int i=0; i< ids.length; i++) {
+    		query += ids[i];
+    		if (i != (ids.length-1)){
+    			query += ",";
+    		} else {
+    			query = query+");";
+    	
+    		}
+    	}
+    	System.out.println("Ids Length: " +ids.length);
+    	System.out.println("Email Query: " +query);
+    	//String query = "Select email from ? where id in ?";
+    	//Array sqlArray = con.createArrayOf("Int", ids);
+    	//this.pStatement.setString(1, tableName);
+    	//this.pStatement.setArray(2, sqlArray);
+    	this.pStatement = con.prepareStatement(query);	
+    	return this.pStatement.executeQuery();
+    }
+    
     public ResultSet getJoiningTablesByFunctionName(String functionName) throws SQLException {
     	String query = "Select joining_query from report_function_table where function_name = ?";
     	this.pStatement = con.prepareStatement(query);

@@ -73,11 +73,8 @@ public class ReportListingActivity extends ListActivity {
 							intent.putExtra("report_function_name",selectedRowData.get("function_name").toString());
 							startActivity(intent);
 					 }
-
-				}  
-				
-				
-			} );
+				}  				
+			});
 			
 			ListAdapter listAdapter = new ArrayAdapter<HashMap<String,String>>(ReportListingActivity.this,
 					R.layout.report_types_and_names_row, this.resultMapList)					
@@ -98,7 +95,7 @@ public class ReportListingActivity extends ListActivity {
 				HashMap<String,String> dataRow = this.getItem(position);
 				for (Entry<String,String> col : dataRow.entrySet()){
 						
-						if (col.getKey().compareTo("name")== 0){
+						if (col.getKey().compareTo("name")== 0) {
 							
 						  	layoutParams = new RelativeLayout.LayoutParams( LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT );
 						  	layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
@@ -121,7 +118,8 @@ public class ReportListingActivity extends ListActivity {
 							linLayout.addView(textView);
 						}
 						
-						if (col.getKey().compareTo("description")== 0){
+						if (col.getKey().compareTo("description")== 0) {
+							
 						  	layoutParams = new RelativeLayout.LayoutParams( LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT );
 						  	layoutParams.addRule(RelativeLayout.BELOW, 5);
 						  	layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
@@ -151,8 +149,6 @@ public class ReportListingActivity extends ListActivity {
 		private HornetDBService sync;
 		private ResultSet result = null;
 		
-		
-
 		
 		public GetReportTypesAndNamesNameData () {
 			sync = new HornetDBService();
