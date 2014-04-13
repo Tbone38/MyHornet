@@ -79,6 +79,7 @@ KEY:
                 Moved MembershipHold to a fragment.
                 Fixed Image capturing, so you can still add photos!
                 Fixed Member Gallery.
+                Added Last Sync time to the bottom of the nav drawer.
  
             TODO:
                 Handle permissions/Roles for different staff, to limit what certain staff can see.
@@ -88,7 +89,6 @@ KEY:
                 Booking view showing multiple days for selected resource.
                 get DD working for bluepay..?
                 Cancel Member Hold. --I think adjusting the expiry is better.
-                Spacing/padding of Labels & Headings..
                 Improve sync-times/OutOfMemory Issues.
                 Fix Times/(possibly dates?) disappearing everytime we update the app.
                 Record Emails/SMS sent from app in gymmaster device.
@@ -97,10 +97,8 @@ KEY:
                 Fix the PollingHandler running on the UI thread. (blocking etc).
                 Improve Performance of the Booking Overview page.
                 Membership complete "Add Tag" doesn't work. Find out why...
-                Add Last Sync time to the bottom of the nav drawer.
                 ReDesign member Details Layout:
 					- Heading
-				Services.getActivity()... Is always returning null...?
 
     
     v119:

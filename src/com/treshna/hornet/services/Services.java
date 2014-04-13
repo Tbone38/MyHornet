@@ -240,28 +240,6 @@ public class Services {
 		return pollingFreqHandler;
 	}
 	
-	public static void setActivityVisible(boolean isVisible) {
-		activityVisible = isVisible;
-	}
-	
-	public static boolean getActivityVisible() {
-		return activityVisible;
-	}
-	
-	public static void setActivity(Activity activity) {
-		theActivity = activity;
-	}
-	
-	public static Activity getActivity() {
-		if (Services.getActivityVisible()) {
-			Log.w("SERVICES", "THE ACTIVITY IS VISIBLE");
-			return theActivity;
-		} else {
-			Log.w("SERVICES", "THE ACTIVITY IS NOT VISIBLE");
-			return null;
-		}
-	}
-	
 	public static byte[] hexStringToByteArray(String s) {
 	    int len = s.length();
 	    byte[] data = new byte[len / 2];

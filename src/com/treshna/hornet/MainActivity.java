@@ -37,6 +37,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -80,8 +81,6 @@ public class MainActivity extends NFCActivity {
     
     private ProgressDialog progress;
     private static final String TAG = "MainActivity";
-    public boolean is_syncing = false;
-    public boolean sync_result = false;
     
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override //when the server sync finishes, it sends out a broadcast.
@@ -98,8 +97,10 @@ public class MainActivity extends NFCActivity {
 			selectedTab = savedInstanceState.getInt("selectedTab");
 			//savedInstanceState.clear();
 	    }
-		Services.setActivity(this);
-		Services.setActivityVisible(true);
+		HornetApplication mApplication = ((HornetApplication) getApplicationContext()).getInstance();
+		mApplication.setActivityStatus(true);
+		mApplication.setCurrentActivity(this);
+		
 		super.onCreate(savedInstanceState);
 
 		//this.setContentView(R.layout.main_activity);
@@ -140,18 +141,32 @@ public class MainActivity extends NFCActivity {
 	}
 	
 	protected void receivedBroadcast(Intent intent) {
-		this.sync_result = intent.getBooleanExtra(Services.Statics.IS_RESTART, false);
-		this.is_syncing = false;
-		setupNavDrawer();
+		
+		if (intent.getAction().compareTo(HornetDBService.FINISHBROADCAST) == 0) {
+			HornetApplication mApplication = ((HornetApplication) getApplicationContext()).getInstance();
+			mApplication.setSyncResult(intent.getBooleanExtra(Services.Statics.IS_RESTART, false));
+			mApplication.setSyncStatus(false);
+			setupNavDrawer();
+		} else if (intent.getAction().compareTo(HornetDBService.STARTBROADCAST) == 0) {
+			HornetApplication mApplication = ((HornetApplication) getApplicationContext()).getInstance();
+			mApplication.setSyncStatus(true);
+			setupNavDrawer();
+		}
 	}
 	
-	private void setNavSync() {
+	private void setNavSync(SlideMenuClickListener mClicker) {
 		TextView sync_text = (TextView) mDrawerView.findViewById(R.id.app_sync_time);
 		ImageView sync_drawable = (ImageView) mDrawerView.findViewById(R.id.app_sync_drawable);
-		if (is_syncing) {
+		HornetApplication mApplication = ((HornetApplication) getApplicationContext()).getInstance();
+		
+		RelativeLayout button_sync = (RelativeLayout) mDrawerView.findViewById(R.id.button_lastsync);
+		button_sync.setOnClickListener(mClicker);
+		
+		if (mApplication.getSyncStatus() == true) {
 			sync_text.setText(getString(R.string.sync_now));
 			sync_drawable.setImageDrawable(getResources().getDrawable(R.drawable.animation_sync));
 		} else {
+			Log.d(TAG, "SYNC STATUS != TRUE");
 			sync_drawable.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_refresh));
 			long last_sync = Long.parseLong(Services.getAppSettings(this, "last_freq_sync"));
 			long current_time = new Date().getTime(); 
@@ -172,14 +187,14 @@ public class MainActivity extends NFCActivity {
 			if (interval < 86400000) { //less than a day, mod the hours value so we can set it.
 				double hours = Double.valueOf(new DecimalFormat("#").format(
 						(((interval/1000)/60)/60)));
-				sync_text.setText(String.format(getString(R.string.sync_hours), hours));
+				sync_text.setText(String.format(getString(R.string.sync_hours), (int) hours));
 			} else 
 			if (interval < 172800000) { //less than two days!
 				sync_text.setText(getString(R.string.sync_one_day));
 			} else { //it's been forever!
 				double days = Double.valueOf(new DecimalFormat("#").format(
 						(interval/86400000)));
-				sync_text.setText(String.format(getString(R.string.sync_days), days));
+				sync_text.setText(String.format(getString(R.string.sync_days), (int) days));
 			}
 		}
 	}
@@ -187,6 +202,13 @@ public class MainActivity extends NFCActivity {
 	//we need to update this after syncs...
 	@SuppressLint("NewApi")
 	public void setupNavDrawer() {
+		
+		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerView = (LinearLayout) findViewById(R.id.slider_wrapper);
+        mDrawerList = (ListView) findViewById(R.id.slider_menu);
+        mDrawerList.removeAllViewsInLayout();
+		SlideMenuClickListener mClicker = new SlideMenuClickListener(this.getSupportFragmentManager(), mDrawerLayout, mDrawerList, this,
+        		mDrawerView);
 		mDrawerTitle = "GymMaster";
 		int membercount = -1, visitcount = -1, bookingcount = -1;
 		ContentResolver contentResolver = this.getContentResolver();
@@ -211,17 +233,9 @@ public class MainActivity extends NFCActivity {
 		
 		// load slide menu items
         navMenuTitles = getResources().getStringArray(R.array.nav_drawer_main);
- 
         // nav drawer icons from resources
         navMenuIcons = getResources()
                 .obtainTypedArray(R.array.nav_drawer_icons);
- 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerView = (LinearLayout) findViewById(R.id.slider_wrapper);
-        setNavSync();
-        mDrawerList = (ListView) findViewById(R.id.slider_menu);
-        mDrawerList.removeAllViewsInLayout();
-        
         navDrawerItems = new ArrayList<NavDrawerItem>();
         // Main
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], navMenuIcons.getResourceId(0, -1), true));
@@ -263,6 +277,8 @@ public class MainActivity extends NFCActivity {
  
         // Recycle the typed array
         navMenuIcons.recycle();
+        
+        setNavSync(mClicker);
  
         // setting the nav drawer list adapter
         if (mDrawerList.getAdapter() != null) {
@@ -294,8 +310,7 @@ public class MainActivity extends NFCActivity {
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);        
-        mDrawerList.setOnItemClickListener(new SlideMenuClickListener(this.getSupportFragmentManager(), mDrawerLayout, mDrawerList, this,
-        		mDrawerView));
+        mDrawerList.setOnItemClickListener(mClicker);
         
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
@@ -312,12 +327,18 @@ public class MainActivity extends NFCActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
-		Services.setActivityVisible(true);
-		Services.setActivity(this);
+		HornetApplication mApplication = ((HornetApplication) getApplicationContext()).getInstance();
+		mApplication.setActivityStatus(true);
+		mApplication.setCurrentActivity(this);
 		//add back in at a later date.
-		IntentFilter iff = new IntentFilter();
-	    iff.addAction("com.treshna.hornet.serviceBroadcast");
-	    this.registerReceiver(this.mBroadcastReceiver,iff);
+		IntentFilter finishFilter = new IntentFilter();
+	    finishFilter.addAction(HornetDBService.FINISHBROADCAST);
+	    
+	    IntentFilter startFilter = new IntentFilter();
+	    startFilter.addAction(HornetDBService.STARTBROADCAST);
+	    
+	    this.registerReceiver(this.mBroadcastReceiver, finishFilter);
+	    this.registerReceiver(this.mBroadcastReceiver, startFilter);
 	    
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		if (prefs.getBoolean("firstrun", true)) {
@@ -352,7 +373,8 @@ public class MainActivity extends NFCActivity {
 	@Override
 	public void onPause() {
 		super.onPause();
-		Services.setActivityVisible(false);
+		HornetApplication mApplication = ((HornetApplication) getApplicationContext()).getInstance();
+		mApplication.setActivityStatus(false);
 		if (Services.getProgress() != null && Services.getProgress().isShowing()) {
     		Services.getProgress().dismiss();
     		//Services.setProgress(null);
@@ -413,6 +435,7 @@ public class MainActivity extends NFCActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         // if nav drawer is opened, hide the action items
         //boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+		setupNavDrawer();
 		boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerView);
         menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
         return super.onPrepareOptionsMenu(menu);
@@ -533,6 +556,7 @@ public class MainActivity extends NFCActivity {
 	    	startActivity(settingsIntent);
 	    	return true;
 	    case (R.id.button_lastsync):
+	    	Log.d(TAG, "BUTTON LAST SYNC PRESSED");
 	    case (R.id.action_update): {
 	    	setupNavDrawer();
 	    	SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -591,13 +615,15 @@ public class MainActivity extends NFCActivity {
 		protected void onPreExecute() {
 			 progress = ProgressDialog.show(MainActivity.this, "Syncing..", 
 					 "Syncing your GymMaster Database.", true);
-			 MainActivity.this.is_syncing = true;
+			 HornetApplication mApplication = ((HornetApplication) getApplicationContext()).getInstance();
+			 mApplication.setSyncStatus(true);
 			 starttime = new Date().getTime();
 		}
 		
 		@Override
 		protected Boolean doInBackground(String... params) {
-			while (MainActivity.this.is_syncing) {
+			HornetApplication mApplication = ((HornetApplication) getApplicationContext()).getInstance();
+			while (mApplication.getSyncStatus()) {
 				curtime = new Date().getTime();
 				if ((curtime - starttime) > TENMINUTES) {
 					message = "Syncing took longer than 10 minutes, progress has been hidden.";
@@ -605,7 +631,7 @@ public class MainActivity extends NFCActivity {
 				}
 			}
 			
-			return MainActivity.this.sync_result;
+			return mApplication.getSyncResult();
 		}
 		
 

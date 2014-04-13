@@ -183,7 +183,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
     		Services.getProgress().show();
 		}
 		IntentFilter iff = new IntentFilter();
-	    iff.addAction("com.treshna.hornet.serviceBroadcast");
+	    iff.addAction(HornetDBService.FINISHBROADCAST);
 	    this.registerReceiver(this.mBroadcastReceiver,iff);
 	}
 	
@@ -313,20 +313,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		return ctx;
 	}
 	
-	private Preference createCollectData(){
-		Preference collectData = new Preference(this);
-		collectData.setKey("full_sync");
-		collectData.setTitle("Download Database");
-		collectData.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-			
-			@Override
-			public boolean onPreferenceClick(Preference preference) {
-				collectData();				
-				return true;
-		}});
-		
-		return collectData;
-	}
+	
 	private void collectData(){
 		Intent updateInt = new Intent(this, HornetDBService.class);
 		updateInt.putExtra(Services.Statics.KEY, Services.Statics.FIRSTRUN);

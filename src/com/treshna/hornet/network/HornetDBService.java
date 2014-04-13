@@ -26,6 +26,7 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.treshna.hornet.HornetApplication;
 import com.treshna.hornet.MainActivity;
 import com.treshna.hornet.R;
 import com.treshna.hornet.services.ApplicationID;
@@ -59,6 +60,9 @@ public class HornetDBService extends Service {
     //Context ctx;
     private long this_sync;
     private long last_sync;
+    
+    public static final String STARTBROADCAST = "com.treshna.hornet.startBroadcast";
+    public static final String FINISHBROADCAST = "com.treshna.hornet.finishBroadcast";
     
     /****/ //does this need to be final as well?
     private static NetworkThread thread;
@@ -130,6 +134,7 @@ public class HornetDBService extends Service {
      */
     public synchronized void startNetworking(int currentcall, Bundle bundle){
     	String first_sync = Services.getAppSettings(getApplicationContext(), "first_sync");
+    	HornetApplication mApplication = ((HornetApplication) getApplicationContext()).getInstance();
     	
     	if (first_sync.compareTo("-1")==0 && currentCall == Services.Statics.FREQUENT_SYNC) {
     		currentCall = Services.Statics.FIRSTRUN;
@@ -139,19 +144,24 @@ public class HornetDBService extends Service {
     		
     		Intent bcIntent = new Intent();
     		bcIntent.putExtra(RESULT, false);
-			bcIntent.setAction("com.treshna.hornet.serviceBroadcast");
+			bcIntent.setAction(FINISHBROADCAST);
 			sendBroadcast(bcIntent);
 	   		return;
+	   	} else {
+	   		//Starting networking broadcast.
+	   		Intent bcIntent = new Intent();
+    		bcIntent.putExtra(RESULT, true);
+			bcIntent.setAction(STARTBROADCAST);
+			sendBroadcast(bcIntent);
+	   	
 	   	}
+    	
     	
     	switch (currentCall){
  	   	case (Services.Statics.FREQUENT_SYNC): { //this should be run frequently
  	   		thread.is_networking = true;
-	 	   	if (Services.getActivity()!= null) {
-	 	   		Log.d(TAG, "SETTINGS IS_SYNC=TRUE");
-	    		((MainActivity) Services.getActivity()).is_syncing = true;
-	    		((MainActivity) Services.getActivity()).setupNavDrawer();
-	    	}
+ 	   		
+ 	   		mApplication.setSyncStatus(true);
     	
 			if (first_sync.compareTo("-1")==0) {
 				SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy", Locale.US);
@@ -224,16 +234,12 @@ public class HornetDBService extends Service {
 		 	   	logger.writeLog();
 		   	  	uploadLog();
 		   	  	
-		   	  	if (Services.getActivity()!= null) {
-		    		((MainActivity) Services.getActivity()).is_syncing = false;
-		    		((MainActivity) Services.getActivity()).setupNavDrawer();
-		    	}
-		    	
+		   	  	mApplication.setSyncStatus(false);
 		   	  	
 	 	   		Services.setPreference(getApplicationContext(), "last_freq_sync", String.valueOf(this_sync));
 		 	   	Intent bcIntent = new Intent();
 				bcIntent.putExtra(RESULT, true);
-				bcIntent.setAction("com.treshna.hornet.serviceBroadcast");
+				bcIntent.setAction(FINISHBROADCAST);
 				sendBroadcast(bcIntent);
 	 	   		return;
 			}
@@ -254,11 +260,8 @@ public class HornetDBService extends Service {
 			logger.writeLog();
 	   	  	uploadLog();
 	   	  	
-	   	  	if (Services.getActivity()!= null) {
-	    		((MainActivity) Services.getActivity()).is_syncing = false;
-	    		((MainActivity) Services.getActivity()).setupNavDrawer();
-	    	}
-	    	
+	   	  	mApplication.setSyncStatus(false);
+	   	  	
 	   	  	//Finish.
 			Services.setPreference(getApplicationContext(), "last_freq_sync", String.valueOf(this_sync));
 			//Services.showToast(getApplicationContext(), statusMessage, handler);
@@ -268,7 +271,7 @@ public class HornetDBService extends Service {
 			
 			Intent bcIntent = new Intent();
 			bcIntent.putExtra(RESULT, true);
-			bcIntent.setAction("com.treshna.hornet.serviceBroadcast");
+			bcIntent.setAction(FINISHBROADCAST);
 			sendBroadcast(bcIntent);
 			Log.v(TAG, "Sending Intent, Stopping Service");
 			
@@ -345,7 +348,7 @@ public class HornetDBService extends Service {
 		   	   thread.is_networking = false;
 			   Intent bcIntent = new Intent();
 			   bcIntent.putExtra(RESULT, true);
-			   bcIntent.setAction("com.treshna.hornet.serviceBroadcast");
+			   bcIntent.setAction(FINISHBROADCAST);
 			   sendBroadcast(bcIntent);
 		   	   return;
 		   }
@@ -399,7 +402,7 @@ public class HornetDBService extends Service {
 		  Intent bcIntent = new Intent();
 		  bcIntent.putExtra(Services.Statics.IS_RESTART, true);
 		  bcIntent.putExtra(RESULT, true);
-		  bcIntent.setAction("com.treshna.hornet.serviceBroadcast");
+		  bcIntent.setAction(FINISHBROADCAST);
 		  sendBroadcast(bcIntent);
 		  Log.v(TAG, "Sending Intent, Stopping Service");
 		  

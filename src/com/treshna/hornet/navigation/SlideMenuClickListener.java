@@ -1,24 +1,29 @@
 package com.treshna.hornet.navigation;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.treshna.hornet.MainActivity;
+import com.treshna.hornet.R;
 import com.treshna.hornet.booking.BookingAddFragment;
 import com.treshna.hornet.booking.ClassCreateFragment;
 import com.treshna.hornet.member.MemberAddFragment;
+import com.treshna.hornet.network.HornetDBService;
 import com.treshna.hornet.report.KeyPerformanceIndexFragment;
 import com.treshna.hornet.report.ReportListingActivity;
 import com.treshna.hornet.roll.RollListFragment;
+import com.treshna.hornet.services.Services;
 
-public class SlideMenuClickListener implements OnItemClickListener {
+public class SlideMenuClickListener implements OnItemClickListener, OnClickListener {
 
 	private FragmentManager fm;
 	private DrawerLayout mDrawerLayout;
@@ -39,10 +44,10 @@ public class SlideMenuClickListener implements OnItemClickListener {
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
-		displayView(position);
+		displayView(position, view);
 	}
 	
-	private void displayView(int position) {
+	private void displayView(int position, View view) {
         // update the main content by replacing fragments
 		/*if (currentselection == position) {
 			return;
@@ -88,9 +93,11 @@ public class SlideMenuClickListener implements OnItemClickListener {
         	fragment = new ClassCreateFragment();
         	tag = "classCreate";
         	break;
-        default:
+        default: 
             break;
         }
+        
+        
         currentselection = position;
     	((MainActivity)activity).changeFragment(fragment, tag);
 
@@ -99,4 +106,15 @@ public class SlideMenuClickListener implements OnItemClickListener {
         //mDrawerLayout.closeDrawer(mDrawerList);
         mDrawerLayout.closeDrawer(mDrawerView);
     }
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case (R.id.button_lastsync):{
+			Intent updateInt = new Intent(activity, HornetDBService.class);
+            updateInt.putExtra(Services.Statics.KEY, Services.Statics.FREQUENT_SYNC);
+            activity.startService(updateInt);
+		}
+		}
+	}
 }

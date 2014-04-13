@@ -133,6 +133,7 @@ public class PollingHandler extends BroadcastReceiver {
 			return;
 		}
 		stopPolling(true);
+		cal = Calendar.getInstance();
 		start_time = cal.getTimeInMillis();
 		
 		preferences.edit().putLong(POLLING_START, start_time).commit();
