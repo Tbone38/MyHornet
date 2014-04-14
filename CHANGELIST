@@ -100,8 +100,9 @@ KEY:
                 ReDesign member Details Layout:
                     - Heading
                 Do an app walkthrough
-				Member Details Bookings - Class Name for classes (rather than saying "class attendant..")
-				Booking Rescheduling!
+                Member Details Bookings - Class Name for classes (rather than saying "class attendant..")
+                Booking Rescheduling!
+                Fix the order of MembershipSuspends. (convert to Epoch!)
 
     
     v119:

@@ -197,7 +197,7 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 		holdlist.removeAllViews();
 		
 		cur = contentResolver.query(ContentDescriptor.MembershipSuspend.CONTENT_URI, null, ContentDescriptor.MembershipSuspend.Cols.MID+" = ?",
-				new String[] {memberID}, null);
+				new String[] {memberID}, ContentDescriptor.MembershipSuspend.Cols.STARTDATE+" DESC"); //FIX THIS
 		
 		if (cur.getCount() <= 0) {
 			TextView heading = (TextView) view.findViewById(R.id.memberHoldH);
