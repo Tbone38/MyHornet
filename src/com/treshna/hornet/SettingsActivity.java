@@ -214,7 +214,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 					roll.setChecked(true);
 				}
 				
-				TextView accept, cancel;
+				TextView accept, cancel, fixpopup_view;
 				accept = (TextView) other_settings_view.findViewById(R.id.button_apply_text);
 				accept.setOnClickListener(new OnClickListener() {
 					@Override
@@ -234,6 +234,18 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 					public void onClick(View v) {
 						other_settings_alert.dismiss();
 				}});
+				
+				fixpopup_view = (TextView) other_settings_view.findViewById(R.id.button_duplicatepopup);
+				fixpopup_view.setClickable(true);
+				fixpopup_view.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						
+						//TODO: move this to an async task.
+						HornetDBService sync = new HornetDBService();
+						sync.duplicatePopupFix(SettingsActivity.getContext());
+						
+					}});
 				
 				AlertDialog.Builder build = new AlertDialog.Builder(SettingsActivity.ctx);
 				build.setTitle("Gym Specific Settings");

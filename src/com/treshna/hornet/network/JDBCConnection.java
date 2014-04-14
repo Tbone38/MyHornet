@@ -1296,6 +1296,31 @@ public ResultSet getReportTypes() throws SQLException {
     		throw new SQLException(e);
     	}
     }
+    
+    public void fixDuplicatePopUp() throws SQLException {
+    	String query = "DO $$ "
+    			+"DECLARE "
+	    	        +"r RECORD; "
+	    	        +"prevmid INT; "
+	    	        +"curmid INT; "
+    	        +"BEGIN "
+    	        	+"prevmid = 0; "
+	    	        +"FOR r IN "
+	    	                +"SELECT id, memberid, is_profile FROM image WHERE id IN ("
+	    	                	+ "SELECT id FROM image i2 WHERE is_profile = true AND i2.memberid = memberid) "
+	    	                + "ORDER BY memberid "
+	    	        +"LOOP "
+	    	                +"curmid = r.memberid; "
+	    	                +"IF prevmid = curmid THEN "
+	    	                        +"UPDATE image SET (is_profile) = (false) WHERE id = r.id; "
+	    	                +"END IF; "
+	    	                +"prevmid = curmid; "
+	    	        +"END LOOP; "
+	    	    +"END$$; ";
+    	
+    	pStatement = con.prepareStatement(query);
+    	pStatement.executeUpdate();
+    }
 
     public SQLWarning getWarnings() throws SQLException, NullPointerException {
     	return con.getWarnings();

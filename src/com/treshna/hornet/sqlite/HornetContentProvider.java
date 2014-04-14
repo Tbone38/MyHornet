@@ -250,7 +250,19 @@ public class HornetContentProvider extends ContentProvider {
         	getContext().getContentResolver().notifyChange(uri, null);
         	return rows;
         }
-        
+        case ContentDescriptor.Image.PATH_TOKEN:{ //we have to delete the image off the disk, as well as out of the db.
+        	int rows = 0;
+        	FileHandler fh = new FileHandler(ctx);
+        	Cursor cur = db.query(ContentDescriptor.Image.NAME, new String[] {ContentDescriptor.Image.Cols.IID,  ContentDescriptor.Image.Cols.MID},
+        			selection, selectionArgs, null, null, null);
+        	while (cur.moveToNext()) {
+        		if (fh.deleteFile(cur.getString(0)+"_"+cur.getString(1)+".jpg")) {
+        			rows += db.delete(ContentDescriptor.Image.NAME, ContentDescriptor.Image.Cols.IID+" = ?",
+        					new String[] {cur.getString(0)});
+        		}
+        	}
+        	return rows;
+        }
         case ContentDescriptor.TOKEN_DROPTABLE:{ //special case, drops tables/deletes database.
         	FileHandler fh = new FileHandler(ctx);
         	fh.clearDirectory();

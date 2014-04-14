@@ -135,7 +135,6 @@ public class BookingAddFragment extends Fragment implements OnClickListener, OnM
 		
 		date.setOnClickListener(this);
 		
-		
 		//select member from find-member list ?
 		RelativeLayout member = (RelativeLayout) page.findViewById(R.id.textwrapper);
 		

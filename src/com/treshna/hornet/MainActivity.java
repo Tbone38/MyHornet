@@ -81,7 +81,6 @@ public class MainActivity extends NFCActivity {
     private NavDrawerListAdapter navadapter;
     private int selectedNavItem = -1;
     
-    private ProgressDialog progress;
     private static final String TAG = "MainActivity";
     
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
@@ -223,7 +222,7 @@ public class MainActivity extends NFCActivity {
         mDrawerList = (ListView) findViewById(R.id.slider_menu);
         mDrawerList.removeAllViewsInLayout();
         
-		SlideMenuClickListener mClicker = new SlideMenuClickListener(this.getSupportFragmentManager(), mDrawerLayout, mDrawerList, this,
+		SlideMenuClickListener mClicker = new SlideMenuClickListener(mDrawerLayout, mDrawerList, this,
         		mDrawerView);
 		mDrawerTitle = "GymMaster";
 		mDrawerList.setItemChecked(getSelectedNavItem(), true);
@@ -451,13 +450,11 @@ public class MainActivity extends NFCActivity {
 		super.onSaveInstanceState(savedInstanceState);
 		
 		savedInstanceState.putInt("selectedTab", selectedTab);
-		//savedInstanceState.putString("selectedFragment", cFragment.getClass().getName());
 	}
 	
 	@Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         // if nav drawer is opened, hide the action items
-        //boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
 		setupNavDrawer();
 		boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerView);
         menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
@@ -634,8 +631,9 @@ public class MainActivity extends NFCActivity {
 		private String message = null;
 		
 		protected void onPreExecute() {
-			 progress = ProgressDialog.show(MainActivity.this, "Syncing..", 
+			 ProgressDialog progress = ProgressDialog.show(MainActivity.this, "Syncing..", 
 					 "Syncing your GymMaster Database.", true);
+			 Services.setProgress(progress);
 			 HornetApplication mApplication = ((HornetApplication) getApplicationContext()).getInstance();
 			 mApplication.setSyncStatus(true);
 			 starttime = new Date().getTime();
@@ -644,12 +642,14 @@ public class MainActivity extends NFCActivity {
 		@Override
 		protected Boolean doInBackground(String... params) {
 			HornetApplication mApplication = ((HornetApplication) getApplicationContext()).getInstance();
-			while (mApplication.getSyncStatus()) {
+			boolean is_syncing = mApplication.getSyncStatus();
+			while (is_syncing) {
 				curtime = new Date().getTime();
 				if ((curtime - starttime) > TENMINUTES) {
 					message = "Syncing took longer than 10 minutes, progress has been hidden.";
 					return false;
 				}
+				is_syncing = mApplication.getSyncStatus();
 			}
 			
 			return mApplication.getSyncResult();
@@ -658,7 +658,8 @@ public class MainActivity extends NFCActivity {
 
 		@SuppressLint("NewApi")
 		protected void onPostExecute(Boolean success) {
-			progress.dismiss();
+			Services.getProgress().dismiss();
+			Services.setProgress(null);
 			if (success) {
 				// refresh the page.
 				//find a way to force refresh the activity.

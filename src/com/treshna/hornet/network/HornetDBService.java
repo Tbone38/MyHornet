@@ -235,6 +235,7 @@ public class HornetDBService extends Service {
 		   	  	uploadLog();
 		   	  	
 		   	  	mApplication.setSyncStatus(false);
+		   	  	mApplication.setSyncResult(true);
 		   	  	
 	 	   		Services.setPreference(getApplicationContext(), "last_freq_sync", String.valueOf(this_sync));
 		 	   	Intent bcIntent = new Intent();
@@ -261,6 +262,7 @@ public class HornetDBService extends Service {
 	   	  	uploadLog();
 	   	  	
 	   	  	mApplication.setSyncStatus(false);
+	   	  	mApplication.setSyncResult(true); //where is this actually getting set?
 	   	  	
 	   	  	//Finish.
 			Services.setPreference(getApplicationContext(), "last_freq_sync", String.valueOf(this_sync));
@@ -2292,6 +2294,9 @@ public class HornetDBService extends Service {
     	}
     	if (!connected) {
 	    	try {
+	    		if (connection == null) {
+	    			//connection = new JDBCConnection(getApplicationContext());
+	    		}
 	    		connection.openConnection();
 	    		connected = connection.isConnected();
 	    	} catch (SQLException e) {
@@ -4797,5 +4802,30 @@ public class HornetDBService extends Service {
     	}
     	
     	return result;
+    }
+    
+    public void duplicatePopupFix(Context context) {
+    	setup(context);
+    	
+    	if (!openConnection()) {
+    		Log.e(TAG, "no Connection");
+    		return;
+    	}
+    	if (!getDeviceDetails()) {
+   			return;
+    	}
+    	
+    	try {
+    		connection.fixDuplicatePopUp();
+    	} catch (SQLException e) {
+    		Log.e(TAG, "", e);
+    		statusMessage = e.getLocalizedMessage();
+    	}
+    	contentResolver.delete(ContentDescriptor.Image.CONTENT_URI, null, null);
+    	getImages(0);
+    	
+    	updateDevice();
+    	closeConnection();
+    	connection.closeConnection();
     }
 }

@@ -9,24 +9,20 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.treshna.hornet.MainActivity.TagFoundListener;
 import com.treshna.hornet.MainActivity;
 import com.treshna.hornet.R;
-import com.treshna.hornet.MainActivity.TagFoundListener;
-import com.treshna.hornet.R.color;
-import com.treshna.hornet.R.id;
-import com.treshna.hornet.R.layout;
+import com.treshna.hornet.booking.BookingAddFragment;
 import com.treshna.hornet.services.Services;
-import com.treshna.hornet.services.Services.Statics;
 import com.treshna.hornet.sqlite.ContentDescriptor;
-import com.treshna.hornet.sqlite.ContentDescriptor.Booking;
-import com.treshna.hornet.sqlite.ContentDescriptor.Booking.Cols;
 
 
-public class MemberBookingsFragment extends Fragment implements TagFoundListener {
+public class MemberBookingsFragment extends Fragment implements TagFoundListener, OnClickListener {
 	Cursor cur;
 	ContentResolver contentResolver;
 	String memberID;
@@ -57,9 +53,6 @@ public class MemberBookingsFragment extends Fragment implements TagFoundListener
 		return view;
 	}
 	
-	/*public MemberActions getMemberActions(){
-		return this.mActions;
-	}*/
 	
 	private View setupView() {
 		//we inflate the list here.
@@ -79,8 +72,17 @@ public class MemberBookingsFragment extends Fragment implements TagFoundListener
 			Date arrival = new Date(cur.getLong(cur.getColumnIndex(ContentDescriptor.Booking.Cols.ARRIVAL)));
 			date_view.setText(Services.DateToString(arrival)+" "+cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.STIME)));
 			
+			
+			Cursor cursor2 = contentResolver.query(ContentDescriptor.Resource.CONTENT_URI, null, ContentDescriptor.Resource.Cols.ID+" = ?",
+					new String[] {cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.RID))}, null);
 			TextView name_view = (TextView) row.findViewById(R.id.booking_row_name);
-			name_view.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.BOOKING)));
+			if (!cursor2.moveToNext()) {
+				name_view.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.BOOKING)));
+			} else {
+				name_view.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.BOOKING))
+						+" - "+cursor2.getString(cursor2.getColumnIndex(ContentDescriptor.Resource.Cols.NAME)));
+			}
+			cursor2.close();
 			
 			TextView status_view = (TextView) row.findViewById(R.id.booking_row_status);
 			status_view.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.ETIME)));
@@ -102,8 +104,10 @@ public class MemberBookingsFragment extends Fragment implements TagFoundListener
 			}
 			list.addView(row);
 		}
-				
-		//mActions.setupActions(view, memberID);
+			
+		LinearLayout addBooking = (LinearLayout) view.findViewById(R.id.button_add_booking);
+		addBooking.setOnClickListener(this);
+
 		return view;
 	}
 
@@ -111,5 +115,11 @@ public class MemberBookingsFragment extends Fragment implements TagFoundListener
 	public boolean onNewTag(String serial) {
 		//return mActions.onNewTag(serial);
 		return false;
+	}
+
+	@Override
+	public void onClick(View v) {
+		Fragment fragment = new BookingAddFragment();
+		((MainActivity)getActivity()).changeFragment(fragment, "bookingAdd");
 	}	
 }

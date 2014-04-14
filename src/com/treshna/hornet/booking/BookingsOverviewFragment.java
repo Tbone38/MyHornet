@@ -192,7 +192,7 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
        	 } catch (Exception e) {
        		 cur = null;
        	 }
-       	 cur = contentResolver.query(ContentDescriptor.Resource.CONTENT_URI, null, null, null, null);
+       	 cur = contentResolver.query(ContentDescriptor.Resource.CONTENT_URI, null, ContentDescriptor.Resource.Cols.HISTORY+" = 'f'", null, null);
 		
 		 ArrayList<String[]> resource = new ArrayList<String[]>();
 		 while (cur.moveToNext()) {

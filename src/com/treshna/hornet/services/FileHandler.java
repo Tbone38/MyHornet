@@ -120,7 +120,7 @@ public class FileHandler {
             File[] files = path.listFiles();
             for(int i=0; i<files.length; i++) {
                 if(files[i].isDirectory()) {
-                    deleteDirectory(files[i]);
+                    deleteDirectory(files[i]); //recursion!
                 } else {
                     result = files[i].delete();
                 }

@@ -172,8 +172,7 @@ public class Services {
 		e.putString(key, value);
 		e.commit();
 	}
-	 
-	 @SuppressLint("InlinedApi")
+	
 	public static String getAppSettings(Context context, String key){
 		 //Exception e = new Exception();
 		 Log.d(TAG, "Getting App Setting: "+key);

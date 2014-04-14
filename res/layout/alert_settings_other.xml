@@ -14,6 +14,26 @@
         android:id="@+id/enable_roll"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/button_duplicatepopup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:text="@string/duplicatepopup"
+        android:background="@drawable/button_large"
+        android:padding="15dp"
+        android:layout_marginLeft="5dp"
+	    android:layout_marginRight="40dp" />
+    <View
+        android:layout_width="match_parent"
+	    android:layout_height="2dp"
+	    android:paddingLeft="5dp"
+    	android:paddingRight="5dp"
+	    android:background="@color/button_underline_grey"
+	    android:layout_marginBottom="5dp"
+	    android:layout_marginLeft="5dp"
+	    android:layout_marginRight="40dp" />
     <LinearLayout
         android:id="@+id/button_row"
         android:layout_width="match_parent"

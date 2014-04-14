@@ -22,9 +22,9 @@
         android:padding="4dp" >
         
     </LinearLayout>	
-   	<!-- <include 
-	    layout="@layout/member_details_actions"
+   	 <include 
+	    layout="@layout/member_details_bookings_actions"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    android:layout_below="@id/booking_list"/> -->
+	    android:layout_below="@id/booking_list"/>
 </RelativeLayout>

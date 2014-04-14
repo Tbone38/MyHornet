@@ -1,9 +1,15 @@
 package com.treshna.hornet.navigation;
 
+import java.util.Date;
+
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -11,7 +17,9 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.treshna.hornet.HornetApplication;
 import com.treshna.hornet.MainActivity;
 import com.treshna.hornet.R;
 import com.treshna.hornet.booking.BookingAddFragment;
@@ -25,16 +33,13 @@ import com.treshna.hornet.services.Services;
 
 public class SlideMenuClickListener implements OnItemClickListener, OnClickListener {
 
-	private FragmentManager fm;
 	private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private LinearLayout mDrawerView;
     private Activity activity;
-    private int currentselection = 0;
 	
     
-	public SlideMenuClickListener(FragmentManager fragmentManager, DrawerLayout drawerLayout, ListView drawerList, Activity ma, LinearLayout drawer) {
-		this.fm = fragmentManager;
+	public SlideMenuClickListener(DrawerLayout drawerLayout, ListView drawerList, Activity ma, LinearLayout drawer) {
 		this.mDrawerLayout = drawerLayout;
 		this.mDrawerList = drawerList;
 		this.mDrawerView = drawer;
@@ -96,7 +101,6 @@ public class SlideMenuClickListener implements OnItemClickListener, OnClickListe
             break;
         }
         
-        currentselection = position;
     	((MainActivity)activity).changeFragment(fragment, tag);
     	((MainActivity)activity).setSelectedNavItem(position);
 
@@ -113,7 +117,62 @@ public class SlideMenuClickListener implements OnItemClickListener, OnClickListe
 			Intent updateInt = new Intent(activity, HornetDBService.class);
             updateInt.putExtra(Services.Statics.KEY, Services.Statics.FREQUENT_SYNC);
             activity.startService(updateInt);
+            
+            SharedPreferences preferences = activity.getSharedPreferences(activity.getPackageName() + 
+            		"_preferences", Context.MODE_MULTI_PROCESS);
+            if (preferences.getBoolean("progress", false)) {
+            	FreqSync task = new FreqSync();
+            	task.execute(null, null);
+            }
 		}
 		}
+	}
+	
+	private class FreqSync extends AsyncTask<String, Integer, Boolean> {
+		
+		private long starttime;
+		private long curtime;
+		private static final long TENMINUTES = 600000;
+		private String message = null;
+		
+		protected void onPreExecute() {
+			 ProgressDialog progress = ProgressDialog.show(activity, "Syncing..", 
+					 "Syncing your GymMaster Database.", true);
+			 Services.setProgress(progress);
+			 HornetApplication mApplication = ((HornetApplication) activity.getApplicationContext()).getInstance();
+			 mApplication.setSyncStatus(true);
+			 starttime = new Date().getTime();
+		}
+		
+		@Override
+		protected Boolean doInBackground(String... params) {
+			message = null;
+			HornetApplication mApplication = ((HornetApplication) activity.getApplicationContext()).getInstance();
+			boolean is_syncing = mApplication.getSyncStatus();
+			while (is_syncing) {
+				curtime = new Date().getTime();
+				if ((curtime - starttime) > TENMINUTES) {
+					message = "Syncing took longer than 10 minutes, progress has been hidden.";
+					return false;
+				}
+				is_syncing = mApplication.getSyncStatus();
+			}
+			return mApplication.getSyncResult();
+		}
+		
+		@Override
+		protected void onPostExecute(Boolean success) {
+			Services.getProgress().dismiss();
+			Services.setProgress(null);
+			if (success) {
+				//we'll need to refresh all our cursors some how...
+				/*ContentResolver contentResolver = activity.getContentResolver();
+				contentResolver.notifyAll();*/
+			} else {
+				message = (message == null)? "Error Encountered" : message;
+				Toast.makeText(activity, "Syncing took longer than 10 minutes, progress has been hidden.",Toast.LENGTH_LONG).show();
+			}
+	    }
+
 	}
 }
