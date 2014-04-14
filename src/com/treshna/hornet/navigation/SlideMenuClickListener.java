@@ -49,9 +49,9 @@ public class SlideMenuClickListener implements OnItemClickListener, OnClickListe
 	
 	private void displayView(int position, View view) {
         // update the main content by replacing fragments
-		/*if (currentselection == position) {
-			return;
-		}*/
+		if (((MainActivity)activity).getSelectedNavItem() == position) {
+			return; //does this break anything?
+		}
         Fragment fragment = null;
         String tag = null;
         switch (position) {
@@ -69,7 +69,6 @@ public class SlideMenuClickListener implements OnItemClickListener, OnClickListe
         	((MainActivity)activity).genTabs();
             break;
         case 5:
-        	//TODO: make memberAdd a fragment;
             fragment = new MemberAddFragment();
         	tag = "memberAdd";
             break;
@@ -97,9 +96,9 @@ public class SlideMenuClickListener implements OnItemClickListener, OnClickListe
             break;
         }
         
-        
         currentselection = position;
     	((MainActivity)activity).changeFragment(fragment, tag);
+    	((MainActivity)activity).setSelectedNavItem(position);
 
         mDrawerList.setItemChecked(position, true);
         mDrawerList.setSelection(position);

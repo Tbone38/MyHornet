@@ -98,7 +98,9 @@ KEY:
                 Improve Performance of the Booking Overview page.
                 Membership complete "Add Tag" doesn't work. Find out why...
                 ReDesign member Details Layout:
-					- Heading
+                    - Heading
+                Do an app walkthrough
+                Fix progress box disappearing on orientation change.
 
     
     v119:

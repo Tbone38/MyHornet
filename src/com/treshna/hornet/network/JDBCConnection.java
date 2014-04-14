@@ -171,7 +171,7 @@ public class JDBCConnection {
     }
    
    public int updateImage( boolean is_profile, String description, int imageid) throws SQLException {
-	   
+	   //what if con is null?!
 	   pStatement = con.prepareStatement("UPDATE IMAGE SET (is_profile, description) = (?, ?) WHERE id = ?;");
 	   
 	   pStatement.setBoolean(1, is_profile);

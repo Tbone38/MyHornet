@@ -62,7 +62,7 @@ public class MemberSlideFragment extends Fragment implements TagFoundListener{
 	    mPager = (ViewPager) view.findViewById(R.id.pager);
 	    mPagerAdapter = new MemberDetailsPagerAdapter(getChildFragmentManager());
 	    mPager.setAdapter(mPagerAdapter);
-	    mPager.setCurrentItem(0);
+	    mPager.setCurrentItem(2);
 	    
 	    PagerTabStrip strip = (PagerTabStrip) view.findViewById(R.id.pts_main);
 	    strip.setDrawFullUnderline(false);
@@ -77,10 +77,11 @@ public class MemberSlideFragment extends Fragment implements TagFoundListener{
 	
 	@SuppressLint("NewApi")
 	private View setupLayout() {
-		Uri uri = Uri.withAppendedPath(ContentDescriptor.Image.IMAGE_JOIN_MEMBER_URI,
-				memberID);
+		/*Uri uri = Uri.withAppendedPath(ContentDescriptor.Image.IMAGE_JOIN_MEMBER_URI,
+				memberID);*/
 		ContentResolver contentResolver = getActivity().getContentResolver();
-		Cursor cur = contentResolver.query(uri, null, null, null, null);
+		Cursor cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, ContentDescriptor.Member.Cols.MID+" = ?",
+				new String[] {memberID}, null);
 		if (!cur.moveToFirst()) {
 			return view;
 		}
@@ -95,7 +96,7 @@ public class MemberSlideFragment extends Fragment implements TagFoundListener{
 		
 		ImageView img = (ImageView) view.findViewById(R.id.member_image);
 		String imgDir = getActivity().getExternalFilesDir(null)+"/"+cur.getInt(cur.getColumnIndex(ContentDescriptor.Image.Cols.IID))
-				+"_"+cur.getString(1)+".jpg";
+				+"_"+cur.getString(cur.getColumnIndex(ContentDescriptor.Image.Cols.MID))+".jpg";
 		File imgFile = null;
 		imgFile = new File(imgDir);
 		if (imgFile.exists() == true){
@@ -263,7 +264,9 @@ public class MemberSlideFragment extends Fragment implements TagFoundListener{
     	FragmentManager fragManager;
     	private static final int NUM_PAGES = 6;
     	
-    	private String[] titles = {"Membership Information", "Member Details", "Visit History", "Bookings", "Finance", "Gallery"};
+    	//Change the Order
+    	//private String[] titles = {"Membership Information", "Member Details", "Visit History", "Bookings", "Finance", "Gallery"};
+    	private String[] titles = {"Gallery", "Member Details", "Membership Information", "Visit History", "Bookings", "Finance"};
     	
         public MemberDetailsPagerAdapter(FragmentManager fragmentManager) {
             super(fragmentManager);
@@ -276,47 +279,57 @@ public class MemberSlideFragment extends Fragment implements TagFoundListener{
         	Bundle bdl = new Bundle(2);
         	bdl.putString(Services.Statics.MID, memberID);
         	
-        	
-        	//Fragment f = null;
-        	
-        	switch (position){
+        	/*switch (position){
         		case(0):
-        			//f = membershipFragment();
         			membershipFragment();
         			break;
         		case (1):
-        			//f = noteFragment();
         			noteFragment();
         			break;
         		case (2):
-        			//f = visitFragment();
         			visitFragment();
         			break;
         		case (3):
-        			//f = bookingFragment();
         			bookingFragment();
         			break;
         		case(4):
-        			//f = financeFragment();
         			financeFragment();
         			break;
         		case (5):
-        			//f = galleryFragment();
         			galleryFragment();
         			break;
         		default:
-        			//f = membershipFragment();
         			membershipFragment();
+        			break;
+        	}*/
+        	switch (position){
+        	case (0):
+        			galleryFragment();
+        			break;
+        	case (1):
+        			noteFragment();
+        			break;
+        	case (2):
+        			membershipFragment();
+        			break;
+        	case (3):
+        			visitFragment();
+        			break;
+        	case (4):
+        			bookingFragment();
+        			break;
+        	case (5):
+        			financeFragment();
         			break;
         	}
         	
         	mTagListener = (TagFoundListener) mainFragment;
         	bdl.putInt(Services.Statics.KEY, selectedFragment);
         	mainFragment.setArguments(bdl);
-        	//mainFragment.setupFragment(f);
         	
         	return mainFragment;
         }
+        
         @Override
         public int getCount() {
             return NUM_PAGES;

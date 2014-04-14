@@ -110,6 +110,9 @@ public class VisitorsViewAdapter extends SimpleCursorAdapter {
 			}
 			Bitmap sm = BitmapFactory.decodeStream(is);
 			smileView.setImageBitmap(sm);
+			smileView.setVisibility(View.VISIBLE);
+		} else {
+			smileView.setVisibility(View.GONE);
 		}
 		String imgDir = context.getExternalFilesDir(null)+"/"+cursor.getInt(cursor.getColumnIndex(ContentDescriptor.Image.Cols.IID))
 				+"_"+cursor.getString(cursor.getColumnIndex(ContentDescriptor.Visitor.Cols.MID))+".jpg";
@@ -147,7 +150,7 @@ public class VisitorsViewAdapter extends SimpleCursorAdapter {
 		timeView.setText(displayText);
 		denyView.setText(denyText);
 		
-		if (cursor.isNull(cursor.getColumnIndex(ContentDescriptor.Member.Cols.FNAME)) == true) {
+		if (cursor.getInt(cursor.getColumnIndex(ContentDescriptor.Visitor.Cols.MID))<= 0) {
 			nameView.setText(cursor.getString(cursor.getColumnIndex(ContentDescriptor.Visitor.Cols.CARDNO)));
 		} else {
 			nameView.setText(cursor.getString(cursor.getColumnIndex(ContentDescriptor.Member.Cols.FNAME))+" "

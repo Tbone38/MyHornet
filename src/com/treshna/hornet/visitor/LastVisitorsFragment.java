@@ -179,9 +179,11 @@ public class LastVisitorsFragment extends ListFragment implements OnClickListene
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
+		String[] projection = {"v.*", "m."+ContentDescriptor.Member.Cols.FNAME, "m."+ContentDescriptor.Member.Cols.SNAME, "i.*",
+				"m."+ContentDescriptor.Member.Cols.HAPPINESS, "m."+ContentDescriptor.Member.Cols.MID};
 		return new CursorLoader(getActivity(), 
 				ContentDescriptor.Visitor.VISITOR_JOIN_MEMBER_URI, 
-				null, null, null, 
+				projection, null, null, 
 				ContentDescriptor.Visitor.Cols.DATETIME+" DESC limit 100");
 	}
 

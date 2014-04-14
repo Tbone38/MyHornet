@@ -472,6 +472,7 @@ public class HornetContentProvider extends ContentProvider {
         }
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection,
 			String[] selectionArgs, String sortOrder) {
@@ -570,7 +571,7 @@ public class HornetContentProvider extends ContentProvider {
             			+ "ON (i."+ContentDescriptor.Image.Cols.MID+" = m."+ContentDescriptor.Member.Cols.MID
             			+") AND i."+ContentDescriptor.Image.Cols.IS_PROFILE+" = 1");
             	
-            	//Log.w("VISITOR JOIN QUERY", builder.buildQuery(null, null, null, null, null, null));
+            	//Log.w("VISITOR JOIN QUERY", builder.buildQuery(null, selection, selectionArgs, null, null, sortOrder, null));
             	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
             }
             case ContentDescriptor.Image.PATH_FOR_JOIN_ID_TOKEN:{
@@ -1077,9 +1078,15 @@ public class HornetContentProvider extends ContentProvider {
             	} else if (tablename.compareTo(ContentDescriptor.Booking.NAME) == 0) {
             		return db.delete(ContentDescriptor.Booking.NAME, ContentDescriptor.Booking.Cols.BID+" = ?",
             				new String[] {rowid});
-            	}//TODO: roll & roll_item
+            	} else if (tablename.compareTo(ContentDescriptor.RollCall.NAME) == 0) {
+            		return db.delete(ContentDescriptor.RollCall.NAME, ContentDescriptor.RollCall.Cols.ROLLID+" = ?",
+            				new String[] {rowid});
+            	} else if (tablename.compareTo(ContentDescriptor.RollItem.NAME) == 0) {
+            		return db.delete(ContentDescriptor.RollItem.NAME, ContentDescriptor.RollItem.Cols.ROLLITEMID+" = ?",
+            				new String[] {rowid});
+            	}
             	else {
-            		Log.e("Unsupported Operation", "DELETE FROM TABLE: "+tablename, 
+            		Log.e("HORNETSERVICE", "DELETE FROM TABLE: "+tablename, 
             				new UnsupportedOperationException("DELETE FROM TABLE: "+tablename+" NOT SUPPORTED.")); 
             		return 0;
             	}

@@ -16,6 +16,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.database.Cursor;
+import android.graphics.drawable.AnimationDrawable;
 import android.net.wifi.WifiManager;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
@@ -78,6 +79,7 @@ public class MainActivity extends NFCActivity {
     private TypedArray navMenuIcons; 
     private ArrayList<NavDrawerItem> navDrawerItems;
     private NavDrawerListAdapter navadapter;
+    private int selectedNavItem = -1;
     
     private ProgressDialog progress;
     private static final String TAG = "MainActivity";
@@ -109,6 +111,7 @@ public class MainActivity extends NFCActivity {
 		this.setTitle("GymMaster");
 		this.setTitleColor(getResources().getColor(R.color.gym));
 		context = getApplicationContext();
+		setSelectedNavItem(1);
 		setupNavDrawer();
 		navadapter.notifyDataSetChanged();
         if (savedInstanceState == null) { //needs to be done after the super.OnCreate call.
@@ -164,7 +167,11 @@ public class MainActivity extends NFCActivity {
 		
 		if (mApplication.getSyncStatus() == true) {
 			sync_text.setText(getString(R.string.sync_now));
-			sync_drawable.setImageDrawable(getResources().getDrawable(R.drawable.animation_sync));
+			AnimationDrawable sync_anim = (AnimationDrawable) getResources().getDrawable(R.drawable.animation_sync);
+			sync_drawable.setImageDrawable(sync_anim);
+			if (!sync_anim.isRunning()) {
+				sync_anim.start();
+			}
 		} else {
 			Log.d(TAG, "SYNC STATUS != TRUE");
 			sync_drawable.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_refresh));
@@ -172,26 +179,26 @@ public class MainActivity extends NFCActivity {
 			long current_time = new Date().getTime(); 
 			long interval = (current_time - last_sync);
 			
-			if ( interval < 600000) { //less than 10 minutes
+			if ( interval < 300000) 	{ //less than 5 minutes
 				sync_text.setText(getString(R.string.sync_just_now));
 			} else 
-			if (interval < 1200000) { //less than 20 minutes ago
-				sync_text.setText(getString(R.string.sync_twenty_minutes));
+			if (interval < 3600000) 	{ //less than an hour ago
+				double minutes = Double.valueOf(new DecimalFormat("#").format(
+						((interval/1000)/60)));
+				sync_text.setText(String.format(getString(R.string.sync_minutes), (int) minutes));
 			} else
-			if (interval < 2400000) { //less than 40 minutes ago
-				sync_text.setText(getString(R.string.sync_fourty_minutes));
-			} else 
-			if (interval < 3600000) { //less than an hour ago
+			if (interval < 7200000) 	{ //less than two hours ago
 				sync_text.setText(getString(R.string.sync_one_hour));
 			} else
-			if (interval < 86400000) { //less than a day, mod the hours value so we can set it.
+			if (interval < 86400000) 	{ //less than a day, show us how many hours its been.
 				double hours = Double.valueOf(new DecimalFormat("#").format(
 						(((interval/1000)/60)/60)));
 				sync_text.setText(String.format(getString(R.string.sync_hours), (int) hours));
 			} else 
-			if (interval < 172800000) { //less than two days!
+			if (interval < 172800000) 	{ //It's been like, a day!
 				sync_text.setText(getString(R.string.sync_one_day));
-			} else { //it's been forever!
+			}
+			else 						{ //it's been forever!
 				double days = Double.valueOf(new DecimalFormat("#").format(
 						(interval/86400000)));
 				sync_text.setText(String.format(getString(R.string.sync_days), (int) days));
@@ -199,6 +206,14 @@ public class MainActivity extends NFCActivity {
 		}
 	}
 
+	public void setSelectedNavItem(int navitem) {
+		this.selectedNavItem = navitem;
+	}
+	
+	public int getSelectedNavItem() {
+		return this.selectedNavItem;
+	}
+	
 	//we need to update this after syncs...
 	@SuppressLint("NewApi")
 	public void setupNavDrawer() {
@@ -207,9 +222,13 @@ public class MainActivity extends NFCActivity {
         mDrawerView = (LinearLayout) findViewById(R.id.slider_wrapper);
         mDrawerList = (ListView) findViewById(R.id.slider_menu);
         mDrawerList.removeAllViewsInLayout();
+        
 		SlideMenuClickListener mClicker = new SlideMenuClickListener(this.getSupportFragmentManager(), mDrawerLayout, mDrawerList, this,
         		mDrawerView);
 		mDrawerTitle = "GymMaster";
+		mDrawerList.setItemChecked(getSelectedNavItem(), true);
+        mDrawerList.setSelection(getSelectedNavItem());
+		
 		int membercount = -1, visitcount = -1, bookingcount = -1;
 		ContentResolver contentResolver = this.getContentResolver();
 		Cursor cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, null, null, null);
@@ -290,6 +309,8 @@ public class MainActivity extends NFCActivity {
         			navDrawerItems);
         }
         mDrawerList.setAdapter(navadapter);
+        mDrawerList.setItemChecked(getSelectedNavItem(), true);
+        mDrawerList.setSelection(getSelectedNavItem());
         
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
                 R.drawable.ic_action_opennav, //nav menu toggle icon
@@ -311,6 +332,8 @@ public class MainActivity extends NFCActivity {
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);        
         mDrawerList.setOnItemClickListener(mClicker);
+        mDrawerList.setItemChecked(getSelectedNavItem(), true);
+        mDrawerList.setSelection(getSelectedNavItem());
         
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
@@ -555,9 +578,7 @@ public class MainActivity extends NFCActivity {
 	    	Intent settingsIntent = new Intent(this, SettingsActivity.class);
 	    	startActivity(settingsIntent);
 	    	return true;
-	    case (R.id.button_lastsync):
-	    	Log.d(TAG, "BUTTON LAST SYNC PRESSED");
-	    case (R.id.action_update): {
+	    /*case (R.id.action_update): {
 	    	setupNavDrawer();
 	    	SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 		 	if (Integer.parseInt(preferences.getString("sync_frequency", "-1")) == -1) {
@@ -566,7 +587,7 @@ public class MainActivity extends NFCActivity {
 		 	PollingHandler polling = Services.getFreqPollingHandler();
 	    	polling.startService();
 	    	return true;
-	    }
+	    }*/
 	    case (R.id.action_halt): {
 	    	PollingHandler polling = Services.getFreqPollingHandler();
 	    	polling.stopPolling(false);

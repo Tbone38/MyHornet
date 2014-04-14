@@ -46,8 +46,7 @@
     <string name="app_sync_heading">App Sync</string>
     <string name="sync_now">in progress</string>
     <string name="sync_just_now">just now</string>
-    <string name="sync_twenty_minutes">20 minutes ago</string>
-    <string name="sync_fourty_minutes">40 minutes ago</string>
+    <string name="sync_minutes">%d minutes ago</string>
     <string name="sync_one_hour">1 hour ago</string>
     <string name="sync_hours">%d hours ago</string>
     <string name="sync_one_day">1 day ago</string>
