@@ -18,6 +18,6 @@
     <string name="report_column_options_title">Report Column Options</string>
     <string name="report_create_btn_title">Create Report</string>
     <string name="report_date_spinner_title">Select Quick Option</string>
-    <string name="report_btn_email">Email All Recipients</string>
+    <string name="report_btn_email">Email Everyone</string>
              
 </resources>

@@ -10,8 +10,11 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 import android.R.attr;
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.annotation.TargetApi;
 import android.app.ActionBar.LayoutParams;
 import android.app.AlertDialog;
@@ -26,6 +29,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Patterns;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -60,6 +64,7 @@ public class ReportMainActivity extends ListActivity {
 	private String finalQuery = null;
 	private Date startDate = null;
 	private Date endDate = null;
+	private Button btnEmail = null;
 	private boolean stripe = true;
 	private int[] selectedColumnIds = null;
 	
@@ -79,16 +84,12 @@ public class ReportMainActivity extends ListActivity {
 		reportName = intent.getStringExtra("report_name");
 		reportFunctionName = intent.getStringExtra("report_function_name");
 		queryFunctionParamsCut = reportFunctionName.substring(0,reportFunctionName.indexOf('('));
-		Button btnEmail = (Button) findViewById(R.id.btnEmail);
+		btnEmail = (Button) findViewById(R.id.btnEmail);
 		btnEmail.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				getEmailAddressesByIds();
-				/*String [] emailRecipients = {"antonygunn@yahoo.co.nz"};
-				String subject = "Test";
-				String message = "Testing 123, this is a test";
-				EmailSender email = new EmailSender(ReportMainActivity.this, emailRecipients, subject, message);*/
 			}
 			
 		});
@@ -104,7 +105,9 @@ public class ReportMainActivity extends ListActivity {
 		int count = 0;
 		for (HashMap<String,String> columnsMap : resultMapList ){
 			if (columnsMap.containsKey("Member ID")){
-				reportIds[count] = Integer.parseInt(columnsMap.get("Member ID")); 	
+				if (columnsMap.get("Member ID")!= null){
+					reportIds[count] = Integer.parseInt(columnsMap.get("Member ID"));
+				}
 			} 
 			else if (columnsMap.containsKey("MemberID")){
 				reportIds[count] = Integer.parseInt(columnsMap.get("MemberID")); 	
@@ -127,10 +130,21 @@ public class ReportMainActivity extends ListActivity {
 		return false;
 	}
 	
+	private boolean columnsContainName(String columnName) {
+		
+		for (HashMap<String,String> columnsMap : columnsMapList ){
+			if (columnsMap.get("column_name").toString().compareTo("Member ID") == 0){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
 	private void  getEmailAddressesByIds() {
 		String tableName = null;
 		
-		if (columnsFieldsContainsTable("member")) {
+		if (columnsContainName("Member ID") || columnsFieldsContainsTable("member")) {
 			tableName = "member";
 		} 
 		else if (columnsFieldsContainsTable("enquiry")) {
@@ -145,23 +159,41 @@ public class ReportMainActivity extends ListActivity {
 		
 	}
 	
+	private String[] getClientPrimaryEmail() {
+		String[] clientPrimaryEmail = new String[1];
+		Pattern emailPattern = Patterns.EMAIL_ADDRESS;
+		Account[] accounts = AccountManager.get(getBaseContext()).getAccounts();
+		for (Account account : accounts) {
+		    if (emailPattern.matcher(account.name).matches()) {
+		    	clientPrimaryEmail[0] = account.name;
+		    }
+		}
+		
+		return clientPrimaryEmail;
+	}
+	
 	private String[] getEmailsAddressesAsArray() {
 		String[] addresses = null;
-		addresses = new String[emailsMapList.size()];
-		int index = 0;
+		ArrayList<HashMap<String,String>> cleanedEmailsMapList = new  ArrayList<HashMap<String,String>>();
+		//Removing nulls and empty strings..
 		for (HashMap<String,String > emailMap : emailsMapList) {
+			 if (emailMap.get("email") != null && emailMap.get("email").compareTo("")!= 0 && (!emailMap.get("email").isEmpty()) && emailMap.get("email").contains("@")) {
+				 cleanedEmailsMapList.add(emailMap);
+			 }
+		}
+		addresses = new String[cleanedEmailsMapList.size()];
+		int index = 0;	
+		for (HashMap<String,String > emailMap : cleanedEmailsMapList) {
 			
-			if (emailMap.get("email")!= null) {
 				addresses[index] = 	emailMap.get("email");
 				index += 1;
-			}
 			
 		}
 		return addresses;	
 	}
 	
 	
-	private void buildQuery(){
+	private void buildQuery() {
 		
 		StringBuilder queryBuilder = new StringBuilder();
 		queryBuilder.append("SELECT ");
@@ -170,15 +202,12 @@ public class ReportMainActivity extends ListActivity {
 		boolean isMemberIdAdded = false;
 		boolean isEnquiryIdAdded = false;
 		for (HashMap<String,String> columnsMap : columnsMapList ){
-			/*if (columnsMap.get("field").toString().contains("member.")){
-				containsMemberColumn = true;
-			}*/
+
 			//Check if coming from column options..
 			if (callingActivity.compareTo("column_options")== 0) {
 				isSelected = false;
 				if (this.isColumnSelected(Integer.parseInt(columnsMap.get("column_id")))){
-					isSelected = true;
-				}
+					isSelected = true;				}
 			}
 			
 			for (Map.Entry<String,String> field: columnsMap.entrySet()){
@@ -290,7 +319,10 @@ public class ReportMainActivity extends ListActivity {
 				}
 				
 			});
-	
+		if (columnsContainName("Member ID") || columnsFieldsContainsTable("member") || columnsFieldsContainsTable("enquiry")) {
+			btnEmail.setVisibility(View.VISIBLE);
+		}
+		
 	    buildColumnHeaders();
 
 		ListAdapter listAdapter = new ArrayAdapter<HashMap<String,String>>(ReportMainActivity.this,R.layout.report_main_row,
@@ -471,6 +503,16 @@ private void buildColumnHeaders() {
 		return textView;
 	}
 	
+	private boolean columnsContainsTableAndField(String tableAndFieldName){
+		
+		for (HashMap<String,String> columnsMap : columnsMapList ){
+			if (columnsMap.get("field").toString().contains(tableAndFieldName)){
+				return true;
+			}
+		}
+		return false;
+		
+	}
 	
 	private boolean isColumnAllNull(String colName) {
 		HashMap<String,Integer> colNullCount = new HashMap<String,Integer>();
@@ -549,7 +591,7 @@ private void buildColumnHeaders() {
 			progress.dismiss();
 			if (success) {
 				
-				System.out.println("\nReport-Type_Data");
+				/*System.out.println("\nReport-Type_Data");
 				
 				System.out.println("Result List Size: " + resultMapList.size());
 				
@@ -559,7 +601,7 @@ private void buildColumnHeaders() {
 						 System.out.println("Field: " + entry.getKey() + " Value: " + entry.getValue());					 
 					}
 				
-				}
+				}*/
 
 				ReportMainActivity.this.buildListAdapter();
 				
@@ -662,7 +704,7 @@ private void buildColumnHeaders() {
 					}
 				
 				}
-				EmailSender email = new EmailSender(ReportMainActivity.this,getEmailsAddressesAsArray(),"","");
+				EmailSender email = new EmailSender(ReportMainActivity.this, getClientPrimaryEmail(),getEmailsAddressesAsArray(),"");
 				
 				
 			} else {
