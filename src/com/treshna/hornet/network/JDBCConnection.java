@@ -3,6 +3,7 @@
  */
 package com.treshna.hornet.network;
 
+import java.net.SocketException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -20,16 +21,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
-import com.treshna.hornet.services.Services;
-import com.treshna.hornet.sqlite.ContentDescriptor;
-import com.treshna.hornet.sqlite.ContentDescriptor.Booking;
-import com.treshna.hornet.sqlite.ContentDescriptor.CancellationFee;
-import com.treshna.hornet.sqlite.ContentDescriptor.Membership;
-import com.treshna.hornet.sqlite.ContentDescriptor.CancellationFee.Cols;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.util.Log;
+
+import com.treshna.hornet.services.Services;
+import com.treshna.hornet.sqlite.ContentDescriptor;
 
 /**
  * @author callum
@@ -481,9 +478,11 @@ public class JDBCConnection {
 	    	return pStatement.executeUpdate();
     }
     
-    public ResultSet getOpenHours() throws SQLException, NullPointerException {
+    public ResultSet getOpenHours(long last_sync) throws SQLException, NullPointerException {
 	    	ResultSet rs = null;
-	    	pStatement = con.prepareStatement("SELECT dayofweek, opentime, closetime, name FROM opentime;");
+	    	pStatement = con.prepareStatement("SELECT dayofweek, opentime, closetime, name, lastupdate FROM opentime WHERE lastupdate > ?;");
+	    	pStatement.setTimestamp(1, new java.sql.Timestamp(last_sync));
+	    	
 	    	rs = pStatement.executeQuery();
 	    	return rs;
     }
@@ -1333,7 +1332,16 @@ public ResultSet getReportTypes() throws SQLException {
     public ResultSet startStatementQuery(String query) throws SQLException, NullPointerException {
     	ResultSet rs = null;
 	    	statement = con.createStatement();
-	    	rs = statement.executeQuery(query);
+	    	try {
+	    		rs = statement.executeQuery(query);
+	    	} catch (NullPointerException e) {
+	    		//sometimes our socket throws an I/O exception (apparently meaning an issue with the connection..?)
+	    		this.closeConnection();
+	    		try {
+	    			this.openConnection();
+	    		} catch (ClassNotFoundException e2) {/*we've already successfully opened a connection, ignore*/};
+	    		rs = startStatementQuery(query);
+	    	}
 	    	return rs;
     }
     /**

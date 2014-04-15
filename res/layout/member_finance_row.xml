@@ -38,7 +38,7 @@
 	    android:paddingLeft="3dp"
 	    />
 	<TextView
-	    android:id="@+id/finance_row_amount1"
+	    android:id="@+id/finance_row_amount2"
 	    android:layout_width="0dp"
 	    android:layout_height="wrap_content"
 	    android:layout_weight=".4"
@@ -48,7 +48,7 @@
 	    android:paddingTop="3dp"
 	    />
 	<TextView
-	    android:id="@+id/finance_row_amount2"
+	    android:id="@+id/finance_row_amount1"
 	    android:layout_width="0dp"
 	    android:layout_height="wrap_content"
 	    android:layout_weight=".4"

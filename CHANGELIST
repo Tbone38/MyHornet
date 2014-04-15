@@ -80,6 +80,8 @@ KEY:
                 Fixed Image capturing, so you can still add photos!
                 Fixed Member Gallery.
                 Added Last Sync time to the bottom of the nav drawer.
+                Fixed the order of MembershipSuspends. (convert to Epoch!)
+                Fixed issue with open Hours going missing on app update, which was causing the bookings to not show.
  
             TODO:
                 Handle permissions/Roles for different staff, to limit what certain staff can see.
@@ -90,7 +92,6 @@ KEY:
                 get DD working for bluepay..?
                 Cancel Member Hold. --I think adjusting the expiry is better.
                 Improve sync-times/OutOfMemory Issues.
-                Fix Times/(possibly dates?) disappearing everytime we update the app.
                 Record Emails/SMS sent from app in gymmaster device.
                 Test Access Control, does it/can we get it working with the GymMaster Access/Security Control (Using Views?)?
                 Issue with sync table: the servertime isn't being set correctly.
@@ -102,7 +103,8 @@ KEY:
                 Do an app walkthrough
                 Member Details Bookings - Class Name for classes (rather than saying "class attendant..")
                 Booking Rescheduling!
-                Fix the order of MembershipSuspends. (convert to Epoch!)
+				Make the sync process more robust by checking that each function returns 0 or more. 
+					If we get less than 0 than we've encountered an error, try continuing but don't update the "last_sync" time..?
 
     
     v119:

@@ -49,7 +49,7 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
 	private String selectedDate;
 	private LayoutInflater mInflater;
 	private DatePickerFragment mDatePicker;
-	TextView mMonth = null, mDay = null, mYear = null;
+	TextView mMonth = null, mDay = null, mYear = null, mTuesday = null;
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -82,15 +82,38 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
         	mDatePicker.getDialog().dismiss();
         }
         RelativeLayout calendarwrapper = (RelativeLayout) view.findViewById(R.id.booking_overview_calendar_wrapper);
+        
         RelativeLayout.LayoutParams params;
+        
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
         	params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
         	params.setMargins(10, 0, 10, 0);
-        	params.addRule(RelativeLayout.CENTER_IN_PARENT);
-        	//params.addRule(RelativeLayout.RIGHT_OF, 20);
+        	params.addRule(RelativeLayout.LEFT_OF, 20);
         } else {
         	params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         }
+        
+        mTuesday = new TextView(getActivity());
+        mTuesday.setTextSize(49f);
+        mTuesday.setTextColor(this.getResources().getColor(R.color.android_blue));
+    	mTuesday.setLayoutParams(params);
+    	mTuesday.setId(40);
+    	if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+    		mTuesday.setGravity(Gravity.CENTER);
+    	} else {
+    		mTuesday.setGravity(Gravity.CENTER_HORIZONTAL);
+    	}
+    	
+    	if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+    		params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+        	params.addRule(RelativeLayout.CENTER_VERTICAL);
+    		params.addRule(RelativeLayout.RIGHT_OF, 20);
+    		params.setMargins(10, 0, 10, 0);
+    	} else {
+    		params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        	params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+    		params.addRule(RelativeLayout.BELOW, 40);
+    	}
     	
     	mMonth = new TextView(getActivity());
     	mMonth.setTextSize(49);
@@ -98,7 +121,6 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
     	mMonth.setLayoutParams(params);
     	mMonth.setId(10);
     	if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-    		//mMonth.setGravity(Gravity.CENTER_VERTICAL);
     		mMonth.setGravity(Gravity.CENTER);
     	} else {
     		mMonth.setGravity(Gravity.CENTER_HORIZONTAL);
@@ -107,8 +129,7 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
     	if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
     		params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
         	params.addRule(RelativeLayout.CENTER_VERTICAL);
-    		//params.addRule(RelativeLayout.CENTER_IN_PARENT);
-    		params.addRule(RelativeLayout.LEFT_OF, 10);
+        	params.addRule(RelativeLayout.CENTER_IN_PARENT);
     		params.setMargins(10, 0, 10, 0);
     	} else {
     		params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
@@ -122,7 +143,6 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
     	mDay.setLayoutParams(params);
     	mDay.setId(20);
     	if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-    		//mDay.setGravity(Gravity.CENTER_VERTICAL);
     		mDay.setGravity(Gravity.CENTER);
     	} else {
     		mDay.setGravity(Gravity.CENTER_HORIZONTAL);
@@ -153,13 +173,11 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
     	}
     	selectedDate = Services.getAppSettings(getActivity(), "bookings_date");
     	if (selectedDate.compareTo("-1") == 0) {
-    		//selectedDate = Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd");
-    		//SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd", Locale.US);
-    		//selectedDate = format.format(new Date());
     		selectedDate = Services.DateToString(new Date());
     	}
         updateDate();
        
+        calendarwrapper.addView(mTuesday);
         calendarwrapper.addView(mMonth);
         calendarwrapper.addView(mDay);
         calendarwrapper.addView(mYear);
@@ -173,9 +191,7 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
 	
 	private void updateDate(){
 		if (mMonth != null && mDay != null && mYear != null) {
-			/*mMonth.setText(Services.dateFormat(selectedDate, "yyyyMMdd", "MMM"));
-			mDay.setText(Services.dateFormat(selectedDate, "yyyyMMdd", "dd"));
-			mYear.setText(Services.dateFormat(selectedDate, "yyyyMMdd", "yyyy"));*/
+			mTuesday.setText(Services.dateFormat(selectedDate, "dd MMM yyyy", "EEEE, "));
 			mDay.setText(Services.dateFormat(selectedDate, "dd MMM yyyy", "dd"));
 			mMonth.setText(Services.dateFormat(selectedDate, "dd MMM yyyy", "MMM"));
 			mYear.setText(Services.dateFormat(selectedDate, "dd MMM yyyy", "yyyy"));

@@ -368,6 +368,7 @@ public class MembershipHoldFragment extends Fragment implements OnClickListener,
 
 		TextView startdate = (TextView) view.findViewById(R.id.startdate);
 		values.put(ContentDescriptor.MembershipSuspend.Cols.STARTDATE, startdate.getText().toString());
+		values.put(ContentDescriptor.MembershipSuspend.Cols.ORDER, Services.StringToDate(startdate.getText().toString(), "dd MMM yyyy").getTime());
 
 		TextView enddate = (TextView) view.findViewById(R.id.hold_enddate);
 		values.put(ContentDescriptor.MembershipSuspend.Cols.ENDDATE, enddate.getText().toString()); 

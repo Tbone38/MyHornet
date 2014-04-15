@@ -71,6 +71,8 @@ public class HornetContentProvider extends ContentProvider {
         case ContentDescriptor.Booking.PATH_TOKEN:{
         	int rows = db.delete(ContentDescriptor.Booking.NAME, selection, selectionArgs);
         	getContext().getContentResolver().notifyChange(uri, null);
+        	//we should really be trying to delete from the bookingTime Table here as we..
+        	
         	return rows;
         }
         case ContentDescriptor.Company.PATH_TOKEN:{

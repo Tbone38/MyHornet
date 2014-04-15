@@ -853,6 +853,8 @@ public class UpdateDatabase {
 					+ " VALUES (new."+Image.Cols.ID+", "+TableIndex.Values.Image.getKey()+");"
 				+" END; ";
 		
+		private static final String SQL13 = "ALTER TABLE "+MembershipSuspend.NAME+" ADD COLUMN "+MembershipSuspend.Cols.ORDER+" NUMERIC DEFAULT 0";
+		
 		public static void patchNinetySix(SQLiteDatabase db) {
 			db.beginTransaction();
 			try {
@@ -880,6 +882,8 @@ public class UpdateDatabase {
 				db.execSQL(SQL11);
 				Log.w(HornetDatabase.class.getName(), "\n"+SQL12);
 				db.execSQL(SQL12);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL13);
+				db.execSQL(SQL13);
 				db.setTransactionSuccessful();
 			/*} catch (SQLException e) {
 			e.printStackTrace();

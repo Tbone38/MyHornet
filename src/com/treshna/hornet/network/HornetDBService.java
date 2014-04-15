@@ -206,6 +206,9 @@ public class HornetDBService extends Service {
 			}
 			
 			//do bookings!
+			//getOpenHours(last_sync);
+			getOpenHours(0);
+			updateOpenHours();
 			updateBookings();
 			long b_lastsync = Long.parseLong(Services.getAppSettings(getApplicationContext(), "b_lastsync"));
 			getBookings(b_lastsync);
@@ -313,7 +316,7 @@ public class HornetDBService extends Service {
  		  
 		   //config
 		   int rcount = getResource(0);
-		   int days = getOpenHours();
+		   int days = getOpenHours(0);
 		   setTime(); 
 	   	   setDate();
 	   	   updateOpenHours();
@@ -1386,6 +1389,10 @@ public class HornetDBService extends Service {
 	    			cur.close();
 	    			int status = 0;
 	    		
+	    			contentResolver.delete(ContentDescriptor.BookingTime.CONTENT_URI, ContentDescriptor.BookingTime.Cols.BID+" = ?",
+	    					new String[] {rs.getString("bookingid")});
+	    			//delete all it's registered times, we're rebuilding them anyway.
+	    			
 	    			status= contentResolver.update(ContentDescriptor.Booking.CONTENT_URI, val, 
 	    					ContentDescriptor.Booking.Cols.BID+" = ? ",
 	    					new String[] {rs.getString("bookingid")});
@@ -1394,10 +1401,10 @@ public class HornetDBService extends Service {
 	    				Log.e(TAG, "Booking Update Failed for id:"+rs.getString("bookingid"));
 	    			}
 	    			result +=status;
-	    			if (rs.getInt("result") ==  5) { //booking-cancelled, delete it from the bookingtime table.
+	    			/*if (rs.getInt("result") ==  5) { //redundant, we're deleting the bookingTimes above anyway.
 	    				contentResolver.delete(ContentDescriptor.BookingTime.CONTENT_URI, ContentDescriptor.BookingTime.Cols.BID+" = ?",
 	    						new String[] {rs.getString("bookingid")});
-	    			}
+	    			}*/
 	    		}
 
 	    		if (!has_parent) {
@@ -1408,16 +1415,16 @@ public class HornetDBService extends Service {
 		    			val.put(ContentDescriptor.BookingTime.Cols.RID, rs.getString("resourceid"));
 		    			val.put(ContentDescriptor.BookingTime.Cols.TIMEID, timeid);
 		    			val.put(ContentDescriptor.BookingTime.Cols.ARRIVAL, date);
-		    			
+
 		    			cur = contentResolver.query(ContentDescriptor.BookingTime.CONTENT_URI, null, "bt."+ContentDescriptor.BookingTime.Cols.BID+" = ? AND bt."
 		    					+ContentDescriptor.BookingTime.Cols.RID+" = ? AND bt."+ContentDescriptor.BookingTime.Cols.TIMEID+" = ? AND bt."
 		    					+ContentDescriptor.BookingTime.Cols.ARRIVAL+" = ?", new String[] {rs.getString("bookingid"), rs.getString("resourceid"),
 		    					String.valueOf(timeid), date}, null);
-		    			
+
 		    			if (cur.getCount() == 0 ) { //insert
 		    				cur.close();
 		    				contentResolver.insert(ContentDescriptor.BookingTime.CONTENT_URI, val);
-		    			} else { //update 
+		    			} else { //update //Probably unneccisary, we're basically always inserting.
 		    				cur.moveToFirst();
 		    				int id = cur.getInt(cur.getColumnIndex(ContentDescriptor.BookingTime.Cols._ID));
 		    				cur.close();
@@ -1425,7 +1432,7 @@ public class HornetDBService extends Service {
 		    						new String[] {String.valueOf(id)});
 		    			}
 		    			timeid +=1;
-		    		}		    		
+		    		}
 		    	}
 	    		if (!cur.isClosed()) {
 	    			cur.close();
@@ -1574,7 +1581,7 @@ public class HornetDBService extends Service {
     	}
     	cur.close();
     	
-		while (current.getTimeInMillis() <= maximum.getTimeInMillis()) {
+		while (current.getTimeInMillis() < maximum.getTimeInMillis()) {
 			date = current.getTime();
 			currentDay = current.get(Calendar.DAY_OF_WEEK);
 			values = new ContentValues();
@@ -1782,17 +1789,16 @@ public class HornetDBService extends Service {
     	return result;
     }
     
-    private int getOpenHours(){
+    private int getOpenHours(long last_sync){
     	Log.v(TAG, "Getting Open Hours");
     	int result = 0;
     	ResultSet rs = null;
     	
-    	contentResolver.delete(ContentDescriptor.OpenTime.CONTENT_URI, null, null);
     	if (!openConnection()) {
     		return -1; //connection failed;
     	}
     	try {
-    		rs = connection.getOpenHours();
+    		rs = connection.getOpenHours(last_sync);
     		while (rs.next()) {
     			ContentValues values = new ContentValues();
     			values.put(ContentDescriptor.OpenTime.Cols.DAYOFWEEK, (rs.getInt("dayofweek")+1));
@@ -1800,7 +1806,16 @@ public class HornetDBService extends Service {
     			values.put(ContentDescriptor.OpenTime.Cols.CLOSETIME, rs.getString("closetime"));
     			values.put(ContentDescriptor.OpenTime.Cols.NAME, rs.getString("name"));
     			
-    			contentResolver.insert(ContentDescriptor.OpenTime.CONTENT_URI, values);
+    			cur = contentResolver.query(ContentDescriptor.OpenTime.CONTENT_URI, null, ContentDescriptor.OpenTime.Cols.DAYOFWEEK+" = ?",
+    					new String[] {String.valueOf(rs.getInt("dayofweek")+1)}, null);
+    			if (cur.moveToFirst()) {
+    				cur.close();
+    				contentResolver.update(ContentDescriptor.OpenTime.CONTENT_URI, values, ContentDescriptor.OpenTime.Cols.DAYOFWEEK+" = ?",
+    						new String[] {String.valueOf(rs.getInt("dayofweek")+1)});
+    			} else {
+    				cur.close();
+    				contentResolver.insert(ContentDescriptor.OpenTime.CONTENT_URI, values);
+    			}
     			result +=1;
     		}
     		rs.close();
@@ -1809,9 +1824,15 @@ public class HornetDBService extends Service {
     		Log.e(TAG, "" , e);
     	}
     	closeConnection();
+    	Log.d(TAG, "UPDATED "+result+" OPEN HOURS");
     	return result;
     }
     
+    /**
+     * This function sets the start id and end id that closest match our opening and closing times.
+     * It should be called immediately after every getOpenHours(), but it only works if the date and time tables are set;
+     * @return
+     */
     private int updateOpenHours(){
     	Log.v(TAG, "Updating Open Hours");
     	int result;
@@ -1839,7 +1860,8 @@ public class HornetDBService extends Service {
     		values = new ContentValues();
 
     		cur = contentResolver.query(ContentDescriptor.Time.CONTENT_URI, null, ContentDescriptor.Time.Cols.TIME+" = ?",
-			new String[] {idList.get(i)[1]}, null);
+			new String[] {idList.get(i)[1]}, null); //find the time row that matches our start time.
+    		
     		if (idList.get(i)[1].compareTo("-1") == 0) {
     			//no starttime/endtime set for this day, what should I do?
     			Log.v(TAG, "NO STARTTIME SET***");
@@ -1848,7 +1870,7 @@ public class HornetDBService extends Service {
     			values.put(ContentDescriptor.OpenTime.Cols.CLOSEID, 0);
     		}
     		else if (cur.getCount() == 0) {
-    			cur.close();
+    			cur.close(); //find the nearest time to our start time.
     			cur = contentResolver.query(ContentDescriptor.Time.CONTENT_URI, null, ContentDescriptor.Time.Cols.TIME+" >= ?",
     					new String[] {idList.get(i)[1]}, ContentDescriptor.Time.Cols.TIME+" ASC LIMIT 1");
     			cur.moveToFirst();
@@ -2411,13 +2433,12 @@ public class HornetDBService extends Service {
     			ContentValues values = new ContentValues();
     			values.put(ContentDescriptor.MembershipSuspend.Cols.SID, rs.getString("id"));
     			values.put(ContentDescriptor.MembershipSuspend.Cols.MID, rs.getString("memberid"));
-    			/*values.put(ContentDescriptor.MembershipSuspend.Cols.STARTDATE, Services.dateFormat(
-    					rs.getString("startdate"), "yyyy-MM-dd", "yyyMMdd"));*/
+
     			values.put(ContentDescriptor.MembershipSuspend.Cols.STARTDATE, 
     					Services.DateToString(new Date(rs.getDate("startdate").getTime())));
     			values.put(ContentDescriptor.MembershipSuspend.Cols.LENGTH, rs.getString("howlong"));
     			values.put(ContentDescriptor.MembershipSuspend.Cols.REASON, rs.getString("reason"));
-    			//values.put(ContentDescriptor.MembershipSuspend.Cols.ENDDATE, rs.getString("edate"));
+
     			values.put(ContentDescriptor.MembershipSuspend.Cols.ENDDATE, 
     					Services.DateToString(new Date(rs.getDate("edate").getTime())));
     			values.put(ContentDescriptor.MembershipSuspend.Cols.SUSPENDCOST, rs.getString("suspendcost"));
@@ -2429,6 +2450,7 @@ public class HornetDBService extends Service {
     			values.put(ContentDescriptor.MembershipSuspend.Cols.PRORATA, rs.getString("prorata"));
     			values.put(ContentDescriptor.MembershipSuspend.Cols.FREEZE, rs.getString("freeze_fees"));
     			values.put(ContentDescriptor.MembershipSuspend.Cols.HOLDFEE, rs.getString("holdfee"));
+    			values.put(ContentDescriptor.MembershipSuspend.Cols.ORDER, rs.getDate("startdate").getTime());
     			
     			cur = contentResolver.query(ContentDescriptor.MembershipSuspend.CONTENT_URI, null, 
     					ContentDescriptor.MembershipSuspend.Cols.SID+" = ?", new String[] {rs.getString("id")}, null);

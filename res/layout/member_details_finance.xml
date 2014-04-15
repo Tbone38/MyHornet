@@ -36,23 +36,23 @@
             android:gravity="left|center_vertical"
             android:text="@string/finance_label_note" />
         <TextView
-            android:id="@+id/header_credit"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight=".4"
-            android:paddingLeft="5dp"
-            android:textSize="14sp"
-            android:gravity="right|center_vertical"
-            android:text="@string/finance_label_credit" />
-        <TextView
             android:id="@+id/header_debit"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight=".4"
             android:paddingLeft="5dp"
+            android:textSize="14sp"
+            android:gravity="right|center_vertical"
+            android:text="@string/finance_label_debit"/>
+        <TextView
+            android:id="@+id/header_credit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".4"
+            android:paddingLeft="5dp"
             android:gravity="right|center_vertical"
             android:textSize="14sp"
-            android:text="@string/finance_label_debit" />
+            android:text="@string/finance_label_credit"/>
     </LinearLayout>
 	<LinearLayout
         android:id="@+id/finance_history_list"
@@ -69,93 +69,4 @@
 	    android:layout_height="wrap_content"
 	    android:layout_below="@id/finance_history_list"
 	    />
-	
-   <!--  <LinearLayout
-	    android:id="@+id/button_row1"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:orientation="horizontal"
-	    android:gravity="center"
-	    android:layout_below="@id/finance_history_list"
-	    android:baselineAligned="false" >
-	    <LinearLayout
-		    android:id="@+id/button_check_billing"
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:orientation="vertical"
-		    android:gravity="center"
-		    android:padding="5dp" >
-		    <TextView 
-		        android:id="@+id/button_billing_check_text"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:paddingLeft="12dp"
-		        android:paddingRight="12dp"
-		        android:paddingTop="7dp"
-		        android:paddingBottom="7dp"
-		        android:text="@string/finance_check_billing"
-		        android:textSize="18sp"
-		        android:background="@drawable/button_large"
-		        android:clickable="true"/>
-		    
-		    <View
-		        android:layout_width="match_parent"
-		        android:layout_height="2dp"
-		        android:background="@color/button_underline_grey" />
-		</LinearLayout>
-	</LinearLayout>
-	<LinearLayout
-	    android:id="@+id/button_row2"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:orientation="horizontal"
-	    android:layout_below="@id/button_row1"
-	    android:baselineAligned="false" >
-	    <LinearLayout
-		    android:id="@+id/button_billing_view"
-		    android:layout_width="0dp"
-		    android:layout_height="wrap_content"
-		    android:layout_weight=".5"
-		    android:orientation="vertical"
-		    android:gravity="center"
-		    android:padding="5dp" >
-		    <TextView 
-		        android:id="@+id/button_billing_view_text"
-		        android:layout_width="match_parent"
-		        android:layout_height="wrap_content"
-		        android:padding="7dp"
-		        android:text="@string/finance_show_billing"
-		        android:textSize="18sp"
-		        android:background="@drawable/button_large"
-		        android:clickable="true"/>
-		    
-		    <View
-		        android:layout_width="match_parent"
-		        android:layout_height="2dp"
-		        android:background="@color/button_underline_grey" />
-		</LinearLayout>
-	    <LinearLayout
-		    android:id="@+id/button_billing_add"
-		    android:layout_width="0dp"
-		    android:layout_height="wrap_content"
-		    android:layout_weight=".5"
-		    android:orientation="vertical"
-		    android:gravity="center"
-		    android:padding="5dp" >
-		    <TextView 
-		        android:id="@+id/button_billing_add_text"
-		        android:layout_width="match_parent"
-		        android:layout_height="wrap_content"
-		        android:text="@string/finance_setup_billing"
-		        android:textSize="18sp"
-		        android:padding="7dp"
-		        android:background="@drawable/button_large_accept"
-		        android:clickable="true"/>
-		    
-		    <View
-		        android:layout_width="match_parent"
-		        android:layout_height="2dp"
-		        android:background="@color/button_underline_green" />
-		</LinearLayout>
-	</LinearLayout> -->
  </RelativeLayout>

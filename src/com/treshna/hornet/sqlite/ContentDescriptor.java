@@ -832,6 +832,8 @@ public class ContentDescriptor {
 	 			public static final String FULLCOST = "fullcost";
 	 			public static final String HOLDFEE = "holdfee";	
 	 			public static final String PRORATA = "prorata";
+	 			
+	 			public static final String ORDER = "orderdate";
 	 		}
 	 	}
 	 	
