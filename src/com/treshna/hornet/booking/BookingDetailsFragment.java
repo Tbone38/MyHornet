@@ -1,9 +1,12 @@
 package com.treshna.hornet.booking;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -25,6 +28,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -32,20 +36,14 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.treshna.hornet.R;
 import com.treshna.hornet.R.color;
-import com.treshna.hornet.R.id;
-import com.treshna.hornet.R.layout;
+import com.treshna.hornet.network.HornetDBService;
 import com.treshna.hornet.services.Services;
 import com.treshna.hornet.sqlite.ContentDescriptor;
-import com.treshna.hornet.sqlite.ContentDescriptor.Booking;
-import com.treshna.hornet.sqlite.ContentDescriptor.BookingTime;
-import com.treshna.hornet.sqlite.ContentDescriptor.Bookingtype;
-import com.treshna.hornet.sqlite.ContentDescriptor.Member;
-import com.treshna.hornet.sqlite.ContentDescriptor.Membership;
-import com.treshna.hornet.sqlite.ContentDescriptor.Resource;
-import com.treshna.hornet.sqlite.ContentDescriptor.BookingTime.Cols;
 
 public class BookingDetailsFragment extends Fragment implements OnClickListener {
 	
@@ -60,14 +58,18 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 	private String resourcename;
 	private String date;
 	private String starttime;
+	private String endtime;
 	
 	private RadioGroup rg;
+	private View rescheduleView;
+	private LayoutInflater mInflater;
 	
 	
 	 @Override
 	 public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			 Bundle savedInstanceState) {
 		 // Inflate the layout for this fragment
+		 mInflater = inflater;
 		 ctx = getActivity();
 		 bookingID = getArguments().getString(Services.Statics.KEY);
 		 System.out.print("\n\nBOOKINGID:"+bookingID+"\n\n");
@@ -117,6 +119,7 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 		
 		date = Services.DateToString(new Date(Long.parseLong(cur.getString(cur.getColumnIndex(ContentDescriptor.BookingTime.Cols.ARRIVAL)))));
 		starttime = Services.dateFormat(cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.STIME)), "HH:mm:ss", "hh:mmaa");
+		endtime = Services.dateFormat(cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.ETIME)), "HH:mm:ss", "hh:mmaa");
 		
 		TextView time = (TextView) page.findViewById(R.id.bookingtime);
 		time.setText(Services.dateFormat(cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.STIME)), "HH:mm:ss", "hh:mmaa")+" - " //start time is pos 15.
@@ -216,6 +219,11 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 			LinearLayout noshow = (LinearLayout) page.findViewById(R.id.button_booking_noshow);
 			noshow.setClickable(true);
 			noshow.setOnClickListener(this);
+			LinearLayout reschedule = (LinearLayout) page.findViewById(R.id.button_booking_reschedule);
+			reschedule.setClickable(true);
+			reschedule.setOnClickListener(this);
+			/*TextView reschedule = (TextView) page.findViewById(R.id.button_booking_reschedule_text);
+			reschedule.setTextColor(color.grey);*/
 			
 			cur.close();
 			cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, "m."+ContentDescriptor.Member.Cols.MID+" = "+memberID, null, null);
@@ -307,9 +315,6 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 			TextView programme = (TextView) page.findViewById(R.id.bookingmembership);
 			programme.setVisibility(View.GONE);
 		}
-		
-		TextView reschedule = (TextView) page.findViewById(R.id.button_booking_reschedule_text);
-		reschedule.setTextColor(color.grey);
 		
 		//SHOW IMAGE;
 				String imgDir = getActivity().getExternalFilesDir(null)+"/0_"+memberID+".jpg"; //cursor.getColumnIndex(ContentDescriptor.Member.Cols.MID)
@@ -410,23 +415,55 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 				}});
 		      alert.show();
 		      break;
-		}/*
-		case(R.id.bookingreschedule):{
-			AlertDialog.Builder alert = new AlertDialog.Builder(this);
-		      alert.setMessage("Really Cancel Booking for "+bookingName+"?");
-		      alert.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+		}
+		case(R.id.button_booking_reschedule):{
+			// we need an alert Dialog with a date & time picker.
+			// then we delete all the bookingtime entries for the booking.
+			// and then re-enter them.
+			// we also need to set the booking as a pending Update.
+			
+			AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+			alert.setTitle("Reschedule Booking");
+			rescheduleView = mInflater.inflate(R.layout.alert_reschedule, null);
+			DatePicker datePicker = (DatePicker) rescheduleView.findViewById(R.id.datePicker1);
+			TimePicker timePicker = (TimePicker) rescheduleView.findViewById(R.id.timePicker1);
+			
+			Date theDate = Services.StringToDate(date, "dd MMM yyyy");
+			Calendar cal = Calendar.getInstance();
+			cal.setTimeInMillis(theDate.getTime());
+			datePicker.updateDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE));
+			
+			theDate = Services.StringToDate(starttime, "hh:mmaa");
+			cal.setTimeInMillis(theDate.getTime());
+			timePicker.setCurrentMinute(cal.get(Calendar.MINUTE));
+			timePicker.setCurrentHour(cal.get(Calendar.HOUR_OF_DAY));
+			
+			alert.setView(rescheduleView);
+			alert.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					//change & update table.
+					//check if the time is even available.
+					//if it is, update the booking.
+					DatePicker datePicker = (DatePicker) rescheduleView.findViewById(R.id.datePicker1);
+					TimePicker timePicker = (TimePicker) rescheduleView.findViewById(R.id.timePicker1);
+					
+					Calendar cal = Calendar.getInstance();
+					cal.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth(), 0, 0, 0);
+					Date theDate = cal.getTime();
+					
+					cal.set(0, 0, 0, timePicker.getCurrentHour(), timePicker.getCurrentMinute(), 0);
+					Date theTime = cal.getTime();
+					SimpleDateFormat format = new SimpleDateFormat("hh:mmaa", Locale.US);
+					
+					if (!checkScheduleAvailable(format.format(theTime), Services.DateToString(theDate))) {
+						Toast.makeText(getActivity(), "Cannot Move Booking to that time, It's already in use.", Toast.LENGTH_LONG).show(); 
+					}
 				}});
-		      alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					//do nothing.
-				}});
-		      alert.show();
-		      break;
-		}*/
+		    alert.setNegativeButton("Cancel", null);
+			alert.show();
+			
+			break;
+		}
 		case (R.id.button_booking_sms):{
 			//send a text reminder
 			Intent smsIntent = new Intent(Intent.ACTION_VIEW);
@@ -446,6 +483,80 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 		}
 		}
 	}
+	
+	private boolean checkScheduleAvailable(String starttime, String date) {
+		// get ResourceID.
+		// start time.
+		// end time.
+		int resourceid = -1, startid = 0, endid = 0;
+		long interval = 0, datelong = 0;
+		boolean can_set = true;
+		
+		
+		Cursor cur2 = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.BID+" = ?",
+				new String[] {String.valueOf(bookingID)}, null);
+		
+		if (!cur2.moveToFirst()) {
+			return false;
+		}
+		
+		datelong = Services.StringToDate(date, "dd MMM yyyy").getTime();
+		interval = Services.StringToDate(endtime, "hh:mmaa").getTime() - Services.StringToDate(starttime, "hh:mmaa").getTime();
+		resourceid = cur2.getInt(cur2.getColumnIndex(ContentDescriptor.Booking.Cols.RID));
+		cur2.close();
+		startid = HornetDBService.getTime(Services.dateFormat(starttime, "hh:mmaa", "HH:mm:ss"), contentResolver, false);
+		SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss", Locale.US);
+		endid = HornetDBService.getTime(format.format(new Date(Services.StringToDate(starttime, "hh:mmaa").getTime()+interval)),
+				contentResolver, true);
+		
+		int curid = startid;
+		while (curid<= endid) { //we are inclusive.
+			Cursor cur = contentResolver.query(ContentDescriptor.BookingTime.CONTENT_URI,null, "bt."+ContentDescriptor.BookingTime.Cols.RID+" = ? AND "
+					+ContentDescriptor.BookingTime.Cols.TIMEID+" = ? AND bt."+ContentDescriptor.BookingTime.Cols.ARRIVAL+" = ?",
+					new String[] {String.valueOf(resourceid), String.valueOf(curid), String.valueOf(datelong)}, null);
+			
+			if (cur.moveToFirst()) {
+				can_set = false;
+			}
+			cur.close();
+			curid+=1;
+		}
+		
+		if (can_set) {
+			contentResolver.delete(ContentDescriptor.BookingTime.CONTENT_URI,ContentDescriptor.BookingTime.Cols.BID+" = ? ",
+					new String[] {String.valueOf(bookingID)});
+			
+			ContentValues values = new ContentValues();
+			values.put(ContentDescriptor.Booking.Cols.STIME, Services.dateFormat(starttime, "hh:mmaa", "HH:mm:ss"));
+			values.put(ContentDescriptor.Booking.Cols.STIMEID, startid);
+			
+			values.put(ContentDescriptor.Booking.Cols.ETIME, 
+					format.format(new Date(Services.StringToDate(starttime, "hh:mmaa").getTime()+interval)));
+			values.put(ContentDescriptor.Booking.Cols.ETIMEID, endid);
+			values.put(ContentDescriptor.Booking.Cols.ARRIVAL, datelong);
+			values.put(ContentDescriptor.Booking.Cols.LASTUPDATE, new Date().getTime());
+			values.put(ContentDescriptor.Booking.Cols.DEVICESIGNUP, "t"); //IS this needed... ?
+			
+			contentResolver.update(ContentDescriptor.Booking.CONTENT_URI, values, ContentDescriptor.Booking.Cols.BID+" = ?",
+					new String[] {String.valueOf(bookingID)});
+			
+			curid = startid;
+			while (curid <= endid) {
+    			values = new ContentValues();
+    			values.put(ContentDescriptor.BookingTime.Cols.BID, bookingID);
+    			values.put(ContentDescriptor.BookingTime.Cols.RID, resourceid);
+    			values.put(ContentDescriptor.BookingTime.Cols.TIMEID, curid);
+    			values.put(ContentDescriptor.BookingTime.Cols.ARRIVAL, date);
+
+				contentResolver.insert(ContentDescriptor.BookingTime.CONTENT_URI, values);
+				curid +=1;
+			}
+			return true;
+		}
+		return false;
+	}
+	
+	
 	private void selectCall(String[] numbers){
 		AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
 		LayoutInflater inflater = getActivity().getLayoutInflater();

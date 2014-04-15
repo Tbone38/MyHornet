@@ -132,12 +132,37 @@ public class JDBCConnection {
     	 }
     }
     
-    public ResultSet getImages(long lastsync) throws SQLException {
-    	pStatement = con.prepareStatement("SELECT decode(substring(imagedata from 3),'base64') AS imagedata, memberid, lastupdate, description, is_profile, "
+    public int getMaxImageId() throws SQLException {
+    	ResultSet rs;
+    	int max = -1;
+
+    	pStatement = con.prepareStatement("SELECT max(id) AS max FROM image;");
+    	rs = pStatement.executeQuery();
+    	rs.next();
+    	max = rs.getInt("max");
+    	rs.close();
+
+    	return max;
+    }
+    
+    public ResultSet getImages(long lastsync, int lastrow) throws SQLException {
+    	String query = "SELECT decode(substring(imagedata from 3),'base64') AS imagedata, memberid, lastupdate, description, is_profile, "
 				+ "created, id FROM IMAGE where substring(imagedata,1,2) = '1|' AND memberid NOT IN (SELECT id FROM member WHERE status = 3)"
-				+ "AND lastupdate > ?");
+				+ "AND lastupdate > ? ";
     	
+    	if (lastrow > 0) {
+    		query = query+"AND id > ? AND id =< (?+100)";
+    	}
+    	
+    	pStatement = con.prepareStatement(query); //get 200 at a time?
+    	
+    	//AND id >= ? AND id < (?+200)"
     	pStatement.setTimestamp(1, new Timestamp(lastsync));
+    	if (lastrow > 0 ) {
+	    	pStatement.setInt(2, lastrow);
+	    	pStatement.setInt(3, lastrow);
+    	}
+
     	return pStatement.executeQuery();
     }
     

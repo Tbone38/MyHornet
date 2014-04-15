@@ -632,11 +632,11 @@ public class HornetDBService extends Service {
     }
     
     private void visitorImages() {
-    	getImages(last_sync);
+    	getImages(last_sync, 0);
     }
     
     private void memberImages() {
-    	getImages(last_sync);
+    	getImages(last_sync, 0);
     }
     
     
@@ -645,16 +645,27 @@ public class HornetDBService extends Service {
      * @param lastsync
      * @return
      */
-    private int getImages(long lastsync) {
+    //TODO: test this is still functional...
+    private int getImages(long lastsync, int lastrow) {
     	int result = 0;
+    	int highestid = 0;
     	
     	if (!openConnection()) {
     		return result; //connection failed;
     	}
     	
-    	ResultSet rs = null;
     	try {
-    		rs = connection.getImages(lastsync);
+    		int max_id = connection.getMaxImageId();
+    		if (lastrow >= max_id) {
+    			return 0;
+    		}
+    		
+    		ResultSet rs = null;
+    		if (lastsync > 10000) { //not our first sync, just check for updated images.
+    			rs = connection.getImages(lastsync, -1);
+    		} else { //it's our first sync, be careful about memory issues! 
+    			rs = connection.getImages(lastsync, lastrow);
+    		}
     		
     		while (rs.next()) {
     			int rowid = -1;
@@ -672,6 +683,7 @@ public class HornetDBService extends Service {
     			values.put(ContentDescriptor.Image.Cols.MID, rs.getInt("memberid"));
     			values.put(ContentDescriptor.Image.Cols.DATE, rs.getTimestamp("created").getTime());
     			values.put(ContentDescriptor.Image.Cols.LASTUPDATE, rs.getTimestamp("lastupdate").getTime());
+    			highestid = rs.getInt("id");
     			
     			byte[] is = rs.getBytes("imagedata");
             	logger.writeFile(is, rs.getInt("id")+"_"+rs.getString("memberid")+".jpg");
@@ -685,11 +697,17 @@ public class HornetDBService extends Service {
             		result += 1;
             	}
     		}
+    		rs.close();
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
     		Log.e(TAG, "", e);
     		return -1;
     	}
+
+    	if (lastsync < 10000) { //it's our first sync, check for more images!
+    		result += getImages(lastsync, highestid);
+    	}
+
     	return result;
     }
     
@@ -4844,7 +4862,7 @@ public class HornetDBService extends Service {
     		statusMessage = e.getLocalizedMessage();
     	}
     	contentResolver.delete(ContentDescriptor.Image.CONTENT_URI, null, null);
-    	getImages(0);
+    	getImages(0, 0);
     	
     	updateDevice();
     	closeConnection();
