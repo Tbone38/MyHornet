@@ -1,5 +1,8 @@
 package com.treshna.hornet;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -28,6 +31,7 @@ import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.util.Patterns;
 import android.util.TypedValue;
@@ -48,6 +52,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class ReportMainActivity extends ListActivity {
@@ -57,10 +62,10 @@ public class ReportMainActivity extends ListActivity {
 	private ArrayList<HashMap<String,String>> emailsMapList =  null;
 	private String reportName = null;
 	private String reportFunctionName = null;
-	private boolean emailSyncComplete = false;
 	private String queryFunctionParamsCut = null;
 	private String numValueRegex = "(^\\$?[0-9]+\\.?[0-9]+)|([0-9]+)";
 	private String callingActivity = null;
+	private Button btnEmailCSV = null;
 	private String finalQuery = null;
 	private Date startDate = null;
 	private Date endDate = null;
@@ -76,6 +81,7 @@ public class ReportMainActivity extends ListActivity {
 		Intent intent = this.getIntent();
 		startDate  =  new Date(intent.getLongExtra("start_date", 0));
 		endDate  =  new Date(intent.getLongExtra("end_date", 0));
+		btnEmailCSV = (Button) findViewById(R.id.btnEmailReportCSV);
 		int reportId = intent.getIntExtra("report_id",0);
 		callingActivity = intent.getStringExtra("calling_activity");
 		if (callingActivity.compareTo("column_options")==  0){
@@ -93,7 +99,14 @@ public class ReportMainActivity extends ListActivity {
 			}
 			
 		});
-		
+		btnEmailCSV.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				emailCSVAsAttachment();	
+			}
+			
+		});		
 		this.getColumnData(reportId);
 	    
 	}
@@ -193,6 +206,52 @@ public class ReportMainActivity extends ListActivity {
 	}
 	
 	
+	private String createCSVFromReportData () {
+		
+		String SDCardRoot = Environment.getExternalStorageDirectory().getPath();
+		PrintWriter writer = null;
+		String fileName = reportName + ".csv";
+		String row = "";
+		try {
+			writer = new PrintWriter(SDCardRoot + "/" + fileName, "UTF-8");
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String headerRow = "";
+		HashMap<String,String>  firstRow =  resultMapList.get(0);
+		for (Entry column: firstRow.entrySet()){
+			headerRow += column.getKey() + ",";
+		}
+		//removing the last comma 
+		headerRow = headerRow.substring(0, headerRow.length() - 1);
+		writer.println(headerRow);
+		
+		for (HashMap<String,String> resultMap : resultMapList){
+			row = "";
+			for (Entry column: resultMap.entrySet()){
+				row += column.getValue() + ",";
+			}
+			//removing the last comma 
+			row = row.substring(0, row.length() - 1);
+			writer.println(row);
+		}
+		 writer.close();
+		 return fileName;
+	}
+	
+	private void emailCSVAsAttachment () {
+		String fileName  = createCSVFromReportData();
+		EmailSender emailSender = new EmailSender(ReportMainActivity.this, getClientPrimaryEmail(),null,fileName);
+		emailSender.attachFile(fileName);
+		emailSender.sendToClientEmail();
+		
+	}
+	
+	
 	private void buildQuery() {
 		
 		StringBuilder queryBuilder = new StringBuilder();
@@ -212,7 +271,7 @@ public class ReportMainActivity extends ListActivity {
 			
 			for (Map.Entry<String,String> field: columnsMap.entrySet()){
 					//System.out.println(field.getKey() + " : " + field.getValue());
-				if (isSelected){
+				if (isSelected) {
 					//Adding the member.id column where other columns join the member table
 					if (columnsFieldsContainsTable("member") && !isMemberIdAdded){
 						queryBuilder.append("member.id AS \"MemberID\", ");
@@ -319,12 +378,14 @@ public class ReportMainActivity extends ListActivity {
 				}
 				
 			});
-		if (columnsContainName("Member ID") || columnsFieldsContainsTable("member") || columnsFieldsContainsTable("enquiry")) {
+		if ((columnsContainName("Member ID") || columnsFieldsContainsTable("member") || columnsFieldsContainsTable("enquiry")) && resultMapList.size() > 0) {
 			btnEmail.setVisibility(View.VISIBLE);
+		}
+		if (resultMapList.size() > 0) {
+			btnEmailCSV.setVisibility(View.VISIBLE);
 		}
 		
 	    buildColumnHeaders();
-
 		ListAdapter listAdapter = new ArrayAdapter<HashMap<String,String>>(ReportMainActivity.this,R.layout.report_main_row,
 				this.resultMapList){
 
@@ -387,7 +448,6 @@ public class ReportMainActivity extends ListActivity {
 												
 		        };
 		this.setListAdapter(listAdapter);
-
 	  }
 	
  private boolean isAnyRowAllNums(String colName){
@@ -517,7 +577,7 @@ private void buildColumnHeaders() {
 	private boolean isColumnAllNull(String colName) {
 		HashMap<String,Integer> colNullCount = new HashMap<String,Integer>();
 		 //Bug fix blocking of all collumns with a single row of data.
-		 if (resultMapList.size() != 1){
+		 if (resultMapList.size() != 1) {
 			for (HashMap<String,String> dataRow: resultMapList){
 						
 				for (Entry<String,String> col : dataRow.entrySet()){
@@ -589,8 +649,7 @@ private void buildColumnHeaders() {
 
 		protected void onPostExecute(Boolean success) {
 			progress.dismiss();
-			if (success) {
-				
+			if (success) {		
 				/*System.out.println("\nReport-Type_Data");
 				
 				System.out.println("Result List Size: " + resultMapList.size());
@@ -680,7 +739,6 @@ private void buildColumnHeaders() {
 		protected void onPreExecute() {
 			progress = ProgressDialog.show(ReportMainActivity.this, "Retrieving..", 
 					 "Retrieving Email Addresses...");
-			emailSyncComplete = false;
 		}
 		
 		@Override
@@ -693,7 +751,7 @@ private void buildColumnHeaders() {
 		protected void onPostExecute(Boolean success) {
 			progress.dismiss();
 			if (success) {
-				emailSyncComplete = true;
+				String errorMessage = "No valid Emails for Members in this Report";
 				//Calls back to the owning activity to call the thread to retrieve the joining tables
 				System.out.println("Email List Size: " + emailsMapList.size());
 				
@@ -704,7 +762,13 @@ private void buildColumnHeaders() {
 					}
 				
 				}
-				EmailSender email = new EmailSender(ReportMainActivity.this, getClientPrimaryEmail(),getEmailsAddressesAsArray(),"");
+				if (getEmailsAddressesAsArray().length > 0){
+					EmailSender email = new EmailSender(ReportMainActivity.this, getClientPrimaryEmail(),getEmailsAddressesAsArray(),null);
+					email.sendToClientEmail();
+				} else {
+					Toast message = Toast.makeText(ReportMainActivity.this, errorMessage, Toast.LENGTH_SHORT);
+					message.show();
+				}
 				
 				
 			} else {

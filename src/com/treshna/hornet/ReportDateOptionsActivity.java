@@ -55,31 +55,7 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 		reportId = intent.getIntExtra("report_id",0);
 		reportData.put("report_name", intent.getStringExtra("report_name"));
 		reportData.put("report_function_name", intent.getStringExtra("report_function_name"));
-		final Spinner datePresetsSpinner = (Spinner) findViewById(R.id.datePresetsSpinner);
-		String[] spinnerOptions = {"Last Month", "Last Two Months", "Last Six Months", "Last Year"};
-		ArrayAdapter<String> spinnerAdapter = new ArrayAdapter(this, R.layout.report_date_options_spinner , spinnerOptions);
-		datePresetsSpinner.setAdapter(spinnerAdapter);
-		datePresetsSpinner.setPrompt("Select Date Presets");
-		datePresetsSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-
-			@Override
-			public void onItemSelected(AdapterView<?> parent, View view,
-					int position, long id) {
-				
-					String selectedOption =  (String) datePresetsSpinner.getSelectedItem();
-					setSelectedDate(selectedOption);
-				
-			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> parent) {
-				// TODO Auto-generated method stub
-				
-			}
-
-		});
-
-			
+		setUpQuickSelectSpinner();			
 		btnStartButton.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -123,6 +99,33 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 		
 	}
 	
+	private void setUpQuickSelectSpinner () {
+		
+		final Spinner datePresetsSpinner = (Spinner) findViewById(R.id.datePresetsSpinner);
+		String[] spinnerOptions = {"Today", "This Month", "Last Month", "Last Two Months", "Last Six Months", "Last Year"};
+		ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(this, R.layout.report_date_options_spinner , spinnerOptions);
+		datePresetsSpinner.setAdapter(spinnerAdapter);
+		datePresetsSpinner.setPrompt("Select Date Presets");
+		datePresetsSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int position, long id) {
+				
+					String selectedOption =  (String) datePresetsSpinner.getSelectedItem();
+					setSelectedDate(selectedOption);
+				
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+				// TODO Auto-generated method stub
+				
+			}
+
+		});
+	}
+	
 	private void setSelectedDate(String selectedOption) {
 		
 		if (selectedOption.compareTo("Last Two Months")== 0){
@@ -139,7 +142,15 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 		} else if (selectedOption.compareTo("Last Month")== 0){
 			
 			selectedStartDate = resetDateByNumOfMonths ( -1, startDateText);
-		} 	
+			
+		} else if (selectedOption.compareTo("This Month")== 0){
+			
+			selectedStartDate = resetDateToStartOfCurrentMonth(startDateText);
+			
+		} else if (selectedOption.compareTo("Today")== 0){
+			
+			selectedStartDate = setStartDateToToday(startDateText);
+		}
 	}
 	
 	
@@ -154,6 +165,29 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 		 return selectedDate;
 		
 	}
+	
+	private Date resetDateToStartOfCurrentMonth(TextView dateDisplayView) {
+		
+		 Date selectedDate = new Date(); 
+		 Calendar cal = Calendar.getInstance();
+		 cal.setTime(selectedDate); 
+		 cal.add(Calendar.DAY_OF_MONTH, - cal.get(Calendar.DATE) + 1);
+		 
+		 selectedDate = cal.getTime();
+		 setDateTextView(dateDisplayView, selectedDate);
+		 return selectedDate;
+		
+	}
+	
+	private Date setStartDateToToday(TextView dateDisplayView) {
+		
+		 Date selectedDate = new Date(); 
+		 setDateTextView(dateDisplayView, selectedDate);
+		 return selectedDate;
+		
+	}
+	
+	
 	
 	private  TextView setDateTextView (TextView dateTextView, Date selectedDate){
 		SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy", Locale.US);

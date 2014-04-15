@@ -1162,6 +1162,7 @@ public class JDBCConnection {
     	return this.pStatement.executeQuery();
     }
     public ResultSet getEmailAddressesByIds(Integer []ids, String tableName) throws SQLException {
+
     	String query = "Select email from " + tableName + " where id in (";
     	for (int i=0; i< ids.length; i++) {
     		query += ids[i];
@@ -1169,9 +1170,11 @@ public class JDBCConnection {
     			query += ",";
     		} else {
     			query = query+");";
-    	
     		}
+    	
     	}
+    	
+    	
     	System.out.println("Ids Length: " +ids.length);
     	System.out.println("Email Query: " +query);
     	//String query = "Select email from ? where id in ?";

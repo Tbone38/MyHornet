@@ -26,6 +26,17 @@
 			android:padding="8dp"
 	        android:visibility="gone"
 	        android:text="@string/report_btn_email" />
+	 	<Button
+	        android:id="@+id/btnEmailReportCSV"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="left"
+	        android:layout_marginRight="10dp"
+	       	android:layout_marginLeft="10dp"
+	       	android:background="@color/button_background_green"
+			android:padding="8dp"
+			android:visibility="gone"
+	        android:text="@string/report_btn_email_csv" />
 	 </LinearLayout>
 			<LinearLayout
 				android:id="@+id/report_list_headings"
