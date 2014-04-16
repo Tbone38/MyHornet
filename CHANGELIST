@@ -82,6 +82,7 @@ KEY:
                 Added Last Sync time to the bottom of the nav drawer.
                 Fixed the order of MembershipSuspends. (convert to Epoch!)
                 Fixed issue with open Hours going missing on app update, which was causing the bookings to not show.
+                Booking Rescheduling is now functional (and handled correctly for bookings that are rescheduled on the desktop.)
  
             TODO:
                 Handle permissions/Roles for different staff, to limit what certain staff can see.
@@ -102,9 +103,8 @@ KEY:
                     - Heading
                 Do an app walkthrough
                 Member Details Bookings - Class Name for classes (rather than saying "class attendant..")
-                Booking Rescheduling!
-				Make the sync process more robust by checking that each function returns 0 or more. 
-					If we get less than 0 than we've encountered an error, try continuing but don't update the "last_sync" time..?
+                Make the sync process more robust by checking that each function returns 0 or more. 
+                    If we get less than 0 than we've encountered an error, try continuing but don't update the "last_sync" time..?
 
     
     v119:

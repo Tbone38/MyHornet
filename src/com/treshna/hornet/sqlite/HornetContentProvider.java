@@ -1,5 +1,7 @@
 package com.treshna.hornet.sqlite;
 
+import java.util.Arrays;
+
 import com.treshna.hornet.services.FileHandler;
 
 import android.content.ContentProvider;
@@ -653,7 +655,7 @@ public class HornetContentProvider extends ContentProvider {
             	 * the current details.
             	 *
             	 */
-            	//Log.w("SQL", builder.buildQuery(projection, selection, "_id", null, sortOrder, null));
+            	Log.w("SQLite", builder.buildQuery(projection, selection, "_id", null, sortOrder, null));
             	return builder.query(db, projection, selection, null, "_id", null, sortOrder);
             }
             
@@ -668,6 +670,9 @@ public class HornetContentProvider extends ContentProvider {
             			+" LEFT JOIN "
             			+ContentDescriptor.BookingTime.NAME+" bt ON (b."
             			+ContentDescriptor.Booking.Cols.BID+" = bt."+ContentDescriptor.BookingTime.Cols.BID+")");
+            	
+            	Log.w("BOOKING TIME", builder.buildQuery(projection, selection, null, null, sortOrder, null));
+            	Log.w("BOOKING TIME", Arrays.toString(selectionArgs));
             	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
             }
             case ContentDescriptor.Resource.PATH_TOKEN:{
@@ -748,6 +753,9 @@ public class HornetContentProvider extends ContentProvider {
             			+ "LEFT JOIN "+ContentDescriptor.Time.NAME+" t ON (bt."
             			+ContentDescriptor.BookingTime.Cols.TIMEID+" = t."
             			+ContentDescriptor.Time.Cols.ID+")");
+            	
+            	//Log.w("BOOKING TIME", builder.buildQuery(projection, selection, selectionArgs, null, null, sortOrder, null));
+            	
             	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);	
             }
             

@@ -151,7 +151,7 @@ public class JDBCConnection {
 				+ "AND lastupdate > ? ";
     	
     	if (lastrow > 0) {
-    		query = query+"AND id > ? AND id =< (?+100)";
+    		query = query+"AND id > ? ORDER BY id ASC LIMIT 100;";
     	}
     	
     	pStatement = con.prepareStatement(query); //get 200 at a time?
@@ -160,7 +160,6 @@ public class JDBCConnection {
     	pStatement.setTimestamp(1, new Timestamp(lastsync));
     	if (lastrow > 0 ) {
 	    	pStatement.setInt(2, lastrow);
-	    	pStatement.setInt(3, lastrow);
     	}
 
     	return pStatement.executeQuery();
@@ -353,24 +352,36 @@ public class JDBCConnection {
 	    	return rs;
     }
     
-    public int updateBookings(int bookingID, int resultstatus, String notes, long lastupdate, int bookingtypeid, long checkin) 
-    		throws SQLException, NullPointerException {
+    public int updateBookings(int bookingID, int resultstatus, String notes, long lastupdate, int bookingtypeid, long checkin,
+    			long arrival, String starttime, String endtime, String offset) throws SQLException, NullPointerException {
 	    	int result = 0;
-	    	pStatement = con.prepareStatement("UPDATE booking SET (result, notes, bookingtypeid, lastupdate, checkin) = (?,?,?,?, ?)" +
+	    	pStatement = con.prepareStatement("UPDATE booking SET (result, notes, bookingtypeid, lastupdate, checkin, arrival, startid,"
+	    			+ "starttime, endid, endtime) = (?,?,?,?, ?, ?, ?::TIME WITHOUT TIME ZONE, ?::TIME WITHOUT TIME ZONE,"
+	    			+ "(?::TIME WITHOUT TIME ZONE - ?::INTERVAL)::TIME WITHOUT TIME ZONE, ?::TIME WITHOUT TIME ZONE)" +
 	    			" WHERE id = ?");
 	    	pStatement.setInt(1, resultstatus);
 	    	pStatement.setString(2, notes);
 	    	pStatement.setInt(3, bookingtypeid);
 	    	pStatement.setDate(4, new java.sql.Date(lastupdate));
-	    	if (checkin <= 0) { //TODO: check this works.
+	    	if (checkin <= 0) { 
 	    		pStatement.setNull(5, java.sql.Types.TIMESTAMP);
 	    	} else {
 	    		//pStatement.setDate(5, new java.sql.Date(checkin));
 	    		pStatement.setTimestamp(5, new java.sql.Timestamp(checkin));
 	    		Log.v(TAG, "updating Booking "+bookingID+", with checkin time: "+new java.sql.Date(checkin));
 	    	}
-	    	pStatement.setInt(6, bookingID);
 	    	
+	    	pStatement.setDate(6, new java.sql.Date(arrival));
+	    	pStatement.setString(7, starttime);
+	    	pStatement.setString(8, starttime);
+	    	pStatement.setString(9, endtime);
+	    	pStatement.setString(10, offset);
+	    	pStatement.setString(11, endtime);
+	    	
+	    	pStatement.setInt(12, bookingID);
+	    	
+	    	
+	    	Log.d(TAG, pStatement.toString());
 	    	result = pStatement.executeUpdate();
 	    	
 	    	return result;
@@ -1356,8 +1367,9 @@ public ResultSet getReportTypes() throws SQLException {
     
     public ResultSet startStatementQuery(String query) throws SQLException, NullPointerException {
     	ResultSet rs = null;
-	    	statement = con.createStatement();
+	    	
 	    	try {
+	    		statement = con.createStatement();
 	    		rs = statement.executeQuery(query);
 	    	} catch (NullPointerException e) {
 	    		//sometimes our socket throws an I/O exception (apparently meaning an issue with the connection..?)

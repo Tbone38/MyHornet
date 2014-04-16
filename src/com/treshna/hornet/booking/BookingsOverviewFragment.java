@@ -94,7 +94,7 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
         }
         
         mTuesday = new TextView(getActivity());
-        mTuesday.setTextSize(49f);
+        mTuesday.setTextSize(45f);
         mTuesday.setTextColor(this.getResources().getColor(R.color.android_blue));
     	mTuesday.setLayoutParams(params);
     	mTuesday.setId(40);
@@ -347,6 +347,7 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
 				for (int j = 0; j < bookingtimes.size(); j +=1) {
 					int[] booking = bookingtimes.get(j); 
 					switch (booking[0]){
+					//	  HHmmss
 					case (50000):{
 						View time = timeslot1.findViewById(R.id.overview_timeslot_mid1);
 						setColour(booking[1], time);

@@ -306,7 +306,7 @@ public class HornetDBService extends Service {
  	   
  	   case (Services.Statics.FIRSTRUN):{ //this should be run nightly/weekly
  		  thread.is_networking = true;
-
+ 		  mApplication.setSyncStatus(true);
  		  if (first_sync.compareTo("-1")==0) {
  			  SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy", Locale.US);
  			  Services.setPreference(getApplicationContext(), "first_sync", format.format(new Date()));
@@ -349,6 +349,8 @@ public class HornetDBService extends Service {
 		   	   //rebuild times, then update the reference in date.
 			   logger.writeLog();
 		   	   uploadLog();
+			   mApplication.setSyncStatus(false);
+		   	   mApplication.setSyncResult(true);
 		   	   
 		   	   thread.is_networking = false;
 			   Intent bcIntent = new Intent();
@@ -393,6 +395,8 @@ public class HornetDBService extends Service {
 	   	  	//rebuild times, then update the reference in date.
 	   	  	logger.writeLog();
 	   	  	uploadLog();
+	   	  	mApplication.setSyncStatus(false);
+	   	  	mApplication.setSyncResult(true);
 
 		   if (statusMessage != null) {
 			   Services.showToast(getApplicationContext(), statusMessage, handler);
@@ -632,13 +636,49 @@ public class HornetDBService extends Service {
     }
     
     private void visitorImages() {
-    	getImages(last_sync, 0);
+    	getImagesController(last_sync);
     }
     
     private void memberImages() {
-    	getImages(last_sync, 0);
+    	getImagesController(last_sync);
     }
     
+    
+    private int getImagesController(long lastsync) {
+    	int result = 0, lastrow = 0, maxid = 0;
+    	
+    	if (!openConnection()) {
+    		return 0;
+    	}
+    	try {
+    		maxid = connection.getMaxImageId();
+    	} catch (SQLException e) {
+    		statusMessage = e.getLocalizedMessage();
+    		Log.e(TAG, "", e);
+    		return -1;
+    	}
+    	
+    	if (lastsync > 1000) {
+    		int[] status = getImages(lastsync, 0);
+    		if (status != null) {
+    			return status[0];
+    		}
+    		return -1;
+    	}
+    	
+    	while (lastrow < maxid) {
+    		int[] status = getImages(lastsync, lastrow);
+    		if (status == null) {
+    			return -1;
+    		}
+    		Log.d(TAG, "LASTROW = "+status[1]);
+    		Log.d(TAG, "MAX ROW = "+maxid);
+    		lastrow = status[1];
+    		result += status[0];
+    	}
+	
+    	return result;
+    }
     
     /** 
      * images are written to file as <image id from psql>_<member id>.jpg
@@ -646,20 +686,15 @@ public class HornetDBService extends Service {
      * @return
      */
     //TODO: test this is still functional...
-    private int getImages(long lastsync, int lastrow) {
+    private int[] getImages(long lastsync, int lastrow) {
     	int result = 0;
     	int highestid = 0;
     	
     	if (!openConnection()) {
-    		return result; //connection failed;
+    		return null; //connection failed;
     	}
     	
     	try {
-    		int max_id = connection.getMaxImageId();
-    		if (lastrow >= max_id) {
-    			return 0;
-    		}
-    		
     		ResultSet rs = null;
     		if (lastsync > 10000) { //not our first sync, just check for updated images.
     			rs = connection.getImages(lastsync, -1);
@@ -701,14 +736,10 @@ public class HornetDBService extends Service {
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
     		Log.e(TAG, "", e);
-    		return -1;
+    		return null;
     	}
 
-    	if (lastsync < 10000) { //it's our first sync, check for more images!
-    		result += getImages(lastsync, highestid);
-    	}
-
-    	return result;
+    	return new int[] {result, highestid};
     }
     
     private int getImageID() {
@@ -1250,8 +1281,8 @@ public class HornetDBService extends Service {
     		}
     	
     		int bookingid, resultstatus, bookingtypeid;
-    		long lastupdate, checkin;
-    		String notes;
+    		long lastupdate, checkin, arrival;
+    		String notes, starttime, endtime, offset;
     	
     		bookingid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Booking.Cols.BID));
     		resultstatus = cur.getInt(cur.getColumnIndex(ContentDescriptor.Booking.Cols.RESULT));
@@ -1259,9 +1290,15 @@ public class HornetDBService extends Service {
     		lastupdate = cur.getLong(cur.getColumnIndex(ContentDescriptor.Booking.Cols.LASTUPDATE)); //TODO: change this to now();
     		checkin = cur.getLong(cur.getColumnIndex(ContentDescriptor.Booking.Cols.CHECKIN));
     		notes = cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.NOTES));
+    		arrival = cur.getLong(cur.getColumnIndex(ContentDescriptor.Booking.Cols.ARRIVAL));
+    		starttime = cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.STIME));
+    		endtime = cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.ETIME));
+    		offset = cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.OFFSET));
+    		
     		//Log.v(TAG, "Last update for booking:"+bookingid+" was "+lastupdate);
     		try {
-    			result += connection.updateBookings(bookingid, resultstatus, notes, lastupdate, bookingtypeid, checkin);
+    			result += connection.updateBookings(bookingid, resultstatus, notes, lastupdate, bookingtypeid, checkin,
+    					arrival, starttime, endtime, offset);
     			connection.closePreparedStatement();
     		} catch (SQLException e) {
     			statusMessage = e.getLocalizedMessage();
@@ -4830,7 +4867,7 @@ public class HornetDBService extends Service {
 	    		result += connection.updateImage(is_profile, 
 	    				cur2.getString(cur2.getColumnIndex(ContentDescriptor.Image.Cols.DESCRIPTION)),
 	    				cur2.getInt(cur2.getColumnIndex(ContentDescriptor.Image.Cols.IID)));
-	    		
+	    		cur2.close();
     		}catch (SQLException e){ 
     			statusMessage = e.getLocalizedMessage();
     			Log.e(TAG, "UpdateImage:", e);

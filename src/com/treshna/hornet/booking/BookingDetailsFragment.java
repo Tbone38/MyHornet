@@ -3,6 +3,7 @@ package com.treshna.hornet.booking;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -21,6 +22,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -484,14 +486,13 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 		}
 	}
 	
-	private boolean checkScheduleAvailable(String starttime, String date) {
+	private boolean checkScheduleAvailable(String thestarttime, String date) {
 		// get ResourceID.
 		// start time.
 		// end time.
 		int resourceid = -1, startid = 0, endid = 0;
 		long interval = 0, datelong = 0;
 		boolean can_set = true;
-		
 		
 		Cursor cur2 = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.BID+" = ?",
 				new String[] {String.valueOf(bookingID)}, null);
@@ -502,18 +503,22 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 		
 		datelong = Services.StringToDate(date, "dd MMM yyyy").getTime();
 		interval = Services.StringToDate(endtime, "hh:mmaa").getTime() - Services.StringToDate(starttime, "hh:mmaa").getTime();
+
 		resourceid = cur2.getInt(cur2.getColumnIndex(ContentDescriptor.Booking.Cols.RID));
 		cur2.close();
-		startid = HornetDBService.getTime(Services.dateFormat(starttime, "hh:mmaa", "HH:mm:ss"), contentResolver, false);
+		startid = HornetDBService.getTime(Services.dateFormat(thestarttime, "hh:mmaa", "HH:mm:ss"), contentResolver, false);
 		SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss", Locale.US);
-		endid = HornetDBService.getTime(format.format(new Date(Services.StringToDate(starttime, "hh:mmaa").getTime()+interval)),
+		endid = HornetDBService.getTime(format.format(new Date(Services.StringToDate(thestarttime, "hh:mmaa").getTime()+interval)),
 				contentResolver, true);
 		
 		int curid = startid;
-		while (curid<= endid) { //we are inclusive.
-			Cursor cur = contentResolver.query(ContentDescriptor.BookingTime.CONTENT_URI,null, "bt."+ContentDescriptor.BookingTime.Cols.RID+" = ? AND "
-					+ContentDescriptor.BookingTime.Cols.TIMEID+" = ? AND bt."+ContentDescriptor.BookingTime.Cols.ARRIVAL+" = ?",
-					new String[] {String.valueOf(resourceid), String.valueOf(curid), String.valueOf(datelong)}, null);
+		while (curid<= endid) { //we are inclusive. 
+			Cursor cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI,null, ContentDescriptor.BookingTime.Cols.RID+" = ? AND ("
+					+ContentDescriptor.Booking.Cols.STIMEID+" = ? OR "+ContentDescriptor.Booking.Cols.ETIMEID+" = ?) "
+					+ "AND "+ContentDescriptor.Booking.Cols.ARRIVAL+" >= ? AND "+ContentDescriptor.Booking.Cols.ARRIVAL
+					+" <=  strftime('%s',datetime((?/1000), 'unixepoch', '+23 hours', '+59 minutes'))*1000",
+					new String[] {String.valueOf(resourceid), String.valueOf(curid), String.valueOf(curid),
+					String.valueOf(datelong), String.valueOf(datelong)}, null);
 			
 			if (cur.moveToFirst()) {
 				can_set = false;
@@ -527,16 +532,17 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 					new String[] {String.valueOf(bookingID)});
 			
 			ContentValues values = new ContentValues();
-			values.put(ContentDescriptor.Booking.Cols.STIME, Services.dateFormat(starttime, "hh:mmaa", "HH:mm:ss"));
+			values.put(ContentDescriptor.Booking.Cols.STIME, Services.dateFormat(thestarttime, "hh:mmaa", "HH:mm:ss"));
 			values.put(ContentDescriptor.Booking.Cols.STIMEID, startid);
 			
 			values.put(ContentDescriptor.Booking.Cols.ETIME, 
-					format.format(new Date(Services.StringToDate(starttime, "hh:mmaa").getTime()+interval)));
+					format.format(new Date(Services.StringToDate(thestarttime, "hh:mmaa").getTime()+interval)));
 			values.put(ContentDescriptor.Booking.Cols.ETIMEID, endid);
 			values.put(ContentDescriptor.Booking.Cols.ARRIVAL, datelong);
 			values.put(ContentDescriptor.Booking.Cols.LASTUPDATE, new Date().getTime());
-			values.put(ContentDescriptor.Booking.Cols.DEVICESIGNUP, "t"); //IS this needed... ?
+			values.put(ContentDescriptor.Booking.Cols.DEVICESIGNUP, "t"); //this IS needed.
 			
+			//Log.d("BOOKING DETAILS", Arrays.deepToString(values.valueSet().toArray()));
 			contentResolver.update(ContentDescriptor.Booking.CONTENT_URI, values, ContentDescriptor.Booking.Cols.BID+" = ?",
 					new String[] {String.valueOf(bookingID)});
 			
@@ -546,7 +552,7 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
     			values.put(ContentDescriptor.BookingTime.Cols.BID, bookingID);
     			values.put(ContentDescriptor.BookingTime.Cols.RID, resourceid);
     			values.put(ContentDescriptor.BookingTime.Cols.TIMEID, curid);
-    			values.put(ContentDescriptor.BookingTime.Cols.ARRIVAL, date);
+    			values.put(ContentDescriptor.BookingTime.Cols.ARRIVAL, datelong);
 
 				contentResolver.insert(ContentDescriptor.BookingTime.CONTENT_URI, values);
 				curid +=1;
