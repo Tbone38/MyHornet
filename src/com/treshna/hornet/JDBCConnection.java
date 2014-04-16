@@ -1191,6 +1191,15 @@ public class JDBCConnection {
     	this.pStatement.setString(1,functionName);
     	return this.pStatement.executeQuery();
     }
+    
+    public ResultSet getFilterFieldsByReportId(int reportId) throws SQLException {
+    	String query = "Select id, name, filter_name from report_filter where user_report_id = ?";
+    	this.pStatement = con.prepareStatement(query);
+    	this.pStatement.setInt(1,reportId);
+    	return this.pStatement.executeQuery();
+    }
+    
+
     public ResultSet getReportTypesAndNames() throws SQLException {
     	String query = "SELECT id, name, function_name, description, report_type_id AS order, false as istype FROM user_report" 
     	+" UNION SELECT id, name, view_name, NULL::text, id AS order, true as istype FROM report_type ORDER BY \"order\", \"istype\" DESC, name,id";

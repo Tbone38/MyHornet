@@ -210,7 +210,7 @@ public class ReportMainActivity extends ListActivity {
 		
 		String SDCardRoot = Environment.getExternalStorageDirectory().getPath();
 		PrintWriter writer = null;
-		String fileName = reportName + ".csv";
+		String fileName = reportName.replace(" ", "_") + ".csv";
 		String row = "";
 		try {
 			writer = new PrintWriter(SDCardRoot + "/" + fileName, "UTF-8");
@@ -233,7 +233,12 @@ public class ReportMainActivity extends ListActivity {
 		for (HashMap<String,String> resultMap : resultMapList){
 			row = "";
 			for (Entry column: resultMap.entrySet()){
-				row += column.getValue() + ",";
+				//Enclosing names in quotes..
+				if (column.getKey().toString().compareTo("Name") == 0){
+					row += "\"" + column.getValue()  + "\"" + ",";  
+				} else {
+					row += column.getValue() + ",";
+				}
 			}
 			//removing the last comma 
 			row = row.substring(0, row.length() - 1);
@@ -245,10 +250,11 @@ public class ReportMainActivity extends ListActivity {
 	
 	private void emailCSVAsAttachment () {
 		String fileName  = createCSVFromReportData();
+		//Create good filenames...
+		//fileName = fileName.replace(" ","_");
 		EmailSender emailSender = new EmailSender(ReportMainActivity.this, getClientPrimaryEmail(),null,fileName);
 		emailSender.attachFile(fileName);
 		emailSender.sendToClientEmail();
-		
 	}
 	
 	

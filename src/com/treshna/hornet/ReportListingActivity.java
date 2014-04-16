@@ -66,7 +66,7 @@ public class ReportListingActivity extends ListActivity {
 					HashMap<String,String> selectedRowData = (HashMap<String, String>) reportName.getTag();
 					
 					//Checking that a report name was clicked on (not a type)
-					 if ((selectedRowData.get("istype").compareTo("f")== 0)){
+					 if ((selectedRowData.get("istype").compareTo("f")== 0)) {
 							Intent intent = new Intent(view.getContext(),ReportDateOptionsActivity.class);
 							intent.putExtra("report_id", Integer.parseInt(selectedRowData.get("id")));
 							intent.putExtra("report_name" , selectedRowData.get("name").toString());
