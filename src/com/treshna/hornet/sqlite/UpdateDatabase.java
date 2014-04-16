@@ -7,6 +7,7 @@ import android.util.Log;
 import com.treshna.hornet.sqlite.ContentDescriptor.AppConfig;
 import com.treshna.hornet.sqlite.ContentDescriptor.BillingHistory;
 import com.treshna.hornet.sqlite.ContentDescriptor.Booking;
+import com.treshna.hornet.sqlite.ContentDescriptor.Bookingtype;
 import com.treshna.hornet.sqlite.ContentDescriptor.CancellationFee;
 import com.treshna.hornet.sqlite.ContentDescriptor.Class;
 import com.treshna.hornet.sqlite.ContentDescriptor.Company;
@@ -21,6 +22,7 @@ import com.treshna.hornet.sqlite.ContentDescriptor.MemberNotes;
 import com.treshna.hornet.sqlite.ContentDescriptor.Membership;
 import com.treshna.hornet.sqlite.ContentDescriptor.MembershipExpiryReason;
 import com.treshna.hornet.sqlite.ContentDescriptor.MembershipSuspend;
+import com.treshna.hornet.sqlite.ContentDescriptor.PaymentAgainst;
 import com.treshna.hornet.sqlite.ContentDescriptor.PendingDeletes;
 import com.treshna.hornet.sqlite.ContentDescriptor.PendingUpdates;
 import com.treshna.hornet.sqlite.ContentDescriptor.PendingUploads;
@@ -855,6 +857,15 @@ public class UpdateDatabase {
 		
 		private static final String SQL13 = "ALTER TABLE "+MembershipSuspend.NAME+" ADD COLUMN "+MembershipSuspend.Cols.ORDER+" NUMERIC DEFAULT 0";
 		
+		private static final String SQL14 = "ALTER TABLE "+Bookingtype.NAME+" ADD COLUMN "+Bookingtype.Cols.HISTORY+" TEXT DEFAULT 'f';";
+		private static final String SQL15 = "ALTER TABLE "+Bookingtype.NAME+" ADD COLUMN "+Bookingtype.Cols.LASTUPDATE+" NUMERIC;";
+		
+		private static final String SQL16 = "CREATE TABLE "+PaymentAgainst.NAME+" ("+PaymentAgainst.Cols._ID+" INTEGER PRIMARY KEY NOT NULL, "
+				+PaymentAgainst.Cols.ID+" INTEGER NOT NULL, "+PaymentAgainst.Cols.PAYMENTID+" INTEGER NOT NULL, "
+				+PaymentAgainst.Cols.DEBITJOURNALID+" INTEGER, "+PaymentAgainst.Cols.AMOUNT+" TEXT, "
+				+PaymentAgainst.Cols.VOIDAMOUNT+" TEXT "
+				+");";
+		
 		public static void patchNinetySix(SQLiteDatabase db) {
 			db.beginTransaction();
 			try {
@@ -884,6 +895,12 @@ public class UpdateDatabase {
 				db.execSQL(SQL12);
 				Log.w(HornetDatabase.class.getName(), "\n"+SQL13);
 				db.execSQL(SQL13);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL14);
+				db.execSQL(SQL14);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL15);
+				db.execSQL(SQL15);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL16);
+				db.execSQL(SQL16);
 				db.setTransactionSuccessful();
 			/*} catch (SQLException e) {
 			e.printStackTrace();

@@ -1,14 +1,15 @@
 package com.treshna.hornet.navigation;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.view.View;
@@ -22,7 +23,7 @@ import android.widget.Toast;
 import com.treshna.hornet.HornetApplication;
 import com.treshna.hornet.MainActivity;
 import com.treshna.hornet.R;
-import com.treshna.hornet.booking.BookingAddFragment;
+import com.treshna.hornet.booking.BookingDetailsSuperFragment;
 import com.treshna.hornet.booking.ClassCreateFragment;
 import com.treshna.hornet.member.MemberAddFragment;
 import com.treshna.hornet.network.HornetDBService;
@@ -79,7 +80,15 @@ public class SlideMenuClickListener implements OnItemClickListener, OnClickListe
             break;
         case 6:
         	tag = "bookingAdd";
-        	fragment = new BookingAddFragment();
+        	fragment = new BookingDetailsSuperFragment();
+        	ArrayList<String> stuff = new ArrayList<String>();
+        	stuff.add("-1");
+        	stuff.add(null);
+        	stuff.add(null);
+        	Bundle bdl = new Bundle(1);
+        	bdl.putStringArrayList(Services.Statics.KEY, stuff);
+        	fragment.setArguments(bdl);
+        	
         	break;
         case 8:
         	tag = "kpi";

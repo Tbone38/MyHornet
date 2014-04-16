@@ -39,6 +39,7 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.treshna.hornet.MainActivity;
 import com.treshna.hornet.R;
@@ -49,6 +50,7 @@ import com.treshna.hornet.R.layout;
 import com.treshna.hornet.R.string;
 import com.treshna.hornet.member.MembersFindFragment;
 import com.treshna.hornet.member.MembersFindFragment.OnMemberSelectListener;
+import com.treshna.hornet.network.HornetDBService;
 import com.treshna.hornet.services.Services;
 import com.treshna.hornet.sqlite.ContentDescriptor;
 import com.treshna.hornet.sqlite.ContentDescriptor.Booking;
@@ -219,7 +221,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener, OnM
 		rlparams.addRule(RelativeLayout.RIGHT_OF, 10);
 		typespinner.setLayoutParams(rlparams);
 		
-		cur = contentResolver.query(ContentDescriptor.Bookingtype.CONTENT_URI, null, null, null, null);
+		cur = contentResolver.query(ContentDescriptor.Bookingtype.CONTENT_URI, null, ContentDescriptor.Bookingtype.Cols.HISTORY+" = 'f'", null, null);
 		List<String> typelist = new ArrayList<String>();
 		while (cur.moveToNext()) {
 			if (cur.getInt(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.BTID)) > 0) {
@@ -488,7 +490,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener, OnM
 				} else {
 					contentResolver.notifyChange(ContentDescriptor.Booking.CONTENT_URI, null);
 					contentResolver.notifyChange(ContentDescriptor.BookingTime.CONTENT_URI, null);
-					getActivity().finish();
+					getActivity().onBackPressed();
 				}
 			} else {
 				//notify of failure.
@@ -498,18 +500,12 @@ public class BookingAddFragment extends Fragment implements OnClickListener, OnM
 		}
 		case (R.id.textwrapper):{
 			//show find member, but set onclick to link back here. destroy find member after passed back here.
-			/*FragmentManager frm = getActivity().getSupportFragmentManager();
-			FragmentTransaction ft = frm.beginTransaction();*/
 			MembersFindFragment f = new MembersFindFragment(); // add a bundle argument, so the code knows what to do.
 			Bundle b = new Bundle(1);
 			b.putBoolean(Services.Statics.IS_BOOKING, true);
 			f.setArguments(b);
-			/*ft.replace(R.id.empty_layout, f);
-			ft.addToBackStack(null);
-			ft.commit();*/
 			((MainActivity)getActivity()).changeFragment(f, "memberFind");
 			f.setMemberSelectListener(this);
-			//this.
 			break;
 		}
 		}
@@ -773,11 +769,45 @@ public class BookingAddFragment extends Fragment implements OnClickListener, OnM
 				result = false;
 				emptyFields.add(String.valueOf(R.id.bookingEndTimeH));
 			} else {
+				{ //check that the selected time/date are with-in open times.
+					/* Work out the chosen day (tuesday, wednesday, etc)
+					 * work out the time id for the selected times.
+					 * check that start time id >= opentime.startid AND < opentime.endid
+					 * AND that end time id > opentime.start AND <= opentime.endid
+					 * 
+					 */
+					if (emptyFields.contains(String.valueOf(R.id.bookingDateH))) {
+						emptyFields.add(0, String.valueOf(result));
+						return emptyFields;
+					}
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(Services.StringToDate(date.getText().toString(), "dd MMM yyyy"));
+					
+					int dayofweek = cal.get(Calendar.DAY_OF_WEEK);
+					int startid = HornetDBService.getTime(starttime.getText().toString(), contentResolver, false);
+					int endid = HornetDBService.getTime(endtime.getText().toString(), contentResolver, true);
+					
+					Cursor cur = contentResolver.query(ContentDescriptor.OpenTime.CONTENT_URI, null, ContentDescriptor.OpenTime.Cols.DAYOFWEEK+" = ? AND ("
+							+ContentDescriptor.OpenTime.Cols.OPENID+" <= ? AND "+ContentDescriptor.OpenTime.Cols.CLOSEID+" > ?) AND ("
+							+ContentDescriptor.OpenTime.Cols.OPENID+" < ? AND "+ContentDescriptor.OpenTime.Cols.CLOSEID+" >= ?)", 
+							new String[] {String.valueOf(dayofweek), String.valueOf(startid), String.valueOf(startid), String.valueOf(endid),
+							String.valueOf(endid)}, null);
+					
+					if (cur.getCount() <= 0) {
+						//we couldn't find the day?
+						Toast.makeText(getActivity(), "Cannot Create Booking Outside Open Hours", Toast.LENGTH_LONG).show();
+						emptyFields.add(String.valueOf(R.id.bookingEndTimeH));
+						emptyFields.add(String.valueOf(R.id.bookingStartTimeH));
+						emptyFields.add(String.valueOf(R.id.bookingDateH));
+						result = false;
+					}
+					cur.close();
+				}
+				
 				TextView label = (TextView) page.findViewById(R.id.bookingEndTimeH);
 				label.setTextColor(Color.BLACK);
 			}
 		}
-		//resource & booking type ?
 		
 		emptyFields.add(0,String.valueOf(result));
 		return emptyFields;
@@ -906,7 +936,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener, OnM
 	 }
 
 	@Override
-	public void onMemberSelect(String id) {
+	public void onMemberSelect(String id) { 
 		((BookingDetailsSuperFragment)this.getParentFragment()).onMemberSelect(id);
 	}
 }

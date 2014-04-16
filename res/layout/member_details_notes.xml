@@ -179,6 +179,7 @@
 	    
 	    </LinearLayout>
     
+	<!--  YMCA only -->
     <LinearLayout
         android:id="@+id/memberParentRow"
         android:layout_width="match_parent"
@@ -203,11 +204,65 @@
 	        android:inputType="none"
 	        android:paddingLeft="10dp" />
     </LinearLayout>
+    
+    <!--  Add Contact Details Layout -->
+    <LinearLayout
+        android:id="@+id/contactHeadingRow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/memberParentRow"
+        android:orientation="horizontal"
+        android:background="@drawable/button_block"
+        android:padding="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:clickable="true">
+        <TextView
+            android:id="@+id/contactGlyph"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:text="@string/glyph_phone"
+            android:textColor="@color/grey_cf" />
+	    <TextView
+	        android:id="@+id/contactH"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight=".8"
+	        android:textSize="24sp"
+	        android:text="@string/heading_member_contact"
+	        android:textIsSelectable="false"
+	        android:padding="5dp" />
+	    
+	    <ImageView
+	        android:id="@+id/contact_expand_collapse"
+	        android:layout_width="40dp"
+	        android:layout_height="40dp"
+	        android:src="@drawable/ic_action_collapse"
+	        android:contentDescription="@string/hint_contact_expand" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/contactDetails"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/contactHeadingRow"
+        android:orientation="vertical"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/button_block" >
+	    <!-- Phone #'s, email @ddr,
+	    see communications..? -->
+    </LinearLayout>
+    
+    
     <LinearLayout
         android:id="@+id/emergencyHeadingRow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/memberParentRow"
+        android:layout_below="@id/contactDetails"
         android:orientation="horizontal"
         android:background="@drawable/button_block"
         android:padding="5dp"

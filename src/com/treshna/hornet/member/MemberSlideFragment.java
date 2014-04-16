@@ -266,7 +266,7 @@ public class MemberSlideFragment extends Fragment implements TagFoundListener{
     	
     	//Change the Order
     	//private String[] titles = {"Membership Information", "Member Details", "Visit History", "Bookings", "Finance", "Gallery"};
-    	private String[] titles = {"Gallery", "Member Details", "Membership Information", "Visit History", "Bookings", "Finance"};
+    	private String[] titles = {"Gallery", "Member Details", "Membership Information", "Visit History", "Bookings", "Transactions"};
     	
         public MemberDetailsPagerAdapter(FragmentManager fragmentManager) {
             super(fragmentManager);

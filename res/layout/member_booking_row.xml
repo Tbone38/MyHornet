@@ -26,17 +26,31 @@
 	    android:paddingLeft="5dp"
 	    android:paddingTop="3dp"
 	    />
-	
-	<TextView 
-	    android:id="@+id/booking_row_name"
+	<LinearLayout
+	    android:id="@+id/booking_text_wrapper"
 	    android:layout_width="0dp"
 	    android:layout_height="wrap_content"
 	    android:layout_weight="1"
-	    android:textSize="14sp"
 	    android:gravity="left"
-	    android:paddingTop="3dp"
-	    android:paddingLeft="3dp"
-	    />
+	    android:orientation="vertical">
+		<TextView
+		    android:id="@+id/booking_resource_name"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:textSize="14sp"
+		    android:textStyle="bold"
+		    android:gravity="left"
+		    android:paddingLeft="3dp"
+		    android:paddingTop="3dp" />
+		<TextView 
+		    android:id="@+id/booking_row_name"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:textSize="14sp"
+		    android:gravity="left"
+		    android:paddingTop="3dp"
+		    android:paddingLeft="3dp"/>
+	</LinearLayout>
 	<TextView
 	    android:id="@+id/booking_row_status"
 	    android:layout_width="0dp"
@@ -46,5 +60,5 @@
 	    android:gravity="right|center_vertical"
 	    android:paddingLeft="5dp"
 	    android:paddingTop="3dp"
-	    />
-	</LinearLayout>
+	    android:paddingRight="5dp"/>
+</LinearLayout>

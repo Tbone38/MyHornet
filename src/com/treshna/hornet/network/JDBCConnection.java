@@ -396,10 +396,14 @@ public class JDBCConnection {
 
     }
     
-    public ResultSet getBookingTypes() throws SQLException, NullPointerException{
+    public ResultSet getBookingTypes(long last_sync) throws SQLException, NullPointerException{
 
 	    	ResultSet rs = null;
-	    	pStatement = con.prepareStatement("select id, name, price, externalname from bookingtype;");
+	    	pStatement = con.prepareStatement("select id, name, price, externalname, history, lastupdate from bookingtype WHERE "
+	    			+ "lastupdate > ?;");
+	    	
+	    	pStatement.setTimestamp(1, new java.sql.Timestamp(last_sync));
+	    	
 	    	rs = pStatement.executeQuery();
 	    	
 	    	return rs;
@@ -1355,6 +1359,15 @@ public ResultSet getReportTypes() throws SQLException {
     	
     	pStatement = con.prepareStatement(query);
     	pStatement.executeUpdate();
+    }
+    
+    //TODO: this won't work untill payment_against has a last_update column.
+    public ResultSet getPaymentAgainst(long last_sync) throws SQLException {
+    	pStatement = con.prepareStatement("SELECT id, paymentid, debitjournal, amount, voidamount, lastupdate FROM payment_against WHERE "
+    			+ "lastupdate >= ? ;");
+    	pStatement.setTimestamp(1, new java.sql.Timestamp(last_sync));
+    	
+    	return pStatement.executeQuery();
     }
 
     public SQLWarning getWarnings() throws SQLException, NullPointerException {

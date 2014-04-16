@@ -119,7 +119,7 @@ public class BookingDetailsSuperFragment extends Fragment implements OnMemberSel
 
 	@Override
 	public void onMemberSelect(String id) {
-		//TODO: create an alert dialog with member's memberships in it.
+
 		selectedID = id;
 		Cursor cur;
 		
@@ -130,7 +130,8 @@ public class BookingDetailsSuperFragment extends Fragment implements OnMemberSel
 		//do for loop, create and append radio option
 		rg = (RadioGroup) layout.findViewById(R.id.alertrg);
 		
-		cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols.MID+" = ?",
+		cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols.MID+" = ? AND "
+				+ContentDescriptor.Membership.Cols.HISTORY+" = 'f'",
 				new String[] {id}, null);
 		
 		while (cur.moveToNext()) {

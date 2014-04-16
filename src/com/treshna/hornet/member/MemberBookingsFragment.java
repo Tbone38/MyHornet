@@ -1,6 +1,10 @@
 package com.treshna.hornet.member;
 
 import java.sql.Date;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import android.content.ContentResolver;
 import android.database.Cursor;
@@ -72,20 +76,89 @@ public class MemberBookingsFragment extends Fragment implements TagFoundListener
 			Date arrival = new Date(cur.getLong(cur.getColumnIndex(ContentDescriptor.Booking.Cols.ARRIVAL)));
 			date_view.setText(Services.DateToString(arrival)+" "+cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.STIME)));
 			
-			
-			Cursor cursor2 = contentResolver.query(ContentDescriptor.Resource.CONTENT_URI, null, ContentDescriptor.Resource.Cols.ID+" = ?",
-					new String[] {cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.RID))}, null);
-			TextView name_view = (TextView) row.findViewById(R.id.booking_row_name);
-			if (!cursor2.moveToNext()) {
-				name_view.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.BOOKING)));
-			} else {
-				name_view.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.BOOKING))
-						+" - "+cursor2.getString(cursor2.getColumnIndex(ContentDescriptor.Resource.Cols.NAME)));
+			TextView resource_view = (TextView) row.findViewById(R.id.booking_resource_name);
+			{
+				Cursor cursor = contentResolver.query(ContentDescriptor.Resource.CONTENT_URI, new String[] {ContentDescriptor.Resource.Cols.NAME},
+						ContentDescriptor.Resource.Cols.ID+" = ?", new String[] 
+						{cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.RID))}, null);
+				if (cursor.moveToFirst()) {
+					resource_view.setText(cursor.getString(0));
+				}
+				cursor.close();
 			}
-			cursor2.close();
 			
+			
+			TextView name_view = (TextView) row.findViewById(R.id.booking_row_name);
+			{ //check the booking type, if it's a class we need to get the class name, other wise use the booking name.
+				if (cur.getInt(cur.getColumnIndex(ContentDescriptor.Booking.Cols.BOOKINGTYPE)) == 0) { //it's a class, get class name.
+					int classid = 0;
+					
+					Cursor cursor = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, new String[] {ContentDescriptor.Booking.Cols.CLASSID},
+							ContentDescriptor.Booking.Cols.BID+" = ?", new String[] {cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.PARENTID))},
+							null);
+					if (cursor.moveToFirst()) {
+						classid = cursor.getInt(0);
+					} else {} //what do we do if we didn't find the parent id..?
+					
+					cursor.close();
+					
+					cursor = contentResolver.query(ContentDescriptor.Class.CONTENT_URI, new String[] {ContentDescriptor.Class.Cols.NAME},
+							ContentDescriptor.Class.Cols.CID+" = ?", new String[] {String.valueOf(classid)}, null);
+					if (cursor.moveToFirst()) {
+						name_view.setText(cursor.getString(0));
+					}
+					
+				} else { //it's a booking.
+					name_view.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.BOOKING)));
+				}
+			}
+			
+			//change this from endtime to duration.
 			TextView status_view = (TextView) row.findViewById(R.id.booking_row_status);
-			status_view.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.ETIME)));
+			{ //calculating the duration!
+				SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss", Locale.US);
+				java.util.Date start, end;
+				long interval = 0;
+				long HOUR = 3600000;
+				
+				try {
+					start = format.parse(cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.STIME)));
+				} catch (ParseException e) {
+					throw new RuntimeException(e);
+				}
+				
+				try {
+					end = format.parse(cur.getString(cur.getColumnIndex(ContentDescriptor.Booking.Cols.ETIME)));
+				} catch (ParseException e) {
+					throw new RuntimeException (e);
+				}
+				
+				interval = end.getTime() - start.getTime();
+				if (interval < HOUR) { // less than an hour.
+					//show the minute amount!
+					double minutes = Double.valueOf(new DecimalFormat("#").format(
+							((interval/1000)/60)));
+					status_view.setText((int)minutes+" minutes");
+				}
+				else {
+					double hours = Double.valueOf(new DecimalFormat("#").format(
+							(((interval/1000)/60)/60)));
+					double minutes = Double.valueOf(new DecimalFormat("#").format(
+							(((interval - ((int)hours*60*60*1000))/1000)/60)));
+
+					if ((int) minutes != 0 && (int) hours > 1) {
+						status_view.setText((int) hours+" hours, "+(int)minutes+" minutes");
+					} else 
+					if ((int) minutes != 0 && (int) hours == 1) {
+						status_view.setText((int) hours+" hour, "+(int)minutes+" minutes");
+					} else 
+					if ((int) hours == 1){
+						status_view.setText((int) hours+" hour");
+					} else {
+						status_view.setText((int) hours+" hours");
+					}
+				}
+			}
 			
 			View colour_block = (View) row.findViewById(R.id.member_booking_colour_block);
 			switch (cur.getInt(cur.getColumnIndex(ContentDescriptor.Booking.Cols.RESULT))){

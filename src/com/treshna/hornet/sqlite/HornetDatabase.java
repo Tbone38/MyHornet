@@ -31,6 +31,7 @@ import com.treshna.hornet.sqlite.ContentDescriptor.Membership;
 import com.treshna.hornet.sqlite.ContentDescriptor.MembershipExpiryReason;
 import com.treshna.hornet.sqlite.ContentDescriptor.MembershipSuspend;
 import com.treshna.hornet.sqlite.ContentDescriptor.OpenTime;
+import com.treshna.hornet.sqlite.ContentDescriptor.PaymentAgainst;
 import com.treshna.hornet.sqlite.ContentDescriptor.PaymentMethod;
 import com.treshna.hornet.sqlite.ContentDescriptor.PendingDeletes;
 import com.treshna.hornet.sqlite.ContentDescriptor.PendingDownloads;
@@ -437,6 +438,7 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS "+BillingHistory.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+AppConfig.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+Enquiry.NAME);
+		db.execSQL("DROP TABLE IF EXISTS "+PaymentAgainst.NAME);
 	}
 	
 	private void repopulateTable(SQLiteDatabase db) {

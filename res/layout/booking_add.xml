@@ -1,42 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" 
-    android:layout_width="fill_parent" 
-    android:layout_height="fill_parent">
+    android:layout_width="match_parent" 
+    android:layout_height="match_parent"
+   	android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    >
 	<RelativeLayout
 	    android:id="@+id/bookingLayout"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    android:orientation="vertical" >
+	    android:gravity="center">
 	    <TextView
 	        android:id="@+id/bookingAddH"
-	        android:layout_width="wrap_content"
+	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
-	        android:layout_alignParentTop="true"
 	        android:gravity="center"
 	        android:textSize="24sp"
-	        android:textStyle="bold"
 	        android:text="@string/bookingAddH"
-	        android:padding="5dp"
-	        android:paddingBottom="1dp"
-	        android:layout_margin="3dp"
-	        android:layout_marginBottom="1dp" />
-	    <View
-	    android:id="@+id/bookingAddHline"
-	    android:layout_width="match_parent"
-	    android:layout_height="5dp"
-	    android:layout_below="@id/bookingAddH"
-	    android:background="@color/block_header_blue"
-	    android:layout_margin="2dp" />
-		<TextView
+	        android:textIsSelectable="false"
+	        android:paddingLeft="3dp"
+	        android:paddingRight="14dp"
+	        android:paddingBottom="1dp" />
+	    <TextView
 	        android:id="@+id/bookingNameH"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:layout_below="@id/bookingAddHline"
+	        android:layout_below="@id/bookingAddH"
 	        android:textSize="16sp"
 	        android:text="@string/bookingNameH"
-	        android:padding="5dp"
-	        android:layout_margin="3dp" />
+	        android:paddingLeft="6dp" />
 		<RelativeLayout
 		    android:id="@+id/textwrapper"
 		    android:layout_width="match_parent"
@@ -81,8 +76,7 @@
 		    android:layout_below="@id/textwrapper"
 		    android:textSize="16sp"
 		    android:text="@string/bookingMembershipH"
-		    android:padding="5dp"
-		    android:layout_margin="3dp" />
+		    android:paddingLeft="6dp" />
 		
 		<TextView
 		    android:id="@+id/bookingMembership"
@@ -91,8 +85,9 @@
 		    android:layout_below="@id/bookingMembershipH"
 		    android:textSize="18sp"
 		    android:text="@string/bookingMembership"
-		    android:padding="5dp"
-		    android:layout_margin="3dp" />
+		    android:paddingLeft="10dp"
+		    android:paddingTop="5dp"
+		    android:paddingBottom="5dp" />
 		    
 	    <TextView 
 	        android:id="@+id/bookingDateH"
@@ -101,8 +96,7 @@
 	        android:layout_below="@id/bookingMembership"
 	        android:textSize="16sp"
 	        android:text="@string/bookingDateH"
-	        android:padding="5dp"
-	        android:layout_margin="3dp" />
+	        android:paddingLeft="6dp" />
 	    <TextView 
 	        android:id="@+id/bookingDate"
 	        android:layout_width="match_parent"
@@ -110,8 +104,9 @@
 	        android:layout_below="@id/bookingDateH"
 	        android:textSize="20sp"
 	        android:text="@string/defaultDate"
-	        android:padding="5dp"
-	        android:layout_margin="3dp" />
+	        android:paddingLeft="10dp"
+		    android:paddingTop="5dp"
+		    android:paddingBottom="5dp" />
 	    <LinearLayout
 	        android:id="@+id/bookingTimeRowH"
 	        android:layout_width="match_parent"

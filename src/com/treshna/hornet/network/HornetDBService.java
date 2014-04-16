@@ -27,7 +27,6 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.treshna.hornet.HornetApplication;
-import com.treshna.hornet.MainActivity;
 import com.treshna.hornet.R;
 import com.treshna.hornet.services.ApplicationID;
 import com.treshna.hornet.services.FileHandler;
@@ -211,8 +210,8 @@ public class HornetDBService extends Service {
 			updateOpenHours();
 			updateBookings();
 			long b_lastsync = Long.parseLong(Services.getAppSettings(getApplicationContext(), "b_lastsync"));
+			getBookingType(last_sync);
 			getBookings(b_lastsync);
-			bookingImages();
 			getClasses(last_sync);
 			
 			//downloads!
@@ -373,7 +372,7 @@ public class HornetDBService extends Service {
 		   //stuff
 		   
 		   int rscount = getResultStatus();
-		   int btcount = getBookingType();
+		   int btcount = getBookingType(-1);
 		   int mcount = getMember(-1);
 		   int mscount = getMembership(-1);
 		   memberImages();
@@ -1506,7 +1505,7 @@ public class HornetDBService extends Service {
     }
     
     
-	private int getBookingType(){
+	private int getBookingType(long last_sync){
     	
     	int result = 0;
     	ResultSet rs = null;
@@ -1519,21 +1518,25 @@ public class HornetDBService extends Service {
     	}
     	
     	try {
-    		//rs = (CACI != 0)?connection.getBookingTypesValid() : connection.getBookingTypes();
-    		rs = connection.getBookingTypes();
+    		rs = connection.getBookingTypes(last_sync);
     		while (rs.next()) {
-    			
     				ContentValues values = new ContentValues();
     				values.put(ContentDescriptor.Bookingtype.Cols.BTID, rs.getString("id"));
     				values.put(ContentDescriptor.Bookingtype.Cols.NAME, rs.getString("name"));
     				values.put(ContentDescriptor.Bookingtype.Cols.PRICE, rs.getString("price"));
     				values.put(ContentDescriptor.Bookingtype.Cols.EXTERNAL, rs.getString("externalname"));
-    				/*if (CACI != 0){ //only applies to clinicMaster ?
-	    				values.put(ContentDescriptor.Bookingtype.Cols.VALIDFROM, rs.getString("validfrom"));
-	    				values.put(ContentDescriptor.Bookingtype.Cols.VALIDTO, rs.getString("validto"));
-    				}*/
-	    			
-    				contentResolver.insert(ContentDescriptor.Bookingtype.CONTENT_URI, values);
+    				values.put(ContentDescriptor.Bookingtype.Cols.HISTORY, rs.getString("history"));
+    				values.put(ContentDescriptor.Bookingtype.Cols.LASTUPDATE, rs.getTimestamp("lastupdate").getTime()*1000);
+    				
+    				cur = contentResolver.query(ContentDescriptor.Bookingtype.CONTENT_URI, null, ContentDescriptor.Bookingtype.Cols.BTID+" = ?",
+    						new String[] {rs.getString("id")}, null);
+    				if (cur.moveToFirst()) {
+    					contentResolver.update(ContentDescriptor.Bookingtype.CONTENT_URI, values, 
+    							ContentDescriptor.Bookingtype.Cols.BTID+" = ?", new String[] {rs.getString("id")});
+    				} else {
+    					contentResolver.insert(ContentDescriptor.Bookingtype.CONTENT_URI, values);
+    				}
+    				cur.close();
     				result +=1;
     		}
     		rs.close();
@@ -1771,16 +1774,6 @@ public class HornetDBService extends Service {
 
     	closeConnection();
     	return result;
-    }
-    
-    private void bookingImages(){
-    	String b_lastsync;
-    	
-    	/*b_lastsync = Services.getAppSettings(getApplicationContext(), "b_lastsync");
-    	cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.LASTUPDATE+" > ?", 
-    			new String[] {b_lastsync}, null);
-    	queryServerForImage(cur, 12);
-    	cur.close();*/
     }
     
     private int swipe(){
@@ -3008,7 +3001,7 @@ public class HornetDBService extends Service {
     	
     	resultMapList = this.resultSetToMapList(result);
 		   
-    		this.closeConnection();
+    	this.closeConnection();
     	
 		return resultMapList;
 	

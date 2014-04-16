@@ -16,8 +16,8 @@ import android.provider.BaseColumns;
  *    5 = DeletedRecords				112 = MemberNotes
  *    9 = AppConfig						113:
  *   10:								114 = MemberBalance
- *   11 = TableIndex					116 = MemberFinance
- *   12:								117 = Billing_history
+ *   11 = TableIndex					
+ *   12:								
  *   13 = PendingUploads				121 = CancellationFee
  *   14:								
  *   15 = PendingDownloads				
@@ -48,9 +48,9 @@ import android.provider.BaseColumns;
  *  312:								401 = idcard
  *  313 = BookingTime					405 = dd_export_format
  *  315:
- *  324:
- *  325 = Time
- *  321:
+ *  324:								410 = MemberFinance
+ *  325 = Time							411 = Billing_history
+ *  321:								412 = Payment_against
  *  322 = Class
  *  320:
  *  330 = Bookingtype 
@@ -150,11 +150,13 @@ public class ContentDescriptor {
 	     matcher.addURI(authority, MembershipExpiryReason.PATH, MembershipExpiryReason.PATH_TOKEN);
 	     matcher.addURI(authority, CancellationFee.PATH, CancellationFee.PATH_TOKEN);
 	     matcher.addURI(authority, KPI.PATH, KPI.PATH_TOKEN);
+	     matcher.addURI(authority, AppConfig.PATH, AppConfig.PATH_TOKEN);
+	     matcher.addURI(authority, Enquiry.PATH, Enquiry.PATH_TOKEN);
+	     
 	     matcher.addURI(authority, MemberFinance.PATH, MemberFinance.PATH_TOKEN);
 	     matcher.addURI(authority, BillingHistory.PATH, BillingHistory.PATH_TOKEN);
 	     matcher.addURI(authority, DDExportFormat.PATH, DDExportFormat.PATH_TOKEN);
-	     matcher.addURI(authority, AppConfig.PATH, AppConfig.PATH_TOKEN);
-	     matcher.addURI(authority, Enquiry.PATH, Enquiry.PATH_TOKEN);
+	     matcher.addURI(authority, PaymentAgainst.PATH, PaymentAgainst.PATH_TOKEN);
 	     
 	     matcher.addURI(authority, DROPTABLE, TOKEN_DROPTABLE);
 	     
@@ -529,6 +531,8 @@ public class ContentDescriptor {
 	 			public static final String VALIDTO = "validto";
 	 			public static final String EXTERNAL = "externalname";
 	 			public static final String LASTUPDATE = "lastupdate";
+	 			
+	 			public static final String HISTORY = "history";
 	 		}
 	 	}
 	 	
@@ -1203,7 +1207,7 @@ public class ContentDescriptor {
 	 	public static class MemberFinance {
 	 		public static final String NAME = "member_finance";
 	 		public static final String PATH = "member_finance";
-	 		public static final int PATH_TOKEN = 116;
+	 		public static final int PATH_TOKEN = 410;
 	 		
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
 	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.member_finance";
@@ -1227,7 +1231,7 @@ public class ContentDescriptor {
 	 	public static class BillingHistory {
 	 		public static final String NAME = "billing_history";
 	 		public static final String PATH = "billing_history";
-	 		public static final int PATH_TOKEN = 117;
+	 		public static final int PATH_TOKEN = 411;
 	 		
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
 	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.billing_history";
@@ -1280,6 +1284,24 @@ public class ContentDescriptor {
 	 		public static class Cols implements BaseColumns {
 	 			public static final String DB_DEVICEID = "deviceid";
 	 			public static final String DB_TIMEOFFSET = "timeoffset";
+	 		}
+	 	}
+	 	
+	 	public static class PaymentAgainst {
+	 		public static final String NAME = "payment_against";
+	 		public static final String PATH = "payment_against";
+	 		public static final int PATH_TOKEN = 412;
+	 		
+	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.payment_against";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.payment_against";
+	 		
+	 		public static class Cols implements BaseColumns {
+	 			public static final String ID = "id";
+	 			public static final String PAYMENTID = "paymentid";
+	 			public static final String DEBITJOURNALID = "debitjournalid";
+	 			public static final String AMOUNT = "amount";
+	 			public static final String VOIDAMOUNT = "voidamount";
 	 		}
 	 	}
 }

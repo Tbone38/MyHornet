@@ -226,7 +226,7 @@ public class FileHandler {
 		
 		fileSize = logfile.length();
 		//Log.d(TAG, "LOG FILE SIZE:"+fileSize);
-		if (fileSize <= 0|| fileSize==36) {
+		if (fileSize < 128) { //this may be too large..?
 			return null;
 		}
 		
