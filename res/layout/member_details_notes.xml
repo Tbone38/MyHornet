@@ -123,24 +123,6 @@
 	        android:paddingLeft="10dp"
 	        android:textColor="@color/black" />
 	    <TextView
-	        android:id="@+id/label_member_country"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:textSize="14sp"
-	        android:text="@string/label_member_country"
-	        android:textColor="@color/button_block_label"
-	        android:paddingLeft="10dp" />
-	    <EditText
-	        android:id="@+id/member_country"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_marginLeft="20dp"
-	        android:textColor="@color/black"
-	        android:enabled="false"
-	        android:editable="false"
-	        android:inputType="none"
-	        android:paddingLeft="10dp" />
-	    <TextView
 	        android:id="@+id/label_member_dateofbirth"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
@@ -177,7 +159,48 @@
 	        android:inputType="none"
 	        android:paddingLeft="10dp" />
 	    
+	    <!-- Edit Button Row -->
+	    <LinearLayout
+	        android:id="@+id/details_edit_row"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="30dp"
+	        android:orientation="horizontal"
+	         >
+	        <View
+	            android:id="@+id/empty"
+	            android:layout_width="0dp"
+	            android:layout_height="wrap_content"
+	            android:layout_weight=".7"
+	            />
+	        <LinearLayout
+		    	android:layout_width="0dp"
+		        android:layout_height="wrap_content"
+		        android:layout_weight=".3"
+		    	android:orientation="vertical"
+		    	android:layout_gravity="bottom"
+		    	android:layout_marginLeft="5dp"
+	        	android:layout_marginRight="10dp"
+	        	android:layout_marginBottom="5dp">
+	        	<TextView
+	        	    android:id="@+id/button_edit_details"
+	        	    android:layout_width="match_parent"
+	        	    android:layout_height="match_parent"
+	        	    android:gravity="center"
+	        	    android:textSize="18sp"
+	        	    android:text="Edit"
+	        	    android:padding="3dp"
+	        	    android:clickable="true"
+	        	    android:background="@drawable/button_large" />
+	        	<View
+	        	    android:layout_width="match_parent"
+	        	    android:layout_height="2dp"
+				    android:paddingLeft="3dp"
+			    	android:paddingRight="3dp"
+				    android:background="@color/button_underline_grey" />
+	        </LinearLayout>
 	    </LinearLayout>
+	</LinearLayout>
     
 	<!--  YMCA only -->
     <LinearLayout
@@ -255,6 +278,78 @@
         android:background="@drawable/button_block" >
 	    <!-- Phone #'s, email @ddr,
 	    see communications..? -->
+	    <TextView
+	        android:id="@+id/label_member_home_phome"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="14sp"
+	        android:text="@string/label_member_home_phone"
+	        android:textColor="@color/button_block_label"
+	        android:paddingLeft="10dp" />
+	    <EditText
+	        android:id="@+id/member_home_phone"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="20dp"
+	        android:textColor="@color/black"
+	        android:enabled="false"
+	        android:editable="false"
+	        android:inputType="none"
+	        android:paddingLeft="10dp" />
+	    <TextView
+	        android:id="@+id/label_member_cell_phome"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="14sp"
+	        android:text="@string/label_member_cell_phone"
+	        android:textColor="@color/button_block_label"
+	        android:paddingLeft="10dp" />
+	    <EditText
+	        android:id="@+id/member_cell_phone"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="20dp"
+	        android:textColor="@color/black"
+	        android:enabled="false"
+	        android:editable="false"
+	        android:inputType="none"
+	        android:paddingLeft="10dp" />
+	    <TextView
+	        android:id="@+id/label_member_work_phome"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="14sp"
+	        android:text="@string/label_member_work_phone"
+	        android:textColor="@color/button_block_label"
+	        android:paddingLeft="10dp" />
+	    <EditText
+	        android:id="@+id/member_work_phone"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="20dp"
+	        android:textColor="@color/black"
+	        android:enabled="false"
+	        android:editable="false"
+	        android:inputType="none"
+	        android:paddingLeft="10dp" />
+	    <TextView
+	        android:id="@+id/label_member_email"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="14sp"
+	        android:text="@string/label_member_email"
+	        android:textColor="@color/button_block_label"
+	        android:paddingLeft="10dp" />
+	    <EditText
+	        android:id="@+id/member_email"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="20dp"
+	        android:textColor="@color/black"
+	        android:enabled="false"
+	        android:editable="false"
+	        android:inputType="none"
+	        android:paddingLeft="10dp" />
     </LinearLayout>
     
     

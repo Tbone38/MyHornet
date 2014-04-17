@@ -43,6 +43,12 @@
  <string name="hint_tasks_expand">expand/collapse tasks icon</string>
  <string name="hint_contact_expand">expand/collapse contact icon</string>
  
+ <string name="label_member_home_phone">Home Phone</string>
+ <string name="label_member_cell_phone">Cell Phone</string>
+ <string name="label_member_work_phone">Work Phone</string>
+ <string name="label_member_email">Email Address</string>
+ 
+ 
  <string name="label_parent_name">Parent\'s Name</string>
  
  <string name="member_finance">Finance</string>

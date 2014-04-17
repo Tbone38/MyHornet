@@ -4187,6 +4187,7 @@ public class HornetDBService extends Service {
     			values.put(ContentDescriptor.Company.Cols.TE_PASSWORD, rs.getString("te_password"));
     			values.put(ContentDescriptor.Company.Cols.WEB_URL, rs.getString("web_url"));
     			values.put(ContentDescriptor.Company.Cols.LASTUPDATE, new Date().getTime());
+    			values.put(ContentDescriptor.Company.Cols.NAMEORDER, rs.getString("name_order"));
     			
     			cur = contentResolver.query(ContentDescriptor.Company.CONTENT_URI, null, ContentDescriptor.Company.Cols.NAME+" = ?",
     					new String[] {rs.getString("name")}, null);

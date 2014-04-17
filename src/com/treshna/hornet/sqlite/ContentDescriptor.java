@@ -582,6 +582,7 @@ public class ContentDescriptor {
 	 			public static final String LASTUPDATE = "lastupdate";
 	 			public static final String TE_PASSWORD = "te_password";
 	 			public static final String WEB_URL = "web_url";
+	 			public static final String NAMEORDER = "name_order";
 	 		}
 	 	}
 	 	// for creating member ships ?

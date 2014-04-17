@@ -866,6 +866,8 @@ public class UpdateDatabase {
 				+PaymentAgainst.Cols.VOIDAMOUNT+" TEXT "
 				+");";
 		
+		private static final String SQL17 = "ALTER TABLE "+Company.NAME+" ADD COLUMN "+Company.Cols.NAMEORDER+" TEXT DEFAULT '"+Member.Cols.FNAME+"';";
+		
 		public static void patchNinetySix(SQLiteDatabase db) {
 			db.beginTransaction();
 			try {
@@ -901,6 +903,8 @@ public class UpdateDatabase {
 				db.execSQL(SQL15);
 				Log.w(HornetDatabase.class.getName(), "\n"+SQL16);
 				db.execSQL(SQL16);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL17);
+				db.execSQL(SQL17);
 				db.setTransactionSuccessful();
 			/*} catch (SQLException e) {
 			e.printStackTrace();

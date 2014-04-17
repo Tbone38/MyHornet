@@ -326,7 +326,7 @@ public class JDBCConnection {
     public ResultSet getCompanyConfig() throws SQLException, NullPointerException {
     		//TODO: web_url te_password
 	    	ResultSet rs = null;
-	    	pStatement = con.prepareStatement("select name, te_username, schemaversion, te_password, web_url FROM company_config, config LIMIT 1;");
+	    	pStatement = con.prepareStatement("select name, te_username, schemaversion, te_password, web_url, name_order FROM company_config, config LIMIT 1;");
 	    	rs = pStatement.executeQuery();
 	    	return rs;
     }

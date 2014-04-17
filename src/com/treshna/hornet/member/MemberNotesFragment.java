@@ -86,6 +86,61 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 		return this.mActions;
 	}*/
 	
+	
+	private View setupContact() {
+		
+		cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, ContentDescriptor.Member.Cols.MID+" = ?",
+				new String[] {memberID}, null);
+		if (!cur.moveToFirst()) {
+			return view;
+		}
+		
+		LinearLayout contactHeading = (LinearLayout) view.findViewById(R.id.contactHeadingRow);
+		contactHeading.setOnClickListener(this);
+		
+		TextView glyph = (TextView) contactHeading.findViewById(R.id.contactGlyph);
+		glyph.setTypeface(Services.Typefaces.get(getActivity(), "fonts/glyphicons_regular.ttf"));
+		
+		boolean vis_cell = false, vis_home = false, vis_work = false, vis_email = false;
+		
+		vis_cell = (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHCELL)) &&
+				!cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHCELL)).isEmpty());
+		
+		vis_home = (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHHOME)) &&
+				!cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHHOME)).isEmpty());
+		
+		vis_work = (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHWORK)) &&
+				!cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHWORK)).isEmpty());
+		
+		vis_email = (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMAIL)) &&
+				cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMAIL)).isEmpty());
+		
+		if (vis_cell || vis_home || vis_work || vis_email) {
+			
+			
+			EditText cellphone = (EditText) view.findViewById(R.id.member_cell_phone);
+			EditText workphone = (EditText) view.findViewById(R.id.member_work_phone);
+			EditText homephone = (EditText) view.findViewById(R.id.member_home_phone);
+			EditText emailaddress = (EditText) view.findViewById(R.id.member_email);
+			
+			cellphone.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHCELL)));
+			workphone.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHWORK)));
+			homephone.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHHOME)));
+			emailaddress.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMAIL)));
+			
+		} else {
+			contactHeading.setVisibility(View.GONE);
+			LinearLayout contactDetails = (LinearLayout) view.findViewById(R.id.contactDetails);
+			contactDetails.setVisibility(View.GONE);
+			/*ImageView expand_collapse = (ImageView) view.findViewById(R.id.emergency_expand_collapse);
+			expand_collapse.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_action_expand));*/
+		}
+		
+		cur.close();
+		
+		return view;
+	}
+	
 	private View setupActions() {
 		cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, null, ContentDescriptor.Member.Cols.MID+" = ?",
 				new String[] {memberID}, null);
@@ -220,7 +275,6 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 				!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.SUBURB))||
 				!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.CITY))||
 				!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.POSTAL))||
-				!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.COUNTRY))||
 				!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.DOB))) {
 			
 			EditText street_view, suburb_view, city_view, postal_view, country_view, dob_view, gender_view;
@@ -236,9 +290,6 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 			
 			postal_view = (EditText) view.findViewById(R.id.member_area_code);
 			postal_view.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.POSTAL)));
-			
-			country_view = (EditText) view.findViewById(R.id.member_country);
-			country_view.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.COUNTRY)));
 			
 			dob_view = (EditText) view.findViewById(R.id.member_dateofbirth);
 			dob_view.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.DOB)));
@@ -314,6 +365,7 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 		setupEmergency();
 		setupMedical();
 		setupActions();
+		setupContact();
 		
 		cur = contentResolver.query(ContentDescriptor.MemberNotes.CONTENT_URI, null, 
 				ContentDescriptor.MemberNotes.Cols.MID+" = ?", new String[] {memberID}, 
@@ -328,6 +380,16 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 		LinearLayout notesGroup = (LinearLayout) view.findViewById(R.id.membernotes);
 		notesGroup.removeAllViews();
 		while (cur.moveToNext()) {
+			
+			LinearLayout row = new LinearLayout(getActivity());
+			row.setOrientation(LinearLayout.VERTICAL);
+			llparams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+			
+			/*if (cur.getPosition()%2==0) {
+				row.setBackgroundColor(getResources().getColor(R.color.button_background_grey));
+			}*/
+			row.setPadding(5, 10, 5, 10);
+			
 			llparams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 			llparams.setMargins(5, 0, 0, 0);
 			TextView notesT = new TextView(getActivity());
@@ -335,7 +397,9 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 			notesT.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.MemberNotes.Cols.NOTES)));
 			notesT.setTextSize(18);
 			notesT.setLayoutParams(llparams);
-			notesGroup.addView(notesT);
+			
+			row.addView(notesT);
+			//notesGroup.addView(notesT);
 			
 			TextView notesdetails = new TextView(getActivity());
 			notesdetails.setPadding(10, 0, 0, 0);
@@ -350,7 +414,11 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 			llparams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 			llparams.setMargins(20, 0, 0, 0);
 			notesdetails.setLayoutParams(llparams);
-			notesGroup.addView(notesdetails);
+			
+			//notesGroup.addView(notesdetails);
+			row.addView(notesdetails);
+			
+			notesGroup.addView(row);
 		}
 		cur.close();
 		
@@ -514,6 +582,19 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 			}
 			break;
 		}
+		case (R.id.contactHeadingRow):{
+			LinearLayout contact = (LinearLayout) view.findViewById(R.id.contactDetails);
+			ImageView expand_collapse = (ImageView) view.findViewById(R.id.contact_expand_collapse);
+			if (contact.isShown()) {
+				contact.setVisibility(View.GONE);
+				expand_collapse.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_action_expand));
+			} else {
+				contact.setVisibility(View.VISIBLE);
+				expand_collapse.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_action_collapse));
+			}
+			break;
+		}
+		
 		case (R.id.button_email):{
 			String email="mailto:"+Uri.encode(v.getTag().toString())+"?subject="+Uri.encode("Gym Details");
 			Intent intent = new Intent(Intent.ACTION_SENDTO);

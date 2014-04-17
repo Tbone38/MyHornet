@@ -138,7 +138,7 @@ public class MemberBookingsFragment extends Fragment implements TagFoundListener
 					//show the minute amount!
 					double minutes = Double.valueOf(new DecimalFormat("#").format(
 							((interval/1000)/60)));
-					status_view.setText((int)minutes+" minutes");
+					status_view.setText((int)minutes+" mins");
 				}
 				else {
 					double hours = Double.valueOf(new DecimalFormat("#").format(
@@ -147,10 +147,10 @@ public class MemberBookingsFragment extends Fragment implements TagFoundListener
 							(((interval - ((int)hours*60*60*1000))/1000)/60)));
 
 					if ((int) minutes != 0 && (int) hours > 1) {
-						status_view.setText((int) hours+" hours, "+(int)minutes+" minutes");
+						status_view.setText((int) hours+" hours, "+(int)minutes+" mins");
 					} else 
 					if ((int) minutes != 0 && (int) hours == 1) {
-						status_view.setText((int) hours+" hour, "+(int)minutes+" minutes");
+						status_view.setText((int) hours+" hour, "+(int)minutes+" mins");
 					} else 
 					if ((int) hours == 1){
 						status_view.setText((int) hours+" hour");

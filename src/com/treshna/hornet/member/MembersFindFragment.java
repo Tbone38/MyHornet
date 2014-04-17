@@ -31,6 +31,7 @@ import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -200,6 +201,16 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 	@Override
 	public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle) {
 		
+		String orderby = null;
+		{
+			Cursor cur = contentResolver.query(ContentDescriptor.Company.CONTENT_URI, new String[] {ContentDescriptor.Company.Cols.NAMEORDER},
+					null, null, null);
+			if (cur.moveToFirst()) {
+				orderby = cur.getString(cur.getColumnIndex(ContentDescriptor.Company.Cols.NAMEORDER));
+			}
+			cur.close();
+		}
+		
 		if (input != null || owes != null || gender != null || membership != null || programmeGroup != null) {
 			//setup the filter window:
 			LinearLayout filter_message_box = (LinearLayout) view.findViewById(R.id.filter_message);
@@ -247,13 +258,13 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 			}
 			filter_message.setTextColor(getResources().getColor(R.color.text_green_shade));
 			filter_message.setText(Html.fromHtml(message));
-			/*return new CursorLoader( getActivity(), ContentDescriptor.Member.CONTENT_URI,
-					null, where, whereArgs, null);*/
+			
 			if (mAdapter != null) {
 				mAdapter.setSelectedPos(0);
 			}
+			
 			return new CursorLoader( getActivity(), ContentDescriptor.Member.URI_FIND,
-					null, where, whereArgs, null);
+					null, where, whereArgs, orderby);
 		} else {
 			LinearLayout filter_message_box = (LinearLayout) view.findViewById(R.id.filter_message);
 			if (filter_message_box != null) {
@@ -261,7 +272,7 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 			}
 
 			return new CursorLoader( getActivity(), ContentDescriptor.Member.CONTENT_URI,
-					null, null, null, null );
+					null, null, null, orderby );
 		}
 	}
 
@@ -275,8 +286,6 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 		mAdapter.notifyDataSetChanged();
 		getListView().setSelection(mAdapter.getSelectedPos());
 		getListView().setSelected(true);
-	
-
 	}
 
 	@Override
