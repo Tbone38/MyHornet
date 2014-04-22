@@ -2,13 +2,17 @@ package com.treshna.hornet;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -26,6 +30,9 @@ import android.widget.Toast;
 
 public class ReportDateOptionsActivity extends FragmentActivity implements DatePickerFragment.DatePickerSelectListener{ 
 	private HashMap<String,Object> reportData = new HashMap<String,Object>() ;
+	private ArrayList<HashMap<String,String>> reportFiltersMapList = new ArrayList<HashMap<String,String>>();
+	private ArrayList<HashMap<String,String>> reportFiltersTableNameList = new ArrayList<HashMap<String,String>>();
+	private String reportFilterTableNamesQuery = null;
 	private DatePickerFragment startDatePicker = null;
 	private Date selectedStartDate = new Date();
 	private Date selectedEndDate = new Date();
@@ -34,7 +41,6 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 	private TextView endDateText = null;
 	private int reportId = 0;
 	private DatePickerFragment datePickerFragment = null;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -55,7 +61,8 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 		reportId = intent.getIntExtra("report_id",0);
 		reportData.put("report_name", intent.getStringExtra("report_name"));
 		reportData.put("report_function_name", intent.getStringExtra("report_function_name"));
-		setUpQuickSelectSpinner();			
+		setUpQuickSelectSpinner();
+		getReportFilterFieldsByReportId();
 		btnStartButton.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -258,6 +265,161 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 		}
 		
 	}
+	
+	private void getReportFilterFieldsByReportId () {
+		GetReportFilterFieldsByReportId reportFilterThread = new GetReportFilterFieldsByReportId();
+		reportFilterThread.execute();
+	
+	}
+	
+	private void getReportFilterTableNames() {
+		GetReportFilterTableNames reportFilterTablesThread = new GetReportFilterTableNames();
+		reportFilterTablesThread.execute();
+	}
+	
+	
+	private void buildFiltersTableNameQuery() {
+		
+		//stripTableIdsFromFields();
+		StringBuilder filtersQuery = new StringBuilder();
+		filtersQuery.append("Select distinct table_name from report_function_table where (joining_query ");
+		int index = 0;
+		for (HashMap<String,String> reportFiltersMap: reportFiltersMapList){
+			index ++;
+			if (index == 1) {
+				filtersQuery.append("like \'%" + reportFiltersMap.get("field") + "%\'");
+			} else {
+				filtersQuery.append("joining_query like \'%" + reportFiltersMap.get("field") + "%\'");
+			}
+			
+			//Looking other than the last value
+			if (index != reportFiltersMapList.size()){
+				filtersQuery.append(" or ");
+			}		
+		}
+		
+		filtersQuery.append(")");
+		filtersQuery.append(" and ");
+		filtersQuery.append("function_name = ");
+		filtersQuery.append("\'" + reportData.get("report_function_name") +"\'");
+		filtersQuery.append(";");
+		Log.i("Filters Table Name Query: ", filtersQuery.toString());
+		reportFilterTableNamesQuery =  filtersQuery.toString();
+		
+	}
+	
+	private void stripTableIdsFromFields() {
+		for (HashMap<String,String> reportFiltersMap: reportFiltersMapList){
+			String filterFieldValue = reportFiltersMap.get("field");
+			reportFiltersMap.put("field", filterFieldValue.substring(0, filterFieldValue.indexOf('=')));
+			
+		}
+		for (HashMap<String,String> reportFiltersMap: reportFiltersMapList){
+			Log.i("Stripped Value: ", reportFiltersMap.get("field"));
+		}
+		
+		
+	}
+	protected class GetReportFilterFieldsByReportId extends AsyncTask<String, Integer, Boolean> {
+		protected ProgressDialog progress;
+		protected HornetDBService sync;
+		//private int reportId = 0;
+		
+	
+		public GetReportFilterFieldsByReportId () {
+			sync = new HornetDBService();
+		}
+		
+		protected void onPreExecute() {
+			progress = ProgressDialog.show(ReportDateOptionsActivity.this, "Retrieving..", 
+					 "Retrieving Report Filter Data...");
+		}
+		
+		@Override
+		protected Boolean doInBackground(String... params) {
+			reportFiltersMapList = sync.getReportFilterFieldsByReportId(ReportDateOptionsActivity.this, reportId);
+	        return true;
+		}
+		
+
+		protected void onPostExecute(Boolean success) {
+			progress.dismiss();
+			if (success) {
+				//Calls back to the owning activity to call the thread to retrieve the joining tables
+				//ReportDateOptionsActivity.this.getJoiningTablesData(reportFunctionName);
+				/*System.out.println("\nReport-Type_Data");
+				
+				System.out.println("Result List Size: " + reportFiltersMapList.size());
+				
+				for (HashMap<String,String> resultMap: reportFiltersMapList){
+				
+					for (HashMap.Entry entry: resultMap.entrySet()){
+						 System.out.println("Field: " + entry.getKey() + " Value: " + entry.getValue());					 
+					}
+				
+				}*/
+				if (reportFiltersMapList.size() > 0) {
+					buildFiltersTableNameQuery();
+					getReportFilterTableNames();
+				} else {
+					Log.i("","No Filters");
+				}
+				
+				
+			} else {
+				AlertDialog.Builder builder = new AlertDialog.Builder(ReportDateOptionsActivity.this);
+				builder.setTitle("Error Occurred")
+				.setMessage(sync.getStatus())
+				.setPositiveButton("OK", null)
+				.show();
+			}
+	    }
+	 }
+	
+	private class GetReportFilterTableNames extends GetReportFilterFieldsByReportId {
+
+		@Override
+		protected void onPreExecute() {
+			progress = ProgressDialog.show(ReportDateOptionsActivity.this, "Retrieving..", 
+					 "Retrieving Report Filter Table_Name Data...");
+		}
+
+		@Override
+		protected Boolean doInBackground(String... params) {
+			reportFiltersTableNameList = sync.getReportFilterTableNames(getApplicationContext(),reportFilterTableNamesQuery);
+			return true;
+		}
+
+		@Override
+		protected void onPostExecute(Boolean success) {
+			progress.dismiss();
+			if (success) {
+				//Calls back to the owning activity to call the thread to retrieve the joining tables
+				//ReportDateOptionsActivity.this.getJoiningTablesData(reportFunctionName);
+				System.out.println("\nReport-Type_Data");
+				
+				System.out.println("Result List Size: " + reportFiltersTableNameList.size());
+				
+				for (HashMap<String,String> resultMap: reportFiltersTableNameList){
+				
+					for (HashMap.Entry entry: resultMap.entrySet()){
+						 System.out.println("Field: " + entry.getKey() + " Value: " + entry.getValue());					 
+					}
+				
+				}
+				
+			} else {
+				AlertDialog.Builder builder = new AlertDialog.Builder(ReportDateOptionsActivity.this);
+				builder.setTitle("Error Occurred")
+				.setMessage(sync.getStatus())
+				.setPositiveButton("OK", null)
+				.show();
+			}
+			
+		}
+		
+	}
+	
 		
 }
 

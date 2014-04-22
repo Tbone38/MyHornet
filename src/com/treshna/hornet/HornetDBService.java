@@ -3075,6 +3075,58 @@ public class HornetDBService extends Service {
 		
 	 }
  
+ public ArrayList<HashMap<String, String>>  getReportFilterFieldsByReportId(Context context, int reportId) {
+	 	
+	 	this.setup(context);
+	 	ArrayList<HashMap<String, String>> resultMapList  = null;
+	 	ResultSet result = null;
+	 
+	 	
+	 	if (!this.openConnection()){
+	 			
+	 	}
+	 	
+	 	try {
+				result = this.connection.getReportFilterFieldsByReportId(reportId);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+	 	
+	 	
+	 		resultMapList = this.resultSetToMapList(result);
+			   
+	 		this.closeConnection();
+	 	
+			return resultMapList;
+		
+}
+ 
+ public ArrayList<HashMap<String, String>>  getReportFilterTableNames(Context context, String query){
+	 	
+	 	this.setup(context);
+	 	ArrayList<HashMap<String, String>> resultMapList  = null;
+	 	ResultSet result = null;
+	 
+	 	
+	 	if (!this.openConnection()){
+	 			
+	 	}
+
+	 	try {
+				result = this.connection.getReportFilterTableNames(query);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+	 	
+	 	
+	 		resultMapList = this.resultSetToMapList(result);
+			   
+	 		this.closeConnection();
+	 	
+			return resultMapList;
+		
+	 }
+ 
  public ArrayList<HashMap<String, String>>  getJoiningTablesByFunctionName(Context context, String functionName) {
 	 	
 	 	this.setup(context);

@@ -1192,10 +1192,15 @@ public class JDBCConnection {
     	return this.pStatement.executeQuery();
     }
     
-    public ResultSet getFilterFieldsByReportId(int reportId) throws SQLException {
-    	String query = "Select id, name, filter_name from report_filter where user_report_id = ?";
+    public ResultSet getReportFilterFieldsByReportId(int reportId) throws SQLException {
+    	String query = "Select field  from report_filter where user_report_id = ?";
     	this.pStatement = con.prepareStatement(query);
     	this.pStatement.setInt(1,reportId);
+    	return this.pStatement.executeQuery();
+    }
+    
+    public ResultSet getReportFilterTableNames(String query) throws SQLException {
+    	this.pStatement = con.prepareStatement(query);
     	return this.pStatement.executeQuery();
     }
     
