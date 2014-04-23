@@ -1,0 +1,848 @@
+<window name="report-param-win" title="Report Parameters">
+	<vbox border="8">
+		<cell expand="false">
+			<frame label="Report Parameters" name="rp-gen">
+				<box border="8">
+					<!--<cell xpos="0" ypos="0" xexpand="false">
+						<label>Report Period</label>
+					</cell>-->
+					<cell xpos="1" ypos="1" xexpand="true">
+						<label justify="center">Report Start Date</label>
+					</cell>
+					<cell xpos="2" ypos="1" xexpand="true">
+						<label justify="center">Report End Date</label>
+					</cell>
+					<cell xpos="1" ypos="2" xexpand="true">
+						<calendar name="dashrpfrom-date">
+							<field dbobjectsrc="dashreport-date">ndate1</field>
+						</calendar>
+					</cell>
+					<cell xpos="2" ypos="2" xexpand="true">
+						<calendar name="dashrpto-date">
+							<field dbobjectsrc="dashreport-date">ndate2</field>
+						</calendar>
+					</cell>
+					<cell xpos="1" ypos="3">
+						<entry visible="false" name="rp-sdate">
+							<field dbobjectsrc="dashreport-date">ndate1</field>
+						</entry>
+					</cell>
+					<cell xpos="2" ypos="3">
+						<entry visible="false" name="rp-edate">
+							<field dbobjectsrc="dashreport-date">ndate2</field>
+						</entry>
+					</cell>
+					<!--<cell xpos="0" ypos="3">
+						<label>Report Parameters</label>
+					</cell>-->
+					<cell xpos="1" ypos="4" xspan="2">
+						<box>
+							<cell xpos="0" ypos="0" xexpand="false">
+								<label>
+									<condition sourcewidget="filter-booking-resource-condition" opr="equal" value="Booking Resource" action="visible-true" reverse_if_false="true"/>
+									Booking Resource 
+								</label>
+							</cell>
+							<cell xpos="1" ypos="0">
+								<dropdown name="booking-resource-filter">
+									<lookup>
+										<dbobject name="booking-resource-filter">
+											<sql>
+												(SELECT 0 AS id, 'All Resource' AS name) UNION
+												SELECT id, name FROM resource ORDER BY id;			
+											</sql>
+										</dbobject>
+										<primaryfield>id</primaryfield>
+										<showfield>name</showfield>
+									</lookup>
+									<condition sourcewidget="filter-booking-resource-condition" opr="equal" value="Booking Resource" action="visible-true" reverse_if_false="true"/>
+									<trigger event="select">
+										<sql>
+											INSERT INTO report_filter_value(report_filter_id, filter_value, reporter)
+											VALUES((SELECT id 
+											FROM report_filter 
+											WHERE filter_name='Booking Resource' 
+											AND user_report_id = <field dbobjectsrc="dashselect-rp">id</field>), 
+											<widget>booking-resource-filter</widget>, (SELECT current_user)); 
+										</sql>
+									</trigger>
+								</dropdown>
+							</cell>
+							<cell xpos="0" ypos="1" xexpand="false">
+								<label>
+									<condition sourcewidget="filter-booking-result-condition" opr="equal" value="Booking Result" action="visible-true" reverse_if_false="true"/>
+									Booking Result 
+								</label>
+							</cell>
+							<cell xpos="1" ypos="1">
+								<dropdown name="booking-result-filter">
+									<lookup>
+										<dbobject name="booking-result-filter">
+											<sql>
+												(SELECT 0 AS id, 'All Result' AS name) UNION
+												SELECT id, name FROM resultstatus ORDER BY id;			
+											</sql>
+										</dbobject>
+										<primaryfield>id</primaryfield>
+										<showfield>name</showfield>
+									</lookup>
+									<condition sourcewidget="filter-booking-result-condition" opr="equal" value="Booking Result" action="visible-true" reverse_if_false="true"/>
+									<trigger event="select">
+										<sql>
+											INSERT INTO report_filter_value(report_filter_id, filter_value, reporter)
+											VALUES((SELECT id 
+											FROM report_filter 
+											WHERE filter_name='Booking Result' 
+											AND user_report_id = <field dbobjectsrc="dashselect-rp">id</field>), 
+											<widget>booking-result-filter</widget>, (SELECT current_user)); 
+										</sql>
+									</trigger>
+								</dropdown>
+							</cell>
+							<cell xpos="0" ypos="2" xexpand="false">
+								<label>
+									<condition sourcewidget="filter-booking-type-condition" opr="equal" value="Booking Type" action="visible-true" reverse_if_false="true"/>
+									Booking Type 
+								</label>
+							</cell>
+							<cell xpos="1" ypos="2">
+								<dropdown name="booking-type-filter">
+									<lookup>
+										<dbobject name="booking-type-filter">
+											<sql cachename="bookingsetup">
+												(SELECT 0 AS id, 'All Type' AS name) UNION
+												SELECT id, name FROM bookingtype ORDER BY id;			
+											</sql>
+										</dbobject>
+										<primaryfield>id</primaryfield>
+										<showfield>name</showfield>
+									</lookup>
+									<condition sourcewidget="filter-booking-type-condition" opr="equal" value="Booking Type" action="visible-true" reverse_if_false="true"/>
+									<trigger event="select">
+										<sql>
+											INSERT INTO report_filter_value(report_filter_id, filter_value, reporter)
+											VALUES((SELECT id 
+											FROM report_filter 
+											WHERE filter_name='Booking Type' 
+											AND user_report_id = <field dbobjectsrc="dashselect-rp">id</field>), 
+											<widget>booking-type-filter</widget>, (SELECT current_user)); 
+										</sql>
+									</trigger>
+								</dropdown>
+							</cell>
+							<cell xpos="0" ypos="3" xexpand="false">
+								<label>
+									<condition sourcewidget="filter-programme-group-condition" opr="equal" value="Programme Group" action="visible-true" reverse_if_false="true"/>
+									Programme Group
+								</label>
+							</cell>
+							<cell xpos="1" ypos="3">
+								<dropdown name="programme-group-filter">
+									<lookup>
+										<dbobject name="programme-group-filter">
+											<sql cachename="programme">
+												(SELECT 0 AS id, 'All Group' AS name) UNION
+												SELECT id, name FROM programmegroup ORDER BY id;			
+											</sql>
+										</dbobject>
+										<primaryfield>id</primaryfield>
+										<showfield>name</showfield>
+									</lookup>
+									<condition sourcewidget="filter-programme-group-condition" opr="equal" value="Programme Group" action="visible-true" reverse_if_false="true"/>
+									<trigger event="select">
+										<sql>
+											INSERT INTO report_filter_value(report_filter_id, filter_value, reporter)
+											VALUES((SELECT id 
+											FROM report_filter 
+											WHERE filter_name='Programme Group' 
+											AND user_report_id = <field dbobjectsrc="dashselect-rp">id</field>), 
+											<widget>programme-group-filter</widget>, (SELECT current_user)); 
+										</sql>
+									</trigger>
+									<trigger event="select">
+										<sql update="pg-where" cachename="programme">
+											SELECT CASE WHEN '<widget>programme-group-filter</widget>' != '0' 
+											THEN '<widget>programme-group-filter</widget>' END; 
+										</sql>
+									</trigger>
+								</dropdown>
+							</cell>
+							<cell xpos="2" ypos="3">
+								<entry name="pg-where" visible="false" tooltip="pg-where"/>
+							</cell>
+							<cell xpos="0" ypos="4" xexpand="false">
+								<label>
+									<condition sourcewidget="filter-group-programme-condition" opr="equal" value="Group-Programme" action="visible-true" reverse_if_false="true"/>
+									Programme
+								</label>
+							</cell>
+							<cell xpos="1" ypos="4">
+								<dropdown name="group-programme-filter">
+									<lookup>
+										<dbobject name="group-programme-filter">
+											<sql cachename="programme">
+												(SELECT 0 AS id, 'All Programme' AS name) UNION
+												SELECT id, name 
+												FROM programme 
+												WHERE programmegroupid <widget prefix="=idtxt('" nullalternative="IS NOT NULL" postfix="')">pg-where</widget>
+												AND history = 'f'
+												ORDER BY id;			
+											</sql>
+										</dbobject>
+										<primaryfield>id</primaryfield>
+										<showfield>name</showfield>
+									</lookup>
+									<condition sourcewidget="filter-group-programme-condition" opr="equal" value="Group-Programme" action="visible-true" reverse_if_false="true"/>
+									<trigger event="select">
+										<sql>
+											INSERT INTO report_filter_value(report_filter_id, filter_value, reporter)
+											VALUES((SELECT id 
+											FROM report_filter 
+											WHERE filter_name='Group-Programme' 
+											AND user_report_id = <field dbobjectsrc="dashselect-rp">id</field>), 
+											<widget>group-programme-filter</widget>, (SELECT current_user)); 
+										</sql>
+									</trigger>
+								</dropdown>
+							</cell>
+							<cell xpos="0" ypos="5" xexpand="false">
+								<label>
+									<condition sourcewidget="filter-programme-condition" opr="equal" value="Programme" action="visible-true" reverse_if_false="true"/>
+									Programme
+								</label>
+							</cell>
+							<cell xpos="1" ypos="5">
+								<dropdown name="programme-filter">
+									<lookup>
+										<dbobject name="programme-filter">
+											<sql cachename="programme">
+												(SELECT 0 AS id, 'All Programme' AS name) UNION
+												SELECT id, name FROM programme WHERE history = 'f' ORDER BY id;			
+											</sql>
+										</dbobject>
+										<primaryfield>id</primaryfield>
+										<showfield>name</showfield>
+									</lookup>
+									<condition sourcewidget="filter-programme-condition" opr="equal" value="Programme" action="visible-true" reverse_if_false="true"/>
+									<trigger event="select">
+										<sql>
+											INSERT INTO report_filter_value(report_filter_id, filter_value, reporter)
+											VALUES((SELECT id 
+											FROM report_filter 
+											WHERE filter_name='Programme' 
+											AND user_report_id = <field dbobjectsrc="dashselect-rp">id</field>), 
+											<widget>programme-filter</widget>, (SELECT current_user)); 
+										</sql>
+									</trigger>
+								</dropdown>
+							</cell>
+							
+							
+							<cell xpos="0" ypos="6" xexpand="false">
+								<label>
+									<condition sourcewidget="filter-sale-type-condition" opr="equal" value="Sale Type" action="visible-true" reverse_if_false="true"/>
+									Sale Type
+								</label>
+							</cell>
+							<cell xpos="1" ypos="6">
+								<dropdown name="sale-type-filter">
+									<lookup>
+										<dbobject name="sale-type-filter">
+											<sql>
+												SELECT 0 AS integer_value, 'All' AS text_value UNION
+												SELECT integer_value, text_value 
+												FROM lookup_default_value
+												WHERE name='Debitjournal Origin Type' ORDER BY integer_value;
+											</sql>
+										</dbobject>
+										<primaryfield>text_value</primaryfield>
+										<showfield>text_value</showfield>
+									</lookup>
+									<condition sourcewidget="filter-sale-type-condition" opr="equal" value="Sale Type" action="visible-true" reverse_if_false="true"/>
+									<trigger event="select">
+										<sql>
+											INSERT INTO report_filter_value(report_filter_id, filter_value, reporter)
+											VALUES((SELECT id 
+											FROM report_filter 
+											WHERE filter_name='Sale Type' 
+											AND user_report_id = <field dbobjectsrc="dashselect-rp">id</field>), 
+											'<widget>sale-type-filter</widget>', (SELECT current_user)); 
+										</sql>
+									</trigger>
+									<trigger event="select">
+										<sql update="st-where">
+											SELECT CASE WHEN '<widget>sale-type-filter</widget>' != 'All'
+											THEN '<widget>sale-type-filter</widget>' END;
+										</sql>
+									</trigger>
+								</dropdown>
+							</cell>
+							<cell xpos="2" ypos="6">
+								<entry name="st-where" visible="false" tooltip="st-where"/>
+							</cell>
+							<cell xpos="0" ypos="7" xexpand="false">
+								<label>
+									<condition sourcewidget="filter-sale-origin-condition" opr="equal" value="Sale-Origin" action="visible-true" reverse_if_false="true"/>
+									Sale Origin
+								</label>
+							</cell>
+							<cell xpos="1" ypos="7">
+								<dropdown name="sale-origin-filter">
+									<lookup>
+										<dbobject name="sale-origin-filter">
+											<sql>
+												
+												SELECT 0 AS integer_value, 'All' AS text_value UNION
+												(SELECT integer_value, text_value 
+												FROM lookup_default_value
+												WHERE name <widget prefix="='" 
+												nullalternative="IS NOT NULL" postfix="'">st-where
+												</widget> AND
+												id &gt;= 1500 AND id &lt;= 1600)
+												ORDER BY integer_value
+											</sql>
+										</dbobject>
+										<primaryfield>text_value</primaryfield>
+										<showfield>text_value</showfield>
+									</lookup>
+									<condition sourcewidget="filter-sale-origin-condition" opr="equal" value="Sale-Origin" action="visible-true" reverse_if_false="true"/>
+									<trigger event="select">
+										<sql>
+											INSERT INTO report_filter_value(report_filter_id, filter_value, reporter)
+											VALUES((SELECT id
+											FROM report_filter
+											WHERE filter_name='Sale-Origin'
+											AND user_report_id = <field dbobjectsrc="dashselect-rp">id</field>),
+											'<widget>sale-origin-filter</widget>', (SELECT current_user));
+										</sql>
+									</trigger>
+								</dropdown>
+							</cell>
+							
+							<cell xpos="0" ypos="6" xexpand="false">
+								<label>
+									<condition sourcewidget="filter-paid-through-condition" opr="equal" value="Paid Through" action="visible-true" reverse_if_false="true"/>
+									Paid Through
+								</label>
+							</cell>
+							<cell xpos="1" ypos="6">
+								<dropdown name="paid-through-filter">
+									<lookup>
+										<dbobject name="paid-through-filter">
+											<sql>
+												SELECT 0 AS integer_value, 'All' AS text_value UNION
+												SELECT integer_value, text_value 
+												FROM lookup_default_value
+												WHERE name='Paid Through' ORDER BY integer_value;
+											</sql>
+										</dbobject>
+										<primaryfield>text_value</primaryfield>
+										<showfield>text_value</showfield>
+									</lookup>
+									<condition sourcewidget="filter-paid-through-condition" opr="equal" value="Paid Through" action="visible-true" reverse_if_false="true"/>
+									<trigger event="select">
+										<sql>
+											INSERT INTO report_filter_value(report_filter_id, filter_value, reporter)
+											VALUES((SELECT id 
+											FROM report_filter 
+											WHERE filter_name='Paid Through' 
+											AND user_report_id = <field dbobjectsrc="dashselect-rp">id</field>), 
+											'<widget>paid-through-filter</widget>', (SELECT current_user)); 
+										</sql>
+									</trigger>
+									<trigger event="select">
+										<sql update="st-location">
+											SELECT CASE WHEN '<widget>paid-through-filter</widget>' != 'All'
+											THEN '<widget>paid-through-filter</widget>' END;
+										</sql>
+									</trigger>
+								</dropdown>
+							</cell>
+							<cell xpos="2" ypos="6">
+								<entry name="st-location" visible="false" tooltip="st-location"/>
+							</cell>
+							<cell xpos="0" ypos="7" xexpand="false">
+								<label>
+									<condition sourcewidget="filter-payment-methods-condition" opr="equal" value="Payment Methods" action="visible-true" reverse_if_false="true"/>
+									Payment Methods
+								</label>
+							</cell>
+							<cell xpos="1" ypos="7">
+								<dropdown name="payment-methods-filter">
+									<lookup>
+											<dbobject name="payment-methods-filter">
+											<sql>
+												SELECT 0 AS integer_value, 'All' AS text_value UNION
+												(SELECT integer_value, text_value 
+												FROM lookup_default_value
+												WHERE name <widget prefix="='" nullalternative="IS NOT NULL" postfix="'">st-location</widget> AND
+												id &gt;= 1600 AND id &lt;= 1800)
+												ORDER BY integer_value
+											</sql>
+										</dbobject>
+										<primaryfield>text_value</primaryfield>
+										<showfield>text_value</showfield>
+									</lookup>
+									<condition sourcewidget="filter-payment-methods-condition" opr="equal" value="Payment Methods" action="visible-true" reverse_if_false="true"/>
+									<trigger event="select">
+										<sql>
+											INSERT INTO report_filter_value(report_filter_id, filter_value, reporter)
+											VALUES((SELECT id
+											FROM report_filter
+											WHERE filter_name='Payment Methods'
+											AND user_report_id = <field dbobjectsrc="dashselect-rp">id</field>),
+											'<widget>payment-methods-filter</widget>', (SELECT current_user));
+										</sql>
+									</trigger>
+								</dropdown>
+							</cell>
+							
+							<cell xpos="0" ypos="2" xexpand="false">
+								<label>
+									<condition sourcewidget="filter-personal-trainer-condition" opr="equal" value="Personal Trainer" action="visible-true" reverse_if_false="true"/>
+Personal Trainer
+								</label>
+							</cell>
+							<cell xpos="1" ypos="2">
+								<dropdown name="personal-trainer-filter">
+									<lookup>
+										<dbobject name="personal-trainer-filter">
+											<sql cachename="staff">
+												(SELECT 0 AS id, 'All Trainers' AS name) UNION
+												SELECT id, get_name(firstname, surname) AS name FROM staff WHERE is_trainer AND NOT historic
+												ORDER BY id;			
+											</sql>
+										</dbobject>
+										<primaryfield>id</primaryfield>
+										<showfield>name</showfield>
+									</lookup>
+									<condition sourcewidget="filter-personal-trainer-condition" opr="equal" value="Personal Trainer" action="visible-true" reverse_if_false="true"/>
+									<trigger event="select">
+										<sql>
+											INSERT INTO report_filter_value(report_filter_id, filter_value, reporter)
+											VALUES((SELECT id 
+											FROM report_filter 
+											WHERE filter_name='Personal Trainer' 
+											AND user_report_id = <field dbobjectsrc="dashselect-rp">id</field>), 
+											<widget>personal-trainer-filter</widget>, (SELECT current_user)); 
+										</sql>
+									</trigger>
+								</dropdown>
+							</cell>
+							
+							<cell xpos="0" ypos="2" xexpand="false">
+								<label>
+									<condition sourcewidget="filter-not-returning-condition" opr="equal" value="Not Returning" action="visible-true" reverse_if_false="true"/>
+									Resources
+								</label>
+							</cell>
+							<cell xpos="1" ypos="2">
+								<dropdown name="not-returning-filter">
+									<lookup>
+										<dbobject name="not-returning-filter">
+											<sql cachename="bookingsetup">
+												(SELECT 0 AS id, 'All Resources' AS name) UNION
+												SELECT id, name FROM resource
+												ORDER BY id;			
+											</sql>
+										</dbobject>
+										<primaryfield>id</primaryfield>
+										<showfield>name</showfield>
+									</lookup>
+									<condition sourcewidget="filter-not-returning-condition" opr="equal" value="Not Returning" action="visible-true" reverse_if_false="true"/>
+									<trigger event="select">
+										<sql>
+											INSERT INTO report_filter_value(report_filter_id, filter_value, reporter)
+											VALUES((SELECT id 
+											FROM report_filter 
+											WHERE filter_name='Not Returning' 
+											AND user_report_id = <field dbobjectsrc="dashselect-rp">id</field>), 
+											<widget>not-returning-filter</widget>, (SELECT current_user)); 
+										</sql>
+									</trigger>
+								</dropdown>
+							</cell>
+							
+							
+							<cell xpos="0" ypos="0" xexpand="false">
+								<label>
+									<condition sourcewidget="filter-task-event-condition" opr="equal" value="Task Event" action="visible-true" reverse_if_false="true"/>
+									Task Event 
+								</label>
+							</cell>
+							<cell xpos="1" ypos="0">
+								<dropdown name="task-event-filter">
+									<lookup>
+										<dbobject name="task-event-filter">
+											<sql>
+									SELECT id, eventname FROM task_trigger WHERE id > -1 ORDER BY id;			
+											</sql>
+										</dbobject>
+										<primaryfield>id</primaryfield>
+										<showfield>eventname</showfield>
+									</lookup>
+									<condition sourcewidget="filter-task-event-condition" opr="equal" value="Task Event" action="visible-true" reverse_if_false="true"/>
+									<trigger event="select">
+										<sql>
+											INSERT INTO report_filter_value(report_filter_id, filter_value, reporter)
+											VALUES((SELECT id 
+											FROM report_filter 
+											WHERE filter_name='Task Event' 
+											AND user_report_id = <field dbobjectsrc="dashselect-rp">id</field>), 
+											<widget>task-event-filter</widget>, (SELECT current_user)); 
+										</sql>
+									</trigger>
+								</dropdown>
+							</cell>
+							<cell xpos="0" ypos="1" xexpand="false">
+								<label>
+									<condition sourcewidget="filter-assigned-to-condition" opr="equal" value="Assigned To" action="visible-true" reverse_if_false="true"/>
+Assigned To 
+								</label>
+							</cell>
+							<cell xpos="1" ypos="1">
+								<dropdown name="assigned-to-filter">
+									<lookup>
+										<dbobject name="assigned-to-filter">
+											<sql cachename="staff">
+											(SELECT 0 AS id, 'All Staff' AS name) UNION
+						SELECT id, get_name(staff.firstname, staff.surname) AS name FROM staff WHERE id > 0 ORDER BY id;
+											</sql>
+										</dbobject>
+										<primaryfield>id</primaryfield>
+										<showfield>name</showfield>
+									</lookup>
+									<condition sourcewidget="filter-assigned-to-condition" opr="equal" value="Assigned To" action="visible-true" reverse_if_false="true"/>
+									<trigger event="select">
+										<sql>
+											INSERT INTO report_filter_value(report_filter_id, filter_value, reporter)
+											VALUES((SELECT id 
+											FROM report_filter 
+											WHERE filter_name='Assigned To' 
+											AND user_report_id = <field dbobjectsrc="dashselect-rp">id</field>), 
+											<widget>assigned-to-filter</widget>, (SELECT current_user)); 
+										</sql>
+									</trigger>
+								</dropdown>
+							</cell>
+							
+							
+							<cell xpos="0" ypos="2" xexpand="false">
+								<label>
+									<condition sourcewidget="filter-promotion-condition" opr="equal" value="Promotion" action="visible-true" reverse_if_false="true"/>
+Promotion
+								</label>
+							</cell>
+							<cell xpos="1" ypos="2">
+								<dropdown name="promotion-filter">
+									<lookup>
+										<dbobject name="promotion-filter">
+											<sql>
+										(SELECT 0 AS promotion_id, 'All Promotions' AS name) UNION
+										SELECT promotion_id, name FROM promotion WHERE promotion_id > 1
+										ORDER BY promotion_id, name;
+											</sql>
+										</dbobject>
+										<primaryfield>promotion_id</primaryfield>
+										<showfield>name</showfield>
+									</lookup>
+									<condition sourcewidget="filter-promotion-condition" opr="equal" value="Promotion" action="visible-true" reverse_if_false="true"/>
+									<trigger event="select">
+										<sql>
+											INSERT INTO report_filter_value(report_filter_id, filter_value, reporter)
+											VALUES((SELECT id 
+											FROM report_filter 
+											WHERE filter_name='Promotion' 
+											AND user_report_id = <field dbobjectsrc="dashselect-rp">id</field>), 
+											<widget>promotion-filter</widget>, (SELECT current_user)); 
+										</sql>
+									</trigger>
+								</dropdown>
+							</cell>
+							
+							<cell xpos="0" ypos="3" xexpand="false">
+								<label>
+									<condition sourcewidget="filter-company-condition" opr="equal" value="Company" action="visible-true" reverse_if_false="true"/>
+Company
+								</label>
+							</cell>
+							<cell xpos="1" ypos="3">
+								<dropdown name="company-filter">
+									<lookup>
+										<dbobject name="company-filter">
+											<sql>
+												(SELECT 0 AS id, 'All Companies' AS name) UNION
+												SELECT id, name FROM company_config
+												ORDER BY id, name;
+											</sql>
+										</dbobject>
+										<primaryfield>id</primaryfield>
+										<showfield>name</showfield>
+									</lookup>
+									<condition sourcewidget="filter-company-condition" opr="equal" value="Company" action="visible-true" reverse_if_false="true"/>
+									<trigger event="select">
+										<sql>
+											INSERT INTO report_filter_value(report_filter_id, filter_value, reporter)
+											VALUES((SELECT id 
+											FROM report_filter 
+											WHERE filter_name='Company' 
+											AND user_report_id = <field dbobjectsrc="dashselect-rp">id</field>), 
+											<widget>company-filter</widget>, (SELECT current_user)); 
+										</sql>
+									</trigger>
+								</dropdown>
+							</cell>
+							
+							<cell xpos="0" ypos="5" xexpand="false">
+								<label>
+									<condition sourcewidget="filter-ongoing-programme-condition" opr="equal" value="Ongoing Programme" action="visible-true" reverse_if_false="true"/>
+Ongoing Programme
+								</label>
+							</cell>
+							<cell xpos="1" ypos="5">
+								<dropdown name="ongoing-programme-filter">
+									<lookup>
+										<dbobject name="ongoing-programme-filter">
+											<sql cachename="ongoing-programme">
+										(SELECT 0 AS id, 'All Ongoing Programme' AS name) UNION
+										SELECT id, name FROM programme 
+										WHERE (programme.paymentschedule = 1 OR programme.paymentschedule = 2)
+										ORDER BY id;			
+											</sql>
+										</dbobject>
+										<primaryfield>id</primaryfield>
+										<showfield>name</showfield>
+									</lookup>
+									<condition sourcewidget="filter-ongoing-programme-condition" opr="equal" value="Ongoing Programme" action="visible-true" reverse_if_false="true"/>
+									<trigger event="select">
+										<sql>
+											INSERT INTO report_filter_value(report_filter_id, filter_value, reporter)
+											VALUES((SELECT id 
+											FROM report_filter 
+											WHERE filter_name='Ongoing Programme' 
+											AND user_report_id = <field dbobjectsrc="dashselect-rp">id</field>), 
+											<widget>ongoing-programme-filter</widget>, (SELECT current_user)); 
+										</sql>
+									</trigger>
+								</dropdown>
+							</cell>
+							<cell xpos="0" ypos="5" xexpand="false">
+                                                                <label>
+                                                                        <condition sourcewidget="filter-supplier-name-condition" opr="equal" value="Supplier Name" action="visible-true" reverse_if_false="true"/>
+Supplier Name
+                                                                </label>
+                                                        </cell>
+                                                     
+                                                        <cell xpos="1" ypos="5">
+                                                                <dropdown name="supplier-name-filter">
+                                                                        <lookup>
+                                                                                <dbobject name="supplier-name-filter">
+                                                                                        <sql cachename="supplier-name">
+                                                                                                (SELECT 0 AS id, 'All Suppliers' AS name) UNION
+                                                                                                SELECT id, name FROM supplier
+                                                                                                ORDER BY id;
+                                                                                        </sql>
+                                                                                </dbobject>
+                                                                                <primaryfield>id</primaryfield>
+                                                                                <showfield>name</showfield>
+                                                                        </lookup>
+                                                                        <condition sourcewidget="filter-supplier-name-condition" opr="equal" value="Supplier Name" action="visible-true" reverse_if_false="true"/>
+                                                                        <trigger event="select">
+                                                                                <sql>
+                                                                                        INSERT INTO report_filter_value(report_filter_id, filter_value, reporter)
+                                                                                        VALUES((SELECT id
+                                                                                        FROM report_filter
+                                                                                        WHERE filter_name='Supplier Name'
+                                                                                        AND user_report_id = <field dbobjectsrc="dashselect-rp">id</field>),
+                                                                                        <widget>supplier-name-filter</widget>, (SELECT current_user));
+                                                                                </sql>
+                                                                        </trigger>
+                                                                </dropdown>
+                                                        </cell>
+
+
+							
+							<cell xpos="0" ypos="5" xexpand="false">
+								<label>
+									<condition sourcewidget="filter-renewed-4-weeks-exp" opr="equal" value="Renewed Member" action="visible-true" reverse_if_false="true"/>
+Renewed within 4 weeks
+								</label>
+							</cell>
+
+							<cell xpos="1" ypos="5">
+								<dropdown name="renewed-4-weeks-exp-filter">
+
+									<lookup>
+										<dbobject name="renewed-4-weeks-exp">
+											<sql cachename="renewed-within-4-weeks">
+												(SELECT 0 AS id, 'All members' AS name) UNION (SELECT 1 AS id, 'Renewed' AS name) UNION (SELECT 2 AS id, 'Not Renewed' AS name)
+												ORDER BY id;			
+											</sql>
+										</dbobject>
+										<primaryfield>id</primaryfield>
+										<showfield>name</showfield>
+									</lookup>
+									<condition sourcewidget="filter-renewed-4-weeks-exp" opr="equal" value="Renewed Member" action="visible-true" reverse_if_false="true"/>
+									<trigger event="select">
+										<sql>
+											INSERT INTO report_filter_value(report_filter_id, filter_value, reporter)
+											VALUES((SELECT id 
+											FROM report_filter 
+											WHERE filter_name='Renewed Member' 
+											AND user_report_id = <field dbobjectsrc="dashselect-rp">id</field>), 
+											<widget>renewed-4-weeks-exp-filter</widget>, (SELECT current_user)); 
+										</sql>
+									</trigger>
+								</dropdown>
+							</cell>
+							
+							<cell xpos="0" ypos="5" xexpand="false">
+								<label tooltip="Ignore charges that occurred in the last x time.">
+									<condition sourcewidget="filter-ignore-condition" opr="equal" value="Ignore Charges" action="visible-true" reverse_if_false="true"/>
+									Ignore Charges
+								</label>
+							</cell>
+							<cell xpos="1" ypos="5">
+								<dropdown name="ignore-filter" tooltip="Ignore charges that occurred in the last x time.">
+									<lookup>
+										<dbobject name="ignore-filter">
+											<sql cachename="ignore">
+												(SELECT '0'::interval AS value, 'None' AS name) UNION
+												(SELECT '1 day'::interval AS value, '1 day' AS name) UNION
+												(SELECT '2 day'::interval AS value, '2 days' AS name) UNION
+												(SELECT '1 Week'::interval AS value, '1 week' AS name) UNION
+												(SELECT '2 Week'::interval AS value, '2 weeks' AS name)
+												ORDER BY value
+											</sql>
+										</dbobject>
+										<primaryfield>value</primaryfield>
+										<showfield>name</showfield>
+									</lookup>
+									<condition sourcewidget="filter-ignore-condition" opr="equal" value="Ignore Charges" action="visible-true" reverse_if_false="true"/>
+									<trigger event="select">
+										<sql>
+											INSERT INTO report_filter_value(report_filter_id, filter_value, reporter)
+											VALUES((SELECT id 
+											FROM report_filter 
+											WHERE filter_name='Ignore Charges' 
+											AND user_report_id = <field dbobjectsrc="dashselect-rp">id</field>), 
+											'<widget>ignore-filter</widget>', (SELECT current_user)); 
+										</sql>
+									</trigger>
+								</dropdown>
+							</cell>
+						</box>
+					</cell>
+				</box>
+			</frame>
+		</cell>
+		<cell expand="false">
+			<hbox border="8">
+				<cell expand="true"><label /></cell>
+				
+				<cell expand="false">
+					<button image="gtk-execute" label="View Report">
+						<condition sourcewidget="hasmember" opr="equal" value="1" action="visible-true" reverse_if_false="true"/>
+						<security ondeny="hide">
+							<allow>reports</allow>
+						</security>
+						<condition action="editable-false" opr="null" reverse_if_false="true" sourcedbobjectsrc="dashselect-rp" sourcefield="id" />
+						<trigger event="click">
+							<sql update="report-filename">
+								SELECT '<config><ifconfig key='os' value='WIN32'/>TEMP\</config><config><ifconfig key='os' value='DARWIN'/>HOME/</config><config><ifconfig key='os' value='UNIX'/>HOME/</config>'||
+								input_report_period(<widget>dashselect-rtype</widget>, <widget nullalternative="0">dashrp-id</widget>, '<widget>rp-sdate</widget>'::date, '<widget>rp-edate</widget>'::date)
+							</sql>
+						</trigger>
+						
+						<trigger event="click">
+							<api call="open">
+								<widget>loading-win</widget>
+							</api>
+						</trigger>
+						<trigger event="click">
+							<api call="open">
+								<widget>view-list-win-member</widget>
+							</api>
+						</trigger>
+						<trigger event="click">
+							<sql update="report-record-id-member">
+								SELECT create_report_query(<widget nullalternative="0">dashrp-id</widget>);
+							</sql>
+						</trigger>
+						<trigger event="click">
+							<api call="close">
+								<widget>loading-win</widget>
+							</api>
+						</trigger>
+						<trigger event="click">
+							<api call="open">
+								<widget>view-list-win-member</widget>
+							</api>
+						</trigger>
+						
+						<trigger event="click">
+							<api call="close">
+								<widget>report-param-win</widget>
+							</api>
+						</trigger>
+					</button>
+				</cell>
+				<cell expand="false">
+					<button image="gtk-execute" label="View Report">
+						<condition sourcewidget="hasmember" opr="notequal" value="1" action="visible-true" reverse_if_false="true"/>
+						<security ondeny="hide">
+							<allow>reports</allow>
+						</security>
+						<condition action="editable-false" opr="null" reverse_if_false="true" sourcedbobjectsrc="dashselect-rp" sourcefield="id" />
+						<trigger event="click">
+							<sql update="report-filename">
+								SELECT  '<config><ifconfig key='os' value='WIN32'/>TEMP</config><config><ifconfig key='os' value='DARWIN'/>HOME</config><config><ifconfig key='os' value='UNIX'/>HOME</config><constant><ifconfig key='os' value='WIN32'/>\</constant><constant><ifconfig key='os' value='DARWIN'/>/</constant><constant><ifconfig key='os' value='UNIX'/>/</constant>'||
+								input_report_period(<widget>dashselect-rtype</widget>,<widget nullalternative="0">dashrp-id</widget>,'<widget>rp-sdate</widget>'::date,'<widget>rp-edate</widget>'::date)
+							</sql>
+						</trigger>
+						
+						<trigger event="click">
+							<api call="open">
+								<widget>loading-win</widget>
+							</api>
+						</trigger>
+						<trigger event="click">
+							<api call="open">
+								<widget>view-list-win</widget>
+							</api>
+						</trigger>
+						<trigger event="click">
+							<sql update="report-record-id">
+								SELECT create_report_query(<widget nullalternative="0">dashrp-id</widget>);
+							</sql>
+						</trigger>
+						<trigger event="click">
+							<api call="close">
+								<widget>loading-win</widget>
+							</api>
+						</trigger>
+						<trigger event="click">
+							<api call="open">
+								<widget>view-list-win</widget>
+							</api>
+						</trigger>
+						<trigger event="click">
+							<api call="close">
+								<widget>report-param-win</widget>
+							</api>
+						</trigger>
+					</button>
+				</cell>
+				<cell expand="false">
+					<button stock="gtk-close">
+						<trigger event="click">
+							<api call="close">
+								<widget>report-param-win</widget>
+							</api>
+						</trigger>
+					</button>
+				</cell>
+			</hbox>
+		</cell>
+	</vbox>
+</window>

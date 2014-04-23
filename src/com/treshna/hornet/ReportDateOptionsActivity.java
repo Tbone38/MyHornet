@@ -31,9 +31,10 @@ import android.widget.Toast;
 public class ReportDateOptionsActivity extends FragmentActivity implements DatePickerFragment.DatePickerSelectListener{ 
 	private HashMap<String,Object> reportData = new HashMap<String,Object>() ;
 	private ArrayList<HashMap<String,String>> reportFiltersMapList = new ArrayList<HashMap<String,String>>();
-	private ArrayList<HashMap<String,String>> reportFiltersTableNameList = new ArrayList<HashMap<String,String>>();
-	private String reportFilterTableNamesQuery = null;
+	private ArrayList<HashMap<String,String>> firstReportFilterMapList = new ArrayList<HashMap<String,String>>();
+	//private String reportFilterTableNamesQuery = null;
 	private DatePickerFragment startDatePicker = null;
+	private String[] filterQueries = null;
 	private Date selectedStartDate = new Date();
 	private Date selectedEndDate = new Date();
 	private DatePickerFragment endDatePicker = null;
@@ -267,20 +268,36 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 	}
 	
 	private void getReportFilterFieldsByReportId () {
+		
 		GetReportFilterFieldsByReportId reportFilterThread = new GetReportFilterFieldsByReportId();
 		reportFilterThread.execute();
 	
 	}
 	
-	private void getReportFilterTableNames() {
-		GetReportFilterTableNames reportFilterTablesThread = new GetReportFilterTableNames();
-		reportFilterTablesThread.execute();
+	private void getFilterQueriesFromXML () {
+		filterQueries = new String [reportFiltersMapList.size()];
+		int index = 0;
+		for (HashMap<String,String> reportFiltersMap: reportFiltersMapList){
+			filterQueries[index] = ReportQueryResources.getFilterQueryByName(getApplicationContext(),reportFiltersMap.get("filter_name"));
+			index ++;
+		}
 	}
 	
+	private void printFilterQueries() {
+		for(int i = 0; i < filterQueries.length; i++) {
+			Log.i("Filter Query Number: " + i+1 , filterQueries[i]);
+		}
+	}
 	
+	private void getFirstReportFilterData() {
+		GetFirstReportFilterData  firstReportFilterThread = new GetFirstReportFilterData();
+		firstReportFilterThread.execute();
+	}
+	
+/*
 	private void buildFiltersTableNameQuery() {
 		
-		//stripTableIdsFromFields();
+		stripTableIdsFromFields();
 		StringBuilder filtersQuery = new StringBuilder();
 		filtersQuery.append("Select distinct table_name from report_function_table where (joining_query ");
 		int index = 0;
@@ -306,9 +323,10 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 		Log.i("Filters Table Name Query: ", filtersQuery.toString());
 		reportFilterTableNamesQuery =  filtersQuery.toString();
 		
-	}
+	
 	
 	private void stripTableIdsFromFields() {
+		
 		for (HashMap<String,String> reportFiltersMap: reportFiltersMapList){
 			String filterFieldValue = reportFiltersMap.get("field");
 			reportFiltersMap.put("field", filterFieldValue.substring(0, filterFieldValue.indexOf('=')));
@@ -319,7 +337,7 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 		}
 		
 		
-	}
+	}*/
 	protected class GetReportFilterFieldsByReportId extends AsyncTask<String, Integer, Boolean> {
 		protected ProgressDialog progress;
 		protected HornetDBService sync;
@@ -359,9 +377,13 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 				
 				}*/
 				if (reportFiltersMapList.size() > 0) {
-					buildFiltersTableNameQuery();
-					getReportFilterTableNames();
+					
+					getFilterQueriesFromXML();
+					printFilterQueries();
+					getFirstReportFilterData();
+					
 				} else {
+					
 					Log.i("","No Filters");
 				}
 				
@@ -376,17 +398,17 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 	    }
 	 }
 	
-	private class GetReportFilterTableNames extends GetReportFilterFieldsByReportId {
+	private class GetFirstReportFilterData extends GetReportFilterFieldsByReportId {
 
 		@Override
 		protected void onPreExecute() {
 			progress = ProgressDialog.show(ReportDateOptionsActivity.this, "Retrieving..", 
-					 "Retrieving Report Filter Table_Name Data...");
+					 "Retrieving First Report Filter Data...");
 		}
 
 		@Override
 		protected Boolean doInBackground(String... params) {
-			reportFiltersTableNameList = sync.getReportFilterTableNames(getApplicationContext(),reportFilterTableNamesQuery);
+			firstReportFilterMapList = sync.getFirstReportFilterData(getApplicationContext(),filterQueries[0]);
 			return true;
 		}
 
@@ -398,9 +420,9 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 				//ReportDateOptionsActivity.this.getJoiningTablesData(reportFunctionName);
 				System.out.println("\nReport-Type_Data");
 				
-				System.out.println("Result List Size: " + reportFiltersTableNameList.size());
+				System.out.println("Result List Size: " + firstReportFilterMapList.size());
 				
-				for (HashMap<String,String> resultMap: reportFiltersTableNameList){
+				for (HashMap<String,String> resultMap: firstReportFilterMapList){
 				
 					for (HashMap.Entry entry: resultMap.entrySet()){
 						 System.out.println("Field: " + entry.getKey() + " Value: " + entry.getValue());					 
@@ -419,7 +441,7 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 		}
 		
 	}
-	
+
 		
 }
 
