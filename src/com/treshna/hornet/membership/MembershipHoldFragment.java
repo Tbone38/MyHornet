@@ -1,5 +1,6 @@
 package com.treshna.hornet.membership;
 
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,14 +42,6 @@ import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 
-/**
- * TODO: 	- populate spinner #2.			-DONE
- * 			- date widget					-DONE
- * 			- handle switch					-DONE
- * 
- * @author callum
- *
- */
 
 public class MembershipHoldFragment extends Fragment implements OnClickListener, DatePickerFragment.DatePickerSelectListener,
 		OnCheckedChangeListener{
@@ -71,7 +64,7 @@ public class MembershipHoldFragment extends Fragment implements OnClickListener,
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			 Bundle savedInstanceState) {
 		mInflater = inflater;
-		view = mInflater.inflate(R.layout.new_membership_hold, null);
+		view = mInflater.inflate(R.layout.membership_hold, null);
 		
 		sdatePicker = new DatePickerFragment();
 		sdatePicker.setDatePickerSelectListener(this);
@@ -217,6 +210,36 @@ public class MembershipHoldFragment extends Fragment implements OnClickListener,
 		input.setText("0.00");
 	}
 	
+	private String calcDuration(String sdate, String edate) {
+		String duration = null;
+		Date start, end;
+		long interval;
+		start = Services.StringToDate(sdate, "dd MMM yyyy");
+		end = Services.StringToDate(edate, "dd MMM yyyy");
+		
+		interval = end.getTime() - start.getTime();
+		
+		double days = Double.valueOf(new DecimalFormat("#").format(
+				(interval/86400000)));
+		
+		if ((int) days < 7) { //less than a week?
+			duration = (int) days+" days ";
+		} else {
+			double weeks = Double.valueOf(new DecimalFormat("#").format(
+					(interval/604800000)));
+			days = 0d;
+			days = Double.valueOf(new DecimalFormat("#").format(
+					(interval-((double)((int)weeks)*604800000))/86400000));
+			if ((int) days == 0) {
+				duration = (int) weeks + " weeks ";
+			} else {
+				duration = (int) weeks+" weeks, "+(int) days + " days ";
+			}
+		}
+		
+		return duration;
+	}
+	
 	private void setupDate(){
 		TextView startdate = (TextView) view.findViewById(R.id.startdate);
 		TextView enddate = (TextView) view.findViewById(R.id.hold_enddate);
@@ -224,11 +247,13 @@ public class MembershipHoldFragment extends Fragment implements OnClickListener,
 		if (sdatevalue != null) {
 			startdate.setText(sdatevalue);
 		} else {
-			startdate.setText(Services.DateToString(new Date()));
+			sdatevalue = Services.DateToString(new Date());
+			startdate.setText(sdatevalue);
 		}
 		
 		if (edatevalue != null) {
-			enddate.setText(edatevalue);
+			
+			enddate.setText(edatevalue+"	- "+calcDuration(sdatevalue, edatevalue));
 		} else {
 		}
 		

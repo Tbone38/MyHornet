@@ -1,6 +1,7 @@
 package com.treshna.hornet.member;
 
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,6 +20,7 @@ import android.nfc.NfcAdapter;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -34,31 +36,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.treshna.hornet.MainActivity;
-import com.treshna.hornet.R;
 import com.treshna.hornet.MainActivity.TagFoundListener;
-import com.treshna.hornet.R.color;
-import com.treshna.hornet.R.id;
-import com.treshna.hornet.R.layout;
-import com.treshna.hornet.R.string;
+import com.treshna.hornet.R;
 import com.treshna.hornet.membership.MembershipAdd;
 import com.treshna.hornet.membership.MembershipHoldFragment;
 import com.treshna.hornet.network.HornetDBService;
 import com.treshna.hornet.services.DatePickerFragment;
-import com.treshna.hornet.services.Services;
 import com.treshna.hornet.services.DatePickerFragment.DatePickerSelectListener;
-import com.treshna.hornet.services.Services.ColorFilterGenerator;
-import com.treshna.hornet.services.Services.Statics;
+import com.treshna.hornet.services.Services;
 import com.treshna.hornet.sqlite.ContentDescriptor;
-import com.treshna.hornet.sqlite.ContentDescriptor.CancellationFee;
-import com.treshna.hornet.sqlite.ContentDescriptor.FreeIds;
-import com.treshna.hornet.sqlite.ContentDescriptor.MemberNotes;
-import com.treshna.hornet.sqlite.ContentDescriptor.Membership;
-import com.treshna.hornet.sqlite.ContentDescriptor.MembershipExpiryReason;
-import com.treshna.hornet.sqlite.ContentDescriptor.MembershipSuspend;
-import com.treshna.hornet.sqlite.ContentDescriptor.Programme;
-import com.treshna.hornet.sqlite.ContentDescriptor.TableIndex;
-import com.treshna.hornet.sqlite.ContentDescriptor.FreeIds.Cols;
-import com.treshna.hornet.sqlite.ContentDescriptor.TableIndex.Values;
+
 
 
 public class MemberMembershipFragment extends Fragment implements TagFoundListener, OnClickListener, DatePickerSelectListener {
@@ -67,7 +54,6 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 	String memberID;
 	private View view;
 	LayoutInflater mInflater;
-	private MemberActions mActions;
 	private int membershipid;
 	private View alert_cancel_ms;
 	private AlertDialog dialog;
@@ -212,7 +198,7 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 			
 			TextView sdate_view = (TextView) row.findViewById(R.id.finance_row_occurred);
 			String sdate = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.STARTDATE));
-			Date thesdate = Services.StringToDate(sdate, "yyyyMMdd");
+			Date thesdate = Services.StringToDate(sdate, "dd MMM yyyy");
 			if (thesdate != null) sdate = Services.DateToString(thesdate);
 			sdate_view.setText(sdate);
 			
@@ -221,11 +207,13 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 			
 			TextView edate_view = (TextView) row.findViewById(R.id.finance_row_amount1);
 			TextView amount_view = (TextView) row.findViewById(R.id.finance_row_amount2);
-			amount_view.setVisibility(View.GONE);
+			//amount_view.setVisibility(View.GONE);
 			String edate = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.ENDDATE));
-			Date theedate = Services.StringToDate(edate, "yyyy-MM-dd");			
+			Date theedate = Services.StringToDate(edate, "dd MMM yyyy");			
 			if (theedate != null) edate =Services.DateToString(theedate);
 			edate_view.setText(edate);
+			
+			amount_view.setText(calculateHoldDuration(thesdate, theedate));
 			
 			View colour_block = (View) row.findViewById(R.id.finance_colour_block);
 			colour_block.setBackgroundColor(getResources().getColor(R.color.android_blue));
@@ -246,6 +234,35 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 		
 		return view;
 	}
+	
+	private String calculateHoldDuration(Date start, Date end) {
+		if (start == null || end == null) {
+			return "";
+		}
+		long interval = end.getTime() - start.getTime();
+		String duration = null;
+		
+		double days = Double.valueOf(new DecimalFormat("#").format(
+				(interval/86400000)));
+		
+		if ((int) days < 7) { //less than a week?
+			duration = (int) days+" days ";
+		} else {
+			double weeks = Double.valueOf(new DecimalFormat("#").format(
+					(interval/604800000)));
+			days = 0d;
+			days = Double.valueOf(new DecimalFormat("#").format(
+					(interval-((double)((int)weeks)*604800000))/86400000));
+			if ((int) days == 0) {
+				duration = (int) weeks + " weeks ";
+			} else {
+				duration = (int) weeks+" weeks, "+(int) days + " days ";
+			}
+		}
+		
+		return duration;
+	}
+	
 
 	@Override
 	public boolean onNewTag(String serial) {

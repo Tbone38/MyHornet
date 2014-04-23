@@ -110,6 +110,7 @@ KEY:
                     If we get less than 0 than we've encountered an error, try continuing but don't update the "last_sync" time..?
                 Make the Member Details Notes page editable.
                 Complete Dru's list of changes.
+		Update Last Visitors on Manual Check In .. ?
 
     
     v119:

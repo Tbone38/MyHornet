@@ -38,56 +38,92 @@
 	 	    android:padding="5dp"
 	 	    android:layout_margin="3dp"/>
 	 	
-	 	<LinearLayout 
-	 	    android:id="@+id/gifttimerow"
-	 	    android:layout_height="wrap_content"
-	 	    android:layout_width="match_parent"
-	 	    android:layout_below="@id/membershipname"
-	 	    android:gravity="center"
-	 	    android:orientation="horizontal"
-	 	    android:paddingLeft="5dp"
-	 	    android:paddingRight="5dp"
-	 	    android:paddingTop="5dp"
-	 	    android:layout_margin="3dp" >
-	 	    
-		 	<TextView
-		 	    android:id="@+id/gifttimeL"
-		 	    android:layout_width="0dp"
-		 	    android:layout_height="wrap_content"
-		 	    android:layout_weight=".8"
-		 	    android:gravity="center_vertical"
-		 	    android:textSize="18sp"
-		 	    android:text="@string/membership_gifttime" /> 	
-		 	<ToggleButton 
-		 	    android:id="@+id/gifttime"
-		 	    android:layout_width="0dp"
-		 	    android:layout_height="wrap_content"
-		 	    android:layout_weight=".2"
-		 	    android:textOn="@string/membership_gifttime_yes"
-		 	    android:textOff="@string/membership_gifttime_no" />
-		 	
-	 	</LinearLayout>
 	 	<TextView
-	 	    android:id="@+id/gifttime_description"
+	 	    android:id="@+id/holdfeeL"
 	 	    android:layout_width="wrap_content"
 	 	    android:layout_height="wrap_content"
-	 	    android:layout_below="@id/gifttimerow"
-	 	    android:textSize="13sp"
-	 	    android:text="@string/membership_gifttime_description"
-	 	    android:paddingLeft="5dp"
-	 	    android:paddingRight="5dp"
-	 	    android:paddingBottom="5dp"
-	 	    android:layout_margin="3dp" />
-	 	<TextView 
+	 	    android:layout_below="@id/membershipname"
+	 	    android:textSize="16sp"
+	 	    android:gravity="center"
+	 	    android:padding="5dp"
+	 	    android:text="@string/membership_holdfee" />
+	 	<RadioGroup 
+	 	    android:id="@+id/holdfee"
+	 	    android:layout_width="wrap_content"
+	 	    android:layout_height="wrap_content"
+	 	    android:layout_below="@id/holdfeeL"
+	 	    android:layout_marginLeft="10dp">
+	 	    <RadioButton 
+	 	        android:id="@+id/holdfee_free"
+	 	        android:layout_width="wrap_content"
+	 	        android:layout_height="wrap_content"
+	 	        android:text="@string/holdfee_free"
+	 	        android:hint="@string/holdfee_free_hint"
+	 	        android:checked="true"
+	 	        android:textSize="15sp"
+	 	        android:padding="1dp"/>
+	 	    <RadioButton 
+	 	        android:id="@+id/holdfee_free_time"
+	 	        android:layout_width="wrap_content"
+	 	        android:layout_height="wrap_content"
+	 	        android:text="@string/holdfee_free_time"
+	 	        android:hint="@string/holdfee_free_time_hint"
+	 	        android:textSize="15sp"
+	 	        android:padding="1dp"/>
+	 	    <RadioButton 
+	 	        android:id="@+id/holdfee_fullcost"
+	 	        android:layout_width="wrap_content"
+	 	        android:layout_height="wrap_content"
+	 	        android:text="@string/holdfee_fullcost"
+	 	        android:hint="@string/holdfee_fullcost_hint"
+	 	        android:textSize="15sp"
+	 	        android:padding="1dp"/>
+	 	    <RadioButton 
+	 	        android:id="@+id/holdfee_setupcost"
+	 	        android:layout_width="wrap_content"
+	 	        android:layout_height="wrap_content"
+	 	        android:text="@string/holdfee_setupcost"
+	 	        android:hint="@string/holdfee_setupcost_hint"
+	 	        android:textSize="15sp"
+	 	        android:padding="1dp"/>
+	 	    <RadioButton 
+	 	        android:id="@+id/holdfee_ongoingfee"
+	 	        android:layout_width="wrap_content"
+	 	        android:layout_height="wrap_content"
+	 	        android:text="@string/holdfee_ongoingfee"
+	 	        android:hint="@string/holdfee_ongoingfee_hint"
+	 	        android:textSize="15sp"
+	 	        android:padding="1dp"/>
+	 	</RadioGroup>
+	 	
+	 	<TextView
+	 	    android:id="@+id/hold_fee_input_H"
+	 	    android:layout_width="wrap_content"
+	 	    android:layout_height="wrap_content"
+	 	    android:layout_below="@id/holdfee"
+	 	    android:visibility="gone"
+	 	    android:textSize="16sp"
+	 	    android:padding="5dp"
+	 	    android:gravity="center" />
+	 	<EditText
+	 	    android:id="@+id/hold_fee_input"
+	 	    android:layout_width="wrap_content"
+	 	    android:layout_height="wrap_content"
+	 	    android:layout_below="@id/hold_fee_input_H"
+	 	    android:layout_marginLeft="10dp"
+	 	    android:inputType="text"
+	 	    android:visibility="gone" />
+
+	 	<TextView
 	 	    android:id="@+id/startdateL"
 	 	    android:layout_width="wrap_content"
 	 	    android:layout_height="wrap_content"
-	 	    android:layout_below="@id/gifttime_description"
+	 	    android:layout_below="@id/hold_fee_input"
+	 	    android:layout_margin="3dp"
 	 	    android:gravity="center"
-	 	    android:textSize="16sp"
-	 	    android:text="@string/membership_startdate"
 	 	    android:padding="5dp"
-	 	    android:layout_margin="3dp"/>
+	 	    android:text="@string/membership_startdate"
+	 	    android:textSize="16sp" />
 	 	
 	 	<TextView 
 	 	    android:id="@+id/startdate"
@@ -98,34 +134,41 @@
 	 	    android:textSize="18sp"
 	 	    android:text="@string/defaultStartDate"
 	 	    android:padding="5dp"
-	 	    android:layout_margin="3dp"
+	 	    android:layout_marginTop="3dp"
+	 	    android:layout_marginBottom="3dp"
+	 	    android:layout_marginLeft="10dp"
 	 	    android:background="@drawable/button" />
 	 	
 	 	<TextView
-	 	    android:id="@+id/hold_durationL"
+	 	    android:id="@+id/hold_enddateL"
 	 	    android:layout_width="wrap_content"
 	 	    android:layout_height="wrap_content"
 	 	    android:layout_below="@id/startdate"
 	 	    android:gravity="center"
 	 	    android:textSize="16sp"
-	 	    android:text="@string/membership_length"
+	 	    android:text="@string/membership_enddate"
 	 	    android:padding="5dp" 
 	 	    android:layout_margin="3dp"/>
 	 	
-	 	<Spinner 
-	 	    android:id="@+id/hold_duration"
-	 	    android:layout_width="wrap_content"
+	 	<TextView 
+	 	    android:id="@+id/hold_enddate"
+	 	    android:layout_width="match_parent"
 	 	    android:layout_height="wrap_content"
-	 	    android:layout_below="@id/hold_durationL"
-	 	    android:padding="5dp" 
-	 	    android:layout_margin="3dp"
-	 	    android:entries="@array/membership_length_titles" />
+	 	    android:layout_below="@id/hold_enddateL"
+	 	    android:gravity="center_vertical"
+	 	    android:textSize="18sp"
+	 	    android:text="@string/defaultEndDate"
+	 	    android:padding="5dp"
+	 	    android:layout_marginTop="3dp"
+	 	    android:layout_marginBottom="3dp"
+	 	    android:layout_marginLeft="10dp"
+	 	    android:background="@drawable/button" />
 	 	
 	 	<TextView 
 	 	    android:id="@+id/hold_reasonL"
 	 	    android:layout_width="wrap_content"
 	 	    android:layout_height="wrap_content"
-	 	    android:layout_below="@id/hold_duration"
+	 	    android:layout_below="@id/hold_enddate"
 	 	    android:gravity="center"
 	 	    android:textSize="16sp"
 	 	    android:text="@string/membership_reason"
@@ -139,14 +182,48 @@
 	 	    android:layout_below="@id/hold_reasonL"
 	 	    android:inputType="text"
 	 	    android:padding="5dp"
-	 	    android:layout_margin="3dp" />
+	 	    android:layout_marginTop="3dp"
+	 	    android:layout_marginBottom="3dp"
+	 	    android:layout_marginLeft="10dp" />
+	 	
+		<CheckBox 
+		    android:id="@+id/hold_endonreturn"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_below="@id/hold_reason"
+		    android:textSize="16sp"
+		    android:hint="@string/hold_endonreturn_hint"
+		    android:text="@string/hold_endonreturn"
+		    android:checked="true"/>
+		
+		<CheckBox
+		    android:id="@+id/hold_prorata"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_below="@id/hold_endonreturn"
+		    android:textSize="16sp"
+		    android:hint="@string/hold_prorata_hint"
+		    android:text="@string/hold_prorata"
+		    android:checked="true" />
+		
+		<TextView
+		    android:id="@+id/free_time_note"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_below="@id/hold_prorata"
+		    android:paddingTop="5dp"
+		    android:paddingLeft="10dp"
+		    android:paddingBottom="5dp"
+		    android:textSize="13sp"
+		    android:text="@string/holdfee_free_time_details" />
 	 	
 	 	<LinearLayout
 	 	    android:id="@+id/buttonrow"
 	 	    android:layout_width="match_parent"
 	 	    android:layout_height="wrap_content"
-	 	    android:layout_below="@id/hold_reason"
-	 	    android:orientation="horizontal" >
+	 	    android:layout_below="@id/free_time_note"
+	 	    android:orientation="horizontal"
+	 	    android:baselineAligned="false" >
 		 	<LinearLayout
 		        android:layout_width="0dp"
 		        android:layout_height="wrap_content"
