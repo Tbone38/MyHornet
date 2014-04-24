@@ -87,6 +87,7 @@ KEY:
                 Member Details Bookings - Class Name for classes 
                 Reduced likelihood of image syncing having a memory crash.
                 Added Contact Info to member Details
+				Member Details are now Editable.
 
             TODO:
                 Handle permissions/Roles for different staff, to limit what certain staff can see.
@@ -110,7 +111,8 @@ KEY:
                     If we get less than 0 than we've encountered an error, try continuing but don't update the "last_sync" time..?
                 Make the Member Details Notes page editable.
                 Complete Dru's list of changes.
-		Update Last Visitors on Manual Check In .. ?
+				Update Last Visitors on Manual Check In .. ?
+				Fix image update recursion (we download, then upload, then download, then upload).
 
     
     v119:

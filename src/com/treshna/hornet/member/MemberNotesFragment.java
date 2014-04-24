@@ -16,11 +16,14 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -37,6 +40,8 @@ import com.treshna.hornet.R.drawable;
 import com.treshna.hornet.R.id;
 import com.treshna.hornet.R.layout;
 import com.treshna.hornet.R.string;
+import com.treshna.hornet.services.DatePickerFragment;
+import com.treshna.hornet.services.DatePickerFragment.DatePickerSelectListener;
 import com.treshna.hornet.services.Services;
 import com.treshna.hornet.services.Services.Statics;
 import com.treshna.hornet.services.Services.Typefaces;
@@ -49,17 +54,14 @@ import com.treshna.hornet.sqlite.ContentDescriptor.FreeIds.Cols;
 import com.treshna.hornet.sqlite.ContentDescriptor.TableIndex.Values;
 
 
-public class MemberNotesFragment extends Fragment implements OnClickListener, TagFoundListener {
+public class MemberNotesFragment extends Fragment implements OnClickListener, TagFoundListener, DatePickerSelectListener {
 	Cursor cur;
 	ContentResolver contentResolver;
 	RadioGroup rg;
 	String memberID;
-	
+	DatePickerFragment mDatePicker;
 	private View view;
 	LayoutInflater mInflater;
-	//private MemberActions mActions;
-	
-	//private static final String TAG = "MemberNotes";
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -94,6 +96,15 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 		if (!cur.moveToFirst()) {
 			return view;
 		}
+		
+		TextView edit = (TextView) view.findViewById(R.id.button_edit_contact);
+		edit.setClickable(true);
+		edit.setOnClickListener(this);
+		
+		TextView save = (TextView) view.findViewById(R.id.button_save_contact);
+		save.setClickable(true);
+		save.setOnClickListener(this);
+		
 		
 		LinearLayout contactHeading = (LinearLayout) view.findViewById(R.id.contactHeadingRow);
 		contactHeading.setOnClickListener(this);
@@ -217,6 +228,64 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 			return view;
 		}
 		
+		//Edit/Save Handling.
+		TextView edit = (TextView) view.findViewById(R.id.button_edit_emergency);
+		edit.setClickable(true);
+		edit.setOnClickListener(this);
+		
+		TextView save = (TextView) view.findViewById(R.id.button_save_emergency);
+		save.setClickable(true);
+		save.setOnClickListener(this);
+		
+		
+		//On Click Handling for Ememergency Calls/Texts.
+		ImageView cell_sms, cell_call, work_call, home_call;
+		cell_call = (ImageView) view.findViewById(R.id.emergency_cell_call);
+		cell_call.setOnClickListener(this);
+		if (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMERGENCYCELL)) != null &&
+				!cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMERGENCYCELL)).isEmpty()) {
+			ArrayList<String> number = new ArrayList<String>();
+			number.add(":"+cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMERGENCYCELL)));
+			cell_call.setTag(number);
+			cell_call.setColorFilter(Services.ColorFilterGenerator.setColour(getResources().getColor(R.color.visitors_green)));
+		} else {
+			cell_call.setClickable(false);
+		}
+		
+		cell_sms = (ImageView) view.findViewById(R.id.emergency_cell_sms);
+		cell_sms.setOnClickListener(this);
+		if (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMERGENCYCELL)) != null &&
+				!cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMERGENCYCELL)).isEmpty()) {
+			cell_sms.setTag(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMERGENCYCELL)));
+			cell_sms.setColorFilter(Services.ColorFilterGenerator.setColour(getResources().getColor(R.color.android_blue_dark)));
+		} else {
+			cell_sms.setClickable(false);
+		}
+		
+		work_call = (ImageView) view.findViewById(R.id.emergency_work_call);
+		work_call.setOnClickListener(this);
+		if (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMERGENCYWORK)) != null &&
+				!cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMERGENCYWORK)).isEmpty()) {
+			ArrayList<String> number = new ArrayList<String>();
+			number.add(":"+cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMERGENCYWORK)));
+			work_call.setTag(number);
+			work_call.setColorFilter(Services.ColorFilterGenerator.setColour(getResources().getColor(R.color.visitors_green)));
+		} else {
+			work_call.setClickable(false);
+		}
+		
+		home_call = (ImageView) view.findViewById(R.id.emergency_home_call);
+		home_call.setOnClickListener(this);
+		if (cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMERGENCYHOME)) != null &&
+				!cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMERGENCYHOME)).isEmpty()) {
+			ArrayList<String> number = new ArrayList<String>();
+			number.add(":"+cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMERGENCYHOME)));
+			home_call.setTag(number);
+			home_call.setColorFilter(Services.ColorFilterGenerator.setColour(getResources().getColor(R.color.visitors_green)));
+		} else {
+			home_call.setClickable(false);
+		}
+		
 		//YMCA specific Parent Name.
 		int use_roll = Integer.parseInt(Services.getAppSettings(getActivity(), "use_roll"));
 		if (use_roll > 0) {
@@ -266,6 +335,15 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 			return view;
 		}
 		
+		TextView edit = (TextView) view.findViewById(R.id.button_edit_details);
+		edit.setClickable(true);
+		edit.setOnClickListener(this);
+		
+		TextView save = (TextView) view.findViewById(R.id.button_save_details);
+		save.setClickable(true);
+		save.setOnClickListener(this);
+		
+		
 		LinearLayout detailsHeading = (LinearLayout) view.findViewById(R.id.memberDetailsHeadingRow);
 		detailsHeading.setOnClickListener(this);
 		TextView glyph = (TextView) detailsHeading.findViewById(R.id.memberDetailsGlyph);
@@ -296,7 +374,7 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 			
 			gender_view = (EditText) view.findViewById(R.id.member_gender);
 			if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.GENDER))&&
-					cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.GENDER)).compareTo("f")==0) {
+					cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.GENDER)).toLowerCase().compareTo("f")==0) {
 				gender = getResources().getString(R.string.gender_female);
 			} else {
 				gender = getResources().getString(R.string.gender_male);
@@ -320,8 +398,27 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 			return view;
 		}
 		
+		//Edit/Save Handling.
+		TextView edit = (TextView) view.findViewById(R.id.button_edit_medical);
+		edit.setClickable(true);
+		edit.setOnClickListener(this);
+		
+		TextView save = (TextView) view.findViewById(R.id.button_save_medical);
+		save.setClickable(true);
+		save.setOnClickListener(this);
+
 		
 		TextView mStaff = (TextView) view.findViewById(R.id.medicationByStaffL);
+		
+		int use_roll = Integer.parseInt(Services.getAppSettings(getActivity(), "use_roll"));
+		if (use_roll <= 0) {
+			mStaff.setVisibility(View.GONE);
+			TextView dosageLabel = (TextView) view.findViewById(R.id.medicationDosageL);
+			EditText dosage = (EditText) view.findViewById(R.id.medicationDosage);
+			dosageLabel.setVisibility(View.GONE);
+			dosage.setVisibility(View.GONE);
+		}
+		
 		if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.MEDICATIONBYSTAFF))&& 
 				cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.MEDICATIONBYSTAFF)).compareTo("f")==0) {
 			mStaff.setText("No "+getActivity().getResources().getString(R.string.label_member_medication_bystaff));
@@ -508,6 +605,224 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 		setupView();
 	}
 	
+	private void editDetails(boolean is_editable) {
+		EditText street, suburb, city, area, dob_edit, gender_edit;
+		TextView dob_select;
+		RadioGroup gender_rg;
+		RadioButton gender_male, gender_female;
+		
+		street = (EditText) view.findViewById(R.id.member_address_street);
+		suburb = (EditText) view.findViewById(R.id.member_address_suburb);
+		city = (EditText) view.findViewById(R.id.member_address_city);
+		area = (EditText) view.findViewById(R.id.member_area_code);
+		dob_edit = (EditText) view.findViewById(R.id.member_dateofbirth);
+		dob_select = (TextView) view.findViewById(R.id.member_dob_select);
+		gender_edit = (EditText) view.findViewById(R.id.member_gender);
+		gender_rg = (RadioGroup) view.findViewById(R.id.rg_gender);
+		gender_male = (RadioButton) view.findViewById(R.id.gender_male);
+		gender_female = (RadioButton) view.findViewById(R.id.gender_female);
+		
+		if (is_editable) {
+			enableView(street, EditorInfo.TYPE_TEXT_FLAG_CAP_WORDS);
+			enableView(suburb, EditorInfo.TYPE_TEXT_FLAG_CAP_WORDS);
+			enableView(city, EditorInfo.TYPE_TEXT_FLAG_CAP_WORDS);
+			enableView(area, EditorInfo.TYPE_CLASS_NUMBER);
+			
+			dob_select.setText(dob_edit.getText().toString());
+			dob_select.setTag(dob_edit.getText().toString());
+			dob_edit.setVisibility(View.GONE);
+			dob_select.setVisibility(View.VISIBLE);
+			dob_select.setOnClickListener(this); //should probably set the tag as well ..?
+			
+			
+			if (gender_edit.getText().toString().toLowerCase(Locale.US).replace(" ", "").compareTo("male") == 0) {
+				gender_male.setChecked(true);
+			} else if (gender_edit.getText().toString().toLowerCase(Locale.US).replace(" ", "").compareTo("female") == 0) {
+				gender_female.setChecked(true);;
+			}
+			
+			gender_edit.setVisibility(View.GONE);
+			gender_rg.setVisibility(View.VISIBLE);
+			
+			
+		} else if (!is_editable) {
+			disableView(street);
+			disableView(suburb);
+			disableView(city);
+			disableView(area);
+			
+			dob_edit.setVisibility(View.VISIBLE);
+			dob_select.setVisibility(View.GONE);
+			
+			gender_rg.setVisibility(View.GONE);
+			gender_edit.setVisibility(View.VISIBLE);
+		}
+	}
+	
+	private void saveDetails() { //do I need to do input checking? i.e. should I make sure their's a value in the field?
+		EditText street, suburb, city, area;
+		RadioGroup gender_rg;
+		TextView dob_select;
+		
+		street = (EditText) view.findViewById(R.id.member_address_street);
+		suburb = (EditText) view.findViewById(R.id.member_address_suburb);
+		city = (EditText) view.findViewById(R.id.member_address_city);
+		area = (EditText) view.findViewById(R.id.member_area_code);
+		gender_rg = (RadioGroup) view.findViewById(R.id.rg_gender);
+		dob_select = (TextView) view.findViewById(R.id.member_dob_select);
+		
+		ContentValues values = new ContentValues();
+		values.put(ContentDescriptor.Member.Cols.STREET, street.getText().toString());
+		values.put(ContentDescriptor.Member.Cols.SUBURB, suburb.getText().toString());
+		values.put(ContentDescriptor.Member.Cols.CITY, city.getText().toString());
+		values.put(ContentDescriptor.Member.Cols.POSTAL, area.getText().toString());
+		if (gender_rg.getCheckedRadioButtonId() == R.id.gender_female) {
+			values.put(ContentDescriptor.Member.Cols.GENDER, "F");
+		} else if (gender_rg.getCheckedRadioButtonId() == R.id.gender_male) {
+			values.put(ContentDescriptor.Member.Cols.GENDER, "M");
+		}
+		values.put(ContentDescriptor.Member.Cols.DOB, dob_select.getText().toString());
+		values.put(ContentDescriptor.Member.Cols.DEVICESIGNUP, "t");
+		
+		contentResolver.update(ContentDescriptor.Member.CONTENT_URI, values, ContentDescriptor.Member.Cols.MID+" = ?",
+				new String[] {memberID}); //will this automatically be added to the pending changes?
+	}
+	
+	private void editContact(boolean is_editable) {
+		EditText homephone, workphone, cellphone, email;
+		
+		cellphone = (EditText) view.findViewById(R.id.member_cell_phone);
+		workphone = (EditText) view.findViewById(R.id.member_work_phone);
+		homephone = (EditText) view.findViewById(R.id.member_home_phone);
+		email = (EditText) view.findViewById(R.id.member_email);
+		
+		if (is_editable) {
+			enableView(cellphone, EditorInfo.TYPE_CLASS_PHONE);
+			enableView(workphone, EditorInfo.TYPE_CLASS_PHONE);
+			enableView(homephone, EditorInfo.TYPE_CLASS_PHONE);
+			enableView(email, EditorInfo.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+			
+		} else {
+			disableView(cellphone);
+			disableView(workphone);
+			disableView(homephone);
+			disableView(email);
+		}
+	}
+	
+	private void disableView(EditText view) {
+		view.setEnabled(false);
+		view.setFocusable(false);
+		view.setFocusableInTouchMode(false);
+		view.setInputType(EditorInfo.TYPE_NULL);
+	}
+	
+	private void enableView(EditText view, int edittype) {
+		view.setFocusable(true);
+		view.setFocusableInTouchMode(true);
+		view.setEnabled(true);
+		view.setInputType(edittype);
+	}
+	
+	private void saveContact() {
+		EditText homephone, workphone, cellphone, email;
+		
+		cellphone = (EditText) view.findViewById(R.id.member_cell_phone);
+		workphone = (EditText) view.findViewById(R.id.member_work_phone);
+		homephone = (EditText) view.findViewById(R.id.member_home_phone);
+		email = (EditText) view.findViewById(R.id.member_email);
+		
+		ContentValues values = new ContentValues();
+		values.put(ContentDescriptor.Member.Cols.PHCELL, cellphone.getText().toString());
+		values.put(ContentDescriptor.Member.Cols.PHHOME, homephone.getText().toString());
+		values.put(ContentDescriptor.Member.Cols.PHWORK, workphone.getText().toString());
+		values.put(ContentDescriptor.Member.Cols.EMAIL, email.getText().toString());
+		values.put(ContentDescriptor.Member.Cols.DEVICESIGNUP, "t");
+		
+		contentResolver.update(ContentDescriptor.Member.CONTENT_URI, values, ContentDescriptor.Member.Cols.MID+" = ?",
+				new String[] {memberID});
+				
+	}
+	
+	private void editEmergency(boolean is_editable) {
+		EditText name, relationship, cell, home, work;
+		
+		name = (EditText) view.findViewById(R.id.emergencyContactName);
+		relationship = (EditText) view.findViewById(R.id.emergencyContactRelationship);
+		cell = (EditText) view.findViewById(R.id.emergencyContactCell);
+		work = (EditText) view.findViewById(R.id.emergencyContactWork);
+		home = (EditText) view.findViewById(R.id.emergencyContactHome);
+		
+		if (is_editable) {
+			enableView(name, EditorInfo.TYPE_TEXT_FLAG_CAP_WORDS);
+			enableView(relationship, EditorInfo.TYPE_TEXT_FLAG_CAP_WORDS);
+			enableView(cell, EditorInfo.TYPE_CLASS_PHONE);
+			enableView(work, EditorInfo.TYPE_CLASS_PHONE);
+			enableView(home, EditorInfo.TYPE_CLASS_PHONE);
+			
+		} else {
+			disableView(name);
+			disableView(relationship);
+			disableView(cell);
+			disableView(work);
+			disableView(home);
+		}
+	}
+	
+	private void saveEmergency() {
+		EditText name, relationship, cell, home, work;
+		
+		name = (EditText) view.findViewById(R.id.emergencyContactName);
+		relationship = (EditText) view.findViewById(R.id.emergencyContactRelationship);
+		cell = (EditText) view.findViewById(R.id.emergencyContactCell);
+		work = (EditText) view.findViewById(R.id.emergencyContactWork);
+		home = (EditText) view.findViewById(R.id.emergencyContactHome);
+		
+		ContentValues values = new ContentValues();
+		values.put(ContentDescriptor.Member.Cols.EMERGENCYNAME, name.getText().toString());
+		values.put(ContentDescriptor.Member.Cols.EMERGENCYRELATIONSHIP, relationship.getText().toString());
+		values.put(ContentDescriptor.Member.Cols.EMERGENCYCELL, cell.getText().toString());
+		values.put(ContentDescriptor.Member.Cols.EMERGENCYHOME, home.getText().toString());
+		values.put(ContentDescriptor.Member.Cols.EMERGENCYWORK, work.getText().toString());
+		values.put(ContentDescriptor.Member.Cols.DEVICESIGNUP, "t");
+		
+		contentResolver.update(ContentDescriptor.Member.CONTENT_URI, values, ContentDescriptor.Member.Cols.MID+" = ?",
+				new String[] {memberID});
+	}
+	
+	private void editMedical(boolean is_editable){
+		EditText conditions, medication, dosage;
+		conditions = (EditText) view.findViewById(R.id.medicalConditions);
+		medication = (EditText) view.findViewById(R.id.medication);
+		dosage = (EditText) view.findViewById(R.id.medicationDosage);
+		
+		if (is_editable) {
+			enableView(conditions, EditorInfo.TYPE_CLASS_TEXT);
+			enableView(medication, EditorInfo.TYPE_CLASS_TEXT);
+			enableView(dosage, EditorInfo.TYPE_CLASS_TEXT);
+		} else {
+			disableView(conditions);
+			disableView(medication);
+			disableView(dosage);
+		}
+	}
+	
+	private void saveMedical() {
+		EditText conditions, medication, dosage;
+		conditions = (EditText) view.findViewById(R.id.medicalConditions);
+		medication = (EditText) view.findViewById(R.id.medication);
+		dosage = (EditText) view.findViewById(R.id.medicationDosage);
+		
+		ContentValues values = new ContentValues();
+		values.put(ContentDescriptor.Member.Cols.MEDICAL, conditions.getText().toString());
+		values.put(ContentDescriptor.Member.Cols.MEDICATION, medication.getText().toString());
+		values.put(ContentDescriptor.Member.Cols.MEDICALDOSAGE, dosage.getText().toString());
+		values.put(ContentDescriptor.Member.Cols.DEVICESIGNUP, "t");
+		
+		contentResolver.update(ContentDescriptor.Member.CONTENT_URI, values, ContentDescriptor.Member.Cols.MID+" = ?",
+				new String[] {memberID});
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public void onClick(View v) {
@@ -606,6 +921,7 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 			}
 			break;
 		}
+		case (R.id.emergency_cell_sms): //we use the same code for sending sms's.
 		case (R.id.button_sms):{
 			String smsNo = (String) v.getTag();
 			Intent smsIntent = new Intent(Intent.ACTION_VIEW);
@@ -618,6 +934,9 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 			}
 			break;
 		}
+		case (R.id.emergency_work_call):
+		case (R.id.emergency_cell_call):
+		case (R.id.emergency_home_call):
 		case (R.id.button_call):{
 			ArrayList<String> tag = null;
 			if (v.getTag() instanceof ArrayList<?>) {
@@ -637,6 +956,120 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 				//show popup window, let user select the number to call.
 				showPhoneWindow(tag);
 			}
+			break;
+		}
+		case (R.id.button_edit_details):{
+			//make all the EditText Boxes in this section of the page editable, and show the save window...?
+			//TextView save = (TextView) view.findViewById(R.id.button_save_details);
+			LinearLayout save = (LinearLayout) view.findViewById(R.id.button_save_details_wrapper);
+			if (save.getVisibility() == View.VISIBLE) {
+				save.setVisibility(View.INVISIBLE);
+				((TextView) v).setText("Edit");
+				//make everything NOT editable.
+				editDetails(false);
+			} else {
+				save.setVisibility(View.VISIBLE);
+				((TextView) v).setText("Cancel");
+				//make everything editiable!
+				editDetails(true);
+			}
+			break;
+		}
+		case (R.id.button_save_details):{
+			//we need to get the values from the edit fields, and then save them back into the sqlite, and flag 
+			//the member has having changed.
+			LinearLayout save = (LinearLayout) view.findViewById(R.id.button_save_details_wrapper);
+			save.setVisibility(View.INVISIBLE);
+			TextView edit = (TextView) view.findViewById(R.id.button_edit_details);
+			edit.setText("Edit");
+			saveDetails();
+			editDetails(false);
+			setupDetails();
+			break;
+		}
+		case (R.id.member_dob_select):{
+			//show a date selector.
+			Bundle bdl = new Bundle(1);
+			bdl.putString(Services.Statics.KEY, v.getTag().toString());
+			mDatePicker = new DatePickerFragment();
+			mDatePicker.setArguments(bdl);
+			mDatePicker.setDatePickerSelectListener(this);
+			mDatePicker.show(this.getChildFragmentManager(), "datePicker");
+			break;
+		}
+		case (R.id.button_edit_contact):{
+			LinearLayout save = (LinearLayout) view.findViewById(R.id.button_save_contact_wrapper);
+			if (save.getVisibility() == View.VISIBLE) {
+				save.setVisibility(View.INVISIBLE);
+				((TextView) v).setText("Edit");
+				//make everything NOT editable.
+				editContact(false);
+			} else {
+				save.setVisibility(View.VISIBLE);
+				((TextView) v).setText("Cancel");
+				//make everything editiable!
+				editContact(true);
+			}
+			break;
+		}
+		case (R.id.button_save_contact):{
+			LinearLayout save = (LinearLayout) view.findViewById(R.id.button_save_contact_wrapper);
+			save.setVisibility(View.INVISIBLE);
+			TextView edit = (TextView) view.findViewById(R.id.button_edit_contact);
+			edit.setText("Edit");
+			saveContact();
+			editContact(false);
+			setupContact();
+			break;
+		}
+		case (R.id.button_edit_emergency):{
+			LinearLayout save = (LinearLayout) view.findViewById(R.id.button_save_emergency_wrapper);
+			if (save.getVisibility() == View.VISIBLE) {
+				save.setVisibility(View.INVISIBLE);
+				((TextView) v).setText("Edit");
+				//make everything NOT editable.
+				editEmergency(false);
+			} else {
+				save.setVisibility(View.VISIBLE);
+				((TextView) v).setText("Cancel");
+				//make everything editiable!
+				editEmergency(true);
+			}
+			break;
+		}
+		case (R.id.button_save_emergency):{
+			LinearLayout save = (LinearLayout) view.findViewById(R.id.button_save_emergency_wrapper);
+			save.setVisibility(View.INVISIBLE);
+			TextView edit = (TextView) view.findViewById(R.id.button_edit_emergency);
+			edit.setText("Edit");
+			saveEmergency();
+			editEmergency(false);
+			setupEmergency();
+			break;
+		}
+		case (R.id.button_edit_medical):{
+			LinearLayout save = (LinearLayout) view.findViewById(R.id.button_save_medical_wrapper);
+			if (save.getVisibility() == View.VISIBLE) {
+				save.setVisibility(View.INVISIBLE);
+				((TextView) v).setText("Edit");
+				//make everything NOT editable.
+				editMedical(false);
+			} else {
+				save.setVisibility(View.VISIBLE);
+				((TextView) v).setText("Cancel");
+				//make everything editiable!
+				editMedical(true);
+			}
+			break;
+		}
+		case (R.id.button_save_medical):{
+			LinearLayout save = (LinearLayout) view.findViewById(R.id.button_save_medical_wrapper);
+			save.setVisibility(View.INVISIBLE);
+			TextView edit = (TextView) view.findViewById(R.id.button_edit_medical);
+			edit.setText("Edit");
+			saveMedical();
+			editMedical(false);
+			setupMedical();
 			break;
 		}
 		default:
@@ -678,7 +1111,12 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 		            	String ph ="tel:"+selectedNo;
 						Intent intent = new Intent(Intent.ACTION_DIAL);
 						intent.setData(Uri.parse(ph));
-						getActivity().startActivity(intent);
+						try {
+							getActivity().startActivity(intent);
+						} catch (Exception e) {
+							//we haven't got anything to handle that intent. show an error.
+							Toast.makeText(getActivity(), "You cannot make calls from this device", Toast.LENGTH_LONG).show();
+						}
 	            	}
             }
         });
@@ -695,5 +1133,11 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 	@Override
 	public boolean onNewTag(String serial) {
 	return false;
+	}
+
+	@Override
+	public void onDateSelect(String date, DatePickerFragment theDatePicker) {
+		TextView dob_select = (TextView) view.findViewById(R.id.member_dob_select);
+		dob_select.setText(date);
 	}
 }

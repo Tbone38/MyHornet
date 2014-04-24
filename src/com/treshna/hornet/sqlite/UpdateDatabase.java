@@ -868,6 +868,19 @@ public class UpdateDatabase {
 		
 		private static final String SQL17 = "ALTER TABLE "+Company.NAME+" ADD COLUMN "+Company.Cols.NAMEORDER+" TEXT DEFAULT '"+Member.Cols.FNAME+"';";
 		
+		private static final String SQL18 = "DROP TRIGGER IF EXISTS "+Member.Triggers.ON_UPDATE+";";
+		
+		private static final String SQL19 ="CREATE TRIGGER "+Member.Triggers.ON_UPDATE+" AFTER UPDATE ON "+Member.NAME
+				+" FOR EACH ROW WHEN (new."+Member.Cols.MID+" > 0 OR "
+						+" old."+Member.Cols.MID+" > 0) "
+						+ "AND new."+Member.Cols.DEVICESIGNUP+" = 't' "
+				//to accomodate other changes.
+				+" BEGIN "
+					+"INSERT OR REPLACE INTO "+PendingUpdates.NAME
+					+" ("+PendingUpdates.Cols.ROWID+", "+PendingUpdates.Cols.TABLEID+")"
+					+" VALUES (new."+Member.Cols._ID+", "+TableIndex.Values.Member.getKey()+");"
+				+"END;";
+		
 		public static void patchNinetySix(SQLiteDatabase db) {
 			db.beginTransaction();
 			try {
@@ -905,6 +918,10 @@ public class UpdateDatabase {
 				db.execSQL(SQL16);
 				Log.w(HornetDatabase.class.getName(), "\n"+SQL17);
 				db.execSQL(SQL17);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL18);
+				db.execSQL(SQL18);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL19);
+				db.execSQL(SQL19);
 				db.setTransactionSuccessful();
 			/*} catch (SQLException e) {
 			e.printStackTrace();

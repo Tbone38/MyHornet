@@ -267,8 +267,6 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 	@Override
 	public boolean onNewTag(String serial) {
 		if (alertDialog == null || !alertDialog.isShowing()) {
-			/*((NFCActivity)caller).onNewTag(serial);
-			return true;*/
 			return false;
 		}
 		ContentResolver contentResolver = getActivity().getContentResolver();
@@ -336,13 +334,14 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 		ContentValues values = new ContentValues();
 		
 		values.put(ContentDescriptor.Member.Cols.CARDNO, cardid);
+		values.put(ContentDescriptor.Member.Cols.DEVICESIGNUP, "t");
 		contentResolver.update(ContentDescriptor.Member.CONTENT_URI, values, ContentDescriptor.Member.Cols.MID+" = ?",
 				new String[] {memberID});
-		values = new ContentValues();
+		/*values = new ContentValues();
 		values.put(ContentDescriptor.PendingUpdates.Cols.TABLEID, ContentDescriptor.TableIndex.Values.Member.getKey());
 		values.put(ContentDescriptor.PendingUpdates.Cols.ROWID, memberID);
 		
-		contentResolver.insert(ContentDescriptor.PendingUpdates.CONTENT_URI, values);
+		contentResolver.insert(ContentDescriptor.PendingUpdates.CONTENT_URI, values);*/ // we have a trigger, this is unneccissary?
 		
 		Intent i = new Intent(getActivity(), HornetDBService.class);
 		i.putExtra(Services.Statics.KEY, Services.Statics.FREQUENT_SYNC);

@@ -7,7 +7,6 @@ import android.content.ContentResolver;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,6 +14,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -189,67 +189,6 @@ public class MemberSlideFragment extends Fragment implements TagFoundListener{
 	   return view;
 	}
 
-	
-	private Fragment noteFragment(){
-		Fragment f = new MemberNotesFragment();
-		Bundle bdl = new Bundle(2);
-		
-        bdl.putString(Services.Statics.MID, memberID);
-        f.setArguments(bdl);
-        
-        selectedFragment = R.id.button_member_navigation_notes;
-        return f;
-	}
-	
-	private Fragment membershipFragment() {
-		Fragment f = new MemberMembershipFragment();
-		Bundle bdl = new Bundle(1);
-        bdl.putString(Services.Statics.MID, memberID);
-        f.setArguments(bdl);
-        
-        selectedFragment = R.id.button_member_navigation_memberships;
-        return f;
-	}
-	
-	private Fragment visitFragment() {
-		Fragment f = new MemberVisitHistoryFragment();
-		Bundle bdl = new Bundle(2);
-        bdl.putString(Services.Statics.MID, memberID);
-        f.setArguments(bdl);
-        
-        selectedFragment = R.id.button_member_navigation_visits;
-        return f;
-	}
-	
-	private Fragment financeFragment() {
-		Fragment f = new MemberFinanceFragment();
-		Bundle bdl = new Bundle(1);
-		bdl.putString(Services.Statics.MID, memberID);
-		f.setArguments(bdl);
-		
-		selectedFragment = R.id.button_member_navigation_finance;
-		return f;
-	}
-	
-	private Fragment bookingFragment() {
-		Fragment f = new MemberBookingsFragment();
-		Bundle bdl = new Bundle(1);
-		bdl.putString(Services.Statics.MID, memberID);
-		f.setArguments(bdl);
-		
-		selectedFragment = R.id.button_member_navigation_booking;
-		return f;
-	}
-	
-	private Fragment galleryFragment() {
-		Fragment f = new MemberGalleryFragment();
-		Bundle bdl = new Bundle(1);
-		bdl.putString(Services.Statics.MID, memberID);
-		f.setArguments(bdl);
-		
-		selectedFragment = R.id.button_member_navigation_gallery;
-		return f;
-	}
 	/**
 	 * Changes the Current Fragment to match the selection.
 	 * @param position
@@ -279,51 +218,28 @@ public class MemberSlideFragment extends Fragment implements TagFoundListener{
         	Bundle bdl = new Bundle(2);
         	bdl.putString(Services.Statics.MID, memberID);
         	
-        	/*switch (position){
-        		case(0):
-        			membershipFragment();
-        			break;
-        		case (1):
-        			noteFragment();
-        			break;
-        		case (2):
-        			visitFragment();
-        			break;
-        		case (3):
-        			bookingFragment();
-        			break;
-        		case(4):
-        			financeFragment();
-        			break;
-        		case (5):
-        			galleryFragment();
-        			break;
-        		default:
-        			membershipFragment();
-        			break;
-        	}*/
         	switch (position){
         	case (0):
-        			galleryFragment();
+        			selectedFragment = R.id.button_member_navigation_gallery;
         			break;
         	case (1):
-        			noteFragment();
+        			selectedFragment = R.id.button_member_navigation_notes;
         			break;
         	case (2):
-        			membershipFragment();
+        			selectedFragment = R.id.button_member_navigation_memberships;
         			break;
         	case (3):
-        			visitFragment();
+        			selectedFragment = R.id.button_member_navigation_visits;
         			break;
         	case (4):
-        			bookingFragment();
+        			selectedFragment = R.id.button_member_navigation_booking;
         			break;
         	case (5):
-        			financeFragment();
+        			selectedFragment = R.id.button_member_navigation_finance;
         			break;
         	}
         	
-        	mTagListener = (TagFoundListener) mainFragment;
+        	//mTagListener = (TagFoundListener) mainFragment;
         	bdl.putInt(Services.Statics.KEY, selectedFragment);
         	mainFragment.setArguments(bdl);
         	
@@ -343,6 +259,13 @@ public class MemberSlideFragment extends Fragment implements TagFoundListener{
         @Override
         public CharSequence getPageTitle(int position) {
             return titles[position];
+        }
+        
+        @Override
+        public void setPrimaryItem(ViewGroup container, int position, Object object) {
+        	super.setPrimaryItem(container, position, object);
+        	
+        	mTagListener = (TagFoundListener) object;
         }
     }
 

@@ -475,7 +475,7 @@ public class MainActivity extends NFCActivity {
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
     
-    private void setupFragment(Fragment f, String tag) {
+    public void setTagListener(Fragment f, String tag) {
     	if (tag.compareTo("memberDetails")==0) {
     		tagFoundListener = (TagFoundListener) f;
     	}
@@ -488,7 +488,8 @@ public class MainActivity extends NFCActivity {
 		
 		if (f != null) {
 			cFragment = f;
-			setupFragment(f, tag);
+			//tagFoundListener = (TagFoundListener) f;
+			setTagListener(f, tag);
 			FragmentTransaction ft = fm.beginTransaction();
 			ft.replace(R.id.content_view, f, tag);
 			ft.addToBackStack(null);
@@ -658,7 +659,9 @@ public class MainActivity extends NFCActivity {
 
 		@SuppressLint("NewApi")
 		protected void onPostExecute(Boolean success) {
-			Services.getProgress().dismiss();
+			if (Services.getProgress() != null) {
+				Services.getProgress().dismiss();
+			}
 			Services.setProgress(null);
 			if (success) {
 				// refresh the page.

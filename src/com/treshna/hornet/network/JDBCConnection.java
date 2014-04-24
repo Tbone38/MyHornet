@@ -482,23 +482,125 @@ public class JDBCConnection {
 	    	return rs;
     }
     
-    /**
-     * updates tablename with the key/value pairs from the 3D array (0 is column name, 1 is value),
-     * for the condition in the WHERE;
-     * 
-     * The values will need to have any casting/etc included..
-     * 
-     * @param values
-     * @param tablename
-     * @param where should be formatted as a where clause WITH OUT the leading 'WHERE ...'
-     * @return
-     * @throws SQLException
-     */
-    public int updateRow(ArrayList<String[]> values, String tablename, String where) throws SQLException, NullPointerException {
+    public int updateMember(String cardno, String street, String suburb, String city, String areacode, String gender, String dob,
+    		String memberid, String phcell, String phhome, String phwork, String email, String emergency_name, String emergency_relationship,
+    		String emergency_cell, String emergency_home, String emergency_work, String medical, String medication, String medicationdosage) 
+    		throws SQLException {
+    	
+    	String query = "UPDATE member SET (cardno, addressstreet, addresssuburb, addresscity, addressareacode, gender, dob, phonecell, "
+    			+ "phonehome, phonework, email, emergencyname, emergencyrelationship, emergencyhome, emergencywork, emergencycell, "
+    			+ "medicalconditions, medication, medicationdosage) = (?, ?, ?, ?, ?, ?, ?::DATE, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
+    			+ "WHERE id = ?;";
+    	pStatement = con.prepareStatement(query);
+    	if (cardno != null) {
+    		pStatement.setInt(1, Integer.valueOf(cardno));
+    	} else {
+    		pStatement.setNull(1, java.sql.Types.INTEGER);
+    	}
+    	if (street != null) {
+    		pStatement.setString(2, street);
+    	} else {
+    		pStatement.setNull(2, java.sql.Types.VARCHAR);
+    	}
+    	if (suburb != null) {
+    		pStatement.setString(3, suburb);
+    	} else {
+    		pStatement.setNull(3, java.sql.Types.VARCHAR);
+    	}
+    	if (city != null) {
+    		pStatement.setString(4, city);
+    	} else {
+    		pStatement.setNull(4, java.sql.Types.VARCHAR);
+    	}
+    	if (areacode != null) {
+    		pStatement.setString(5, areacode);
+    	} else {
+    		pStatement.setNull(5, java.sql.Types.VARCHAR);
+    	}
+    	if (gender != null) {
+    		pStatement.setString(6, gender);
+    	} else {
+    		pStatement.setNull(6, java.sql.Types.CHAR);
+    	}
+    	if (dob != null) {
+    		pStatement.setString(7, dob);
+    	} else {
+    		pStatement.setNull(7, java.sql.Types.DATE);
+    	}
+    	if (phcell != null) {
+    		pStatement.setString(8, phcell);
+    	} else {
+    		pStatement.setNull(8, java.sql.Types.VARCHAR);
+    	}
+    	if (phhome != null) {
+    		pStatement.setString(9, phhome);
+    	} else {
+    		pStatement.setNull(9, java.sql.Types.VARCHAR);
+    	}
+    	if (phwork != null) {
+    		pStatement.setString(10, phwork);
+    	} else {
+    		pStatement.setNull(10, java.sql.Types.VARCHAR);
+    	}
+    	if (email != null) {
+    		pStatement.setString(11, email);
+    	} else {
+    		pStatement.setNull(11, java.sql.Types.VARCHAR);
+    	}
+    	if (emergency_name != null) {
+    		pStatement.setString(12, emergency_name);
+    	} else {
+    		pStatement.setNull(12, java.sql.Types.VARCHAR);
+    	}
+    	if (emergency_relationship != null) {
+    		pStatement.setString(13, emergency_relationship);
+    	} else {
+    		pStatement.setNull(13, java.sql.Types.VARCHAR);
+    	}
+    	if (emergency_home != null) {
+    		pStatement.setString(14, emergency_home);
+    	} else {
+    		pStatement.setNull(14, java.sql.Types.VARCHAR);
+    	}
+    	if (emergency_work != null) {
+    		pStatement.setString(15, emergency_work);
+    	} else {
+    		pStatement.setNull(15, java.sql.Types.VARCHAR);
+    	}
+    	if (emergency_cell != null) {
+    		pStatement.setString(16, emergency_cell);
+    	} else {
+    		pStatement.setNull(16, java.sql.Types.VARCHAR);
+    	}
+    	if (medical != null) {
+    		pStatement.setString(17, medical);
+    	} else {
+    		pStatement.setNull(17, java.sql.Types.VARCHAR);
+    	}
+    	if (medication != null) {
+    		pStatement.setString(18, medication);
+    	} else {
+    		pStatement.setNull(18, java.sql.Types.VARCHAR);
+    	}
+    	if (medicationdosage != null) {
+    		pStatement.setString(19, medicationdosage);
+    	} else {
+    		pStatement.setNull(19, java.sql.Types.VARCHAR);
+    	}
+    	if (memberid != null) {
+    		pStatement.setInt(20, Integer.parseInt(memberid));
+    	} else {
+    		return 0;
+    	}
+    	
+    	return pStatement.executeUpdate();
+    }
+    
+    
+    /*public int updateRow(ArrayList<String[]> values, String tablename, String where) throws SQLException, NullPointerException {
 	    	if (where == null || where.isEmpty()) {
 	    		return 0;
 	    	}
-	    	//find a way to make this easier to read.
 	    	String set = "UPDATE "+tablename+" SET (";
 	    	String value = "(";
 	    	for (int i = 0; i < values.size(); i++) {
@@ -516,7 +618,7 @@ public class JDBCConnection {
 	    	String query = set+value+where;
 	    	pStatement = con.prepareStatement(query);
 	    	return pStatement.executeUpdate();
-    }
+    }*/
     
     public ResultSet getOpenHours(long last_sync) throws SQLException, NullPointerException {
 	    	ResultSet rs = null;

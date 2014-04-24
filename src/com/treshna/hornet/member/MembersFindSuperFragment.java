@@ -93,6 +93,7 @@ public class MembersFindSuperFragment extends Fragment implements OnMemberSelect
 	        //MemberDetailsFragment f = new MemberDetailsFragment();
 	        Fragment f = new MemberSlideFragment();
 	        Bundle bdl = new Bundle(1);
+	        ((MainActivity)getActivity()).setTagListener(f, "memberDetails");
 	        bdl.putString(Services.Statics.MID, id);
 	        f.setArguments(bdl);
 	        ft.replace(R.id.frame_left, f);

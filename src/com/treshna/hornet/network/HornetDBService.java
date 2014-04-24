@@ -1,6 +1,7 @@
 package com.treshna.hornet.network;
 
 import java.sql.ResultSet;
+
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -937,31 +938,152 @@ public class HornetDBService extends Service {
     	return result;
     }
     
-    private int updateMember(String memberid) {
-    	Log.v(TAG, "Updating Member for ID:"+memberid);
-    	int result = 0;
-    	String where = "id = "+memberid;
-    	cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, new String[] {
-    			"m."+ContentDescriptor.Member.Cols.CARDNO}, ContentDescriptor.Member.Cols.MID+" = ?",
-    			new String[] {memberid}, null);
+    /**
+     * TODO: this will break if user input contains "'"
+     * @param rowid
+     * @return
+     */
+    private int updateMember(String rowid) {
+    	String memberid = null;
+    	String[] columns = {"m."+ContentDescriptor.Member.Cols.CARDNO, ContentDescriptor.Member.Cols.STREET,
+    			ContentDescriptor.Member.Cols.SUBURB, ContentDescriptor.Member.Cols.CITY, ContentDescriptor.Member.Cols.POSTAL,
+    			ContentDescriptor.Member.Cols.GENDER, ContentDescriptor.Member.Cols.DOB, "m."+ContentDescriptor.Member.Cols.MID,
+    			ContentDescriptor.Member.Cols.PHCELL, ContentDescriptor.Member.Cols.PHHOME, ContentDescriptor.Member.Cols.PHWORK,
+    			ContentDescriptor.Member.Cols.EMAIL, ContentDescriptor.Member.Cols.EMERGENCYNAME, ContentDescriptor.Member.Cols.EMERGENCYCELL, 
+    			ContentDescriptor.Member.Cols.EMERGENCYRELATIONSHIP, ContentDescriptor.Member.Cols.EMERGENCYHOME,
+    			ContentDescriptor.Member.Cols.EMERGENCYWORK, ContentDescriptor.Member.Cols.MEDICAL,
+    			ContentDescriptor.Member.Cols.MEDICALDOSAGE, ContentDescriptor.Member.Cols.MEDICATION
+    			};
+    	
+    	cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, columns, "m."+ContentDescriptor.Member.Cols._ID+" = ?",
+    			new String[] {rowid}, null);
     	
     	if (!cur.moveToNext()) {
     		cur.close();
     		return 0;
     	}
+    	memberid = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.MID));
+    	
+    	Log.v(TAG, "Updating Member for ID:"+memberid);
+    	int result = 0;
+    	String where = "id = "+memberid, cardno, street, suburb, 
+    			city, areacode, gender, dob, phcell, phhome, phwork,
+    			email, emergency_name, emergency_relationship, emergency_cell,
+    			emergency_home, emergency_work, medical, medication, medicationdosage;
+    	
+    	
     	ArrayList<String[]> values = new ArrayList<String[]>();
-    	/*for (int col =0; col < cur.getColumnCount(); col++){
-    		Log.d(TAG, "Column:"+cur.getColumnName(col)+"  Value:"+cur.getString(col));
-    	}*/
-    		values.add(new String[] {ContentDescriptor.Member.Cols.CARDNO, 
-    				cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.CARDNO))});
-    		Log.d(TAG, "GOT CARDNO:"+cur.getInt(cur.getColumnIndex(ContentDescriptor.Member.Cols.CARDNO)));
+		if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.CARDNO))) {
+			cardno = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.CARDNO));
+		} else {
+			cardno = null;
+		}
+		if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.STREET))) {
+			street = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.STREET));
+		} else {
+			street = null;
+		}
+		if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.SUBURB))) {
+			suburb = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.SUBURB));
+		} else {
+			suburb = null;
+		}
+		if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.CITY))) {
+			city = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.CITY));
+		} else {
+			city = null;
+		}
+		if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.POSTAL))) {
+			areacode = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.POSTAL));
+		} else {
+			areacode = null;
+		}
+		if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.GENDER))) {
+			gender = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.GENDER));
+		} else {
+			gender =null;
+		}
+		if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.DOB))) {
+			dob = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.DOB));
+		} else {
+			dob = null;
+		}
+		if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHCELL))) {
+			phcell = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHCELL));
+		} else {
+			phcell = null;
+		}
+		if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHHOME))) {
+			phhome = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHHOME));
+		} else {
+			phhome = null;
+		}
+		if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHWORK))) {
+			phwork = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.PHWORK));
+		} else {
+			phwork = null;
+		}
+		if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMAIL))) {
+			email = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMAIL));
+		} else {
+			email = null;
+		}
+		if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMERGENCYNAME))) {
+			emergency_name = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMERGENCYNAME));
+		} else {
+			emergency_name = null;
+		}
+    	if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMERGENCYRELATIONSHIP))) {
+    		emergency_relationship = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMERGENCYRELATIONSHIP));
+    	} else {
+    		emergency_relationship = null;
+    	}
+    	if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMERGENCYCELL))) {
+    		emergency_cell = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMERGENCYCELL));
+    	} else {
+    		emergency_cell = null;
+    	}
+    	if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMERGENCYHOME))) {
+    		emergency_home = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMERGENCYHOME));
+    	} else {
+    		emergency_home = null;
+    	}
+    	if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMERGENCYWORK))) {
+    		emergency_work = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.EMERGENCYWORK));
+    	} else {
+    		emergency_work = null;
+    	}
+    	if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.MEDICAL))) {
+    		medical = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.MEDICAL));
+    	} else {
+    		medical = null;
+    	}
+    	if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.MEDICATION))) {
+    		medication = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.MEDICATION));
+    	} else {
+    		medication = null;
+    	}
+    	if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.MEDICALDOSAGE))) {
+    		medicationdosage = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.MEDICALDOSAGE));
+    	} else {
+    		medicationdosage = null;
+    	}
+
     	try {
-    		connection.updateRow(values, ContentDescriptor.Member.NAME, where);
+    		//connection.updateRow(values, ContentDescriptor.Member.NAME, where);
+    		connection.updateMember(cardno, street, suburb, city, areacode, gender, dob, memberid,
+    				phcell, phhome, phwork, email, emergency_name, emergency_relationship, emergency_cell,
+    				emergency_home, emergency_work, medical, medication, medicationdosage);
+    		result+=1;
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
     		Log.e(TAG, "", e);
     		return -2;
+    	} finally {
+    		ContentValues value = new ContentValues();
+    		value.put(ContentDescriptor.Member.Cols.DEVICESIGNUP, "f");
+    		contentResolver.update(ContentDescriptor.Member.CONTENT_URI, value, ContentDescriptor.Member.Cols.MID+" = ?",
+    				new String[] {memberid});
     	}
     	cur.close();
     	return result;
@@ -980,9 +1102,7 @@ public class HornetDBService extends Service {
     		return -1; //connection failed; see statusMessage for why
     	}
     	
-    	cur = /*contentResolver.query(ContentDescriptor.Member.URI_FREE_IDS, null, ContentDescriptor.Member.Cols.STATUS+" = -1",
-    			null, null);*/
-    			contentResolver.query(ContentDescriptor.FreeIds.CONTENT_URI, null, ContentDescriptor.FreeIds.Cols.TABLEID+" = "
+    	cur = contentResolver.query(ContentDescriptor.FreeIds.CONTENT_URI, null, ContentDescriptor.FreeIds.Cols.TABLEID+" = "
     					+ContentDescriptor.TableIndex.Values.Member.getKey(),null, null);
     	count = cur.getCount();
     	cur.close();
@@ -3320,7 +3440,7 @@ public class HornetDBService extends Service {
     		Log.e(TAG, "", e);
     		return false;
     	}
-    	
+
     	updateDevice();
     	closeConnection();
     	connection.closeConnection();
@@ -3765,7 +3885,6 @@ public class HornetDBService extends Service {
     			});
     			break;
     		}}
-    		result = i;
     	}
     	Log.d(TAG, "Updated "+result+" Member(s)");
     	

@@ -141,6 +141,19 @@
 	        android:inputType="none"
 	        android:paddingLeft="10dp" />
 	    <TextView
+	        android:id="@+id/member_dob_select" 
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="20dp"
+	        android:textColor="@color/black"
+	        android:textSize="18sp"
+	        android:paddingLeft="10dp"
+	        android:paddingTop="7dp"
+	        android:paddingBottom="7dp"
+	        android:background="@drawable/button"
+	        android:clickable="true"
+	        android:visibility="gone" />
+	    <TextView
 	        android:id="@+id/label_member_gender"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
@@ -158,6 +171,25 @@
 	        android:editable="false"
 	        android:inputType="none"
 	        android:paddingLeft="10dp" />
+	    <RadioGroup
+	        android:id="@+id/rg_gender"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:paddingLeft="10dp"
+	        android:visibility="gone">
+	    	<RadioButton
+	    	    android:id="@+id/gender_male"
+	    	    android:layout_width="wrap_content"
+	    	    android:layout_height="wrap_content"
+	    	    android:textSize="14sp"
+	    	    android:text="@string/radioMale" />
+	    	<RadioButton 
+	    	    android:id="@+id/gender_female"
+	    	    android:layout_width="wrap_content"
+	    	    android:layout_height="wrap_content"
+	    	    android:textSize="14sp"
+	    	    android:text="@string/radioFemale"/>
+        </RadioGroup>
 	    
 	    <!-- Edit Button Row -->
 	    <LinearLayout
@@ -171,8 +203,36 @@
 	            android:id="@+id/empty"
 	            android:layout_width="0dp"
 	            android:layout_height="wrap_content"
-	            android:layout_weight=".7"
+	            android:layout_weight=".3"
 	            />
+	        <LinearLayout
+	            android:id="@+id/button_save_details_wrapper"
+	            android:layout_width="0dp"
+	            android:layout_height="wrap_content"
+	            android:layout_weight=".3"
+	            android:orientation="vertical"
+	            android:layout_gravity="bottom"
+		    	android:layout_marginLeft="5dp"
+	        	android:layout_marginRight="10dp"
+	        	android:layout_marginBottom="5dp"
+	        	android:visibility="invisible" >
+	            <TextView
+	        	    android:id="@+id/button_save_details"
+	        	    android:layout_width="match_parent"
+	        	    android:layout_height="match_parent"
+	        	    android:gravity="center"
+	        	    android:textSize="18sp"
+	        	    android:text="Save"
+	        	    android:padding="3dp"
+	        	    android:clickable="true"
+	        	    android:background="@drawable/button_large_accept" />
+	        	<View
+	        	    android:layout_width="match_parent"
+	        	    android:layout_height="2dp"
+				    android:paddingLeft="3dp"
+			    	android:paddingRight="3dp"
+				    android:background="@color/button_underline_green" />
+	        </LinearLayout>
 	        <LinearLayout
 		    	android:layout_width="0dp"
 		        android:layout_height="wrap_content"
@@ -228,7 +288,7 @@
 	        android:paddingLeft="10dp" />
     </LinearLayout>
     
-    <!--  Add Contact Details Layout -->
+    
     <LinearLayout
         android:id="@+id/contactHeadingRow"
         android:layout_width="match_parent"
@@ -276,8 +336,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:background="@drawable/button_block" >
-	    <!-- Phone #'s, email @ddr,
-	    see communications..? -->
+	    
 	    <TextView
 	        android:id="@+id/label_member_home_phome"
 	        android:layout_width="wrap_content"
@@ -350,6 +409,75 @@
 	        android:editable="false"
 	        android:inputType="none"
 	        android:paddingLeft="10dp" />
+	    <!-- Edit Button Row -->
+	    <LinearLayout
+	        android:id="@+id/contact_edit_row"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="30dp"
+	        android:orientation="horizontal"
+	         >
+	        <View
+	            android:id="@+id/empty"
+	            android:layout_width="0dp"
+	            android:layout_height="wrap_content"
+	            android:layout_weight=".3"
+	            />
+	        <LinearLayout
+	            android:id="@+id/button_save_contact_wrapper"
+	            android:layout_width="0dp"
+	            android:layout_height="wrap_content"
+	            android:layout_weight=".3"
+	            android:orientation="vertical"
+	            android:layout_gravity="bottom"
+		    	android:layout_marginLeft="5dp"
+	        	android:layout_marginRight="10dp"
+	        	android:layout_marginBottom="5dp"
+	        	android:visibility="invisible" >
+	            <TextView
+	        	    android:id="@+id/button_save_contact"
+	        	    android:layout_width="match_parent"
+	        	    android:layout_height="match_parent"
+	        	    android:gravity="center"
+	        	    android:textSize="18sp"
+	        	    android:text="Save"
+	        	    android:padding="3dp"
+	        	    android:clickable="true"
+	        	    android:background="@drawable/button_large_accept" />
+	        	<View
+	        	    android:layout_width="match_parent"
+	        	    android:layout_height="2dp"
+				    android:paddingLeft="3dp"
+			    	android:paddingRight="3dp"
+				    android:background="@color/button_underline_green" />
+	        </LinearLayout>
+	        <LinearLayout
+		    	android:layout_width="0dp"
+		        android:layout_height="wrap_content"
+		        android:layout_weight=".3"
+		    	android:orientation="vertical"
+		    	android:layout_gravity="bottom"
+		    	android:layout_marginLeft="5dp"
+	        	android:layout_marginRight="10dp"
+	        	android:layout_marginBottom="5dp">
+	        	<TextView
+	        	    android:id="@+id/button_edit_contact"
+	        	    android:layout_width="match_parent"
+	        	    android:layout_height="match_parent"
+	        	    android:gravity="center"
+	        	    android:textSize="18sp"
+	        	    android:text="Edit"
+	        	    android:padding="3dp"
+	        	    android:clickable="true"
+	        	    android:background="@drawable/button_large" />
+	        	<View
+	        	    android:layout_width="match_parent"
+	        	    android:layout_height="2dp"
+				    android:paddingLeft="3dp"
+			    	android:paddingRight="3dp"
+				    android:background="@color/button_underline_grey" />
+	        </LinearLayout>
+	    </LinearLayout>
     </LinearLayout>
     
     
@@ -446,17 +574,50 @@
 	        android:text="@string/label_member_emergency_cell"
 	        android:textColor="@color/button_block_label"
 	        android:paddingLeft="10dp" />
-	    <EditText
-	        android:id="@+id/emergencyContactCell"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_marginLeft="20dp"
-	        android:textColor="@color/black"
-	        android:enabled="false"
-	        android:editable="false"
-	        android:inputType="none"
-	        android:paddingLeft="10dp" />
+	    <RelativeLayout
+	        android:id="@+id/emeryceny_cell_row"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content" >
 	        
+	        <ImageView
+	            android:id="@+id/emergency_cell_call"
+	            android:layout_width="40dp"
+	            android:layout_height="40dp"
+	            android:layout_alignParentRight="true"
+	            android:padding="3dp"
+	            android:layout_marginLeft="5dp"
+	            android:src="@drawable/ic_action_call"
+	            android:clickable="true"
+	            android:background="@drawable/button" />
+	        <ImageView 
+	            android:id="@+id/emergency_cell_sms"
+	            android:layout_width="40dp"
+	            android:layout_height="40dp"
+	            android:layout_toLeftOf="@id/emergency_cell_call"
+	            android:padding="3dp"
+	            android:layout_marginLeft="5dp"
+	            android:src="@drawable/ic_action_chat"
+	            android:clickable="true"
+	            android:background="@drawable/button"/>
+	        
+	        <RelativeLayout
+	            android:layout_width="wrap_content"
+	            android:layout_height="match_parent"
+	            android:gravity="center_vertical"
+	            android:layout_toLeftOf="@id/emergency_cell_sms"
+		        android:layout_alignParentLeft="true">
+		        <EditText
+			        android:id="@+id/emergencyContactCell"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:layout_marginLeft="20dp"
+			        android:textColor="@color/black"
+			        android:enabled="false"
+			        android:editable="false"
+			        android:inputType="none"
+			        android:paddingLeft="10dp" />    
+	        </RelativeLayout>
+	    </RelativeLayout>    
 	    <TextView
 	        android:id="@+id/emergencyContactWorkL"
 	        android:layout_width="wrap_content"
@@ -465,17 +626,38 @@
 	        android:text="@string/label_member_emergency_work"
 	        android:textColor="@color/button_block_label"
 	        android:paddingLeft="10dp" />
-	    <EditText
-	        android:id="@+id/emergencyContactWork"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_marginLeft="20dp"
-	        android:textColor="@color/black"
-	        android:enabled="false"
-	        android:editable="false"
-	        android:inputType="none"
-	        android:paddingLeft="10dp" />
-	    
+	    <RelativeLayout
+	        android:id="@+id/emeryceny_work_row"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content" >
+	    	<ImageView
+	            android:id="@+id/emergency_work_call"
+	            android:layout_width="40dp"
+	            android:layout_height="40dp"
+	            android:layout_alignParentRight="true"
+	            android:padding="3dp"
+	            android:layout_marginLeft="5dp"
+	            android:src="@drawable/ic_action_call"
+	            android:clickable="true"
+	            android:background="@drawable/button" />
+    	    <RelativeLayout
+	            android:layout_width="wrap_content"
+	            android:layout_height="match_parent"
+	            android:gravity="center_vertical"
+	            android:layout_toLeftOf="@id/emergency_work_call"
+		        android:layout_alignParentLeft="true">
+			    <EditText
+			        android:id="@+id/emergencyContactWork"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:layout_marginLeft="20dp"
+			        android:textColor="@color/black"
+			        android:enabled="false"
+			        android:editable="false"
+			        android:inputType="none"
+			        android:paddingLeft="10dp" />
+			</RelativeLayout>
+	    </RelativeLayout>
 	    <TextView
 	        android:id="@+id/emergencyContactHomeL"
 	        android:layout_width="wrap_content"
@@ -484,17 +666,109 @@
 	        android:text="@string/label_member_emergency_home"
 	        android:textColor="@color/button_block_label"
 	        android:paddingLeft="10dp" />
-	    <EditText
-	        android:id="@+id/emergencyContactHome"
-	        android:layout_width="wrap_content"
+	    <RelativeLayout
+	        android:id="@+id/emeryceny_home_row"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content" >
+		    <ImageView
+	            android:id="@+id/emergency_home_call"
+	            android:layout_width="40dp"
+	            android:layout_height="40dp"
+	            android:layout_alignParentRight="true"
+	            android:padding="3dp"
+	            android:layout_marginLeft="5dp"
+	            android:src="@drawable/ic_action_call"
+	            android:clickable="true"
+	            android:background="@drawable/button" />
+		    <RelativeLayout
+	            android:layout_width="wrap_content"
+	            android:layout_height="match_parent"
+	            android:gravity="center_vertical"
+	            android:layout_toLeftOf="@id/emergency_home_call"
+		        android:layout_alignParentLeft="true">
+			    <EditText
+			        android:id="@+id/emergencyContactHome"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:layout_marginLeft="20dp"
+			        android:textColor="@color/black"
+			        android:enabled="false"
+			        android:editable="false"
+			        android:inputType="none"
+			        android:paddingLeft="10dp" />
+			</RelativeLayout>
+	    </RelativeLayout>
+	    <!-- Edit Button Row -->
+	    <LinearLayout
+	        android:id="@+id/emergency_edit_row"
+	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
-	        android:layout_marginLeft="20dp"
-	        android:textColor="@color/black"
-	        android:enabled="false"
-	        android:editable="false"
-	        android:inputType="none"
-	        android:paddingLeft="10dp" />
+	        android:layout_marginLeft="30dp"
+	        android:orientation="horizontal"
+	         >
+	        <View
+	            android:layout_width="0dp"
+	            android:layout_height="wrap_content"
+	            android:layout_weight=".3"
+	            />
+	        <LinearLayout
+	            android:id="@+id/button_save_emergency_wrapper"
+	            android:layout_width="0dp"
+	            android:layout_height="wrap_content"
+	            android:layout_weight=".3"
+	            android:orientation="vertical"
+	            android:layout_gravity="bottom"
+		    	android:layout_marginLeft="5dp"
+	        	android:layout_marginRight="10dp"
+	        	android:layout_marginBottom="5dp"
+	        	android:visibility="invisible" >
+	            <TextView
+	        	    android:id="@+id/button_save_emergency"
+	        	    android:layout_width="match_parent"
+	        	    android:layout_height="match_parent"
+	        	    android:gravity="center"
+	        	    android:textSize="18sp"
+	        	    android:text="Save"
+	        	    android:padding="3dp"
+	        	    android:clickable="true"
+	        	    android:background="@drawable/button_large_accept" />
+	        	<View
+	        	    android:layout_width="match_parent"
+	        	    android:layout_height="2dp"
+				    android:paddingLeft="3dp"
+			    	android:paddingRight="3dp"
+				    android:background="@color/button_underline_green" />
+	        </LinearLayout>
+	        <LinearLayout
+		    	android:layout_width="0dp"
+		        android:layout_height="wrap_content"
+		        android:layout_weight=".3"
+		    	android:orientation="vertical"
+		    	android:layout_gravity="bottom"
+		    	android:layout_marginLeft="5dp"
+	        	android:layout_marginRight="10dp"
+	        	android:layout_marginBottom="5dp">
+	        	<TextView
+	        	    android:id="@+id/button_edit_emergency"
+	        	    android:layout_width="match_parent"
+	        	    android:layout_height="match_parent"
+	        	    android:gravity="center"
+	        	    android:textSize="18sp"
+	        	    android:text="Edit"
+	        	    android:padding="3dp"
+	        	    android:clickable="true"
+	        	    android:background="@drawable/button_large" />
+	        	<View
+	        	    android:layout_width="match_parent"
+	        	    android:layout_height="2dp"
+				    android:paddingLeft="3dp"
+			    	android:paddingRight="3dp"
+				    android:background="@color/button_underline_grey" />
+	        </LinearLayout>
+	    </LinearLayout>
     </LinearLayout>
+    
+    <!-- MEDICAL -->
     <LinearLayout
         android:id="@+id/medicalHeadingRow"
         android:layout_width="match_parent"
@@ -580,6 +854,7 @@
 	        android:inputType="none"
 	        android:paddingLeft="10dp" />
 	    
+	    <!--  YMCA ONLY. -->
 	    <TextView
 	        android:id="@+id/medicationDosageL"
 	        android:layout_width="wrap_content"
@@ -599,6 +874,7 @@
 	        android:inputType="none"
 	        android:paddingLeft="10dp" />
 		
+	    <!--  YMCA ONLY. -->
 	    <TextView
 	        android:id="@+id/medicationByStaffL"
 	        android:layout_width="wrap_content"
@@ -607,6 +883,74 @@
 	        android:text="@string/label_member_medication_bystaff"
 	        android:textColor="@color/button_block_label"
 	        android:paddingLeft="10dp" />
+	    
+	    <LinearLayout
+	        android:id="@+id/medical_edit_row"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="30dp"
+	        android:orientation="horizontal"
+	         >
+	        <View
+	            android:layout_width="0dp"
+	            android:layout_height="wrap_content"
+	            android:layout_weight=".3"
+	            />
+	        <LinearLayout
+	            android:id="@+id/button_save_medical_wrapper"
+	            android:layout_width="0dp"
+	            android:layout_height="wrap_content"
+	            android:layout_weight=".3"
+	            android:orientation="vertical"
+	            android:layout_gravity="bottom"
+		    	android:layout_marginLeft="5dp"
+	        	android:layout_marginRight="10dp"
+	        	android:layout_marginBottom="5dp"
+	        	android:visibility="invisible" >
+	            <TextView
+	        	    android:id="@+id/button_save_medical"
+	        	    android:layout_width="match_parent"
+	        	    android:layout_height="match_parent"
+	        	    android:gravity="center"
+	        	    android:textSize="18sp"
+	        	    android:text="Save"
+	        	    android:padding="3dp"
+	        	    android:clickable="true"
+	        	    android:background="@drawable/button_large_accept" />
+	        	<View
+	        	    android:layout_width="match_parent"
+	        	    android:layout_height="2dp"
+				    android:paddingLeft="3dp"
+			    	android:paddingRight="3dp"
+				    android:background="@color/button_underline_green" />
+	        </LinearLayout>
+	        <LinearLayout
+		    	android:layout_width="0dp"
+		        android:layout_height="wrap_content"
+		        android:layout_weight=".3"
+		    	android:orientation="vertical"
+		    	android:layout_gravity="bottom"
+		    	android:layout_marginLeft="5dp"
+	        	android:layout_marginRight="10dp"
+	        	android:layout_marginBottom="5dp">
+	        	<TextView
+	        	    android:id="@+id/button_edit_medical"
+	        	    android:layout_width="match_parent"
+	        	    android:layout_height="match_parent"
+	        	    android:gravity="center"
+	        	    android:textSize="18sp"
+	        	    android:text="Edit"
+	        	    android:padding="3dp"
+	        	    android:clickable="true"
+	        	    android:background="@drawable/button_large" />
+	        	<View
+	        	    android:layout_width="match_parent"
+	        	    android:layout_height="2dp"
+				    android:paddingLeft="3dp"
+			    	android:paddingRight="3dp"
+				    android:background="@color/button_underline_grey" />
+	        </LinearLayout>
+	    </LinearLayout>
     </LinearLayout>
     <LinearLayout
         android:id="@+id/notesHeadingRow"
