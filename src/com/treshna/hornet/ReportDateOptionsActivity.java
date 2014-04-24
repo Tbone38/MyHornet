@@ -23,17 +23,19 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
-public class ReportDateOptionsActivity extends FragmentActivity implements DatePickerFragment.DatePickerSelectListener{ 
+public class ReportDateOptionsActivity extends FragmentActivity implements DatePickerFragment.DatePickerSelectListener { 
 	private HashMap<String,Object> reportData = new HashMap<String,Object>() ;
 	private ArrayList<HashMap<String,String>> reportFiltersMapList = new ArrayList<HashMap<String,String>>();
 	private ArrayList<HashMap<String,String>> firstReportFilterMapList = new ArrayList<HashMap<String,String>>();
 	//private String reportFilterTableNamesQuery = null;
 	private DatePickerFragment startDatePicker = null;
+	private int filterCount = 0;
 	private String[] filterQueries = null;
 	private Date selectedStartDate = new Date();
 	private Date selectedEndDate = new Date();
@@ -122,6 +124,92 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 				
 					String selectedOption =  (String) datePresetsSpinner.getSelectedItem();
 					setSelectedDate(selectedOption);
+				
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+				// TODO Auto-generated method stub
+				
+			}
+
+		});
+	}
+	
+	private void setUpFirstFilterSpinner() {
+		
+		final Spinner firstFilterSpinner = (Spinner) findViewById(R.id.firstFilterSpinner);
+		
+		String[] filterOptions = new String[firstReportFilterMapList.size()];
+		int index = 0;
+		
+		for (HashMap<String,String> filterName : firstReportFilterMapList){
+			if (filterName.containsKey("name")) {
+					filterOptions[index] = filterName.get("name");
+			}
+			else if (filterName.containsKey("text_value")) {
+				filterOptions[index] = filterName.get("text_value");	
+		    }
+			
+			index++;
+		}
+		
+		ArrayAdapter<String> filterAdapter = new ArrayAdapter<String>(this, R.layout.report_date_options_spinner , filterOptions);
+		firstFilterSpinner.setAdapter(filterAdapter);
+		firstFilterSpinner.setPrompt("Select Filter");
+		firstFilterSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int position, long id) {
+				
+					String selectedParam =  (String) firstFilterSpinner.getSelectedItem();
+					Log.i("Select Filter: ", selectedParam);
+					
+					if (filterQueries.length > 1) {
+						addSelectedParamToQuery(selectedParam);
+						getSecondReportFilterData();
+					}
+				
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+				// TODO Auto-generated method stub
+				
+			}
+
+		});
+	}
+	
+	private void setUpSecondFilterSpinner() {
+		
+		final Spinner secondFilterSpinner = (Spinner) findViewById(R.id.secondFilterSpinner);
+		
+		String[] filterOptions = new String[firstReportFilterMapList.size()];
+		int index = 0;
+		
+		for (HashMap<String,String> filterName : firstReportFilterMapList){
+			if (filterName.containsKey("name")) {
+				filterOptions[index] = filterName.get("name");
+			}
+			else if (filterName.containsKey("text_value")) {
+				filterOptions[index] = filterName.get("text_value");	
+		    }
+			
+			index++;
+		}
+		
+		ArrayAdapter<String> filterAdapter = new ArrayAdapter<String>(this, R.layout.report_date_options_spinner , filterOptions);
+		secondFilterSpinner.setAdapter(filterAdapter);
+		secondFilterSpinner.setPrompt("Select Filter");
+		secondFilterSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int position, long id) {
+				
+					String selectedFilter =  (String) secondFilterSpinner.getSelectedItem();
 				
 			}
 
@@ -289,8 +377,23 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 		}
 	}
 	
-	private void getFirstReportFilterData() {
-		GetFirstReportFilterData  firstReportFilterThread = new GetFirstReportFilterData();
+  private void addSelectedParamToQuery(String selectedParam) {
+	  
+		if (filterQueries.length > 1) {
+			String filterName = filterQueries[1].substring(filterQueries[1].indexOf("="), filterQueries[1].indexOf("'"));
+			 filterQueries[1] = filterQueries[1].replace(filterName, "\'" + selectedParam + "\'");
+			 Log.i("Parametized Query", filterQueries[1]);
+		}
+   }
+  private void getFirstReportFilterData() {
+		
+		GetFirstReportFilterData  firstReportFilterThread = new GetFirstReportFilterData(0);
+		firstReportFilterThread.execute();
+	}
+  
+   private void getSecondReportFilterData() {
+		
+		GetFirstReportFilterData  firstReportFilterThread = new GetFirstReportFilterData(1);
 		firstReportFilterThread.execute();
 	}
 	
@@ -377,7 +480,8 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 				
 				}*/
 				if (reportFiltersMapList.size() > 0) {
-					
+					LinearLayout firstFilterLayout = (LinearLayout) findViewById(R.id.firstFilterLayout);
+					firstFilterLayout.setVisibility(View.VISIBLE);
 					getFilterQueriesFromXML();
 					printFilterQueries();
 					getFirstReportFilterData();
@@ -399,7 +503,13 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 	 }
 	
 	private class GetFirstReportFilterData extends GetReportFilterFieldsByReportId {
-
+		
+		
+		
+		public GetFirstReportFilterData (int filterCount) {
+			ReportDateOptionsActivity.this.filterCount = filterCount;
+		}
+		
 		@Override
 		protected void onPreExecute() {
 			progress = ProgressDialog.show(ReportDateOptionsActivity.this, "Retrieving..", 
@@ -408,7 +518,7 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 
 		@Override
 		protected Boolean doInBackground(String... params) {
-			firstReportFilterMapList = sync.getFirstReportFilterData(getApplicationContext(),filterQueries[0]);
+			firstReportFilterMapList = sync.getFirstReportFilterData(getApplicationContext(),filterQueries[filterCount]);
 			return true;
 		}
 
@@ -429,6 +539,22 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 					}
 				
 				}
+				
+				Log.i("Filter Count", filterCount+"");
+				if (filterCount == 0) {
+					setUpFirstFilterSpinner();
+					
+					if (filterQueries.length > 1) {
+						LinearLayout secondFilterLayout = (LinearLayout) findViewById(R.id.secondFilterLayout);
+						secondFilterLayout.setVisibility(View.VISIBLE);
+						Log.i("Filter Name: ", reportFiltersMapList.get(1).get("filter_name"));
+						//addSelectedParamToQuery("Full Membership Fee");
+						//getSecondReportFilterData();
+					}
+				}
+				else if (filterCount == 1) {
+				    setUpSecondFilterSpinner();
+			    }
 				
 			} else {
 				AlertDialog.Builder builder = new AlertDialog.Builder(ReportDateOptionsActivity.this);

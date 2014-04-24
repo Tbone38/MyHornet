@@ -53,7 +53,7 @@
 		           android:layout_height="wrap_content"
 		           android:prompt="@string/report_date_spinner_title"
 		           android:gravity="center" />
-		   
+		       
 		</LinearLayout>
 		<RelativeLayout 
 				    android:layout_width="wrap_content"
@@ -106,6 +106,29 @@
    
 		</RelativeLayout>
 		
+		<LinearLayout
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+		    android:orientation="vertical"
+		    >
+
+				
+		    <TextView
+		           android:layout_width="wrap_content"
+		           android:layout_height="wrap_content"
+		           android:textSize="15sp" 
+		           android:textStyle="bold"
+		           android:gravity="center"
+		           android:text="@string/report_first_filter_spinner"/>	       
+		     <Spinner
+		           android:id="@+id/firstFilterSpinner"
+		           android:layout_width="wrap_content"
+		           android:layout_height="wrap_content"
+		           android:prompt="@string/report_first_filter_spinner"
+		           android:gravity="center"/>
+		    </LinearLayout> 
+		    	
 		   <LinearLayout 
 				    android:layout_width="match_parent"
 				    android:layout_height="wrap_content"
@@ -139,4 +162,5 @@
 			       android:textStyle="bold"
 			       android:text="@string/report_btn_column_options" />
 		   	 	</LinearLayout>
+		   
 </LinearLayout>
