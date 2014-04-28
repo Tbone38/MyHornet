@@ -1193,7 +1193,7 @@ public class JDBCConnection {
     }
     
     public ResultSet getReportFilterFieldsByReportId(int reportId) throws SQLException {
-    	String query = "Select filter_name from report_filter where user_report_id = ?";
+    	String query = "Select filter_name, field from report_filter where user_report_id = ?";
     	this.pStatement = con.prepareStatement(query);
     	this.pStatement.setInt(1,reportId);
     	return this.pStatement.executeQuery();

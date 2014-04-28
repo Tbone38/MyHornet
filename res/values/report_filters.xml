@@ -49,7 +49,7 @@
     
     <string-array name="Sale_Origin" >
      <item>SELECT 0 AS integer_value, \'All\' AS text_value UNION(SELECT integer_value, text_value
-           FROM lookup_default_value WHERE name = \'?\' AND id >= 1500 AND id &#60;= 1600) ORDER BY integer_value; 
+           FROM lookup_default_value WHERE name = ? AND id >= 1500 AND id &#60;= 1600) ORDER BY integer_value; 
      </item>
    </string-array>
    
@@ -62,7 +62,7 @@
    
     <string-array name="Payment_Methods" >
      <item>SELECT 0 AS integer_value, \'All\' AS text_value UNION 
-         SELECT integer_value, text_value FROM lookup_default_value
+         (SELECT integer_value, text_value FROM lookup_default_value
          WHERE name = ? AND id >= 1500 AND id &#60;= 1800) ORDER BY integer_value;       
      </item>
    </string-array>

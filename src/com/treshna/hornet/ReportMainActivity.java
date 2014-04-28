@@ -65,6 +65,8 @@ public class ReportMainActivity extends ListActivity {
 	private String queryFunctionParamsCut = null;
 	private String numValueRegex = "(^\\$?[0-9]+\\.?[0-9]+)|([0-9]+)";
 	private String callingActivity = null;
+	private String firstFilter = null;
+	private String secondFilter = null;
 	private Button btnEmailCSV = null;
 	private String finalQuery = null;
 	private Date startDate = null;
@@ -84,9 +86,11 @@ public class ReportMainActivity extends ListActivity {
 		btnEmailCSV = (Button) findViewById(R.id.btnEmailReportCSV);
 		int reportId = intent.getIntExtra("report_id",0);
 		callingActivity = intent.getStringExtra("calling_activity");
-		if (callingActivity.compareTo("column_options")==  0){
+		if (callingActivity.compareTo("column_options")==  0) {
 			selectedColumnIds = intent.getIntArrayExtra("selected_column_ids");
 		}
+		firstFilter = intent.getStringExtra("first_filter_field");
+		secondFilter = intent.getStringExtra("second_filter_field");
 		reportName = intent.getStringExtra("report_name");
 		reportFunctionName = intent.getStringExtra("report_function_name");
 		queryFunctionParamsCut = reportFunctionName.substring(0,reportFunctionName.indexOf('('));
@@ -266,35 +270,34 @@ public class ReportMainActivity extends ListActivity {
 		//boolean containsMemberColumn = false;
 		boolean isMemberIdAdded = false;
 		boolean isEnquiryIdAdded = false;
-		for (HashMap<String,String> columnsMap : columnsMapList ){
-
+		for (HashMap<String,String> columnsMap : columnsMapList ) {
 			//Check if coming from column options..
 			if (callingActivity.compareTo("column_options")== 0) {
 				isSelected = false;
-				if (this.isColumnSelected(Integer.parseInt(columnsMap.get("column_id")))){
+				if (this.isColumnSelected(Integer.parseInt(columnsMap.get("column_id")))) {
 					isSelected = true;				}
 			}
 			
-			for (Map.Entry<String,String> field: columnsMap.entrySet()){
+			for (Map.Entry<String,String> field: columnsMap.entrySet()) {
 					//System.out.println(field.getKey() + " : " + field.getValue());
 				if (isSelected) {
 					//Adding the member.id column where other columns join the member table
-					if (columnsFieldsContainsTable("member") && !isMemberIdAdded){
+					if (columnsFieldsContainsTable("member") && !isMemberIdAdded) {
 						queryBuilder.append("member.id AS \"MemberID\", ");
 						isMemberIdAdded = true;
 					}
 					//Adding the enquiry.id column where other columns join the enquiry table
-					if (columnsFieldsContainsTable("enquiry") && !isEnquiryIdAdded){
+					if (columnsFieldsContainsTable("enquiry") && !isEnquiryIdAdded) {
 						queryBuilder.append("enquiry.enquiry_id AS \"Enquiry Id\", ");
 						isEnquiryIdAdded = true;
 					}
 					
-					if(field.getKey().toString().compareTo("field")== 0){
+					if (field.getKey().toString().compareTo("field")== 0) {
 							queryBuilder.append(field.getValue());
 							queryBuilder.append(" AS ");
 							
 					}
-					if(field.getKey().toString().compareTo("column_name")== 0){
+					if (field.getKey().toString().compareTo("column_name")== 0) {
 								queryBuilder.append("\"" + field.getValue() + "\"");
 								queryBuilder.append(", ");
 					}				
@@ -326,6 +329,19 @@ public class ReportMainActivity extends ListActivity {
 				}
 			}
 			
+			if (firstFilter != null && !firstFilter.contains("'All'")) {
+				queryBuilder.append(" WHERE ");
+				queryBuilder.append(' ');
+				queryBuilder.append(firstFilter);
+				queryBuilder.append(' ');
+				if (secondFilter != null && !secondFilter.contains("'All'")) {
+					queryBuilder.append(" AND ");
+					queryBuilder.append(' ');
+					queryBuilder.append(secondFilter);
+					queryBuilder.append(' ');
+				}
+			}
+				
 			queryBuilder.append(";");
 			System.out.println(queryBuilder.toString());
 			finalQuery = queryBuilder.toString();
