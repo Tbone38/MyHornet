@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 
 /*	ID RANGES
+
  *  0   > < 100 = company/database settings etc.
  *  100 > < 200 = Member/membership/images etc
  *  200 > < 300 = Pending member uploads & swipes.
@@ -25,6 +26,7 @@ import android.provider.BaseColumns;
  *   17 = PendingUpdates				127 = MembershipSuspend
  *   18 = PendingDeletes				128 = MembershipExpiryReason
  *   20 = FreeIds						130:
+ *   22 = PendingConflicts
  *   50:								135:
  *   55 = Company (unused)
  *   56 = KPI's							140 = Visitor
@@ -51,7 +53,7 @@ import android.provider.BaseColumns;
  *  324:								410 = MemberFinance
  *  325 = Time							411 = Billing_history
  *  321:								412 = Payment_against
- *  322 = Class
+ *  322 = Class							413 = correspondance_set
  *  320:
  *  330 = Bookingtype 
  *  340:
@@ -157,6 +159,7 @@ public class ContentDescriptor {
 	     matcher.addURI(authority, BillingHistory.PATH, BillingHistory.PATH_TOKEN);
 	     matcher.addURI(authority, DDExportFormat.PATH, DDExportFormat.PATH_TOKEN);
 	     matcher.addURI(authority, PaymentAgainst.PATH, PaymentAgainst.PATH_TOKEN);
+	     matcher.addURI(authority, PendingConflicts.PATH, PendingConflicts.PATH_TOKEN);
 	     
 	     matcher.addURI(authority, DROPTABLE, TOKEN_DROPTABLE);
 	     
@@ -676,6 +679,7 @@ public class ContentDescriptor {
 	 			public static final String NEXTPAYMENT = "nextpayment";
 	 			public static final String FIRSTPAYMENT = "firstpayment";
 	 			public static final String UPFRONT = "upfront";
+	 			
 	 		}
 	 	}
 	 	
@@ -1288,7 +1292,12 @@ public class ContentDescriptor {
 	 		}
 	 	}
 	 	
-	 	public static class PaymentAgainst {
+	 	/**
+	 	 * TODO: this needs finished.
+	 	 * @author callum
+	 	 *
+	 	 */
+	 	public static class PaymentAgainst { //this isn't active yet I don't think..?
 	 		public static final String NAME = "payment_against";
 	 		public static final String PATH = "payment_against";
 	 		public static final int PATH_TOKEN = 412;
@@ -1303,6 +1312,55 @@ public class ContentDescriptor {
 	 			public static final String DEBITJOURNALID = "debitjournalid";
 	 			public static final String AMOUNT = "amount";
 	 			public static final String VOIDAMOUNT = "voidamount";
+	 			public static final String CREATED = "created";
 	 		}
 	 	}
+	 	
+	 	/**
+	 	 * Going to put this table in the "too hard basket" for the time being.
+	 	 * There doesn't seem to be an easy way to get the details of sms/email without
+	 	 * writing a custom frame/window for sending them via.
+	 	 * 
+	 	 * may do it at some point in the future.
+	 	 * 
+	 	 * @author callum
+	 	 *
+	 	 */
+	 	public static class CorrespondanceSent {
+	 		public static final String NAME = "correspondance_sent";
+	 		public static final String PATH  = "correspondance_sent";
+	 		public static final int  PATH_TOKEN = 413;
+	 		
+	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.correspondance_sent";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.correspondance_sent";
+	 		
+	 		public static class Cols implements BaseColumns {
+	 			
+	 		}
+	 	}
+	 	
+	 	/**
+	 	 * TODO: 	add handling to insert into this table when we get SQL errors/etc.
+	 	 * 			we can re use the magical form builder (that's still to be created) for it.
+	 	 * @author callum
+	 	 *
+	 	 */
+	 	public static class PendingConflicts {
+	 		public static final String NAME = "PendingConflicts";
+	 		public static final String PATH = "PendingConflicts";
+	 		public static final int PATH_TOKEN = 22;
+	 		
+	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.pending_conflicts";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.pending_conflicts";
+	 		
+	 		public static class Cols implements BaseColumns {
+	 			public static final String ROWID = "rowid";
+	 			public static final String TABLEID = "tableid";
+	 			public static final String ERROR = "error"; //an error message to show to the user?
+	 		}
+	 	}
+	 	
+	 	
 }

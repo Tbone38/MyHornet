@@ -366,7 +366,7 @@ public class HornetDBService extends Service {
 		   getBookingID();
 		   int midcount = getMemberID();
 		   if (midcount != 0) statusMessage = " Sign-up's available";
-		   if (statusMessage != null && statusMessage.length() >3 ) {
+		   if (statusMessage != null && statusMessage.length() > 3 ) {
 				   Services.showToast(getApplicationContext(), statusMessage, handler);
 		   }
 		   		   
@@ -377,6 +377,7 @@ public class HornetDBService extends Service {
 		   int mcount = getMember(-1);
 		   int mscount = getMembership(-1);
 		   memberImages();
+		   fixImages();
 		   getMembershipSuspends(-1);
 		   getMemberBalance(-1);
 		   getMemberNotes(-1);
@@ -718,6 +719,7 @@ public class HornetDBService extends Service {
     			values.put(ContentDescriptor.Image.Cols.MID, rs.getInt("memberid"));
     			values.put(ContentDescriptor.Image.Cols.DATE, rs.getTimestamp("created").getTime());
     			values.put(ContentDescriptor.Image.Cols.LASTUPDATE, rs.getTimestamp("lastupdate").getTime());
+    			values.put(ContentDescriptor.Image.Cols.DEVICESIGNUP, "f");
     			highestid = rs.getInt("id");
     			
     			byte[] is = rs.getBytes("imagedata");
@@ -1872,6 +1874,7 @@ public class HornetDBService extends Service {
     			
     		while (rs.next()){
     			ContentValues values = insertMembership(rs);
+    			values.put(ContentDescriptor.Membership.Cols.CANCEL_REASON, rs.getString("cancel_reason"));
     			
     			cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols.MSID+" = ?",
     					new String[] {rs.getString("id")},null);
@@ -2976,7 +2979,7 @@ public class HornetDBService extends Service {
     		return -1; //check statusMessage for reason
     	}
     	try {
-    		rs = connection.getProgrammes(String.valueOf(last_sync));
+    		rs = connection.getProgrammes(last_sync);
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
     		Log.e(TAG, "", e);
@@ -3689,7 +3692,7 @@ public class HornetDBService extends Service {
 		values.put(ContentDescriptor.Membership.Cols.NEXTPAYMENT, rs.getString("nextpayment"));
 		values.put(ContentDescriptor.Membership.Cols.FIRSTPAYMENT, rs.getString("firstpayment"));
 		values.put(ContentDescriptor.Membership.Cols.UPFRONT, rs.getString("upfront"));
-    	
+		
 		return values;
     }
     
@@ -3797,14 +3800,15 @@ public class HornetDBService extends Service {
     				+ContentDescriptor.PendingDownloads.Cols.TABLEID+" = ?",new String[] {member.get(i),
     				String.valueOf(ContentDescriptor.TableIndex.Values.Member.getKey())});
     	}
-    	
+    	//TODO: add cancel_reason to this code.
     	for (int i = 0; i < membership.size(); i++) {
     		ResultSet rs;
     		String query ="SELECT membership.id, memberid, membership.startdate, membership.enddate, cardno, membership.notes, " +
 	    			"primarymembership, membership.lastupdate, membership_state(membership.*, programme.*) as state," +
 	    			" membership.concession, programme.name, programme.id AS programmeid, membership.termination_date, membership.cancel_reason, "
-	    			+ " membership.history, membership.signupfee, membership.paymentdue, membership.nextpayment, membership.firstpayment,"
-	    			+ " membership.upfront"
+	    			+ " membership.history, membership.signupfee, membership.paymentdue::TEXT||' '::TEXT||price_desc(programme.amount, programme.id) AS paymentdue,"
+	    			+ " membership.nextpayment, membership.firstpayment,"
+	    			+ " membership.upfront, price_desc(programme.amount, programme.id) AS price_desc"
 	    			+ " FROM membership LEFT JOIN programme ON (membership.programmeid = programme.id)" +
 	    			" WHERE membership.id = "+membership.get(i)+" ;";
     		
@@ -4744,6 +4748,9 @@ public class HornetDBService extends Service {
     		}
     		rs.close();
     	} catch (SQLException e) {
+    		//if we got here either our connection was bad, or our query was bad.
+			//if the query was bad, then we're probably using an older version of GymMaster (not > 320)
+			//in which case we return false, though we're not actually using these return values for anything.
     		statusMessage = e.getLocalizedMessage();
     		Log.e(TAG, "", e);
     		return false;
@@ -4796,6 +4803,8 @@ public class HornetDBService extends Service {
     		query = "UPDATE sync SET (servertime, clienttime, completed) = (now(), to_timestamp("+(double)(new Date().getTime()/1000d)
     				+"),false) WHERE id = "+deviceid+" RETURNING *;";
     	}
+    	
+    	if (!openConnection()) return false;
     	
     	try {
     		rs = connection.startStatementQuery(query);
@@ -4963,7 +4972,7 @@ public class HornetDBService extends Service {
     private int updateImage() {
     	Log.d(TAG, "Updating Images");
     	int result = 0;
-    	fixImages();
+    	//fixImages();
     	
     	cur = contentResolver.query(ContentDescriptor.PendingUpdates.CONTENT_URI, null, ContentDescriptor.PendingUpdates.Cols.TABLEID+" = ?",
     			new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Image.getKey())}, null);
@@ -4994,6 +5003,7 @@ public class HornetDBService extends Service {
     	return result;
     }
     
+    //TODO: finish writing a functional UI for this.
     public void duplicatePopupFix(Context context) {
     	setup(context);
     	

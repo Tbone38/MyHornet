@@ -23,6 +23,7 @@ import com.treshna.hornet.sqlite.ContentDescriptor.Membership;
 import com.treshna.hornet.sqlite.ContentDescriptor.MembershipExpiryReason;
 import com.treshna.hornet.sqlite.ContentDescriptor.MembershipSuspend;
 import com.treshna.hornet.sqlite.ContentDescriptor.PaymentAgainst;
+import com.treshna.hornet.sqlite.ContentDescriptor.PendingConflicts;
 import com.treshna.hornet.sqlite.ContentDescriptor.PendingDeletes;
 import com.treshna.hornet.sqlite.ContentDescriptor.PendingUpdates;
 import com.treshna.hornet.sqlite.ContentDescriptor.PendingUploads;
@@ -826,7 +827,7 @@ public class UpdateDatabase {
 				+" END; ";
 		
 		private static final String SQL6 = "CREATE TRIGGER "+Image.Triggers.ON_UPDATE+" AFTER UPDATE ON "+Image.NAME
-				+" FOR EACH ROW WHEN old."+Image.Cols.IID+" > 0"
+				+" FOR EACH ROW WHEN new."+Image.Cols.DEVICESIGNUP+" = 't' "
 				+" BEGIN "
 					+"INSERT OR REPLACE INTO "+PendingUpdates.NAME
 					+" ("+PendingUpdates.Cols.ROWID+", "+PendingUpdates.Cols.TABLEID+")"
@@ -835,7 +836,7 @@ public class UpdateDatabase {
 		
 		private static final String SQL7 = "DELETE FROM "+Visitor.NAME+" ;"; 
 			/* Clearing out the visit log because we've changed the way the time stamps are used, which won't be
-			 * compatabile with previous timestamps. Shouldn't be an issue though, as we reset sync times/etc when
+			 * compatible with previous timestamps. Shouldn't be an issue though, as we reset sync times/etc when
 			 * we upgrade, so all the recent visits should be downloaded again..*/
 		
 		private static final String SQL8 = "DELETE FROM "+Image.NAME+" ;";
@@ -863,7 +864,7 @@ public class UpdateDatabase {
 		private static final String SQL16 = "CREATE TABLE "+PaymentAgainst.NAME+" ("+PaymentAgainst.Cols._ID+" INTEGER PRIMARY KEY NOT NULL, "
 				+PaymentAgainst.Cols.ID+" INTEGER NOT NULL, "+PaymentAgainst.Cols.PAYMENTID+" INTEGER NOT NULL, "
 				+PaymentAgainst.Cols.DEBITJOURNALID+" INTEGER, "+PaymentAgainst.Cols.AMOUNT+" TEXT, "
-				+PaymentAgainst.Cols.VOIDAMOUNT+" TEXT "
+				+PaymentAgainst.Cols.VOIDAMOUNT+" TEXT, "+PaymentAgainst.Cols.CREATED+" TEXT "
 				+");";
 		
 		private static final String SQL17 = "ALTER TABLE "+Company.NAME+" ADD COLUMN "+Company.Cols.NAMEORDER+" TEXT DEFAULT '"+Member.Cols.FNAME+"';";
@@ -874,12 +875,17 @@ public class UpdateDatabase {
 				+" FOR EACH ROW WHEN (new."+Member.Cols.MID+" > 0 OR "
 						+" old."+Member.Cols.MID+" > 0) "
 						+ "AND new."+Member.Cols.DEVICESIGNUP+" = 't' "
-				//to accomodate other changes.
 				+" BEGIN "
 					+"INSERT OR REPLACE INTO "+PendingUpdates.NAME
 					+" ("+PendingUpdates.Cols.ROWID+", "+PendingUpdates.Cols.TABLEID+")"
 					+" VALUES (new."+Member.Cols._ID+", "+TableIndex.Values.Member.getKey()+");"
 				+"END;";
+		
+		private static final String SQL20 = "CREATE TABLE "+PendingConflicts.NAME+" ( "+PendingConflicts.Cols._ID+" INTEGER PRIMARY KEY NOT NULL,"
+				+PendingConflicts.Cols.ROWID+" INTEGER, "+PendingConflicts.Cols.TABLEID+" INTEGER,"
+				+PendingConflicts.Cols.ERROR+" TEXT "
+				+");";
+		
 		
 		public static void patchNinetySix(SQLiteDatabase db) {
 			db.beginTransaction();
@@ -922,6 +928,8 @@ public class UpdateDatabase {
 				db.execSQL(SQL18);
 				Log.w(HornetDatabase.class.getName(), "\n"+SQL19);
 				db.execSQL(SQL19);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL20);
+				db.execSQL(SQL20);
 				db.setTransactionSuccessful();
 			/*} catch (SQLException e) {
 			e.printStackTrace();

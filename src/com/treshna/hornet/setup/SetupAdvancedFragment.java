@@ -106,34 +106,34 @@ public class SetupAdvancedFragment extends Fragment implements OnClickListener {
 		EditText db_address, db_name, db_port, db_user, db_password;
 		
 		db_address = (EditText) view.findViewById(R.id.setup_database_address);
-		editor.putString("address", db_address.getText().toString());
+		editor.putString("address", db_address.getText().toString().replace(" ", ""));
 		
 		db_name = (EditText) view.findViewById(R.id.setup_database_name);
 		if (db_name.getText().toString().compareTo("")==0){ //no input, use defaults.
 			editor.putString("database", "gymmaster");
 		} else {
-			editor.putString("database", db_name.getText().toString());
+			editor.putString("database", db_name.getText().toString().replace(" ", ""));
 		}
 		
 		db_port = (EditText) view.findViewById(R.id.setup_database_port);
 		if (db_port.getText().toString().compareTo("")==0){ //no input, use defaults.
 			editor.putString("port", "5432");
 		} else {
-			editor.putString("port", db_port.getText().toString());
+			editor.putString("port", db_port.getText().toString().replace(" ", ""));
 		}
 		
 		db_user = (EditText) view.findViewById(R.id.setup_user_name);
 		if (db_user.getText().toString().compareTo("")==0){ //no input, use default.
 			editor.putString("username", "gymmaster");
 		} else {
-			editor.putString("username", db_user.getText().toString());
+			editor.putString("username", db_user.getText().toString().replace(" ", ""));
 		}
 		
 		db_password = (EditText) view.findViewById(R.id.setup_user_password);
 		if (db_password.getText().toString().compareTo("")==0) { //no input, use defaults.
 			editor.putString("password", "7urb0");
 		} else {
-			editor.putString("password", db_password.getText().toString());
+			editor.putString("password", db_password.getText().toString().replace(" ", ""));
 		}
 		
 		return editor.commit();

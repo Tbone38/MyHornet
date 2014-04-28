@@ -40,8 +40,8 @@
   
   <!-- 				ADD MEMBERSHIP 				-->
   	<string name="membership_add">Add Membership</string>
-  	<string name="membership_add_group_type">Membership Group</string>
-  	<string name="membership_add_type">Membership Type</string>
+  	<string name="membership_add_group_type">Division</string>
+  	<string name="membership_type">Membership Type</string>
 	<string name="membership_add_to">to</string>
 	<string name="membership_add_startdate">Start Date</string>
 	<string name="membership_add_enddate">End Date</string>
@@ -52,7 +52,7 @@
 	<string name="membership_add_actions">Actions</string>
 	
 	
-	<string name="membership_complete_pname">Programme Name</string>
+	
 	<string name="membership_complete_tag">Card Number</string>
 	<string name="membership_complete_start_end">Start &amp; End Dates</string>
 	<string name="membership_complete_first_payment">First Payment Date</string>

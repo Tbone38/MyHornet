@@ -25,7 +25,7 @@
 	        android:layout_height="wrap_content"
 	        android:layout_below="@id/membership_complete_desc"
 	        android:textSize="13sp"
-	        android:text="@string/membership_complete_pname" />
+	        android:text="@string/membership_type" />
 	    <EditText
 	        android:id="@+id/membership_programme_name"
 	        android:layout_width="wrap_content"

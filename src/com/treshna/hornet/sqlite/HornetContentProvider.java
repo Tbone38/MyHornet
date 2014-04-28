@@ -271,6 +271,11 @@ public class HornetContentProvider extends ContentProvider {
         	getContext().getContentResolver().notifyChange(uri, null);
         	return rows;
         }
+        case ContentDescriptor.PendingConflicts.PATH_TOKEN:{
+        	int rows = db.delete(ContentDescriptor.PendingConflicts.NAME, selection, selectionArgs);
+        	getContext().getContentResolver().notifyChange(uri, null);
+        	return rows;
+        }
         
         case ContentDescriptor.TOKEN_DROPTABLE:{ //special case, drops tables/deletes database.
         	FileHandler fh = new FileHandler(ctx);
@@ -491,6 +496,11 @@ public class HornetContentProvider extends ContentProvider {
             	long id = db.insert(ContentDescriptor.PaymentAgainst.NAME, null, values);
             	getContext().getContentResolver().notifyChange(uri, null);
             	return ContentDescriptor.PaymentAgainst.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
+            }
+            case ContentDescriptor.PendingConflicts.PATH_TOKEN:{
+            	long id = db.insert(ContentDescriptor.PendingConflicts.NAME, null, values);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return ContentDescriptor.PendingConflicts.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
             }
             default: {
                 throw new UnsupportedOperationException("URI: " + uri + " not supported.");
@@ -813,7 +823,7 @@ public class HornetContentProvider extends ContentProvider {
             	builder.setTables(ContentDescriptor.Programme.NAME);
             	return builder.query(db, new String[] {ContentDescriptor.Programme.Cols.GID,
             			ContentDescriptor.Programme.Cols.GNAME}, selection, selectionArgs, 
-            			ContentDescriptor.Programme.Cols.GNAME, null, null);
+            			ContentDescriptor.Programme.Cols.GNAME, null, sortOrder);
             }
             case ContentDescriptor.Door.PATH_TOKEN:{
             	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
@@ -918,7 +928,11 @@ public class HornetContentProvider extends ContentProvider {
             	builder.setTables(ContentDescriptor.PaymentAgainst.NAME);
             	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
             }
-            
+            case ContentDescriptor.PendingConflicts.PATH_TOKEN:{
+            	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+            	builder.setTables(ContentDescriptor.PendingConflicts.NAME);
+            	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+            }
             default: throw new UnsupportedOperationException("URI: " + uri + " not supported.");
         }
 	}
@@ -1102,6 +1116,11 @@ public class HornetContentProvider extends ContentProvider {
             }
             case ContentDescriptor.PaymentAgainst.PATH_TOKEN:{
             	int result = db.update(ContentDescriptor.PaymentAgainst.NAME, values, selection, selectionArgs);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return result;
+            }
+            case ContentDescriptor.PendingConflicts.PATH_TOKEN:{
+            	int result = db.update(ContentDescriptor.PendingConflicts.NAME, values, selection, selectionArgs);
             	getContext().getContentResolver().notifyChange(uri, null);
             	return result;
             }

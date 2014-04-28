@@ -87,7 +87,9 @@ KEY:
                 Member Details Bookings - Class Name for classes 
                 Reduced likelihood of image syncing having a memory crash.
                 Added Contact Info to member Details
-				Member Details are now Editable.
+                Member Details are now Editable.
+                Fixed image update recursion (we download, then upload, then download, then upload).
+                stripped white space from db address, db name, user name, password, and port.
 
             TODO:
                 Handle permissions/Roles for different staff, to limit what certain staff can see.
@@ -109,10 +111,13 @@ KEY:
                 Do an app walkthrough
                 Make the sync process more robust by checking that each function returns 0 or more. 
                     If we get less than 0 than we've encountered an error, try continuing but don't update the "last_sync" time..?
-                Make the Member Details Notes page editable.
-                Complete Dru's list of changes.
-				Update Last Visitors on Manual Check In .. ?
-				Fix image update recursion (we download, then upload, then download, then upload).
+                Complete Dru's list of changes. --this is mostly done.
+                Update Last Visitors on Manual Check In .. ?
+                Finish payment_against stuff.
+                Some kind of UI/form for adding various types of stuff.
+                    (maybe we should use a builder?)
+                    which we can then use to help resolve conflicts.
+                merge Tony's branch into main;
 
     
     v119:

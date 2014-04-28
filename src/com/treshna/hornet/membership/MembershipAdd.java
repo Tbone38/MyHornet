@@ -7,16 +7,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-import com.treshna.hornet.MainActivity;
-import com.treshna.hornet.R;
-import com.treshna.hornet.R.drawable;
-import com.treshna.hornet.R.id;
-import com.treshna.hornet.R.layout;
-import com.treshna.hornet.R.string;
-import com.treshna.hornet.services.DatePickerFragment;
-import com.treshna.hornet.services.Services;
-import com.treshna.hornet.sqlite.ContentDescriptor;
-
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -27,6 +17,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -38,6 +29,12 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.treshna.hornet.MainActivity;
+import com.treshna.hornet.R;
+import com.treshna.hornet.services.DatePickerFragment;
+import com.treshna.hornet.services.Services;
+import com.treshna.hornet.sqlite.ContentDescriptor;
 
 public class MembershipAdd extends Fragment implements OnClickListener, DatePickerFragment.DatePickerSelectListener {
 	//private static final String TAG ="MembershipAdd";
@@ -155,7 +152,12 @@ public class MembershipAdd extends Fragment implements OnClickListener, DatePick
 
 		
 		Spinner membershipgroup = (Spinner) page.findViewById(R.id.membershipgrouptype);
-		cur = contentResolver.query(ContentDescriptor.Programme.GROUP_URI, null, null, null, ContentDescriptor.Programme.Cols.PID);
+		cur = contentResolver.query(ContentDescriptor.Programme.GROUP_URI, null, null, null, ContentDescriptor.Programme.Cols.GID);
+		if (cur.getCount() <= 1) {
+			membershipgroup.setVisibility(View.GONE);
+			TextView membership_label = (TextView) page.findViewById(R.id.membershipgrouptypeL);
+			membership_label.setVisibility(View.GONE);
+		}
 		ArrayList<String> membershipgroups = new ArrayList<String>();
 		while (cur.moveToNext()) {
 			membershipgroups.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Programme.Cols.GNAME)));
@@ -171,7 +173,7 @@ public class MembershipAdd extends Fragment implements OnClickListener, DatePick
 			@Override
 			public void onItemSelected(AdapterView<?> parentView, View selectedView,
 					int position, long id) {
-				cur = contentResolver.query(ContentDescriptor.Programme.GROUP_URI, null, null, null, null);
+				cur = contentResolver.query(ContentDescriptor.Programme.GROUP_URI, null, null, null, ContentDescriptor.Programme.Cols.GID);
 				if (!cur.moveToPosition(position)) {
 					//error!
 				}
@@ -217,15 +219,13 @@ public class MembershipAdd extends Fragment implements OnClickListener, DatePick
 						 end = new Date((start.getTime()+(mLength*1000)));
 						 
 						 TextView startdate = (TextView) page.findViewById(R.id.membershipsdate);
-						 startdate.setText(Services.dateFormat(start.toString(), "EEE MMM dd HH:mm:ss zzz yyyy", 
-								 "dd MMM yyyy"));
+						 startdate.setText(Services.DateToString(start));
 						 
 						 TextView enddate = (TextView) page.findViewById(R.id.membershipedate);
 						 if ( mLength > 0) {
-							 enddate.setText(Services.dateFormat(end.toString(), "EEE MMM dd HH:mm:ss zzz yyyy",
-									 "dd MMM yyyy"));
-							 enddate.setTag(Services.dateFormat(end.toString(),
-									 "EEE MMM dd HH:mm:ss zzz yyyy", "yyyyMMdd"));
+							 enddate.setText(Services.DateToString(end));
+							 enddate.setTag(Services.dateFormat(Services.DateToString(end),
+									 "dd MMM yyyy", "yyyyMMdd"));
 						 } else {
 							 enddate.setText(getActivity().getString(R.string.membership_add_enddate));
 						 }
@@ -326,8 +326,10 @@ public class MembershipAdd extends Fragment implements OnClickListener, DatePick
 			ArrayList<String> emptyviews = validate();
 			boolean is_valid = Boolean.parseBoolean(emptyviews.get(0));
 			if (!is_valid) {
+				Log.w("MEMBERSHIPADD", "WAS NOT VALID");
 				updateView(emptyviews);
 			} else {
+				Log.w("MEMBERSHIPADD", "WAS VALID");
 				ArrayList<String> results = getInput();
 				
 				Fragment f = new MembershipComplete();

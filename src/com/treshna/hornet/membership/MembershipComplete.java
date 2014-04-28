@@ -283,6 +283,7 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 		values.put(ContentDescriptor.Membership.Cols.PRICE, input.get(5));
 		//payment-date?
 		values.put(ContentDescriptor.Membership.Cols.SIGNUP, input.get(7));
+		values.put(ContentDescriptor.Membership.Cols.VISITS, 0);
 		if (cardid != null) {
 			values.put(ContentDescriptor.Membership.Cols.CARDNO, cardid);
 		}

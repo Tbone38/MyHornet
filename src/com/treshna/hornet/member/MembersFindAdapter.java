@@ -2,6 +2,7 @@ package com.treshna.hornet.member;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -17,6 +18,7 @@ import com.treshna.hornet.R.color;
 import com.treshna.hornet.R.id;
 import com.treshna.hornet.member.MembersFindFragment.OnMemberSelectListener;
 import com.treshna.hornet.services.BitmapLoader;
+import com.treshna.hornet.services.Services;
 import com.treshna.hornet.sqlite.ContentDescriptor;
 import com.treshna.hornet.sqlite.ContentDescriptor.Member;
 import com.treshna.hornet.sqlite.ContentDescriptor.Membership;
@@ -32,6 +34,7 @@ public class MembersFindAdapter extends SimpleCursorAdapter implements OnClickLi
 	private static final String TAG = "MemberFindAdapter";
 	
 	private static int selectedPos = -1;
+	private long today;
 	
 	@SuppressWarnings("deprecation")
 	public MembersFindAdapter(Context context, int layout, Cursor c,
@@ -41,6 +44,7 @@ public class MembersFindAdapter extends SimpleCursorAdapter implements OnClickLi
 		this.FROM = from;
 		IS_BOOKING = booking;
 		mCallback = act;
+		today = new Date().getTime();
 		
 	}
 	//selectedPos should probably go off of Member ID.
@@ -73,8 +77,9 @@ public class MembersFindAdapter extends SimpleCursorAdapter implements OnClickLi
 			rowLayout.setTag(tagInfo);
 			
 			TextView details = (TextView) rowLayout.findViewById(R.id.details);
-			if (!cursor.isNull(cursor.getColumnIndex(ContentDescriptor.Membership.Cols.EXPIRERY)) &&
-					cursor.getString(cursor.getColumnIndex(ContentDescriptor.Membership.Cols.EXPIRERY)).compareTo("") != 0) {
+			Date expiry = Services.StringToDate(cursor.getString(cursor.getColumnIndex(ContentDescriptor.Membership.Cols.EXPIRERY)),
+					"dd MMM yyyy"); 
+			if (expiry != null && expiry.getTime() >= today) {
 				details.setText(cursor.getString(cursor.getColumnIndex(ContentDescriptor.Membership.Cols.PNAME))
 						+"\n Expired "+cursor.getString(cursor.getColumnIndex(ContentDescriptor.Membership.Cols.EXPIRERY)));
 				details.setVisibility(View.VISIBLE);

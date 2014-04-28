@@ -656,15 +656,15 @@ public class JDBCConnection {
     public ResultSet getMembership(String lastsync, int ymca) throws SQLException, NullPointerException {
 	    	ResultSet rs = null;
 	    	String query ="SELECT membership.id, memberid, membership.startdate, membership.enddate, cardno, membership.notes, " +
-	    			"primarymembership, membership.lastupdate,  membership_state(membership.*, programme.*) as state," +
-	    			" membership.concession, programme.name, programme.id AS programmeid, membership.termination_date, ";
+	    			"primarymembership, membership.lastupdate, membership_state(membership.*, programme.*) as state," +
+	    			" membership.concession, programme.name, programme.id AS programmeid, membership.termination_date,";
 	    	
 	    	String check_query = "SELECT TRUE from pg_proc WHERE proname = 'select_column' "
 	    			+ "UNION SELECT false FROM pg_proc WHERE 'select_column' NOT IN (SELECT proname FROM pg_proc);";
 	    	pStatement = con.prepareStatement(check_query);
 	    	rs = pStatement.executeQuery();
 	    	
-	    	if (rs.next() && rs.getBoolean(1)) {
+	    	if (rs.next() && rs.getBoolean(1)) { //check's if the select_column function even exists.
 	    			query = query+ "select_column('membership','cancel_reason', membership.*) AS cancel_reason,";
 	    	} else {
 	    		query = query+ "NULL AS cancel_reason,";
@@ -672,7 +672,8 @@ public class JDBCConnection {
 	    	rs.close();
 	    	this.closePreparedStatement();
 	    	
-	    	query = query+ " membership.history, membership.signupfee, membership.paymentdue, membership.nextpayment,"
+	    	query = query+ " membership.history, membership.signupfee, "
+	    			+ "membership.paymentdue::TEXT||' '::TEXT||price_desc(programme.amount, programme.id) AS paymentdue, membership.nextpayment,"
 	    			+ " membership.firstpayment, membership.upfront"
 	    			+ " FROM membership LEFT JOIN programme ON (membership.programmeid = programme.id)" +
 	    			" WHERE 1=1 ";
@@ -968,22 +969,17 @@ public class JDBCConnection {
     /**
      * grabs the mlength as seconds, add them to the chosen start date.
      */
-    public ResultSet getProgrammes(String lastupdate) throws SQLException, NullPointerException {
+    public ResultSet getProgrammes(long lastupdate) throws SQLException, NullPointerException {
 	    	ResultSet rs;
 	    	String query = "SELECT p.id AS pid, programmegroupid, p.name, pg.name AS groupname, startdate, enddate, "
 	    			+ "amount, date_part('epoch', mlength::interval) as mlength, signupfee, notes, lastupdate, price_desc(NULL, p.id) AS price_desc,"
 	    			+ " concession "
 	    			+ "FROM programme p LEFT JOIN programmegroup pg ON "
 	    			+ "(p.programmegroupid = pg.id)"
-	    			+ "WHERE history = 'f' ";
-	    	if (lastupdate != null) {
-	    		query = query + "AND lastupdate >?::TIMESTAMP WITHOUT TIME ZONE";
-	    	}
+	    			+ "WHERE history = 'f' AND lastupdate >?";
 	    	pStatement = con.prepareStatement(query);
-	    	if (lastupdate != null) {
-	    		pStatement.setString(1, Services.dateFormat(new Date(Long.parseLong(lastupdate)).toString(), 
-	    				"EEE MMM dd HH:mm:ss zzz yyyy", "dd-MMM-yyyy HH:mm:ss"));
-	    	}
+	    	pStatement.setTimestamp(1, new java.sql.Timestamp(lastupdate));
+	    	
 	    	rs = pStatement.executeQuery();
 	    	
 	    	return rs;

@@ -35,7 +35,7 @@
 		    android:layout_height="wrap_content"
 		    android:layout_below="@id/membershipgrouptype"
 		    android:textSize="13sp"
-		  	android:text="@string/membership_add_type"
+		  	android:text="@string/membership_type"
 		  	android:layout_margin="3dp"
 		  	android:padding="5dp" />
 		<Spinner
@@ -52,7 +52,8 @@
 		    android:layout_height="wrap_content"
 		    android:layout_below="@+id/membershiptype"
 		    android:textSize="18sp"
-		    
+		    android:text="@string/defaultStartDate"
+		    android:textColor="@color/android_blue_dark"
 		    android:layout_margin="3dp"
 		  	android:padding="5dp" />
 		<TextView
@@ -71,8 +72,9 @@
 		    android:layout_height="wrap_content"
 		    android:layout_below="@id/membershiptype"
 		    android:layout_toRightOf="@+id/membershipdateto"
+		    android:textColor="@color/android_blue_dark"
 		    android:textSize="18sp"
-		    
+		    android:text="@string/defaultEndDate"
 		    android:layout_margin="3dp"
 		  	android:padding="5dp" />
 		
