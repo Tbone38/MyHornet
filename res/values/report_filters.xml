@@ -31,7 +31,7 @@
     <string-array name="Group_Programme" >
       <item >(SELECT 0 AS id, \'All Programme\' AS name) UNION
          	SELECT id, name FROM programme
-            WHERE programmegroupid = ? ORDER BY id; 
+            WHERE programmegroupid = ? AND history = \'f\' ORDER BY id;  
       </item>
     </string-array>
     
