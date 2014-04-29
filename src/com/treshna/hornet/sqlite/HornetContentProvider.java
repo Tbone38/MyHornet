@@ -276,6 +276,11 @@ public class HornetContentProvider extends ContentProvider {
         	getContext().getContentResolver().notifyChange(uri, null);
         	return rows;
         }
+        case ContentDescriptor.ResourceType.PATH_TOKEN:{
+        	int rows = db.delete(ContentDescriptor.ResourceType.NAME, selection, selectionArgs);
+        	getContext().getContentResolver().notifyChange(uri, null);
+        	return rows;
+        }
         
         case ContentDescriptor.TOKEN_DROPTABLE:{ //special case, drops tables/deletes database.
         	FileHandler fh = new FileHandler(ctx);
@@ -501,6 +506,11 @@ public class HornetContentProvider extends ContentProvider {
             	long id = db.insert(ContentDescriptor.PendingConflicts.NAME, null, values);
             	getContext().getContentResolver().notifyChange(uri, null);
             	return ContentDescriptor.PendingConflicts.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
+            }
+            case ContentDescriptor.ResourceType.PATH_TOKEN:{
+            	long id = db.insert(ContentDescriptor.ResourceType.NAME, null, values);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return ContentDescriptor.ResourceType.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
             }
             default: {
                 throw new UnsupportedOperationException("URI: " + uri + " not supported.");
@@ -933,6 +943,11 @@ public class HornetContentProvider extends ContentProvider {
             	builder.setTables(ContentDescriptor.PendingConflicts.NAME);
             	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
             }
+            case ContentDescriptor.ResourceType.PATH_TOKEN:{
+            	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+            	builder.setTables(ContentDescriptor.ResourceType.NAME);
+            	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+            }
             default: throw new UnsupportedOperationException("URI: " + uri + " not supported.");
         }
 	}
@@ -1121,6 +1136,11 @@ public class HornetContentProvider extends ContentProvider {
             }
             case ContentDescriptor.PendingConflicts.PATH_TOKEN:{
             	int result = db.update(ContentDescriptor.PendingConflicts.NAME, values, selection, selectionArgs);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return result;
+            }
+            case ContentDescriptor.ResourceType.PATH_TOKEN:{
+            	int result = db.update(ContentDescriptor.ResourceType.NAME, values, selection, selectionArgs);
             	getContext().getContentResolver().notifyChange(uri, null);
             	return result;
             }

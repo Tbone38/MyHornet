@@ -40,6 +40,7 @@ import com.treshna.hornet.sqlite.ContentDescriptor.PendingUpdates;
 import com.treshna.hornet.sqlite.ContentDescriptor.PendingUploads;
 import com.treshna.hornet.sqlite.ContentDescriptor.Programme;
 import com.treshna.hornet.sqlite.ContentDescriptor.Resource;
+import com.treshna.hornet.sqlite.ContentDescriptor.ResourceType;
 import com.treshna.hornet.sqlite.ContentDescriptor.ResultStatus;
 import com.treshna.hornet.sqlite.ContentDescriptor.RollCall;
 import com.treshna.hornet.sqlite.ContentDescriptor.RollItem;
@@ -441,6 +442,7 @@ public class HornetDatabase extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS "+Enquiry.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+PaymentAgainst.NAME);
 		db.execSQL("DROP TABLE IF EXISTS "+PendingConflicts.NAME);
+		db.execSQL("DROP TABLE IF EXISTS "+ResourceType.NAME);
 	}
 	
 	private void repopulateTable(SQLiteDatabase db) {

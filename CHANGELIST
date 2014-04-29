@@ -118,6 +118,17 @@ KEY:
                     (maybe we should use a builder?)
                     which we can then use to help resolve conflicts.
                 merge Tony's branch into main;
+		GET SWIPE WORKING.
+		Booking Add, When selected from the Member Details, seems to crash.
+		Add Bookings Doesn't work at all?
+		Swiping from the left hand side interfares with the member swiping, etc.
+		"Sync Set to never" DISABLE.
+		Class Create - Select End Date;
+		Back button is frustrating.
+		Adding to Classes:
+			if membershipcount = 1 then default;
+			if membershipcount = 2 then prompt;
+			if membershipcount = 0 then prompt for payment;
 
     
     v119:

@@ -110,8 +110,10 @@ public class ClassCreateFragment extends Fragment implements OnClickListener, Da
 				Long difference = enddate.getTime() - tempdate.getTime();
 				difference = difference *2;
 			
-				endtimevalue = Services.dateFormat(new Date((startdate.getTime()+difference)).toString(), 
-						"EEE MMM dd HH:mm:ss zzz yyyy", "HH:mm:ss");
+				/*endtimevalue = Services.dateFormat(new Date((startdate.getTime()+difference)).toString(), 
+						"EEE MMM dd HH:mm:ss zzz yyyy", "HH:mm:ss");*/
+				endtimevalue = Services.DateToString(new Date((startdate.getTime()+difference)), "HH:mm:ss");
+				
 			}
 		}
 		

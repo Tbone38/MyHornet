@@ -1467,6 +1467,13 @@ public ResultSet getReportTypes() throws SQLException {
     	
     	return pStatement.executeQuery();
     }
+    
+    public ResultSet getResourceType(long last_sync) throws SQLException {
+    	pStatement = con.prepareStatement("SELECT id, name, period FROM resourcetype WHERE lastupdate >= ? ;");
+    	pStatement.setTimestamp(1, new java.sql.Timestamp(last_sync));
+    	
+    	return pStatement.executeQuery();
+    }
 
     public SQLWarning getWarnings() throws SQLException, NullPointerException {
     	return con.getWarnings();

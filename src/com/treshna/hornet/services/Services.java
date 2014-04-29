@@ -56,6 +56,11 @@ public class Services {
 		return format.format(date);
 	}
 	
+	public static String DateToString(Date date, String outputformat) {
+		SimpleDateFormat format = new SimpleDateFormat(outputformat, Locale.US);
+		return format.format(date);
+	}
+	
 	/**
 	 * Returns Date based on string format or null
 	 */
@@ -106,7 +111,9 @@ public class Services {
 		catch(ParseException e){
 			return false;
 		}
-}
+	}
+
+	
 	/*
 	 * This function is for scaling down the images in the list,
 	 * in order to avoid memory crashes. It takes a bitmapFactory option
@@ -467,7 +474,7 @@ public class Services {
 		
 		public static enum FragmentType {
 			MembershipAdd(1), MembershipComplete(2), MemberDetails(3), MemberGallery(4),
-			RollList(5), RollItemList(6), MemberAddTag(7), KPIs(8);
+			RollList(5), RollItemList(6), MemberAddTag(7), KPIs(8), Resource(9);
 			
 			private final int key;
 			

@@ -178,7 +178,7 @@ public class MembersFindAdapter extends SimpleCursorAdapter implements OnClickLi
 				
 				mCallback.onMemberSelect(tagInfo.get(0));
 				
-			} else if (IS_BOOKING) {
+			} else if (IS_BOOKING) { //TODO: FIX THIS..?
 				if (mCallback != null) {
 					ArrayList<String> tagInfo = (ArrayList<String>) v.getTag();
 					mCallback.onMemberSelect(tagInfo.get(0));

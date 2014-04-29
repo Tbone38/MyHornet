@@ -29,6 +29,7 @@ import com.treshna.hornet.sqlite.ContentDescriptor.PendingUpdates;
 import com.treshna.hornet.sqlite.ContentDescriptor.PendingUploads;
 import com.treshna.hornet.sqlite.ContentDescriptor.Programme;
 import com.treshna.hornet.sqlite.ContentDescriptor.Resource;
+import com.treshna.hornet.sqlite.ContentDescriptor.ResourceType;
 import com.treshna.hornet.sqlite.ContentDescriptor.RollCall;
 import com.treshna.hornet.sqlite.ContentDescriptor.RollItem;
 import com.treshna.hornet.sqlite.ContentDescriptor.TableIndex;
@@ -886,7 +887,25 @@ public class UpdateDatabase {
 				+PendingConflicts.Cols.ERROR+" TEXT "
 				+");";
 		
+		private static final String SQL21 = "CREATE TABLE "+ResourceType.NAME+" ("+ResourceType.Cols._ID+" INTEGER PRIMARY KEY NOT NULL, "
+				+ResourceType.Cols.ID+" INTEGER, "+ResourceType.Cols.NAME+" TEXT, "
+				+ResourceType.Cols.PERIOD+" TEXT, "+ResourceType.Cols.DEVICESIGNUP+" TEXT DEFAULT 'f' "
+				+");";
 		
+		private static final String SQL22 = "ALTER TABLE "+Resource.NAME+" ADD COLUMN "+Resource.Cols.DEVICESIGNUP+" TEXT DEFAULT 'f';";
+		
+		private static final String SQL23 = "CREATE TRIGGER "+Resource.Triggers.ON_INSERT+" AFTER INSERT ON "+Resource.NAME
+				+"FOR EACH ROW WHEN new."+Resource.Cols.DEVICESIGNUP+" = 't' "
+				+"BEGIN "
+					+"INSERT OR REPLACE INTO "+PendingUploads.NAME
+					+" ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
+					+" VALUES (new."+Resource.Cols.ID+", "+TableIndex.Values.Resource.getKey()+");"
+					+"END;";
+		
+		private static final String SQL24 = "CREATE TRIGGER "+Resource.Triggers.ON_UPDATE+" AFTER UPDATE ON "+Resource.NAME
+				+"FOR EACH ROW WHEN new."+Resource.Cols.DEVICESIGNUP+" = 't' "
+				+"BEGIN ";
+				
 		public static void patchNinetySix(SQLiteDatabase db) {
 			db.beginTransaction();
 			try {
@@ -930,6 +949,10 @@ public class UpdateDatabase {
 				db.execSQL(SQL19);
 				Log.w(HornetDatabase.class.getName(), "\n"+SQL20);
 				db.execSQL(SQL20);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL21);
+				db.execSQL(SQL21);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL22);
+				db.execSQL(SQL22);
 				db.setTransactionSuccessful();
 			/*} catch (SQLException e) {
 			e.printStackTrace();

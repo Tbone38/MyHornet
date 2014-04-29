@@ -57,7 +57,7 @@ import android.provider.BaseColumns;
  *  320:
  *  330 = Bookingtype 
  *  340:
- *  350 = Resource
+ *  350 = Resource						351 = ResourceType
  *  360:
  *  370 = Programme
  *  371 = ProgrammeGroup (sorted from programme)
@@ -75,7 +75,6 @@ public class ContentDescriptor {
 	 public static final String DROPTABLE = "dropTable";
 	 public static final int TOKEN_DROPTABLE = 1;
 	 public static final Uri DROPTABLE_URI = BASE_URI.buildUpon().appendPath(DROPTABLE).build();
-	 private ContentDescriptor(){};
 	 
 	 private static  UriMatcher buildUriMatcher() {
 		 final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -160,6 +159,7 @@ public class ContentDescriptor {
 	     matcher.addURI(authority, DDExportFormat.PATH, DDExportFormat.PATH_TOKEN);
 	     matcher.addURI(authority, PaymentAgainst.PATH, PaymentAgainst.PATH_TOKEN);
 	     matcher.addURI(authority, PendingConflicts.PATH, PendingConflicts.PATH_TOKEN);
+	     matcher.addURI(authority, ResourceType.PATH, ResourceType.PATH_TOKEN);
 	     
 	     matcher.addURI(authority, DROPTABLE, TOKEN_DROPTABLE);
 	     
@@ -550,6 +550,11 @@ public class ContentDescriptor {
 	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.resource";
 	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.resource";
 	 		
+	 		public static class Triggers {
+	 			public static final String ON_INSERT = "resource_insert";
+	 			public static final String ON_UPDATE = "resource_update";
+	 		}
+	 		
 	 		public static class Cols {
 	 			public static final String ID = BaseColumns._ID;
 	 			public static final String NAME = "name";
@@ -561,6 +566,7 @@ public class ContentDescriptor {
 	 			
 	 			//added v120
 	 			public static final String HISTORY = "historic";
+	 			public static final String DEVICESIGNUP = "devicesignup";
 	 			
 	 		}
 	 	}
@@ -1070,7 +1076,7 @@ public class ContentDescriptor {
 	 			Booking(1), Class(2), Swipe(3),Membership(4) /*when adding memberships*/,
 	 					Member(5) /*when adding members/prospects*/,Image(6),
 	 					MembershipSuspend(7), MemberNotes(8), RollCall(9), RollItem(10),
-	 					Idcard(11), Prospect(12);
+	 					Idcard(11), Prospect(12), Resource(13);
 	 			
 	 			private final int key;
 	 			
@@ -1362,5 +1368,20 @@ public class ContentDescriptor {
 	 		}
 	 	}
 	 	
-	 	
+	 	public static class ResourceType {
+	 		public static final String NAME = "resourcetype";
+	 		public static final String PATH = "resourcetype";
+	 		public static final int PATH_TOKEN = 351;
+	 		
+	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.resourcetype";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.resourcetype";
+	 		
+	 		public static class Cols implements BaseColumns {
+	 			public static final String ID = "resourcetypeid";
+	 			public static final String NAME = "name";
+	 			public static final String PERIOD = "period";
+	 			public static final String DEVICESIGNUP = "devicesignup";
+	 		}
+	 	}
 }

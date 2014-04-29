@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="resource_add">Add Resource</string>
+    <string name="resource_edit">Edit Resource</string>
+	<string name="resource_name">Resource Name</string>
+	<string name="resource_type">Resource Type</string>
+	<string name="resource_istrainer">Resource is Personal Trainer</string>
+	<string name="resource_historic">Resource is Historic</string>
+</resources>

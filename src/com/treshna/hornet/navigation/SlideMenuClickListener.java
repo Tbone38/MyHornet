@@ -25,6 +25,7 @@ import com.treshna.hornet.MainActivity;
 import com.treshna.hornet.R;
 import com.treshna.hornet.booking.BookingDetailsSuperFragment;
 import com.treshna.hornet.booking.ClassCreateFragment;
+import com.treshna.hornet.form.FormFragment;
 import com.treshna.hornet.member.MemberAddFragment;
 import com.treshna.hornet.network.HornetDBService;
 import com.treshna.hornet.report.KeyPerformanceIndexFragment;
@@ -106,6 +107,9 @@ public class SlideMenuClickListener implements OnItemClickListener, OnClickListe
         	fragment = new ClassCreateFragment();
         	tag = "classCreate";
         	break;
+        case 14:
+        	fragment = new FormFragment();
+        	tag = "formFragment";
         default: 
             break;
         }

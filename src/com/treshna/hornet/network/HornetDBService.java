@@ -183,6 +183,7 @@ public class HornetDBService extends Service {
 			getMembershipID();
 			getIdCardID();
 			getImageID();
+			getResourceID();
 			int sid_count = getSuspendID();
 			if (sid_count < 0) {
 				Services.showToast(getApplicationContext(), statusMessage, handler);
@@ -216,6 +217,7 @@ public class HornetDBService extends Service {
 			getClasses(last_sync);
 			
 			//downloads!
+			getResourceType(last_sync);
 			getResource(last_sync);
 			getMember(last_sync);
 			getProgrammes(last_sync);
@@ -324,6 +326,7 @@ public class HornetDBService extends Service {
 		   getConfig();
 		   getPaymentMethods();
 		   
+		   getResourceType(last_sync);
 		   getProgrammes(0);
 		   getBookings(0);
 		   getClasses(-1);
@@ -364,6 +367,7 @@ public class HornetDBService extends Service {
 		   getIdCardID();
 		   getMemberNoteID();
 		   getBookingID();
+		   getResourceID();
 		   int midcount = getMemberID();
 		   if (midcount != 0) statusMessage = " Sign-up's available";
 		   if (statusMessage != null && statusMessage.length() > 3 ) {
@@ -5028,4 +5032,70 @@ public class HornetDBService extends Service {
     	closeConnection();
     	connection.closeConnection();
     }
+    
+    private int getResourceType(long last_sync) {
+    	int result = 0;
+    	
+    	if (!openConnection()) {
+    		return -1;
+    	}
+    	
+    	try {
+    		ResultSet rs = connection.getResourceType(last_sync);
+    		while (rs.next()) {
+	    		ContentValues values = new ContentValues();
+	    		values.put(ContentDescriptor.ResourceType.Cols.ID, rs.getInt("id"));
+	    		values.put(ContentDescriptor.ResourceType.Cols.NAME, rs.getString("name"));
+	    		values.put(ContentDescriptor.ResourceType.Cols.PERIOD, rs.getString("period"));
+	    		
+	    		cur = contentResolver.query(ContentDescriptor.ResourceType.CONTENT_URI, null, ContentDescriptor.ResourceType.Cols.ID+" = ?",
+	    				new String[] {rs.getString("id")}, null);
+	    		if (cur.getCount()> 0) {
+	    			contentResolver.update(ContentDescriptor.ResourceType.CONTENT_URI, values, ContentDescriptor.ResourceType.Cols.ID+" = ?",
+	        				new String[] {rs.getString("id")});
+	    		} else {
+	    			contentResolver.insert(ContentDescriptor.ResourceType.CONTENT_URI, values);
+	    		}
+	    		cur.close();
+	    		result +=1;
+    		}
+    	} catch (SQLException e) {
+    		statusMessage = e.getLocalizedMessage();
+    		Log.e(TAG, "", e);
+    		return -2;
+    	}
+    	return result;
+    }
+    
+    private int getResourceID() {
+    	int result = 0;
+    	
+    	cur = contentResolver.query(ContentDescriptor.FreeIds.CONTENT_URI, null, ContentDescriptor.FreeIds.Cols.TABLEID+" = ?",
+    			new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Resource.getKey())}, null);
+    	
+    	int count = cur.getCount();
+    	cur.close();
+    	
+    	if (!openConnection()) {
+    		return -1;
+    	}
+    	
+    	for (int i=(10-count);i>0; i--) {
+    		try {
+    			ResultSet rs = connection.startStatementQuery("select nextval('resource_id_seq');");
+    			rs.next();
+    			ContentValues values = new ContentValues();
+    			values.put(ContentDescriptor.FreeIds.Cols.TABLEID, ContentDescriptor.TableIndex.Values.Resource.getKey());
+    			values.put(ContentDescriptor.FreeIds.Cols.ROWID, rs.getInt("nextval"));
+    			contentResolver.insert(ContentDescriptor.FreeIds.CONTENT_URI, values);
+    			result +=1;
+    		} catch (SQLException e) {
+    			statusMessage = e.getLocalizedMessage();
+    			Log.e(TAG, "", e);
+    			return -2;
+    		}
+    	}
+    	closeConnection();
+    	return result;
+    }	
 }
