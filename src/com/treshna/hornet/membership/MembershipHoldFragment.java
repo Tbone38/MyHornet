@@ -64,7 +64,7 @@ public class MembershipHoldFragment extends Fragment implements OnClickListener,
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			 Bundle savedInstanceState) {
 		mInflater = inflater;
-		view = mInflater.inflate(R.layout.membership_hold, null);
+		view = mInflater.inflate(R.layout.fragment_membership_hold, null);
 		
 		sdatePicker = new DatePickerFragment();
 		sdatePicker.setDatePickerSelectListener(this);

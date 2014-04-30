@@ -78,7 +78,7 @@ public class ClassDetailsSuperFragment extends Fragment implements OnMemberSelec
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {	
 		super.onCreateView(inflater, container, savedInstanceState);
-		view = inflater.inflate(R.layout.visitor_frame, container, false);
+		view = inflater.inflate(R.layout.fragment_visitor_frame, container, false);
 		bookingID = getArguments().getString(Services.Statics.KEY);
 		
 		TextView hideme = (TextView) view.findViewById(R.id.empty_text);

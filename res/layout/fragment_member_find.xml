@@ -53,7 +53,7 @@
 	        android:padding="3dp"/>
     </LinearLayout>
     <include 
-        layout="@layout/filter_message"
+        layout="@layout/item_filter_message"
         android:id="@+id/filter_message"
     	android:layout_width="match_parent"
     	android:layout_height="wrap_content"

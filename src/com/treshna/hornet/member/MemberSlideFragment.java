@@ -29,6 +29,13 @@ import com.treshna.hornet.sqlite.ContentDescriptor;
 
 public class MemberSlideFragment extends Fragment implements TagFoundListener{
 
+	public static final int MEMBER_BOOKINGS = 1;
+	public static final int MEMBER_MEMBERSHIPS = 2;
+	public static final int MEMBER_NOTES = 3;
+	public static final int MEMBER_GALLERY = 4;
+	public static final int MEMBER_VISITS = 5;
+	public static final int MEMBER_FINANCE = 6;
+	
 	private View view;
 	private ViewPager mPager;
     private PagerAdapter mPagerAdapter;
@@ -47,7 +54,7 @@ public class MemberSlideFragment extends Fragment implements TagFoundListener{
 		} catch (Exception e) {};
 		
 		//view = inflater.inflate(R.layout.swipe_layout, container, false);
-    	view = inflater.inflate(R.layout.member_details_new_navigation, null);
+    	view = inflater.inflate(R.layout.item_member_details_navigation, null);
 		// Instantiate a ViewPager and a PagerAdapter.
     	if (container != null) {
 	    	 TextView glyph = (TextView)container.findViewById(R.id.empty_glyph);
@@ -220,22 +227,22 @@ public class MemberSlideFragment extends Fragment implements TagFoundListener{
         	
         	switch (position){
         	case (0):
-        			selectedFragment = R.id.button_member_navigation_gallery;
+        			selectedFragment = MEMBER_GALLERY;
         			break;
         	case (1):
-        			selectedFragment = R.id.button_member_navigation_notes;
+        			selectedFragment = MEMBER_NOTES;
         			break;
         	case (2):
-        			selectedFragment = R.id.button_member_navigation_memberships;
+        			selectedFragment = MEMBER_MEMBERSHIPS;
         			break;
         	case (3):
-        			selectedFragment = R.id.button_member_navigation_visits;
+        			selectedFragment = MEMBER_VISITS;
         			break;
         	case (4):
-        			selectedFragment = R.id.button_member_navigation_booking;
+        			selectedFragment = MEMBER_BOOKINGS;
         			break;
         	case (5):
-        			selectedFragment = R.id.button_member_navigation_finance;
+        			selectedFragment = MEMBER_FINANCE;
         			break;
         	}
         	

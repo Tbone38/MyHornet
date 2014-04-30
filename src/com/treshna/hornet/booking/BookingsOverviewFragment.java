@@ -74,7 +74,7 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {	
 		super.onCreateView(inflater, container, savedInstanceState);
-        view = inflater.inflate(R.layout.booking_overview, container, false);
+        view = inflater.inflate(R.layout.fragment_booking_overview, container, false);
         mInflater = inflater;
         mDatePicker = new DatePickerFragment();
         mDatePicker.setDatePickerSelectListener(this);
@@ -220,7 +220,7 @@ public class BookingsOverviewFragment extends Fragment implements OnClickListene
 		 LinearLayout list = (LinearLayout) view.findViewById(R.id.booking_resource_list); 
 		 list.removeAllViews(); //this needs reworked to actually only show the hours that the gym is open..
 		 for (int i=0; i<resource.size(); i++) {
-			 View row = inflater.inflate(R.layout.booking_overview_row, null);
+			 View row = inflater.inflate(R.layout.row_booking_overview, null);
 			 row.setClickable(true);
 			 row.setTag(resource.get(i)[0]);
 			 row.setOnClickListener(this);

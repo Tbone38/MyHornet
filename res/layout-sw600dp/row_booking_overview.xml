@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.0625"
             android:padding="2dp">
-            <include layout="@layout/booking_overview_time" />
+            <include layout="@layout/item_booking_overview_time" />
         </RelativeLayout>
         <RelativeLayout 
             android:id="@+id/booking_timeslot_2"
@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.0625"
             android:padding="2dp">
-            <include layout="@layout/booking_overview_time" />
+            <include layout="@layout/item_booking_overview_time" />
         </RelativeLayout>
         <RelativeLayout 
             android:id="@+id/booking_timeslot_3"
@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.0625"
             android:padding="2dp">
-            <include layout="@layout/booking_overview_time" />
+            <include layout="@layout/item_booking_overview_time" />
         </RelativeLayout>
         <RelativeLayout 
             android:id="@+id/booking_timeslot_4"
@@ -52,7 +52,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.0625"
             android:padding="2dp">
-            <include layout="@layout/booking_overview_time" />
+            <include layout="@layout/item_booking_overview_time" />
         </RelativeLayout>
         <RelativeLayout 
             android:id="@+id/booking_timeslot_5"
@@ -60,7 +60,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.0625"
             android:padding="2dp">
-            <include layout="@layout/booking_overview_time" />
+            <include layout="@layout/item_booking_overview_time" />
         </RelativeLayout>
         <RelativeLayout 
             android:id="@+id/booking_timeslot_6"
@@ -68,7 +68,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.0625"
             android:padding="2dp">
-            <include layout="@layout/booking_overview_time" />
+            <include layout="@layout/item_booking_overview_time" />
         </RelativeLayout>
         <RelativeLayout 
             android:id="@+id/booking_timeslot_7"
@@ -76,7 +76,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.0625"
             android:padding="2dp">
-            <include layout="@layout/booking_overview_time" />
+            <include layout="@layout/item_booking_overview_time" />
         </RelativeLayout>
         <RelativeLayout 
             android:id="@+id/booking_timeslot_8"
@@ -84,7 +84,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.0625"
             android:padding="2dp">
-            <include layout="@layout/booking_overview_time" />
+            <include layout="@layout/item_booking_overview_time" />
         </RelativeLayout>
         <RelativeLayout 
             android:id="@+id/booking_timeslot_9"
@@ -92,7 +92,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.0625"
             android:padding="2dp">
-            <include layout="@layout/booking_overview_time" />
+            <include layout="@layout/item_booking_overview_time" />
         </RelativeLayout>
         <RelativeLayout 
             android:id="@+id/booking_timeslot_10"
@@ -100,7 +100,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.0625"
             android:padding="2dp">
-            <include layout="@layout/booking_overview_time" />
+            <include layout="@layout/item_booking_overview_time" />
         </RelativeLayout>
         <RelativeLayout 
             android:id="@+id/booking_timeslot_11"
@@ -108,7 +108,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.0625"
             android:padding="2dp">
-            <include layout="@layout/booking_overview_time" />
+            <include layout="@layout/item_booking_overview_time" />
         </RelativeLayout>
         <RelativeLayout 
             android:id="@+id/booking_timeslot_12"
@@ -116,7 +116,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.0625"
             android:padding="2dp">
-            <include layout="@layout/booking_overview_time" />
+            <include layout="@layout/item_booking_overview_time" />
         </RelativeLayout>
         <RelativeLayout 
             android:id="@+id/booking_timeslot_13"
@@ -124,7 +124,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.0625"
             android:padding="2dp">
-            <include layout="@layout/booking_overview_time" />
+            <include layout="@layout/item_booking_overview_time" />
         </RelativeLayout>
         <RelativeLayout 
             android:id="@+id/booking_timeslot_14"
@@ -132,7 +132,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.0625"
             android:padding="2dp">
-            <include layout="@layout/booking_overview_time" />
+            <include layout="@layout/item_booking_overview_time" />
         </RelativeLayout>
         <RelativeLayout 
             android:id="@+id/booking_timeslot_15"
@@ -140,7 +140,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.0625"
             android:padding="2dp">
-            <include layout="@layout/booking_overview_time" />
+            <include layout="@layout/item_booking_overview_time" />
         </RelativeLayout>
         <RelativeLayout 
             android:id="@+id/booking_timeslot_16"
@@ -148,7 +148,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.0625"
             android:padding="2dp">
-            <include layout="@layout/booking_overview_time" />
+            <include layout="@layout/item_booking_overview_time" />
         </RelativeLayout>
         
     </LinearLayout>

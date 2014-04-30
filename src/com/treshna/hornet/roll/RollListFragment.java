@@ -72,7 +72,7 @@ public class RollListFragment extends ListFragment implements OnClickListener, L
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 		super.onCreateView(inflater, container, savedInstanceState);
 	
-		view = inflater.inflate(R.layout.roll_list, container, false);
+		view = inflater.inflate(R.layout.fragment_roll_list, container, false);
 		
 		mInflater = getActivity().getLayoutInflater();
 		
@@ -99,7 +99,7 @@ public class RollListFragment extends ListFragment implements OnClickListener, L
 		
 		String[] from = {};
 		int[] to = {};
-		mAdapter = new RollListAdapter(getActivity(), R.layout.roll_list_row, null, from, to);
+		mAdapter = new RollListAdapter(getActivity(), R.layout.row_roll_list, null, from, to);
 		
         setListAdapter(mAdapter);
 		

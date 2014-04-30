@@ -60,7 +60,7 @@ public class MemberAddFragment extends Fragment implements OnClickListener, Date
 		super.onCreate(savedInstanceState);
 		//setContentView(R.layout.member_add);
 		mInflater = inflater;
-		view = (View) mInflater.inflate(R.layout.member_add, null); 
+		view = (View) mInflater.inflate(R.layout.fragment_member_add, null); 
 		Services.setContext(getActivity());
 		
 		/*

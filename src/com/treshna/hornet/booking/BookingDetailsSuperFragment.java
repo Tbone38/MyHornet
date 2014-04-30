@@ -58,7 +58,7 @@ public class BookingDetailsSuperFragment extends Fragment implements OnMemberSel
 		
 			//setContentView(R.layout.empty_activity);
 			mInflater = inflater;
-			view = mInflater.inflate(R.layout.empty_activity, null);
+			view = mInflater.inflate(R.layout.activity_empty, null);
 			if (savedInstanceState == null) {
 				if (Integer.parseInt(bookingID) > 0) {
 					Cursor cur;

@@ -55,7 +55,7 @@ public class BookingsSlideFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
     	super.onCreateView(inflater, container, savedInstanceState);
 	
-		view = inflater.inflate(R.layout.swipe_layout, container, false);
+		view = inflater.inflate(R.layout.fragment_swipe_layout, container, false);
 		// Instantiate a ViewPager and a PagerAdapter.
 	    mPager = (ViewPager) view.findViewById(R.id.pager);
 	    mPagerAdapter = new ScreenSlidePagerAdapter(getChildFragmentManager());

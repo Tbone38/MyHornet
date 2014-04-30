@@ -34,7 +34,7 @@ public class SetupResetPasswordFragment extends Fragment implements OnClickListe
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 		super.onCreateView(inflater, container, savedInstanceState);
 	
-		view = inflater.inflate(R.layout.setup_reset_password, container, false);
+		view = inflater.inflate(R.layout.fragment_setup_reset_password, container, false);
 		
 		mInflater = getActivity().getLayoutInflater();
 		view = setupPage();

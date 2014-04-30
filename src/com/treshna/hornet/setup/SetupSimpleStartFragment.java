@@ -45,7 +45,7 @@ public class SetupSimpleStartFragment extends Fragment implements OnClickListene
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 		super.onCreateView(inflater, container, savedInstanceState);
 	
-		view = inflater.inflate(R.layout.setup_page_simple, container, false);
+		view = inflater.inflate(R.layout.fragment_setup_page_simple, container, false);
 		
 		mInflater = getActivity().getLayoutInflater();
 		view = setupSimple();

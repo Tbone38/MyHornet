@@ -105,7 +105,7 @@ public class MainActivity extends NFCActivity {
 		super.onCreate(savedInstanceState);
 
 		//this.setContentView(R.layout.main_activity);
-		this.setContentView(R.layout.drawer_layout);
+		this.setContentView(R.layout.activity_main);
 		
 		this.setTitle("GymMaster");
 		this.setTitleColor(getResources().getColor(R.color.gym));

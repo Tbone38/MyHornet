@@ -100,7 +100,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener, OnM
 		 }
 		 
 		 contentResolver = getActivity().getContentResolver();
-		 page = inflater.inflate(R.layout.booking_add, container, false);
+		 page = inflater.inflate(R.layout.fragment_booking_add, container, false);
 		 if (curdate == null) {
 			 curdate = Services.dateFormat(new Date().toString(), "EEE MMM dd HH:mm:ss zzz yyyy", "dd MMM yyyy");
 			 //curdate = Services.DateToString(new Date());

@@ -44,10 +44,6 @@ public class Services {
 	private static Context theCtx;
 	private static final String TAG = "Services";
 	
-	private static Activity theActivity;
-	private static boolean activityVisible = false;
-	
-	
 	/** Always returns date format as "dd MMM yyyy"
 	 * 
 	 */
@@ -452,6 +448,7 @@ public class Services {
 		//used for referencing various bundles and stuff stored in intents;
 		public static final String DATE = "date";
 		public static final String KEY = "key";
+		public static final String ID_KEY = "id_key";
 		public static final String IS_BOOKING = "booking";
 		public static final String IS_BOOKING_F = "firstname";
 		public static final String IS_BOOKING_S = "surname";

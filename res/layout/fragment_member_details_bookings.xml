@@ -23,7 +23,7 @@
         
     </LinearLayout>	
    	 <include 
-	    layout="@layout/member_details_bookings_actions"
+	    layout="@layout/actions_member_details_bookings"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	    android:layout_below="@id/booking_list"/>

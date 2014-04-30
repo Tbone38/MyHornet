@@ -37,7 +37,7 @@ public class SetupActivity extends FragmentActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.empty_activity);
+		setContentView(R.layout.activity_empty);
 		fm = this.getSupportFragmentManager();
 		
 		Intent caller = this.getIntent();

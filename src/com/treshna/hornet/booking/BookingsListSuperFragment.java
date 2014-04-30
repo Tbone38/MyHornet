@@ -37,7 +37,7 @@ public class BookingsListSuperFragment extends Fragment {
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {	
 		super.onCreateView(inflater, container, savedInstanceState);
-		view = inflater.inflate(R.layout.empty_activity, container, false);
+		view = inflater.inflate(R.layout.activity_empty, container, false);
 		setFragment();
         return view;
     }

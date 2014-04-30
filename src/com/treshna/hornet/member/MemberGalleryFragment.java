@@ -54,7 +54,7 @@ public class MemberGalleryFragment extends Fragment implements OnClickListener,
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 		super.onCreateView(inflater, container, savedInstanceState);
 	
-		view = inflater.inflate(R.layout.member_details_gallery, container, false);
+		view = inflater.inflate(R.layout.fragment_member_details_gallery, container, false);
 		
 		mInflater = getActivity().getLayoutInflater();
 		//mInflater = inflater;
@@ -76,7 +76,7 @@ public class MemberGalleryFragment extends Fragment implements OnClickListener,
 		
 		GridView gallery = (GridView) view.findViewById(R.id.member_gallery);
 		//ExpandableHeightGridView gallery = (ExpandableHeightGridView) view.findViewById(R.id.member_gallery);
-		mAdapter = new GalleryViewAdapter(this, R.layout.member_gallery_row, null,
+		mAdapter = new GalleryViewAdapter(this, R.layout.row_member_gallery, null,
 				new String[] {}, new int[] {}, 230, gallery);
 		gallery.setAdapter(mAdapter);
 		

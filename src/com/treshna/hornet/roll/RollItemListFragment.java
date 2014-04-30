@@ -45,7 +45,7 @@ public class RollItemListFragment extends ListFragment implements LoaderManager.
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 		super.onCreateView(inflater, container, savedInstanceState);
 	
-		view = inflater.inflate(R.layout.roll_item_list, container, false);
+		view = inflater.inflate(R.layout.fragment_roll_item_list, container, false);
 		
 		mInflater = getActivity().getLayoutInflater();
 		
@@ -73,7 +73,7 @@ public class RollItemListFragment extends ListFragment implements LoaderManager.
 		
 		String[] from = {};
 		int[] to = {};
-		mAdapter = new RollItemAdapter(getActivity(), R.layout.roll_item_row, null, from, to);
+		mAdapter = new RollItemAdapter(getActivity(), R.layout.row_roll_item, null, from, to);
 		
         setListAdapter(mAdapter);
 		return view;

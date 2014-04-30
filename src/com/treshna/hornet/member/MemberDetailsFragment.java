@@ -58,10 +58,10 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 		  super.onCreateView(inflater, container, savedInstanceState);
 	
-		  if (selectedFragment != R.id.button_member_navigation_gallery) {
-			  view = inflater.inflate(R.layout.member_new_details_scroll, container, false);
+		  if (selectedFragment != MemberSlideFragment.MEMBER_GALLERY) {
+			  view = inflater.inflate(R.layout.fragment_member_details_scroll, container, false);
 		  } else {
-			  view = inflater.inflate(R.layout.member_new_details, container, false);
+			  view = inflater.inflate(R.layout.fragment_member_details, container, false);
 		  }
 		  
 		  setupFragment(null);
@@ -79,7 +79,7 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 		Log.w(TAG, "OUR SELECTED VALUE IS:"+selectedFragment);*/
 		Fragment f = null;
 		switch (selectedFragment){
-		case (R.id.button_member_navigation_notes):{
+		case (MemberSlideFragment.MEMBER_NOTES):{
 			//Log.w(TAG, "NOTES!");
 			f = new MemberNotesFragment();
 			Bundle bdl = new Bundle(2);
@@ -87,7 +87,7 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 	        f.setArguments(bdl);
 			break;
 		}
-		case (R.id.button_member_navigation_memberships):{
+		case (MemberSlideFragment.MEMBER_MEMBERSHIPS):{
 			//Log.w(TAG, "Membership!");
 			f = new MemberMembershipFragment();
 			Bundle bdl = new Bundle(1);
@@ -95,7 +95,7 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 	        f.setArguments(bdl);
 	        break;
 		}
-		case (R.id.button_member_navigation_visits):{
+		case (MemberSlideFragment.MEMBER_VISITS):{
 			//Log.w(TAG, "Visits!");
 			f = new MemberVisitHistoryFragment();
 			Bundle bdl = new Bundle(2);
@@ -103,7 +103,7 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 	        f.setArguments(bdl);
 			break;
 		}
-		case (R.id.button_member_navigation_finance):{
+		case (MemberSlideFragment.MEMBER_FINANCE):{
 			//Log.w(TAG, "finance!");
 			f = new MemberFinanceFragment();
 			Bundle bdl = new Bundle(1);
@@ -111,7 +111,7 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 			f.setArguments(bdl);
 			break;
 		}
-		case (R.id.button_member_navigation_booking):{
+		case (MemberSlideFragment.MEMBER_BOOKINGS):{
 			//Log.w(TAG, "Booking!");
 			f = new MemberBookingsFragment();
 			Bundle bdl = new Bundle(1);
@@ -119,7 +119,7 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 			f.setArguments(bdl);
 			break;
 		}
-		case (R.id.button_member_navigation_gallery):{
+		case (MemberSlideFragment.MEMBER_GALLERY):{
 			f = new MemberGalleryFragment();
 			Bundle bdl = new Bundle(1);
 			bdl.putString(Services.Statics.MID, memberID);
@@ -141,7 +141,7 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 				Bundle bdl = new Bundle(1);
 		        bdl.putString(Services.Statics.MID, memberID);
 		        f.setArguments(bdl);
-		        selectedFragment = R.id.button_member_navigation_memberships;
+		        selectedFragment = MemberSlideFragment.MEMBER_MEMBERSHIPS;
 			}
 		}
 		tagFoundListener = (TagFoundListener) f;
@@ -156,7 +156,7 @@ public class MemberDetailsFragment extends Fragment implements OnClickListener, 
 	public void onClick(View v) {
 		
 		switch(v.getId()) {
-		case (R.id.member_navigation_image):{
+		case (R.id.member_image):{
 			int state = Integer.parseInt(v.getTag().toString());
 			if (state == 1) {
 				//do nothing.

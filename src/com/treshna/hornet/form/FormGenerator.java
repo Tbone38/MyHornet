@@ -50,7 +50,7 @@ public class FormGenerator {
 	}
 	
 	public void addEditText(String label_text, int id, String key, String default_text) {
-		RelativeLayout editLayout = (RelativeLayout) mInflater.inflate(R.layout.edit_text, null);
+		RelativeLayout editLayout = (RelativeLayout) mInflater.inflate(R.layout.item_edit_text, null);
 		editLayout.setId(id);
 		
 		TextView label = (TextView) editLayout.findViewById(R.id.label);
@@ -81,7 +81,7 @@ public class FormGenerator {
 	}
 	
 	public void addSpinner(String label_text, int id, String key, ArrayList<String> contents) {
-		RelativeLayout spinnerLayout = (RelativeLayout) mInflater.inflate(R.layout.spinner, null);
+		RelativeLayout spinnerLayout = (RelativeLayout) mInflater.inflate(R.layout.item_spinner, null);
 		spinnerLayout.setId(id);
 		
 		TextView label = (TextView) spinnerLayout.findViewById(R.id.label);
@@ -117,7 +117,7 @@ public class FormGenerator {
 	}
 	
 	public void addClickableText(String label_text, int layoutid, String key, String default_text, int clickid, OnClickListener clicklistener) {
-		RelativeLayout clickLayout = (RelativeLayout) mInflater.inflate(R.layout.clickable_text, null);
+		RelativeLayout clickLayout = (RelativeLayout) mInflater.inflate(R.layout.item_clickable_text, null);
 		clickLayout.setId(layoutid);
 		
 		TextView label = (TextView) clickLayout.findViewById(R.id.label);
@@ -154,7 +154,7 @@ public class FormGenerator {
 	}
 	
 	public void addHeading(String heading_text) {
-		RelativeLayout textLayout = (RelativeLayout) mInflater.inflate(R.layout.clickable_text, null);
+		RelativeLayout textLayout = (RelativeLayout) mInflater.inflate(R.layout.item_clickable_text, null);
 		
 		TextView label = (TextView) textLayout.findViewById(R.id.label);
 		label.setText(heading_text);
@@ -170,7 +170,7 @@ public class FormGenerator {
 	}
 	
 	public void addText(String label_text, int id, String key) {
-		RelativeLayout textLayout = (RelativeLayout) mInflater.inflate(R.layout.clickable_text, null);
+		RelativeLayout textLayout = (RelativeLayout) mInflater.inflate(R.layout.item_clickable_text, null);
 		textLayout.setId(id);
 		
 		TextView label = (TextView) textLayout.findViewById(R.id.label);
@@ -184,7 +184,7 @@ public class FormGenerator {
 	}
 	
 	public void addButtonRow(String positive_text, String negative_text, int positive_id, int negative_id, OnClickListener clicklistener) {
-		LinearLayout buttonRow = (LinearLayout) mInflater.inflate(R.layout.buttons_row, null);
+		LinearLayout buttonRow = (LinearLayout) mInflater.inflate(R.layout.item_buttons_row, null);
 		
 		TextView positive = (TextView) buttonRow.findViewById(R.id.button_positive);
 		positive.setText(positive_text);
@@ -200,7 +200,7 @@ public class FormGenerator {
 	}
 	
 	public void addCheckBox(String label_text, int id, String key, boolean is_checked) {
-		CheckBox check = (CheckBox) mInflater.inflate(R.layout.checkbox, mView, false);
+		CheckBox check = (CheckBox) mInflater.inflate(R.layout.item_checkbox, mView, false);
 		check.setText(label_text);
 		check.setId(id);
 		check.setChecked(is_checked);

@@ -79,7 +79,7 @@ public class SlideMenuClickListener implements OnItemClickListener, OnClickListe
             fragment = new MemberAddFragment();
         	tag = "memberAdd";
             break;
-        case 6:
+        case 6: {
         	tag = "bookingAdd";
         	fragment = new BookingDetailsSuperFragment();
         	ArrayList<String> stuff = new ArrayList<String>();
@@ -91,6 +91,7 @@ public class SlideMenuClickListener implements OnItemClickListener, OnClickListe
         	fragment.setArguments(bdl);
         	
         	break;
+        }
         case 8:
         	tag = "kpi";
         	fragment = new KeyPerformanceIndexFragment();
@@ -107,9 +108,14 @@ public class SlideMenuClickListener implements OnItemClickListener, OnClickListe
         	fragment = new ClassCreateFragment();
         	tag = "classCreate";
         	break;
-        case 14:
+        case 14: {
         	fragment = new FormFragment();
+        	Bundle bdl = new Bundle(1);
+        	bdl.putInt(Services.Statics.KEY, FormFragment.RESOURCE);
+        	fragment.setArguments(bdl);
         	tag = "formFragment";
+        	break;
+        }
         default: 
             break;
         }

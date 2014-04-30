@@ -76,7 +76,7 @@ public class MemberNotesFragment extends Fragment implements OnClickListener, Ta
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 		super.onCreateView(inflater, container, savedInstanceState);
 	
-		view = inflater.inflate(R.layout.member_details_notes, container, false);
+		view = inflater.inflate(R.layout.fragment_member_details_notes, container, false);
 		
 		mInflater = getActivity().getLayoutInflater();
 		//mInflater = inflater;

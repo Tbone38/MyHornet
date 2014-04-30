@@ -54,7 +54,7 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 		 contentResolver = getActivity().getContentResolver();
 		 results = this.getArguments().getStringArrayList(Services.Statics.KEY);
 		 cardid = results.get(8);
-		 page = inflater.inflate(R.layout.membership_complete, container, false);
+		 page = inflater.inflate(R.layout.fragment_membership_complete, container, false);
 		 page = setupView();
 		 
 		 ((MainActivity) this.getActivity()).setTitle("Confirm Membership");

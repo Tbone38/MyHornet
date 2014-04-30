@@ -56,7 +56,7 @@ public class NavDrawerListAdapter extends BaseAdapter {
     	if (navDrawerItems.get(position).getHeader()) { //show a header instead of our regular view.
     		LayoutInflater mInflater = (LayoutInflater)
                     context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-            convertView = mInflater.inflate(R.layout.drawer_list_header, null);
+            convertView = mInflater.inflate(R.layout.row_drawer_header, null);
             
             TextView txtTitle = (TextView) convertView.findViewById(R.id.title);
             txtTitle.setText(navDrawerItems.get(position).getTitle());
@@ -67,7 +67,7 @@ public class NavDrawerListAdapter extends BaseAdapter {
     	} else {
 		    LayoutInflater mInflater = (LayoutInflater)
                     context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-            convertView = mInflater.inflate(R.layout.drawer_list_item, null);
+            convertView = mInflater.inflate(R.layout.row_drawer_item, null);
             
 	    	if (navDrawerItems.get(position).getTitle() == null) {
 	    		convertView = new View(context);

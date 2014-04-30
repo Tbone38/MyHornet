@@ -30,7 +30,7 @@
 		</GridView> 
 	</RelativeLayout>
 	<include 
-	    layout="@layout/member_details_gallery_actions"
+	    layout="@layout/actions_member_details_gallery"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	    />

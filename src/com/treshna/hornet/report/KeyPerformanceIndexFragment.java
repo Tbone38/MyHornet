@@ -50,7 +50,7 @@ public class KeyPerformanceIndexFragment extends Fragment implements OnClickList
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 		super.onCreateView(inflater, container, savedInstanceState);
 	
-		view = inflater.inflate(R.layout.key_performace_index_fragment, container, false);
+		view = inflater.inflate(R.layout.fragment_key_performace_index, container, false);
 		mInflater = inflater;
 		TextView get_kpi = (TextView) view.findViewById(R.id.button_get_kpi);
 		get_kpi.setOnClickListener(this);
@@ -68,14 +68,14 @@ public class KeyPerformanceIndexFragment extends Fragment implements OnClickList
 		list.removeAllViews();
 		
 		while (cur.moveToNext()) {
-			View row = mInflater.inflate(R.layout.kpi_row, null);
+			View row = mInflater.inflate(R.layout.row_kpi, null);
 			if (cur.getPosition()%2==0) {
 				row.setBackgroundColor(getActivity().getResources().getColor(R.color.white));
 			}
 			
 			String metric = cur.getString(cur.getColumnIndex(ContentDescriptor.KPI.Cols.METRIC));
 			if ( metric.contains(HEADING2) || metric.contains(HEADING3)) {
-				View row2 = mInflater.inflate(R.layout.kpi_row, null);
+				View row2 = mInflater.inflate(R.layout.row_kpi, null);
 				row2.setBackgroundColor(getActivity().getResources().getColor(R.color.white));
 				list.addView(row2);
 			}

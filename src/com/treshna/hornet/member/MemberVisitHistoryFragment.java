@@ -61,7 +61,7 @@ public class MemberVisitHistoryFragment extends Fragment implements TagFoundList
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 		super.onCreateView(inflater, container, savedInstanceState);
 	
-		view = inflater.inflate(R.layout.member_details_visit_history, container, false);
+		view = inflater.inflate(R.layout.fragment_member_details_visit_history, container, false);
 		
 		mInflater = getActivity().getLayoutInflater();
 		//mInflater = inflater;
@@ -92,7 +92,7 @@ public class MemberVisitHistoryFragment extends Fragment implements TagFoundList
 		
 		while (cur.moveToNext()) {
 			
-			View row = mInflater.inflate(R.layout.member_visit_history_row, null);
+			View row = mInflater.inflate(R.layout.row_member_visit_history, null);
 			if (cur.getPosition()%2 == 0) {
 				row.setBackgroundColor(getActivity().getResources().getColor(R.color.white));
 			}

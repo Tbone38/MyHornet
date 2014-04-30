@@ -64,7 +64,7 @@ public class LastVisitorsSuperFragment extends Fragment {
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {	
 		super.onCreateView(inflater, container, savedInstanceState);
-		view = inflater.inflate(R.layout.visitor_frame, container, false);
+		view = inflater.inflate(R.layout.fragment_visitor_frame, container, false);
 		
         return view;
     }

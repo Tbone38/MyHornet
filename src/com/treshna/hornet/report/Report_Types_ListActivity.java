@@ -50,7 +50,7 @@ public class Report_Types_ListActivity extends ListActivity {
 				
 			} );
 			ListAdapter listAdapter = new SimpleAdapter(Report_Types_ListActivity.this,this.resultMapList,
-					R.layout.reporttype_row,
+					R.layout.row_reporttype,
 					new String[] {"id","name","view_name", "reportgroup"},
 					new int[] {R.id.report_type_Id, R.id.report_type_name, R.id.report_type_viewname, R.id.report_type_group});
 			this.setListAdapter(listAdapter);

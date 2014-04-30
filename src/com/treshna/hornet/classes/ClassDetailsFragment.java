@@ -83,7 +83,7 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 		 mLoaderManager = getLoaderManager();
 		 System.out.print("\n\nBOOKINGID:"+bookingID+"\n\n");
 		 contentResolver = getActivity().getContentResolver();
-		 View page =inflater.inflate(R.layout.class_details, container, false); 
+		 View page =inflater.inflate(R.layout.fragment_class_details, container, false); 
 		 setupView(page);
 		 thePage = page;
 		 return page;
@@ -174,7 +174,7 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 		addmemberButton.setOnClickListener(this);
 		
 		//for populating the list
-		mAdapter = new ClassMemberListAdapter(ctx, R.layout.class_details_row, null, from, to);
+		mAdapter = new ClassMemberListAdapter(ctx, R.layout.row_class_details, null, from, to);
 		setListAdapter(mAdapter);
 		mLoaderManager.restartLoader(0, null, this);
 	}

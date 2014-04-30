@@ -41,7 +41,7 @@ public class SetupAdvancedFragment extends Fragment implements OnClickListener {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 		super.onCreateView(inflater, container, savedInstanceState);
 	
-		view = inflater.inflate(R.layout.setup_page_advanced, container, false);
+		view = inflater.inflate(R.layout.fragment_setup_page_advanced, container, false);
 		
 		mInflater = getActivity().getLayoutInflater();
 		view = setupAdvanced();

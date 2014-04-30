@@ -70,7 +70,7 @@ public class MembershipAdd extends Fragment implements OnClickListener, DatePick
 		 //get memberID.
 		 memberid = this.getArguments().getString(Services.Statics.MID);
 		 
-		 page = inflater.inflate(R.layout.membership_add, container, false);
+		 page = inflater.inflate(R.layout.fragment_membership_add, container, false);
 		 page = setupView();
 		 
 		 return page;

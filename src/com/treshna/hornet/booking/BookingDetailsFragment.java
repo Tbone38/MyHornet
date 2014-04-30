@@ -76,7 +76,7 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 		 bookingID = getArguments().getString(Services.Statics.KEY);
 		 System.out.print("\n\nBOOKINGID:"+bookingID+"\n\n");
 		 contentResolver = getActivity().getContentResolver();
-		 View page =inflater.inflate(R.layout.booking_details, container, false); 
+		 View page =inflater.inflate(R.layout.fragment_booking_details, container, false); 
 		 setupView(page);
 		 return page;
 	 }

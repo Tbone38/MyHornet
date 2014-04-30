@@ -64,7 +64,7 @@ public class ClassCreateFragment extends Fragment implements OnClickListener, Da
 		super.onCreate(savedInstanceState);
 		
 		mInflater = inflater;
-		view = mInflater.inflate(R.layout.class_create, null);
+		view = mInflater.inflate(R.layout.fragment_class_create, null);
 		
 		datePicker = new DatePickerFragment();
 		datePicker.setDatePickerSelectListener(this);

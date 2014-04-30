@@ -48,7 +48,7 @@ public class SetupSimpleEndFragment extends Fragment implements OnClickListener,
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 		super.onCreateView(inflater, container, savedInstanceState);
 	
-		view = inflater.inflate(R.layout.setup_page2_simple, container, false);
+		view = inflater.inflate(R.layout.fragment_setup_page2_simple, container, false);
 		
 		mInflater = getActivity().getLayoutInflater();
 		view = setupSimpleTwo();

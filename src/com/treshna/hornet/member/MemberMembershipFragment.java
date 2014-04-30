@@ -81,7 +81,7 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 		super.onCreateView(inflater, container, savedInstanceState);
 	
-		view = inflater.inflate(R.layout.member_details_membership, container, false);
+		view = inflater.inflate(R.layout.fragment_member_details_membership, container, false);
 		
 		mInflater = getActivity().getLayoutInflater();
 		view = setupView();
@@ -139,7 +139,7 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 			is_cancelled = (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Membership.Cols.CANCEL_REASON))
 					&& cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.HISTORY)).compareTo("f")==0) ? true : false;
 			
-			RelativeLayout membershipRow = (RelativeLayout) mInflater.inflate(R.layout.member_membership_row, null);
+			RelativeLayout membershipRow = (RelativeLayout) mInflater.inflate(R.layout.row_member_membership, null);
 			membershipRow.setClickable(true);
 			membershipRow.setTag(cur.getInt(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MSID)));
 			membershipRow.setOnClickListener(this);
@@ -190,7 +190,7 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 			heading.setVisibility(View.GONE);
 		}
 		while (cur.moveToNext()) {
-			LinearLayout row = (LinearLayout) mInflater.inflate(R.layout.member_finance_row, null);
+			LinearLayout row = (LinearLayout) mInflater.inflate(R.layout.row_member_finance, null);
 			
 			if (cur.getPosition()%2==0) {
 				row.setBackgroundColor(Color.WHITE);
@@ -504,7 +504,7 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 			LinearLayout list = (LinearLayout) listwrapper.findViewById(R.id.alert_membership_details);
 			
 			for (int i=0; i <cur.getColumnCount(); i++) {
-				LinearLayout row = (LinearLayout) inflater.inflate(R.layout.membership_details_row, null);
+				LinearLayout row = (LinearLayout) inflater.inflate(R.layout.row_membership_details, null);
 				boolean add_row = true;
 				if (i%2==0) {
 					row.setBackgroundColor(Color.TRANSPARENT);

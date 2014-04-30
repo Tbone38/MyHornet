@@ -49,7 +49,7 @@ public class MemberBookingsFragment extends Fragment implements TagFoundListener
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 		super.onCreateView(inflater, container, savedInstanceState);
 	
-		view = inflater.inflate(R.layout.member_details_bookings, container, false);
+		view = inflater.inflate(R.layout.fragment_member_details_bookings, container, false);
 		
 		mInflater = getActivity().getLayoutInflater();
 		//mInflater = inflater;
@@ -66,7 +66,7 @@ public class MemberBookingsFragment extends Fragment implements TagFoundListener
 		list.removeAllViews();
 		
 		while (cur.moveToNext()) {
-			LinearLayout row = (LinearLayout) mInflater.inflate(R.layout.member_booking_row, null);
+			LinearLayout row = (LinearLayout) mInflater.inflate(R.layout.row_member_booking, null);
 			
 			if (cur.getPosition()%2!=0) { //we're doing it backwards ?
 				row.setBackgroundColor(Color.WHITE);

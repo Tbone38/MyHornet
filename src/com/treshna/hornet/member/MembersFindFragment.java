@@ -114,7 +114,7 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 		  //return super.onCreateView(inflater, container, savedInstanceState);
 		 
 		 
-		  view = inflater.inflate(R.layout.member_find_fragment, container, false);
+		  view = inflater.inflate(R.layout.fragment_member_find, container, false);
 
 		  return view;
 
@@ -178,9 +178,9 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 		setupFilter();
 		
 		if (is_booking) {
-			mAdapter = new MembersFindAdapter(parent,R.layout.member_find_row, null, from, to, true, mCallback);
+			mAdapter = new MembersFindAdapter(parent,R.layout.row_member_find, null, from, to, true, mCallback);
 		} else {
-			mAdapter = new MembersFindAdapter(parent,R.layout.member_find_row, null, from, to, false, mCallback);
+			mAdapter = new MembersFindAdapter(parent,R.layout.row_member_find, null, from, to, false, mCallback);
 		}
 		setListAdapter(mAdapter);
 		System.out.print("\n\nADAPTER SET: ");

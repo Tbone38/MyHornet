@@ -60,7 +60,7 @@ public class MemberFinanceFragment extends Fragment implements TagFoundListener,
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 		super.onCreateView(inflater, container, savedInstanceState);
 	
-		view = inflater.inflate(R.layout.member_details_finance, container, false);
+		view = inflater.inflate(R.layout.fragment_member_details_finance, container, false);
 		
 		mInflater = getActivity().getLayoutInflater();
 		//mInflater = inflater;
@@ -103,7 +103,7 @@ public class MemberFinanceFragment extends Fragment implements TagFoundListener,
 		.setPositiveButton("OK", null);
 		
 		while (cur.moveToNext()) {
-			LinearLayout row = (LinearLayout) mInflater.inflate(R.layout.member_finance_row, null);
+			LinearLayout row = (LinearLayout) mInflater.inflate(R.layout.row_member_finance, null);
 			
 			if (cur.getPosition()%2 ==0) {
 				row.setBackgroundColor(Color.TRANSPARENT);
@@ -150,7 +150,7 @@ public class MemberFinanceFragment extends Fragment implements TagFoundListener,
 		}
 		
 		while (cur.moveToNext()) {
-			LinearLayout row = (LinearLayout) mInflater.inflate(R.layout.member_finance_row, null);
+			LinearLayout row = (LinearLayout) mInflater.inflate(R.layout.row_member_finance, null);
 			if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.MemberFinance.Cols.DD_EXPORT_MEMBERID))) {
 				row.setId(cur.getInt(cur.getColumnIndex(ContentDescriptor.MemberFinance.Cols.DD_EXPORT_MEMBERID)));
 			}

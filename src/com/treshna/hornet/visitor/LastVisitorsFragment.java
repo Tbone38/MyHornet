@@ -81,13 +81,13 @@ public class LastVisitorsFragment extends ListFragment implements OnClickListene
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {	
 		super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.visitor_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_visitor_list, container, false);
 		
         getActivity().setTitle("Last Visitors");
         String[] from = {};
         int[] to = {};
         mLoader.initLoader(0, null, this);
-        mAdapter = new VisitorsViewAdapter(getActivity(), R.layout.visitor_row, cur, from, to, this);
+        mAdapter = new VisitorsViewAdapter(getActivity(), R.layout.row_visitor, cur, from, to, this);
         setListAdapter(mAdapter);
         
         return view;
