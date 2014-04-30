@@ -21,6 +21,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
+import org.postgresql.util.PSQLException;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.util.Log;
@@ -1474,6 +1476,28 @@ public ResultSet getReportTypes() throws SQLException {
     	
     	return pStatement.executeQuery();
     }
+    //do I need to add start/end time handling?
+    public int insertResource(int rid, String name, int rtid, String history) throws SQLException {
+    	pStatement = con.prepareStatement("INSERT INTO resource (id, name, resourcetypeid, history) VALUES (?, ?, ?, ?::BOOLEAN);");
+    	
+    	pStatement.setInt(1, rid);
+    	pStatement.setString(2, name);
+    	pStatement.setInt(3, rtid);
+    	pStatement.setString(4, history);
+    	
+    	return pStatement.executeUpdate();
+    }
+    
+    public int updateResource(int rid, String name, int rtid, String history) throws SQLException {
+    	pStatement = con.prepareStatement("UPDATE resource SET (name, resourcetypeid, history) = (?, ?, ?::BOOLEAN) WHERE id = ?");
+
+    	pStatement.setString(1, name);
+    	pStatement.setInt(2, rtid);
+    	pStatement.setString(3, history);
+    	pStatement.setInt(4, rid);
+
+    	return pStatement.executeUpdate();
+    }
 
     public SQLWarning getWarnings() throws SQLException, NullPointerException {
     	return con.getWarnings();
@@ -1489,8 +1513,14 @@ public ResultSet getReportTypes() throws SQLException {
 	    	try {
 	    		statement = con.createStatement();
 	    		rs = statement.executeQuery(query);
-	    	} catch (NullPointerException e) {
+	    	} catch (PSQLException e) { 
 	    		//sometimes our socket throws an I/O exception (apparently meaning an issue with the connection..?)
+	    		this.closeConnection();
+	    		try {
+	    			this.openConnection();
+	    		} catch (ClassNotFoundException e2) {};
+	    		rs = startStatementQuery(query);
+	    	} catch (NullPointerException e) {
 	    		this.closeConnection();
 	    		try {
 	    			this.openConnection();

@@ -481,6 +481,10 @@ public class MainActivity extends NFCActivity {
     		tagFoundListener = (TagFoundListener) f;
     	}
     }
+    
+    public void setCFragment(Fragment f) {
+    	cFragment = f;
+    }
 	
 	public void changeFragment(Fragment f, String tag) {
 		FragmentManager fm = this.getSupportFragmentManager();
@@ -612,12 +616,12 @@ public class MainActivity extends NFCActivity {
 	
 	@Override
 	public void onNewIntent(Intent i) {
-		boolean tag_used = false;
+		boolean swipe_handled = false;
 		if (tagFoundListener != null) {
 			Tag card = i.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 			String id = this.getID(card);
-			tag_used = tagFoundListener.onNewTag(id);
-			if (!tag_used) {
+			swipe_handled = tagFoundListener.onNewTag(id);
+			if (!swipe_handled) {
 				super.onNewIntent(i);
 			}
 		} else {

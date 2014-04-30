@@ -1,4 +1,4 @@
-package com.treshna.hornet.booking;
+package com.treshna.hornet.classes;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

@@ -1,4 +1,4 @@
-package com.treshna.hornet.booking;
+package com.treshna.hornet.classes;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -121,6 +121,8 @@ public class ClassCreateFragment extends Fragment implements OnClickListener, Da
 		if (endtimevalue != null) {
 			endtime.setText(endtimevalue);
 		}
+		endtime.setClickable(true);
+		endtime.setOnClickListener(this);
 		
 		setresource = (LinearLayout) view.findViewById(R.id.button_class_resource);
 		setresource.setClickable(true);
@@ -243,7 +245,7 @@ public class ClassCreateFragment extends Fragment implements OnClickListener, Da
 				break;
 			}
 			case R.id.classEndTime:{
-			    etimePicker.show(this.getChildFragmentManager(), "timePicker");
+			    etimePicker.show(this.getChildFragmentManager(), "etimePicker");
 				break;
 			}
 			case R.id.button_class_resource:{

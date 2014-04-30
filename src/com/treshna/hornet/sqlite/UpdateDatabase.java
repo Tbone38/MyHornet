@@ -895,7 +895,7 @@ public class UpdateDatabase {
 		private static final String SQL22 = "ALTER TABLE "+Resource.NAME+" ADD COLUMN "+Resource.Cols.DEVICESIGNUP+" TEXT DEFAULT 'f';";
 		
 		private static final String SQL23 = "CREATE TRIGGER "+Resource.Triggers.ON_INSERT+" AFTER INSERT ON "+Resource.NAME
-				+"FOR EACH ROW WHEN new."+Resource.Cols.DEVICESIGNUP+" = 't' "
+				+" FOR EACH ROW WHEN new."+Resource.Cols.DEVICESIGNUP+" = 't' "
 				+"BEGIN "
 					+"INSERT OR REPLACE INTO "+PendingUploads.NAME
 					+" ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
@@ -903,8 +903,14 @@ public class UpdateDatabase {
 					+"END;";
 		
 		private static final String SQL24 = "CREATE TRIGGER "+Resource.Triggers.ON_UPDATE+" AFTER UPDATE ON "+Resource.NAME
-				+"FOR EACH ROW WHEN new."+Resource.Cols.DEVICESIGNUP+" = 't' "
-				+"BEGIN ";
+				+" FOR EACH ROW WHEN new."+Resource.Cols.DEVICESIGNUP+" = 't' "
+				+"BEGIN "
+					+"INSERT OR REPLACE INTO "+PendingUpdates.NAME
+					+" ("+PendingUpdates.Cols.ROWID+", "+PendingUpdates.Cols.TABLEID+")"
+					+" VALUES (old."+Resource.Cols.ID+", "+TableIndex.Values.Resource.getKey()+" );"
+					+"END;";
+		
+		private static final String SQL25 = "ALTER TABLE "+Class.NAME+" ADD COLUMN "+Class.Cols.PRICE+" TEXT DEFAULT '$0.00'";
 				
 		public static void patchNinetySix(SQLiteDatabase db) {
 			db.beginTransaction();
@@ -953,6 +959,12 @@ public class UpdateDatabase {
 				db.execSQL(SQL21);
 				Log.w(HornetDatabase.class.getName(), "\n"+SQL22);
 				db.execSQL(SQL22);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL23);
+				db.execSQL(SQL23);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL24);
+				db.execSQL(SQL24);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL25);
+				db.execSQL(SQL25);
 				db.setTransactionSuccessful();
 			/*} catch (SQLException e) {
 			e.printStackTrace();

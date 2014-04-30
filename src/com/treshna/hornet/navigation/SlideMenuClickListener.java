@@ -24,7 +24,7 @@ import com.treshna.hornet.HornetApplication;
 import com.treshna.hornet.MainActivity;
 import com.treshna.hornet.R;
 import com.treshna.hornet.booking.BookingDetailsSuperFragment;
-import com.treshna.hornet.booking.ClassCreateFragment;
+import com.treshna.hornet.classes.ClassCreateFragment;
 import com.treshna.hornet.form.FormFragment;
 import com.treshna.hornet.member.MemberAddFragment;
 import com.treshna.hornet.network.HornetDBService;

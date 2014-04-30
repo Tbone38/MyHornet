@@ -12,24 +12,19 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
-import com.treshna.hornet.MainActivity;
-import com.treshna.hornet.R;
 import com.treshna.hornet.MainActivity.TagFoundListener;
-import com.treshna.hornet.R.id;
-import com.treshna.hornet.R.layout;
+import com.treshna.hornet.R;
+import com.treshna.hornet.classes.ClassDetailsSuperFragment;
 import com.treshna.hornet.member.MembersFindFragment.OnMemberSelectListener;
 import com.treshna.hornet.services.Services;
 import com.treshna.hornet.sqlite.ContentDescriptor;
-import com.treshna.hornet.sqlite.ContentDescriptor.Booking;
-import com.treshna.hornet.sqlite.ContentDescriptor.Member;
-import com.treshna.hornet.sqlite.ContentDescriptor.Membership;
-import com.treshna.hornet.sqlite.ContentDescriptor.Booking.Cols;
 
 
 public class BookingDetailsSuperFragment extends Fragment implements OnMemberSelectListener, TagFoundListener {
@@ -79,10 +74,12 @@ public class BookingDetailsSuperFragment extends Fragment implements OnMemberSel
 					
 					if (classid > 0) {
 						//it's a class, show the class-booking page instead.
-						ClassDetailsFragment f;
+						//ClassDetailsFragment f;
+						ClassDetailsSuperFragment f;
 						Bundle bdl;
 						
-						f = new ClassDetailsFragment();
+						//f = new ClassDetailsFragment();
+						f = new ClassDetailsSuperFragment();
 						tagFoundListener = (TagFoundListener) f;
 						bdl = new Bundle(1);
 						bdl.putString(Services.Statics.KEY, bookingID);
@@ -134,6 +131,25 @@ public class BookingDetailsSuperFragment extends Fragment implements OnMemberSel
 				+ContentDescriptor.Membership.Cols.HISTORY+" = 'f'",
 				new String[] {id}, null);
 		
+		if (cur.getCount() == 1) { //theirs only 1 membership, just use that.
+			cur.moveToFirst();
+			selectedMSID = cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MSID));
+			cur.close();
+			
+			cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI,new String[] {ContentDescriptor.Member.Cols.FNAME, 
+					ContentDescriptor.Member.Cols.SNAME}, ContentDescriptor.Member.Cols.MID+" = ?",new String[] {id}, null);
+			cur.moveToFirst();
+
+			String fname = cur.getString(0), sname = cur.getString(1);
+			cur.close();
+			
+			frm = getActivity().getSupportFragmentManager();
+    		BookingAddFragment f = (BookingAddFragment) getChildFragmentManager().findFragmentByTag("AddBooking");
+    		f.setName(fname, sname);
+    		f.setMembership(selectedMSID);
+    		return;
+		}
+		
 		while (cur.moveToNext()) {
 			if (cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PNAME)) != null 
 					&& cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PNAME)).compareTo("") !=0) {
@@ -165,7 +181,7 @@ public class BookingDetailsSuperFragment extends Fragment implements OnMemberSel
 		            	System.out.print("\n\nSelected Membership:"+selectedMS+" with ID:"+selectedMSID);
 	            	}
             	}
-	            /** Rabbit Hole: fix this by changing the member name handling as well.
+	            /**TODO: Rabbit Hole: fix this by changing the member name handling as well.
 	             * 
 	             */
             	Cursor cur;
@@ -219,9 +235,9 @@ public class BookingDetailsSuperFragment extends Fragment implements OnMemberSel
 
 	@Override
 	public boolean onNewTag(String serial) {
+		Log.d("BOOKINGDETAILSSUPERFRAGMENT", "BOOKINGS DETAILS SUPER FRAG GOT NEW TAG");
 		if (tagFoundListener != null) {
-			tagFoundListener.onNewTag(serial);
-			return true;
+			return tagFoundListener.onNewTag(serial);
 		} else {
 			return false;
 		}

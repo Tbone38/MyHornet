@@ -128,8 +128,8 @@ public class PollingHandler extends BroadcastReceiver {
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 		int pollingInterval = Integer.parseInt(preferences.getString("sync_frequency", "-1"));
 		if (pollingInterval == -1) {
-			message = "sync set to never, please check application sync settings.";
-			makeToast();
+			//message = "sync set to never, please check application sync settings.";
+			//makeToast();
 			return;
 		}
 		stopPolling(true);

@@ -1,4 +1,4 @@
-package com.treshna.hornet.booking;
+package com.treshna.hornet.classes;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -271,7 +271,6 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 		mAdapter.notifyDataSetChanged();
 	}
 
-
 	@Override
 	public void onClick(View view) {
 		switch (view.getId()){
@@ -341,7 +340,7 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 		}
 	}
 		
-	private void showAlert(final String memberid, final String firstname, final String surname) {
+	public void showAlert(final String memberid, final String firstname, final String surname) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		LayoutInflater inflater = getActivity().getLayoutInflater();
 		View layout = inflater.inflate(R.layout.alert_select_call, null);
@@ -349,9 +348,15 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 		//do for loop, create and append radio option
 		final RadioGroup rg = (RadioGroup) layout.findViewById(R.id.alertrg);
 		
-		
 		cur = contentResolver.query(ContentDescriptor.Membership.CONTENT_URI, null, ContentDescriptor.Membership.Cols.MID+" = ? AND "
 				+ContentDescriptor.Membership.Cols.HISTORY+" = 'f'", new String[] {memberid}, null);
+		if (cur.getCount() == 1) {
+			cur.moveToFirst();
+			String membershipid = cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.MSID));
+			cur.close();
+			this.startTransaction(membershipid, memberid, firstname, surname);
+			return;
+		}
 		
 		while (cur.moveToNext()) {
 			if (cur.getString(cur.getColumnIndex(ContentDescriptor.Membership.Cols.PNAME)) != null 
@@ -413,10 +418,21 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 	 *  - MemberID					- DONE
 	 *  - MembershipID				- DONE
 	 */			
-	private void startTransaction(String membership, String memberid, String firstname, String surname) {
+	public void startTransaction(String membership, String memberid, String firstname, String surname) {
 		// get all the other variables, and insert them into SQLite
 		String resourceid, startid, stime, endid, etime, arrival, offset;
 		int bookingid;
+		
+		if (firstname == null || surname == null) {	
+			cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, new String[] {ContentDescriptor.Member.Cols.FNAME,
+					ContentDescriptor.Member.Cols.SNAME}, ContentDescriptor.Member.Cols.MID+" = ?",
+					new String[] {memberid}, null);
+			if (cur.moveToFirst()) {
+				firstname = cur.getString(0);
+				surname = cur.getString(1);
+			}
+			cur.close();
+		}
 		
 		ContentResolver contentResolver = getActivity().getContentResolver();
 		Cursor cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.BID+" = ?",

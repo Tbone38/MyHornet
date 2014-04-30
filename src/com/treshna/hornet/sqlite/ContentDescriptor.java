@@ -803,6 +803,9 @@ public class ContentDescriptor {
 	 			public static final String RID = "resourceid";
 	 			public static final String LASTUPDATE = "lastupdate";
 	 			public static final String DEVICESIGNUP = "devicesignup";
+	 			
+	 			//added in v120.
+	 			public static final String PRICE = "price";
 	 		}
 	 	}
 	 	

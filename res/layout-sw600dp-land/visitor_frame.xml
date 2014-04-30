@@ -21,14 +21,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center">
-	    <!-- <ImageView 
-	        android:id="@+id/empty_image"
-	        android:layout_width="200dp"
-	        android:layout_height="200dp"
-	        android:src="@drawable/glyphicons_parents"
-	        android:gravity="center"
-	        android:layout_gravity="center"
-	        /> -->
 	    <TextView
 	        android:id="@+id/empty_glyph"
 	        android:layout_width="wrap_content"

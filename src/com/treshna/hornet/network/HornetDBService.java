@@ -199,6 +199,8 @@ public class HornetDBService extends Service {
 			uploadImage();
 			updateImage();
 			uploadBookings();
+			insertResource();
+			updateResource();
 			int classcount = uploadClass();
 			Log.d(TAG, "Uploaded "+classcount+" Classes");
 			int upload_sid_count = uploadSuspends();
@@ -1632,11 +1634,9 @@ public class HornetDBService extends Service {
     
     
 	private int getBookingType(long last_sync){
-    	
+    	Log.d(TAG, "GETTING BOOKING TYPES");
     	int result = 0;
     	ResultSet rs = null;
-    	
-    	result = contentResolver.delete(ContentDescriptor.Bookingtype.CONTENT_URI,null, null);
 
     	//final int CACI = 0; //TODO: create a settings variable that checks if we're using caci stuff or not.
     	if (!openConnection()) {
@@ -1671,7 +1671,7 @@ public class HornetDBService extends Service {
     		Log.e(TAG, "", e);
     	}
     	closeConnection();
-    	
+    	Log.d(TAG, "GOT "+result+" BOOKING TYPES");
     	return result;
     }
     
@@ -2207,6 +2207,7 @@ public class HornetDBService extends Service {
     			values.put(ContentDescriptor.Class.Cols.NAME, rs.getString("name"));
     			values.put(ContentDescriptor.Class.Cols.DESC, rs.getString("description"));
     			values.put(ContentDescriptor.Class.Cols.MAX_ST, rs.getString("max_students"));
+    			values.put(ContentDescriptor.Class.Cols.PRICE, rs.getString("price"));
     			if (rs.getString("onlinebook").compareTo("t") ==0) {
     				values.put(ContentDescriptor.Class.Cols.ONLINE, 1);
     			} else {
@@ -5097,5 +5098,76 @@ public class HornetDBService extends Service {
     	}
     	closeConnection();
     	return result;
-    }	
+    }
+    
+    private int insertResource() {
+    	int result = 0;
+    	
+    	Cursor pendings = contentResolver.query(ContentDescriptor.PendingUploads.CONTENT_URI, null, ContentDescriptor.PendingUploads.Cols.TABLEID+" = ?",
+    			new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Resource.getKey())}, null);
+    	if (!openConnection()) {
+    		return -1;
+    	}
+    	while (pendings.moveToNext()) {
+    		cur = contentResolver.query(ContentDescriptor.Resource.CONTENT_URI, null, ContentDescriptor.Resource.Cols.ID+" = ?", 
+    				new String[] {pendings.getString(pendings.getColumnIndex(ContentDescriptor.PendingUploads.Cols.ROWID))}, null);
+    		if (cur.moveToFirst()) {
+    			try {
+    				connection.insertResource(cur.getInt(cur.getColumnIndex(ContentDescriptor.Resource.Cols.ID)),
+    						cur.getString(cur.getColumnIndex(ContentDescriptor.Resource.Cols.NAME)),
+    						cur.getInt(cur.getColumnIndex(ContentDescriptor.Resource.Cols.RTID)), 
+    						cur.getString(cur.getColumnIndex(ContentDescriptor.Resource.Cols.HISTORY)));
+    				result +=1;
+    				
+    				
+    				//I don't know if this is going to like having contents deleted while a query is open..?
+    				contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, ContentDescriptor.PendingUploads.Cols.ROWID+" = ? AND "
+    						+ContentDescriptor.PendingUploads.Cols.TABLEID+" = ?",new String[] {cur.getString(cur.getColumnIndex(
+    						ContentDescriptor.Resource.Cols.ID)), String.valueOf(ContentDescriptor.TableIndex.Values.Resource.getKey())});
+    			} catch (SQLException e) {
+    				statusMessage = e.getLocalizedMessage();
+    				Log.e(TAG, "", e);
+    				return -2;
+    			}
+    		}
+    		cur.close();
+    	}
+    	pendings.close();
+    	closeConnection();
+    	
+    	return result;
+    }
+    
+    private int updateResource(){
+    	int result = 0;
+    	
+    	Cursor pendings = contentResolver.query(ContentDescriptor.PendingUpdates.CONTENT_URI, null, ContentDescriptor.PendingUpdates.Cols.TABLEID+" = ?",
+    			new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Resource.getKey())}, null);
+    	while (pendings.moveToNext()) {
+    		cur = contentResolver.query(ContentDescriptor.Resource.CONTENT_URI, null, ContentDescriptor.Resource.Cols.ID+" = ?",
+    				new String[] {pendings.getString(pendings.getColumnIndex(ContentDescriptor.PendingUpdates.Cols.ROWID))}, null);
+    		if (cur.moveToFirst()) {
+    			try {
+    				connection.updateResource(cur.getInt(cur.getColumnIndex(ContentDescriptor.Resource.Cols.ID)),
+    						cur.getString(cur.getColumnIndex(ContentDescriptor.Resource.Cols.NAME)),
+    						cur.getInt(cur.getColumnIndex(ContentDescriptor.Resource.Cols.RTID)), 
+    						cur.getString(cur.getColumnIndex(ContentDescriptor.Resource.Cols.HISTORY)));
+    				result += 1;
+    				
+    				//I don't know if this is going to like having contents deleted while a query is open..?
+    				contentResolver.delete(ContentDescriptor.PendingUpdates.CONTENT_URI, ContentDescriptor.PendingUpdates.Cols.ROWID+" = ? AND "
+    						+ContentDescriptor.PendingUpdates.Cols.TABLEID+" = ?",new String[] {cur.getString(cur.getColumnIndex(
+    						ContentDescriptor.Resource.Cols.ID)), String.valueOf(ContentDescriptor.TableIndex.Values.Resource.getKey())});
+    			} catch (SQLException e) {
+    				statusMessage = e.getLocalizedMessage();
+    				Log.e(TAG, "", e);
+    				return -2;
+    			}
+    		}
+    		cur.close();
+    	}
+    	
+    	
+    	return result;
+    }
 }

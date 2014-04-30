@@ -244,12 +244,9 @@ public class BookingsListAdapter extends SimpleCursorAdapter implements OnClickL
 			Bundle bdl = new Bundle(1);
 			bdl.putStringArrayList(Services.Statics.KEY, tagInfo);
 			f.setArguments(bdl);
-			((MainActivity)activity).changeFragment(f, "BookingPage");
-			/*Intent intent = new Intent(context, BookingPage.class);
-			
-			intent.putStringArrayListExtra(Services.Statics.KEY, tagInfo);
-			context.startActivity(intent);*/
-			break; 
+			((MainActivity)activity).setTagListener(f, "memberDetails");
+			((MainActivity)activity).changeFragment(f, "BookingPage");			
+			break;
 			}
 		}	
     }

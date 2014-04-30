@@ -90,6 +90,11 @@ KEY:
                 Member Details are now Editable.
                 Fixed image update recursion (we download, then upload, then download, then upload).
                 stripped white space from db address, db name, user name, password, and port.
+                Add Bookings Doesn't wasn't working, because the bookingtypes were being deleted by some bad code.
+                Booking Add, is missing the date.
+                "Sync Set to never" toast has been disabled.
+                Class Create - Selectable End Date;
+                Redid the UI for Adding Members to classes, when horizontal (tablets).
 
             TODO:
                 Handle permissions/Roles for different staff, to limit what certain staff can see.
@@ -118,17 +123,16 @@ KEY:
                     (maybe we should use a builder?)
                     which we can then use to help resolve conflicts.
                 merge Tony's branch into main;
-		GET SWIPE WORKING.
-		Booking Add, When selected from the Member Details, seems to crash.
-		Add Bookings Doesn't work at all?
-		Swiping from the left hand side interfares with the member swiping, etc.
-		"Sync Set to never" DISABLE.
-		Class Create - Select End Date;
-		Back button is frustrating.
-		Adding to Classes:
-			if membershipcount = 1 then default;
-			if membershipcount = 2 then prompt;
-			if membershipcount = 0 then prompt for payment;
+                GET OFFLINE SWIPES WORKING.
+                Swiping from the left hand side interfares with the member swiping, etc.
+                Adding to Classes:
+                    if membershipcount = 1 then default;    --Done
+                    if membershipcount = 2 then prompt;     --Done
+                    if membershipcount = 0 then prompt for payment? --TODO...?
+                    How do we handle casuals?
+                Gallery seems to behaive weirdly (multiple images show up as profile, even when only one is..?)
+                Bug with removing member from class. It sometimes gets really odd. Look at whats causing it (weird issue with the list binding?)
+                Fix your demo db on nikita.
 
     
     v119:

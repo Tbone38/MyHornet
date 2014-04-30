@@ -51,6 +51,8 @@ import com.treshna.hornet.R.string;
 import com.treshna.hornet.member.MembersFindFragment;
 import com.treshna.hornet.member.MembersFindFragment.OnMemberSelectListener;
 import com.treshna.hornet.network.HornetDBService;
+import com.treshna.hornet.services.DatePickerFragment;
+import com.treshna.hornet.services.DatePickerFragment.DatePickerSelectListener;
 import com.treshna.hornet.services.Services;
 import com.treshna.hornet.sqlite.ContentDescriptor;
 import com.treshna.hornet.sqlite.ContentDescriptor.Booking;
@@ -65,7 +67,7 @@ import com.treshna.hornet.sqlite.ContentDescriptor.Time;
 import com.treshna.hornet.sqlite.ContentDescriptor.BookingTime.Cols;
 import com.treshna.hornet.sqlite.ContentDescriptor.TableIndex.Values;
 
-public class BookingAddFragment extends Fragment implements OnClickListener, OnMemberSelectListener {
+public class BookingAddFragment extends Fragment implements OnClickListener, OnMemberSelectListener, DatePickerSelectListener {
 	
 	private Cursor cur;
 	private ContentResolver contentResolver;
@@ -90,6 +92,8 @@ public class BookingAddFragment extends Fragment implements OnClickListener, OnM
 			 if (getArguments().getString(Services.Statics.DATE)!= null) {
 				 curdate = getArguments().getString(Services.Statics.DATE);
 				 //curdate = Services.dateFormat(curdate, "yyyyMMdd", "dd MMM yyyy");
+			 } else {
+				 curdate = Services.DateToString(new Date());
 			 }
 		 } else {
 			 startid = "0";
@@ -225,7 +229,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener, OnM
 		List<String> typelist = new ArrayList<String>();
 		while (cur.moveToNext()) {
 			if (cur.getInt(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.BTID)) > 0) {
-				typelist.add(cur.getString(1));
+				typelist.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.NAME)));
 			}
 		}
 		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(ctx,
@@ -372,7 +376,8 @@ public class BookingAddFragment extends Fragment implements OnClickListener, OnM
 		case (R.id.bookingDate):{
 			Bundle bdl = new Bundle(1);
 			bdl.putString(Services.Statics.KEY, (String) v.getTag());
-			DialogFragment newFragment = new DatePickerFragment();
+			DatePickerFragment newFragment = new DatePickerFragment();
+			newFragment.setDatePickerSelectListener(this);
 			newFragment.setArguments(bdl);
 		    newFragment.show(getActivity().getSupportFragmentManager(), "datePicker");
 		    break;
@@ -751,7 +756,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener, OnM
 		}
 		
 		TextView endtime = (TextView) page.findViewById(R.id.bookingEndTime);
-		System.out.print("\n\nEnd Time::"+endtime.getText().toString());
+		
 		if (endtime.getText().toString().compareTo(getString(R.string.defaultEndTime)) ==0){
 			result = false;
 			emptyFields.add(String.valueOf(R.id.bookingEndTimeH));
@@ -809,11 +814,29 @@ public class BookingAddFragment extends Fragment implements OnClickListener, OnM
 			}
 		}
 		
+		Spinner resource = (Spinner) page.findViewById(R.id.bookingResourceS);
+		if (resource.getItemAtPosition(resource.getSelectedItemPosition()) == null) {
+			emptyFields.add(String.valueOf(R.id.bookingResourceH));
+			result = false;
+		} else {
+			TextView label = (TextView) page.findViewById(R.id.bookingResourceH);
+			label.setTextColor(Color.BLACK);
+		}
+		
+		Spinner bookingtype = (Spinner) page.findViewById(11); //hard-coded value, see code in setupView()
+		if (bookingtype.getItemAtPosition(bookingtype.getSelectedItemPosition()) == null) {
+			emptyFields.add(String.valueOf(10));
+			result = false;
+		} else {
+			TextView label = (TextView) page.findViewById(10);
+			label.setTextColor(Color.BLACK);
+		}
+		
 		emptyFields.add(0,String.valueOf(result));
 		return emptyFields;
 	}
 	
-	public static class DatePickerFragment extends DialogFragment
+	/*public static class DatePickerFragment extends DialogFragment
     implements DatePickerDialog.OnDateSetListener {
 
 		@Override
@@ -839,10 +862,9 @@ public class BookingAddFragment extends Fragment implements OnClickListener, OnM
 			cal.set(year, month, day);
 			//System.out.print("\n\n"+cal.getTime().toString());
 			SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy", Locale.US);
-			TextView date = (TextView) getActivity().findViewById(R.id.bookingDate);
-			date.setText(format.format(cal.getTime()));
+			
 		}
-	}
+	}*/
 	
 	public static class TimePickerFragment extends DialogFragment
     implements TimePickerDialog.OnTimeSetListener {
@@ -930,7 +952,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener, OnM
 		 
 		 /*if ((ismin == 15 || ismin == 45) && (iperiod == 30 || iperiod == 60)) {
 			 return -3;
-		 }*/		 
+		 }*/
 
 		 return result;
 	 }
@@ -938,5 +960,11 @@ public class BookingAddFragment extends Fragment implements OnClickListener, OnM
 	@Override
 	public void onMemberSelect(String id) { 
 		((BookingDetailsSuperFragment)this.getParentFragment()).onMemberSelect(id);
+	}
+
+	@Override
+	public void onDateSelect(String date, DatePickerFragment theDatePicker) {
+		TextView date_view = (TextView) getActivity().findViewById(R.id.bookingDate);
+		date_view.setText(date);
 	}
 }

@@ -266,6 +266,7 @@ public class MemberMembershipFragment extends Fragment implements TagFoundListen
 
 	@Override
 	public boolean onNewTag(String serial) {
+		Log.w(TAG, "RECIEVED NEW TAG");
 		if (alertDialog == null || !alertDialog.isShowing()) {
 			return false;
 		}

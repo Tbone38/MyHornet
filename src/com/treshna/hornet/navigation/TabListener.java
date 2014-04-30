@@ -46,6 +46,7 @@ public class TabListener<T extends Fragment> implements ActionBar.TabListener {
 	            // If it exists, simply attach it in order to show it
 	        	ft.attach(mFragment);
 	        }
+	         mActivity.setCFragment(mFragment);
 	         //mDrawerList.setItemChecked(tab.getPosition()+1, true);
 	         mActivity.getDrawerList().setItemChecked(tab.getPosition()+1, true);
 	    }
