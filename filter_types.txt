@@ -5,16 +5,18 @@
  Booking Resource	ID
  Task Event            ID 
  Booking Type          ID 
- Renewed Member        Boolean? 
+ Renewed Member        ID 
  Programme Group       ID
  Assigned To		ID
- Supplier Name		No Filters to implement
+ Supplier Name		No Filters t
+
+o implement
  Sale-Origin		Name
  Sale Type		Name
  Ongoing Programme	ID
  Paid Through		Name
  Group-Programme       ID
- Promotion	       ID		
+ Promotion	       ID		   
  Booking Result		ID
  Company	       ID
  Ignore Charges		Boolean

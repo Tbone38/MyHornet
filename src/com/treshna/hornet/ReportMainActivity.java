@@ -72,7 +72,6 @@ public class ReportMainActivity extends ListActivity {
 	private Date startDate = null;
 	private Date endDate = null;
 	private Button btnEmail = null;
-	private boolean stripe = true;
 	private int[] selectedColumnIds = null;
 	
 	@Override
@@ -329,17 +328,24 @@ public class ReportMainActivity extends ListActivity {
 				}
 			}
 			
+			boolean firstFilterAdded = false;
 			if (firstFilter != null && !firstFilter.contains("'All'")) {
 				queryBuilder.append(" WHERE ");
 				queryBuilder.append(' ');
 				queryBuilder.append(firstFilter);
 				queryBuilder.append(' ');
-				if (secondFilter != null && !secondFilter.contains("'All'")) {
+				firstFilterAdded = true;
+			}
+			
+			if (secondFilter != null && !secondFilter.contains("'All'")) {
+				if (firstFilterAdded) {
 					queryBuilder.append(" AND ");
-					queryBuilder.append(' ');
-					queryBuilder.append(secondFilter);
-					queryBuilder.append(' ');
+				} else {
+					queryBuilder.append(" WHERE ");
 				}
+				queryBuilder.append(' ');
+				queryBuilder.append(secondFilter);
+				queryBuilder.append(' ');
 			}
 				
 			queryBuilder.append(";");
@@ -423,7 +429,6 @@ public class ReportMainActivity extends ListActivity {
 					if (position % 2 == 0){
 						linLayout.setBackgroundColor(getResources().getColor(R.color.booking_resource_background));
 					}
-					ReportMainActivity.this.stripe = false;
 					linLayout.setOrientation(LinearLayout.HORIZONTAL);
 					AbsListView.LayoutParams listLayoutParams = new AbsListView.LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT);
 					LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams( LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT );

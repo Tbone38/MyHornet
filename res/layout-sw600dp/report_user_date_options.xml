@@ -17,7 +17,7 @@
 		       android:text="@string/report_date_options_title"
 		       android:textSize="@dimen/report_title_text_size"
 		       android:padding="10dp"
-		       android:gravity="center_horizontal"       
+		       android:gravity="center_horizontal"
 			/>
      </LinearLayout>
 		    <TextView
@@ -116,11 +116,12 @@
 		    android:orientation="vertical">
 			  
 		    <TextView
+		           android:id="@+id/firstFilterTitle"
 		           android:layout_width="wrap_content"
 		           android:layout_height="wrap_content"
 		           android:textSize="20sp" 
 		           android:textStyle="bold"
-		           android:gravity="center"
+		           android:layout_gravity="center"
 		           android:text="@string/report_first_filter_spinner"/>	       
 		     <Spinner
 		           android:id="@+id/firstFilterSpinner"
@@ -129,20 +130,21 @@
 		           android:prompt="@string/report_first_filter_spinner"
 		           android:gravity="center"/>
 		    </LinearLayout>
-		    		<LinearLayout
-		    android:id="@+id/secondFilterLayout"
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:layout_gravity="center"
-		    android:visibility="gone"
-		    android:orientation="vertical">
+		    <LinearLayout
+			    android:id="@+id/secondFilterLayout"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:layout_gravity="center"
+			    android:visibility="gone"
+			    android:orientation="vertical">
 			  
 		    <TextView
+		           android:id="@+id/secondFilterTitle"
 		           android:layout_width="wrap_content"
 		           android:layout_height="wrap_content"
 		           android:textSize="20sp" 
 		           android:textStyle="bold"
-		           android:gravity="center"
+		           android:layout_gravity="center"
 		           android:text="@string/report_second_filter_spinner"/>	       
 		     <Spinner
 		           android:id="@+id/secondFilterSpinner"

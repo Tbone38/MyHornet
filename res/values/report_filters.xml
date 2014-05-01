@@ -2,31 +2,31 @@
 <resources>
     
     <string-array name="Booking_Resource" >
-       <item >(SELECT 0 AS id, \'All Resource\' AS name) UNION
+       <item >(SELECT null AS id, \'All Resource\' AS name) UNION
          SELECT id, name FROM resource ORDER BY id;</item>
          <item>type-ID</item>
     </string-array>
     
      <string-array name="Booking_Result" >
-        <item >(SELECT 0 AS id, \'All Result\' AS name) UNION
+        <item >(SELECT null AS id, \'All Result\' AS name) UNION
         SELECT id, name FROM resultstatus ORDER BY id;</item>
         <item>type-ID</item>
     </string-array>
     
     <string-array name="Booking_Type" >
-     <item >(SELECT 0 AS id, \'All Type\' AS name) UNION
+     <item >(SELECT null AS id, \'All Type\' AS name) UNION
         SELECT id, name FROM bookingtype ORDER BY id;</item>
         <item>type-ID</item>
     </string-array>
     
     <string-array name="Programme_Group" >
-     <item >(SELECT 0 AS id, \'All Group\' AS name) UNION
+     <item >(SELECT null AS id, \'All Group\' AS name) UNION
       SELECT id, name FROM programmegroup ORDER BY id; </item>
       <item>type-ID</item>
     </string-array>
     
    <string-array name="Personal_Trainer" >
-     <item >(SELECT 0 AS id, \'All Trainers\' AS name) UNION
+     <item >(SELECT null AS id, \'All Trainers\' AS name) UNION
            SELECT id, get_name(firstname, surname) AS name FROM staff WHERE is_trainer 
            AND NOT historic ORDER BY id;
      </item>
@@ -34,7 +34,7 @@
     </string-array>
     
     <string-array name="Group_Programme" >
-      <item >(SELECT 0 AS id, \'All Programme\' AS name) UNION
+      <item >(SELECT null AS id, \'All Programme\' AS name) UNION
          	SELECT id, name FROM programme
             WHERE programmegroupid = ? AND history = \'f\' ORDER BY id;  
       </item>
@@ -42,14 +42,14 @@
     </string-array>
     
    <string-array name="Programme" >
-      <item > (SELECT 0 AS id, \'All Programme\' AS name) UNION
+      <item > (SELECT null AS id, \'All Programme\' AS name) UNION
              SELECT id, name FROM programme WHERE history = \'f\' ORDER BY id; 
       </item>
       <item>type-ID</item>
     </string-array>
     
     <string-array name="Sale_Type" >
-     <item > (SELECT 0 AS integer_value, \'All\' AS text_value) UNION
+     <item > (SELECT null AS integer_value, \'All\' AS text_value) UNION
       		SELECT integer_value, text_value FROM lookup_default_value
      		WHERE name = \'Debitjournal Origin Type\' ORDER BY integer_value;
      </item>
@@ -58,14 +58,14 @@
     </string-array>
     
     <string-array name="Sale_Origin" >
-     <item>SELECT 0 AS integer_value, \'All\' AS text_value UNION(SELECT integer_value, text_value
+     <item>SELECT null AS integer_value, \'All\' AS text_value UNION(SELECT integer_value, text_value
            FROM lookup_default_value WHERE name = ? AND id >= 1500 AND id &#60;= 1600) ORDER BY integer_value; 
      </item>
      <item>type-Name</item>
    </string-array>
    
    <string-array name="Paid_Through" >
-     <item>SELECT 0 AS integer_value, \'All\' AS text_value UNION 
+     <item>SELECT null AS integer_value, \'All\' AS text_value UNION 
          SELECT integer_value, text_value FROM lookup_default_value
          WHERE name=\'Paid Through\' ORDER BY integer_value;       
      </item>
@@ -73,7 +73,7 @@
    </string-array>
    
     <string-array name="Payment_Methods" >
-     <item>SELECT 0 AS integer_value, \'All\' AS text_value UNION 
+     <item>SELECT null AS integer_value, \'All\' AS text_value UNION 
          (SELECT integer_value, text_value FROM lookup_default_value
          WHERE name = ? AND id >= 1500 AND id &#60;= 1800) ORDER BY integer_value;       
      </item>
@@ -81,34 +81,35 @@
    </string-array>
    
    <string-array name="Not_Returning" >
-     <item>(SELECT 0 AS integer_value, \'All Resources\' AS name) UNION 
+     <item>(SELECT null AS integer_value, \'All Resources\' AS name) UNION 
          SELECT id, name FROM resource Order By id;       
      </item>
      <item>type-ID</item>
    </string-array>
    
    <string-array name="Task_Event" >
-     <item>SELECT id, eventname AS name FROM task_trigger WHERE id > -1 ORDER BY id;      
+     <item>(SELECT null AS id, \'All Events\' AS name) UNION
+         SELECT id, eventname AS name FROM task_trigger WHERE id > -1 ORDER BY id;      
      </item>
      <item>type-ID</item>
    </string-array>
    
    <string-array name="Assigned_To" >
-     <item>(SELECT 0 AS id, \'All Staff\' AS name) UNION
+     <item>(SELECT null AS id, \'All Staff\' AS name) UNION
       	SELECT id, get_name(staff.firstname, staff.surname) AS name FROM staff WHERE id > 0 ORDER BY id;    
      </item>
      <item>type-ID</item>
    </string-array>
    
    <string-array name="Promotion" >
-     <item>(SELECT 0 AS promotion_id, \'All Promotions\' AS name) UNION
+     <item>(SELECT null AS promotion_id, \'All Promotions\' AS name) UNION
            SELECT promotion_id, name FROM promotion WHERE promotion_id > 1 ORDER BY promotion_id, name;   
      </item>
      <item>type-ID</item>
    </string-array>
    
     <string-array name="Company" >
-     <item>(SELECT 0 AS id, \'All Companies\' AS name) UNION
+     <item>(SELECT null AS id, \'All Companies\' AS name) UNION
             SELECT id, name FROM company_config ORDER BY id, name;
      </item>
      <item>type-ID</item>
@@ -116,7 +117,7 @@
    
    <string-array name="Ongoing_Programme" >
          <item>
-	        (SELECT 0 AS id, \'All Ongoing Programme\' AS name) UNION
+	        (SELECT null AS id, \'All Ongoing Programme\' AS name) UNION
 	         SELECT id, name FROM programme WHERE (programme.paymentschedule = 1 OR programme.paymentschedule = 2)
 	         ORDER BY id;
         </item>
@@ -125,7 +126,7 @@
    
    <string-array name="Supplier_Name" >
          <item>
-	      (SELECT 0 AS id, \'All Suppliers\' AS name) UNION
+	      (SELECT null AS id, \'All Suppliers\' AS name) UNION
            SELECT id, name FROM supplier ORDER BY id;
         </item>
     <item>type-Unknown</item>
@@ -133,7 +134,7 @@
    
     <string-array name="Renewed_Member" >
          <item>
-	      (SELECT 0 AS id, \'All members\' AS name) UNION (SELECT 1 AS id, \'Renewed\' AS name) UNION (SELECT 2 AS id, \'Not Renewed\' AS name)
+	      (SELECT null AS id, \'All members\' AS name) UNION (SELECT 1 AS id, \'Renewed\' AS name) UNION (SELECT 2 AS id, \'Not Renewed\' AS name)
           ORDER BY id;
         </item>
      <item>Boolean</item>
@@ -141,11 +142,11 @@
    
    <string-array name="Ignore_Charges" >
          <item>
-	     (SELECT \'0\'::interval AS value, \'None\' AS name) UNION
+	     (SELECT null AS value, \'None\' AS name) UNION
          (SELECT \'1 day\'::interval AS value, \'1 day\' AS name) $
          (SELECT \'2 day\'::interval AS value, \'2 days\' AS name)$
-         (SELECT \'1 Week\'::interval AS value, \'1 week\' AS name$
-         (SELECT \'2 Week\'::interval AS value, \'2 weeks\' AS nam$
+         (SELECT \'1 Week\'::interval AS value, \'1 week\' AS name)$
+         (SELECT \'2 Week\'::interval AS value, \'2 weeks\' AS name)$
          ORDER BY value;     
         </item>
         <item>Boolean</item>

@@ -39,6 +39,8 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 	private DatePickerFragment startDatePicker = null;
 	private int filterCount = 0;
 	private boolean firstFilterSelectionMade = false;
+	private TextView firstFilterTitle = null;
+	private TextView secondFilterTitle = null;
 	private String[] filterQueries = null;
 	private String secondFilterQuery = null;
 	private Date selectedStartDate = new Date();
@@ -47,7 +49,7 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 	private TextView startDateText = null;
 	private TextView endDateText = null;
 	private int reportId = 0;
-	private DatePickerFragment datePickerFragment = null;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -65,6 +67,8 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 		Button btnStartButton = (Button) findViewById(R.id.btnSelectStartDate);
 		Button btnEndButton = (Button) findViewById(R.id.btnSelectEndDate);
 		reportNameTxt.setText(intent.getStringExtra("report_name").trim());
+		firstFilterTitle = (TextView) findViewById(R.id.firstFilterTitle);
+		secondFilterTitle = (TextView) findViewById(R.id.secondFilterTitle);
 		reportId = intent.getIntExtra("report_id", 0);
 		reportData.put("report_name", intent.getStringExtra("report_name"));
 		reportData.put("report_function_name", intent.getStringExtra("report_function_name"));
@@ -146,21 +150,23 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 		
 		final Spinner firstFilterSpinner = (Spinner) findViewById(R.id.firstFilterSpinner);
 		
-		String[] filterOptions = new String[firstReportFilterMapList.size()];
-		int index = 0;
+		ArrayList<String> filterOptionsList = new ArrayList<String>();
 		
 		for (HashMap<String,String> filterName : firstReportFilterMapList){
 			if (filterName.containsKey("name")) {
-					filterOptions[index] = filterName.get("name");
+					//Bug fix for ALL value being zero (in task-trigger table) in the Task Event filter
+				if (!((filterName.get("name").compareTo("ALL") == 0) && (reportFiltersMapList.get(0).get("filter_name").compareTo("Task Event") == 0))) {
+					filterOptionsList.add(filterName.get("name"));
+				}
+					
 			}
 			else if (filterName.containsKey("text_value")) {
-				filterOptions[index] = filterName.get("text_value");	
+				filterOptionsList.add(filterName.get("text_value"));	
 		    }
-			
-			index++;
-		}
 		
-		ArrayAdapter<String> filterAdapter = new ArrayAdapter<String>(this, R.layout.report_date_options_spinner , filterOptions);
+		}
+	
+		ArrayAdapter<String> filterAdapter = new ArrayAdapter<String>(this, R.layout.report_date_options_spinner , filterOptionsList);
 		firstFilterSpinner.setAdapter(filterAdapter);
 		firstFilterSpinner.setPrompt("Select Filter");
 		firstFilterSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -170,36 +176,46 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 					int position, long id) {
 					String filterField = null;
 					String selectedParam =  (String) firstFilterSpinner.getSelectedItem();
-					
-					if (filterQueries.length > 1) {
-						
+											
 						String filterType = ReportQueryResources.getFilterTypeByName(getApplicationContext(),reportFiltersMapList.get(0).get("filter_name"));
 						
-						Log.i("Filter Type: ", filterType);
+						
 						//Checking for filters implemented by id...
 						if (filterType.compareTo("type-ID") == 0) {
 							
 							
 							String selectedId = getIdFromReportFirstFilterDataName(selectedParam);
 							
-							if (selectedId != null) {
 								
-								if (selectedId.compareTo("0") == 0 ) {
+								if (selectedId == null ) {
 								
 										if (reportFiltersMapList.get(0).get("filter_name").compareTo("Programme Group") == 0) {
-										
+											
+											if (filterQueries.length > 1) {
+												
 												filterQueries[1] = ReportQueryResources.getFilterQueryByName(getApplicationContext(), "Programme");
+												
+											}
 										
-										} else {
-																						
 										}
+										
+										reportData.remove("first_filter_field");
 										
 								} else {
 										
+										Log.i("Filter ID:", selectedId);
+										
+										
+										
 										if (reportFiltersMapList.get(0).get("filter_name").compareTo("Programme Group") == 0) {
 											
-											filterQueries[1] = ReportQueryResources.getFilterQueryByName(getApplicationContext(), "Group_Programme");
-											addSelectedParamToQuery(selectedId);
+											if (filterQueries.length > 1) {
+											
+												filterQueries[1] = ReportQueryResources.getFilterQueryByName(getApplicationContext(), "Group_Programme");
+												
+												addSelectedParamToQuery(selectedId);
+											}
+											
 										}
 										
 										
@@ -209,30 +225,30 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 										reportData.put("first_filter_field", filterField);
 									}
 								
+								if (filterQueries.length > 1) {
 										getSecondReportFilterData();
-															
-							}
+								}
 							
 						
 						}  else if (filterType.compareTo("type-Name")== 0) {
 							
 								//Block for filters implemented by name...
 								addSelectedParamToQuery(selectedParam);
-								getSecondReportFilterData();
+								if (filterQueries.length > 1) {
+									getSecondReportFilterData();
+								}
 								filterField = buildFilterField(selectedParam, 0);
 								Log.i(" First Selected Filter Field ", filterField );
 								reportData.put("first_filter_field", filterField);
 					
 						}						
-					}				
+									
 			}
 
 			@Override
 			public void onNothingSelected(AdapterView<?> parent) {
-				// TODO Auto-generated method stub
-				
+				// TODO Auto-generated method stub			
 			}
-
 		});
 	}
 		
@@ -272,8 +288,13 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 						
 						String selectedId = getIdFromSecondReportFilterDataName(selectedName);
 						
-						if (selectedId.compareTo("0") != 0 ) {
+						if (selectedId != null) {
+							
 							filterField = buildFilterField(selectedId, 1);
+							
+						} else {
+							
+							reportData.remove("second_filter_field");
 						}
 			
 						
@@ -287,10 +308,7 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 						
 						Log.i(" Second Selected Filter Field ", filterField);
 						reportData.put("second_filter_field", filterField);
-					}
-					
-					
-							
+					}							
 			}
 
 			@Override
@@ -302,13 +320,15 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 		});
 	}
 	
-	private String buildFilterField (String filterName, int filterNumber) {
+	private String buildFilterField (String filterValue, int filterNumber) {
 		
 		String filterField = "";
 		
 		filterField = reportFiltersMapList.get(filterNumber).get("field");
+		//Removing placeholder text from field..
 		filterField = filterField.substring(0, filterField.indexOf("=") + 1);
-		filterField +=  "\'" + filterName + "\'";
+		//Add selected name or id value to filter field..
+		filterField +=  "\'" + filterValue + "\'";
 		return filterField;
 		
 	}
@@ -392,8 +412,6 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 			e.printStackTrace();
 		}
 		
-		//Calendar cal = Calendar.getInstance();
-	
 		return 	date;
 	}
 	
@@ -410,9 +428,7 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 	}
 	
 	private void loadIntent(String callingActivity, Class<?> activity) {
-		Log.i("Selected Start Date: ", selectedStartDate+"");
-		Log.i("Selected End Date: ", selectedEndDate+"");
-		
+	
 		reportData.put("start_date",selectedStartDate);
 		reportData.put("end_date",  selectedEndDate);
 		
@@ -508,14 +524,7 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
   private void addSelectedParamToQuery(String selectedParam) {
 	  
 		if (filterQueries.length > 1) {
- 
-			/*Log.i("= Index:", filterQueries[1].indexOf("=")+"");
-			int firstEqualsIndex = filterQueries[1].indexOf("=");
-			String secondHalf = filterQueries[1].substring(firstEqualsIndex);
-			String filterName = filterQueries[1].substring(firstEqualsIndex + 1, firstEqualsIndex + getSecondOccurenceIndexOf(secondHalf, '\'')+1);
-			filterQueries[1] = filterQueries[1].replace(filterName, "\'" + selectedParam + "\'");
-			Log.i(" Filter String: ", filterQueries[1]);*/
-			
+ 		
 			if (firstFilterSelectionMade) {
 				
 				if (selectedParam.compareTo("All") == 0) {
@@ -551,11 +560,7 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 			Log.i(" Filter String: ", filterQueries[1]);
 		}
    }
-  
-  private void addSelectedIdParamToQuery(int filterId) {
-	  
-  }
-  
+ 
   private int getSecondOccurenceIndexOf(String targetString, char targetChar) {
 	  
 		 int tickCount = 0;
@@ -580,57 +585,14 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 		firstReportFilterThread.execute();
 	}
   
-   private void getSecondReportFilterData() {
+  private void getSecondReportFilterData() {
 		
 		GetFirstReportFilterData  firstReportFilterThread = new GetFirstReportFilterData(1);
 		firstReportFilterThread.execute();
 	}
 	
-/*
-	private void buildFiltersTableNameQuery() {
-		
-		stripTableIdsFromFields();
-		StringBuilder filtersQuery = new StringBuilder();
-		filtersQuery.append("Select distinct table_name from report_function_table where (joining_query ");
-		int index = 0;
-		for (HashMap<String,String> reportFiltersMap: reportFiltersMapList){
-			index ++;
-			if (index == 1) {
-				filtersQuery.append("like \'%" + reportFiltersMap.get("field") + "%\'");
-			} else {
-				filtersQuery.append("joining_query like \'%" + reportFiltersMap.get("field") + "%\'");
-			}
-			
-			//Looking other than the last value
-			if (index != reportFiltersMapList.size()){
-				filtersQuery.append(" or ");
-			}		
-		}
-		
-		filtersQuery.append(")");
-		filtersQuery.append(" and ");
-		filtersQuery.append("function_name = ");
-		filtersQuery.append("\'" + reportData.get("report_function_name") +"\'");
-		filtersQuery.append(";");
-		Log.i("Filters Table Name Query: ", filtersQuery.toString());
-		reportFilterTableNamesQuery =  filtersQuery.toString();
-		
-	
-	
-	private void stripTableIdsFromFields() {
-		
-		for (HashMap<String,String> reportFiltersMap: reportFiltersMapList){
-			String filterFieldValue = reportFiltersMap.get("field");
-			reportFiltersMap.put("field", filterFieldValue.substring(0, filterFieldValue.indexOf('=')));
-			
-		}
-		for (HashMap<String,String> reportFiltersMap: reportFiltersMapList){
-			Log.i("Stripped Value: ", reportFiltersMap.get("field"));
-		}
-		
-		
-	}*/
-	protected class GetReportFilterFieldsByReportId extends AsyncTask<String, Integer, Boolean> {
+
+  protected class GetReportFilterFieldsByReportId extends AsyncTask<String, Integer, Boolean> {
 		protected ProgressDialog progress;
 		protected HornetDBService sync;
 		//private int reportId = 0;
@@ -671,6 +633,13 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 				if (reportFiltersMapList.size() > 0) {
 					LinearLayout firstFilterLayout = (LinearLayout) findViewById(R.id.firstFilterLayout);
 					firstFilterLayout.setVisibility(View.VISIBLE);
+					firstFilterTitle.setText(reportFiltersMapList.get(0).get("filter_name"));				
+					if (reportFiltersMapList.size() > 1) {
+						LinearLayout secondFilterLayout = (LinearLayout) findViewById(R.id.secondFilterLayout);
+						secondFilterLayout.setVisibility(View.VISIBLE);
+						secondFilterTitle.setText(reportFiltersMapList.get(1).get("filter_name"));
+					}
+					
 					getFilterQueriesFromXML();
 					printFilterQueries();
 					getFirstReportFilterData();
@@ -741,8 +710,7 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 					setUpFirstFilterSpinner();
 					
 					if (filterQueries.length > 1) {
-						LinearLayout secondFilterLayout = (LinearLayout) findViewById(R.id.secondFilterLayout);
-						secondFilterLayout.setVisibility(View.VISIBLE);
+
 						//Log.i("Filter Name: ", reportFiltersMapList.get(1).get("filter_name"));
 						//addSelectedParamToQuery("Full Membership Fee");
 						//getSecondReportFilterData();
