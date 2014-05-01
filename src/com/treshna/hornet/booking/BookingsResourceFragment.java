@@ -56,6 +56,7 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
     private boolean hasOverview = false; 
     private TextView mMonth, mDay, mYear;
     private DatePickerFragment mDatePicker;
+    private String selectedTime;
     
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -70,6 +71,14 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
     		selectedDate = Services.DateToString(new Date());
     	}
         hasOverview = this.getArguments().getBoolean("hasOverview");
+        
+        if (this.getArguments().containsKey("selectedTime")) {
+        	selectedTime = this.getArguments().getString("selectedTime");
+        	if (selectedTime.length() == 5) {
+        		selectedTime = "0"+selectedTime;
+        	}
+        	selectedTime = selectedTime.substring(0, 2)+":"+selectedTime.substring(2, 4)+":"+selectedTime.substring(4,6);
+        }
     }
 	
 	public boolean hasOverView(){
@@ -168,17 +177,6 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
 	
 	private void updateDate(){
 		if (mMonth != null && mDay != null && mYear != null) {
-			/*if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-				//mMonth.setText(Services.dateFormat(selectedDate, "yyyyMMdd", "MMMM")+" ");
-				mMonth.setText(Services.dateFormat(selectedDate, "yyyyMMdd", "MMMM")+" ");
-				mDay.setText(Services.dateFormat(selectedDate, "yyyyMMdd", "dd")+",  ");
-				mYear.setText(Services.dateFormat(selectedDate, "yyyyMMdd", "yyyy"));
-			} else {
-				//mMonth.setText(Services.dateFormat(selectedDate, "yyyyMMdd", "MMM"));
-				mMonth.setText(Services.dateFormat(selectedDate, "yyyyMMdd", "MMM"));
-				mDay.setText(Services.dateFormat(selectedDate, "yyyyMMdd", "dd"));
-				mYear.setText(Services.dateFormat(selectedDate, "yyyyMMdd", "yyyy"));
-			}*/
 			mMonth.setText(Services.dateFormat(selectedDate, "dd MMM yyyy", "MMM"));
 			mDay.setText(Services.dateFormat(selectedDate, "dd MMM yyyy", "dd"));
 			mYear.setText(Services.dateFormat(selectedDate, "dd MMM yyyy", "yyyy"));
@@ -311,6 +309,18 @@ public class BookingsResourceFragment extends ListFragment implements LoaderMana
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+		int position = 0;
+		if (selectedTime != null) {
+			while (cursor.moveToNext()) {
+				if (cursor.getString(cursor.getColumnIndex(ContentDescriptor.Time.Cols.TIME)).compareTo(selectedTime) == 0) {
+					position = cursor.getPosition();
+				}
+			}
+			cursor.moveToFirst();
+			ListView list = (ListView) view.findViewById(android.R.id.list);
+			list.setSelection(position);
+		}
+		selectedTime = null;
 		mAdapter.changeCursor(cursor);		
 		mAdapter.notifyDataSetChanged();
 	}

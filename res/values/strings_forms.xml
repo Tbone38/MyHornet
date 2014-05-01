@@ -6,4 +6,10 @@
 	<string name="resource_type">Resource Type</string>
 	<string name="resource_istrainer">Resource is Personal Trainer</string>
 	<string name="resource_historic">Resource is Historic</string>
+	
+	<string name="programme_group_add">Add Programme Group</string>
+	<string name="programme_group_edit">Edit Programme Group</string>
+	<string name="programme_group_name">Programme Group Name</string>
+	<string name="programme_group_historic">Historic Group</string>
+	<string name="programme_group_issue_card">Issues Cards By Default</string>
 </resources>

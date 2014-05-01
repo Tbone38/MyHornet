@@ -36,15 +36,15 @@ public class ProgrammeGroupBuilder implements FormGenerator.FormBuilder, OnClick
 			
 		} else {
 			
-			formgen.addHeading(mActivity.getString(R.string.resource_add));
+			formgen.addHeading(mActivity.getString(R.string.programme_group_add));
 			
-			formgen.addEditText(mActivity.getString(R.string.resource_name), RES_NAME_ID, ContentDescriptor.Resource.Cols.NAME, null);
+			formgen.addEditText(mActivity.getString(R.string.programme_group_name), RES_NAME_ID, "key", null);
 			
-			formgen.addCheckBox(mActivity.getString(R.string.resource_historic), RES_HIST_ID, ContentDescriptor.Resource.Cols.HISTORY, false);
+			formgen.addCheckBox(mActivity.getString(R.string.programme_group_issue_card), RES_HIST_ID, ContentDescriptor.Resource.Cols.HISTORY, false);
 			
-			formgen.addCheckBox(mActivity.getString(R.string.resource_historic), RES_HIST_ID, ContentDescriptor.Resource.Cols.HISTORY, false);
+			formgen.addCheckBox(mActivity.getString(R.string.programme_group_historic), RES_HIST_ID, ContentDescriptor.Resource.Cols.HISTORY, false);
 			
-			formgen.addButtonRow(mActivity.getString(R.string.buttonOK), mActivity.getString(R.string.buttonCancel), RES_SAVE_ID, RES_CANCEL_ID, this);
+			formgen.addButtonRow(mActivity.getString(R.string.buttonSave), mActivity.getString(R.string.buttonCancel), RES_SAVE_ID, RES_CANCEL_ID, this);
 		}
 		
 		mView = formgen.getForm();

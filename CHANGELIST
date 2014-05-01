@@ -95,6 +95,7 @@ KEY:
                 "Sync Set to never" toast has been disabled.
                 Class Create - Selectable End Date;
                 Redid the UI for Adding Members to classes, when horizontal (tablets).
+		fixed the Booking Overview page to use an actual list, still seems to be as slow, if not slower, than before.
 
             TODO:
                 Handle permissions/Roles for different staff, to limit what certain staff can see.
@@ -124,7 +125,7 @@ KEY:
                     which we can then use to help resolve conflicts.
                 merge Tony's branch into main;
                 GET OFFLINE SWIPES WORKING.
-                Swiping from the left hand side interfares with the member swiping, etc.
+                Swiping from the left hand side interfares with the member swiping, etc. OR DOES IT?
                 Adding to Classes:
                     if membershipcount = 1 then default;    --Done
                     if membershipcount = 2 then prompt;     --Done
@@ -132,7 +133,7 @@ KEY:
                     How do we handle casuals?
                 Gallery seems to behaive weirdly (multiple images show up as profile, even when only one is..?)
                 Bug with removing member from class. It sometimes gets really odd. Look at whats causing it (weird issue with the list binding?)
-                Fix your demo db on nikita.
+		Set all the toasts to go through the Services.app so that they take into consideration user settings. 
 
     
     v119:

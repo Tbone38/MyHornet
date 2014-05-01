@@ -34,7 +34,7 @@ public class BookingsSlideFragment extends Fragment {
     private PagerAdapter mPagerAdapter;
     private String selectedDate;
     private boolean hasOverview;
-    
+    private String selectedTime;
     private View view;
     private static final String TAG = "BookingsSlideFragment";
     
@@ -49,6 +49,10 @@ public class BookingsSlideFragment extends Fragment {
     		selectedDate = Services.DateToString(new Date());
     	}
     	hasOverview = this.getArguments().getBoolean("hasOverview");
+    	
+    	if (this.getArguments().containsKey("selectedTime")) {
+        	selectedTime = this.getArguments().getString("selectedTime");
+        }
     }
     
     @Override
@@ -148,9 +152,12 @@ public class BookingsSlideFragment extends Fragment {
             }
             fragmentlist.put(position, page);
 
-        	Bundle bdl = new Bundle(2);
+        	Bundle bdl = new Bundle(3);
             bdl.putBoolean("hasOverview", hasOverview);
             String date = BookingsSlideFragment.this.getDate(position);
+            if (selectedTime != null) {
+            	bdl.putString("selectedTime", selectedTime);
+            }
             bdl.putString("bookings_date", date);
             page.setArguments(bdl);
             

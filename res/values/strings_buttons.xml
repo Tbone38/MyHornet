@@ -19,6 +19,7 @@
     <string name="buttonComplete">Complete</string>
     <string name="buttonSMS">SMS</string>
     <string name="buttonCall">Call</string>
+    <string name="buttonSave">Save</string>
 	
 	<!--  Defaults -->
 	<string name="defaultDoB">Select Birth-Date</string>

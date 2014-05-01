@@ -116,6 +116,14 @@ public class SlideMenuClickListener implements OnItemClickListener, OnClickListe
         	tag = "formFragment";
         	break;
         }
+        case 15:{
+        	fragment = new FormFragment();
+        	Bundle bdl = new Bundle(1);
+        	bdl.putInt(Services.Statics.KEY, FormFragment.PROGRAMMEGROUP);
+        	fragment.setArguments(bdl);
+        	tag = "formFragment";
+        	break;
+        }
         default: 
             break;
         }

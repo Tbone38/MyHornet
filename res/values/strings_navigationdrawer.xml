@@ -21,6 +21,7 @@
         <item >Setup</item>
         <item >Add Class</item>
         <item>Add Resource</item>
+        <item>Add ProgrammeGroup</item>
     </string-array>
      
     <!-- Nav Drawer List Item Icons -->
@@ -40,6 +41,7 @@
         <item>@drawable/ic_action_paste</item>
         <item></item>
         <item>@drawable/ic_action_add_to_queue</item>
+        <item>@drawable/ic_action_add_person</item>
         <item>@drawable/ic_action_add_person</item>
     </array>
      

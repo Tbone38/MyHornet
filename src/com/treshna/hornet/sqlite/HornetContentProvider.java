@@ -685,7 +685,7 @@ public class HornetContentProvider extends ContentProvider {
             	 * the current details.
             	 *
             	 */
-            	Log.w("SQLite", builder.buildQuery(projection, selection, "_id", null, sortOrder, null));
+            	//Log.w("SQLite", builder.buildQuery(projection, selection, "_id", null, sortOrder, null));
             	return builder.query(db, projection, selection, null, "_id", null, sortOrder);
             }
             
@@ -701,8 +701,8 @@ public class HornetContentProvider extends ContentProvider {
             			+ContentDescriptor.BookingTime.NAME+" bt ON (b."
             			+ContentDescriptor.Booking.Cols.BID+" = bt."+ContentDescriptor.BookingTime.Cols.BID+")");
             	
-            	Log.w("BOOKING TIME", builder.buildQuery(projection, selection, null, null, sortOrder, null));
-            	Log.w("BOOKING TIME", Arrays.toString(selectionArgs));
+            	//Log.w("SQLite", builder.buildQuery(projection, selection, null, null, sortOrder, null));
+            	//Log.w("SQLite", Arrays.toString(selectionArgs));
             	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
             }
             case ContentDescriptor.Resource.PATH_TOKEN:{
@@ -787,8 +787,8 @@ public class HornetContentProvider extends ContentProvider {
             			+ContentDescriptor.BookingTime.Cols.TIMEID+" = t."
             			+ContentDescriptor.Time.Cols.ID+")");
             	
-            	//Log.w("BOOKING TIME", builder.buildQuery(projection, selection, selectionArgs, null, null, sortOrder, null));
-            	
+            	/*Log.w("SQLITE", builder.buildQuery(projection, selection, null, null, sortOrder, null));
+            	Log.w("SQLITE", Arrays.toString(selectionArgs));*/
             	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);	
             }
             
