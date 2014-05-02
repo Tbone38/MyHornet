@@ -88,7 +88,7 @@
    </string-array>
    
    <string-array name="Task_Event" >
-     <item>(SELECT null AS id, \'All Events\' AS name) UNION
+     <item>(SELECT null AS id, \'All\' AS name) UNION
          SELECT id, eventname AS name FROM task_trigger WHERE id > -1 ORDER BY id;      
      </item>
      <item>type-ID</item>

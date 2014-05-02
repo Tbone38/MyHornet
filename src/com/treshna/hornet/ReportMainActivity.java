@@ -516,14 +516,14 @@ public class ReportMainActivity extends ListActivity {
 		if (selectedColumnIds != null){
 			
 			if (dataRow.size() > maxProtraitColumns && selectedColumnIds.length > maxSelectedPortraitColumns){
-				this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 			}
 			
 		} else {
 			
 			//Launched from date options UI..
 			if (dataRow.size() > maxProtraitColumns){
-				this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 			}
 			
 		}

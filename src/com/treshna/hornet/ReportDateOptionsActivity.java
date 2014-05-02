@@ -13,10 +13,13 @@ import java.util.Map.Entry;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -42,6 +45,8 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 	private TextView firstFilterTitle = null;
 	private TextView secondFilterTitle = null;
 	private String[] filterQueries = null;
+	private	Button btnStartButton = null;
+	private	Button btnEndButton = null;
 	private String secondFilterQuery = null;
 	private Date selectedStartDate = new Date();
 	private Date selectedEndDate = new Date();
@@ -64,37 +69,45 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 		setDateTextView(endDateText, selectedEndDate);
 		Button createButton =  (Button) findViewById(R.id.btnCreateReport);
 		Button columnOptionsButton =  (Button) findViewById(R.id.btnColumnOptions);
-		Button btnStartButton = (Button) findViewById(R.id.btnSelectStartDate);
-		Button btnEndButton = (Button) findViewById(R.id.btnSelectEndDate);
+		LinearLayout layout = (LinearLayout) findViewById(R.id.dateOptions);
+		
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		
+		if (layout.getTag().toString().compareTo("Large") == 0) {
+			btnStartButton = (Button) findViewById(R.id.btnSelectStartDate);
+			btnEndButton = (Button) findViewById(R.id.btnSelectEndDate);
+		}
 		reportNameTxt.setText(intent.getStringExtra("report_name").trim());
 		firstFilterTitle = (TextView) findViewById(R.id.firstFilterTitle);
 		secondFilterTitle = (TextView) findViewById(R.id.secondFilterTitle);
 		reportId = intent.getIntExtra("report_id", 0);
 		reportData.put("report_name", intent.getStringExtra("report_name"));
 		reportData.put("report_function_name", intent.getStringExtra("report_function_name"));
-		//reportData.put("first_filter_field", null);
-		//reportData.put("second_filter_field", null);
 		setUpQuickSelectSpinner();
 		getReportFilterFieldsByReportId();
-		btnStartButton.setOnClickListener(new View.OnClickListener() {
 
-			@Override
-			public void onClick(View v) {
-				startDatePicker.show( ReportDateOptionsActivity.this.getSupportFragmentManager(), "Start Date Picker");
-				
-			}
-			
-		});
 		
-		btnEndButton.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				endDatePicker.show(ReportDateOptionsActivity.this.getSupportFragmentManager(), "End Date Picker");
-				
-			}
+		if (layout.getTag().toString().compareTo("Large") == 0) {
 			
-		});
+			btnStartButton.setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					startDatePicker.show( ReportDateOptionsActivity.this.getSupportFragmentManager(), "Start Date Picker");			
+				}
+				
+			});
+			
+			btnEndButton.setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					endDatePicker.show(ReportDateOptionsActivity.this.getSupportFragmentManager(), "End Date Picker");	
+				}
+				
+			});		
+		}
+	
 		
 		
 		
@@ -156,12 +169,31 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 			if (filterName.containsKey("name")) {
 					//Bug fix for ALL value being zero (in task-trigger table) in the Task Event filter
 				if (!((filterName.get("name").compareTo("ALL") == 0) && (reportFiltersMapList.get(0).get("filter_name").compareTo("Task Event") == 0))) {
-					filterOptionsList.add(filterName.get("name"));
-				}
 					
+					if (filterName.get("name").contains("All")) {
+						
+						filterOptionsList.add(0,filterName.get("name"));
+						
+					} else {
+						
+						filterOptionsList.add(filterName.get("name"));
+					}
+				}
+						
 			}
+			
 			else if (filterName.containsKey("text_value")) {
-				filterOptionsList.add(filterName.get("text_value"));	
+				
+				//Inserting the select-all option at the top of the list
+				
+				if (filterName.get("text_value").contains("All")) {
+					
+					filterOptionsList.add(0,filterName.get("text_value"));
+					
+				} else {
+					
+					filterOptionsList.add(filterName.get("text_value"));
+				}	
 		    }
 		
 		}
@@ -256,21 +288,40 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 		
 		final Spinner secondFilterSpinner = (Spinner) findViewById(R.id.secondFilterSpinner);
 		
-		String[] filterOptions = new String[secondReportFilterMapList.size()];
-		int index = 0;
+		ArrayList<String> filterOptionsList = new ArrayList<String>();
+
 		
-		for (HashMap<String,String> filterName : secondReportFilterMapList){
-			if (filterName.containsKey("name")) {
-				filterOptions[index] = filterName.get("name");
-			}
-			else if (filterName.containsKey("text_value")) {
-				filterOptions[index] = filterName.get("text_value");	
-		    }
+		for (HashMap<String,String> filterName : secondReportFilterMapList) {
 			
-			index++;
+			if (filterName.containsKey("name")) {
+				
+				//Inserting the select-all option at the top of the list
+				if (filterName.get("name").contains("All")) {
+					
+					filterOptionsList.add(0,filterName.get("name"));
+					
+				} else {
+					
+					filterOptionsList.add(filterName.get("name"));
+				}
+			}
+			
+			else if (filterName.containsKey("text_value")) {
+				
+				//Inserting the select-all option at the top of the list
+				if (filterName.get("text_value").contains("All")) {
+					
+					filterOptionsList.add(0,filterName.get("text_value"));
+					
+				} else {
+					
+					filterOptionsList.add(filterName.get("text_value"));
+				}
+		    }
+
 		}
 		
-		ArrayAdapter<String> filterAdapter = new ArrayAdapter<String>(this, R.layout.report_date_options_spinner , filterOptions);
+		ArrayAdapter<String> filterAdapter = new ArrayAdapter<String>(this, R.layout.report_date_options_spinner , filterOptionsList);
 		secondFilterSpinner.setAdapter(filterAdapter);
 		secondFilterSpinner.setPrompt("Select Filter");
 		secondFilterSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -452,11 +503,11 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 	@Override
 	public void onDateSelect(String date, DatePickerFragment theDatePicker) {
 		if (theDatePicker == startDatePicker){
-			 selectedStartDate = this.dateFromPicker(date);
+			 selectedStartDate = dateFromPicker(date);
 			 this.setDateTextView(startDateText, selectedStartDate);
 		}
 		else if (theDatePicker == endDatePicker){
-			selectedEndDate = this.dateFromPicker(date);
+			selectedEndDate = dateFromPicker(date);
 			this.setDateTextView(endDateText, selectedEndDate);
 		}
 		
@@ -561,24 +612,7 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 		}
    }
  
-  private int getSecondOccurenceIndexOf(String targetString, char targetChar) {
-	  
-		 int tickCount = 0;
-		 int targetIndex = 0;
-		 
-		 for (int i = 0; i < targetString.length(); i++) {
-			 
-			 if (targetString.charAt(i) == (targetChar)){
-				 tickCount++;
-			 }
-			 if (tickCount == 2){
-				 targetIndex = i;
-				 break; 
-			 }
-		 }
-		 return targetIndex;
-   }
-  
+
   private void getFirstReportFilterData() {
 		
 		GetFirstReportFilterData  firstReportFilterThread = new GetFirstReportFilterData(0);
@@ -595,7 +629,6 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
   protected class GetReportFilterFieldsByReportId extends AsyncTask<String, Integer, Boolean> {
 		protected ProgressDialog progress;
 		protected HornetDBService sync;
-		//private int reportId = 0;
 		
 	
 		public GetReportFilterFieldsByReportId () {
@@ -617,19 +650,7 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 		protected void onPostExecute(Boolean success) {
 			progress.dismiss();
 			if (success) {
-				//Calls back to the owning activity to call the thread to retrieve the joining tables
-				//ReportDateOptionsActivity.this.getJoiningTablesData(reportFunctionName);
-				/*System.out.println("\nReport-Type_Data");
-				
-				System.out.println("Result List Size: " + reportFiltersMapList.size());
-				
-				for (HashMap<String,String> resultMap: reportFiltersMapList){
-				
-					for (HashMap.Entry entry: resultMap.entrySet()){
-						 System.out.println("Field: " + entry.getKey() + " Value: " + entry.getValue());					 
-					}
-				
-				}*/
+
 				if (reportFiltersMapList.size() > 0) {
 					LinearLayout firstFilterLayout = (LinearLayout) findViewById(R.id.firstFilterLayout);
 					firstFilterLayout.setVisibility(View.VISIBLE);
