@@ -17,7 +17,7 @@ import android.provider.BaseColumns;
  *    5 = DeletedRecords				112 = MemberNotes
  *    9 = AppConfig						113:
  *   10:								114 = MemberBalance
- *   11 = TableIndex					
+ *   11 = TableIndex					116 = Member (including expired).
  *   12:								
  *   13 = PendingUploads				121 = CancellationFee
  *   14:								
@@ -60,7 +60,8 @@ import android.provider.BaseColumns;
  *  350 = Resource						351 = ResourceType
  *  360:
  *  370 = Programme
- *  371 = ProgrammeGroup (sorted from programme)
+ *  371 = ProgrammeGroup (sorted from programme) //REMOVE THIS.
+ *  372 = ProgrammeGroup Table.
  */
 /**
  * This class provides/stores the information required
@@ -82,6 +83,7 @@ public class ContentDescriptor {
 	 
 	     matcher.addURI(authority, Member.PATH, Member.PATH_TOKEN);
 	     matcher.addURI(authority, Member.PATH_FOR_ID, Member.PATH_FOR_ID_TOKEN);
+	     matcher.addURI(AUTHORITY, Member.PATH_INCLUDE, Member.PATH_INCLUDE_TOKEN);
 	     matcher.addURI(authority, Image.PATH, Image.PATH_TOKEN);
 	     matcher.addURI(authority, Image.PATH_FOR_ID, Image.PATH_FOR_ID_TOKEN);
 	     matcher.addURI(authority, Visitor.PATH, Visitor.PATH_TOKEN);
@@ -160,6 +162,7 @@ public class ContentDescriptor {
 	     matcher.addURI(authority, PaymentAgainst.PATH, PaymentAgainst.PATH_TOKEN);
 	     matcher.addURI(authority, PendingConflicts.PATH, PendingConflicts.PATH_TOKEN);
 	     matcher.addURI(authority, ResourceType.PATH, ResourceType.PATH_TOKEN);
+	     matcher.addURI(authority, ProgrammeGroup.PATH, ProgrammeGroup.PATH_TOKEN);
 	     
 	     matcher.addURI(authority, DROPTABLE, TOKEN_DROPTABLE);
 	     
@@ -172,6 +175,10 @@ public class ContentDescriptor {
 	        public static final int PATH_TOKEN = 100; 
 	        public static final String PATH_FOR_ID = "Member/*";
 	        public static final int PATH_FOR_ID_TOKEN = 110;
+	        
+	        public static final String PATH_INCLUDE = "Member_Include";
+	        public static final int PATH_INCLUDE_TOKEN = 116;
+	        public static final Uri URI_INCLUDE = BASE_URI.buildUpon().appendPath(PATH_INCLUDE).build();
 	        
 	        public static final String PATH_FIND = "MemberFind";
 	        public static final int TOKEN_FIND = 201;
@@ -806,6 +813,7 @@ public class ContentDescriptor {
 	 			
 	 			//added in v120.
 	 			public static final String PRICE = "price";
+	 			public static final String MULTIBOOK = "multiplebookings";
 	 		}
 	 	}
 	 	
@@ -1079,7 +1087,7 @@ public class ContentDescriptor {
 	 			Booking(1), Class(2), Swipe(3),Membership(4) /*when adding memberships*/,
 	 					Member(5) /*when adding members/prospects*/,Image(6),
 	 					MembershipSuspend(7), MemberNotes(8), RollCall(9), RollItem(10),
-	 					Idcard(11), Prospect(12), Resource(13);
+	 					Idcard(11), Prospect(12), Resource(13), ProgrammeGroup(14);
 	 			
 	 			private final int key;
 	 			
@@ -1387,4 +1395,23 @@ public class ContentDescriptor {
 	 			public static final String DEVICESIGNUP = "devicesignup";
 	 		}
 	 	}
+	 	
+	 	public static class ProgrammeGroup {
+	 		public static final String NAME = "programmegroup";
+	 		public static final String PATH = "programmegroup";
+	 		public static final int PATH_TOKEN = 372;//TODO
+	 		
+	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
+	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.programmegroup";
+	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.programmegroup";
+	 		
+	 		public static class Cols implements BaseColumns {
+	 			public static final String ID = "programmegroupid";
+	 			public static final String NAME = "name";
+	 			public static final String HISTORIC = "historic";
+	 			public static final String ISSUECARD = "issuecard";
+	 			public static final String DEVICESIGNUP = "devicesignup";
+	 		}
+	 	}
+	 	
 }

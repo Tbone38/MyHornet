@@ -85,7 +85,7 @@ public class ResourceBuilder implements FormGenerator.FormBuilder, OnClickListen
 		Cursor cur = contentResolver.query(ContentDescriptor.ResourceType.CONTENT_URI, null, null, null, null);
 		if (!cur.moveToPosition(selectedPos)) {
 			//our move failed, throw a fit?
-			throw new RuntimeException("SOMEBODIES DELETED DATA WHILE WE WERE ATTEMPTING TO USE IT. OR SOMEONE'S BAD AT CODING.");
+			throw new RuntimeException("SOMEBODIES DELETED DATA WHILE WE WERE ATTEMPTING TO USE IT. OR SOMEONE'S BAD AT SQLite.");
 		}
 		values.put(ContentDescriptor.Resource.Cols.RTID, cur.getInt(cur.getColumnIndex(ContentDescriptor.ResourceType.Cols.ID)));
 		cur.close();

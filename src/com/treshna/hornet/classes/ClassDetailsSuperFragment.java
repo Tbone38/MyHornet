@@ -37,7 +37,6 @@ public class ClassDetailsSuperFragment extends Fragment implements OnMemberSelec
 	public void onResume(){
 		super.onResume();
 		
-		refresh();
 	}
 	
 	@Override
@@ -86,6 +85,7 @@ public class ClassDetailsSuperFragment extends Fragment implements OnMemberSelec
 			hideme.setVisibility(View.GONE);
 		}
 		
+		refresh();
         return view;
     }
 	

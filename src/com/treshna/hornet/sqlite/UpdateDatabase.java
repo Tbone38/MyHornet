@@ -28,6 +28,7 @@ import com.treshna.hornet.sqlite.ContentDescriptor.PendingDeletes;
 import com.treshna.hornet.sqlite.ContentDescriptor.PendingUpdates;
 import com.treshna.hornet.sqlite.ContentDescriptor.PendingUploads;
 import com.treshna.hornet.sqlite.ContentDescriptor.Programme;
+import com.treshna.hornet.sqlite.ContentDescriptor.ProgrammeGroup;
 import com.treshna.hornet.sqlite.ContentDescriptor.Resource;
 import com.treshna.hornet.sqlite.ContentDescriptor.ResourceType;
 import com.treshna.hornet.sqlite.ContentDescriptor.RollCall;
@@ -911,6 +912,14 @@ public class UpdateDatabase {
 					+"END;";
 		
 		private static final String SQL25 = "ALTER TABLE "+Class.NAME+" ADD COLUMN "+Class.Cols.PRICE+" TEXT DEFAULT '$0.00'";
+		
+		private static final String SQL26 = "ALTER TABLE "+Class.NAME+" ADD COLUMN "+Class.Cols.MULTIBOOK+" TEXT DEFAULT 'f'";
+		
+		private static final String SQL27 = "CREATE TABLE "+ProgrammeGroup.NAME+" ("+ProgrammeGroup.Cols._ID+" INTEGER PRIMARY KEY NOT NULL, "
+				+ProgrammeGroup.Cols.ID+" INTEGER, "+ProgrammeGroup.Cols.NAME+" TEXT, "
+				+ProgrammeGroup.Cols.HISTORIC+" TEXT DEFAULT 'f', "+ProgrammeGroup.Cols.ISSUECARD+" TEXT DEFAULT 't', "
+				+ProgrammeGroup.Cols.DEVICESIGNUP+" TEXT DEFAULT 'f' "
+				+");";
 				
 		public static void patchNinetySix(SQLiteDatabase db) {
 			db.beginTransaction();
@@ -965,6 +974,10 @@ public class UpdateDatabase {
 				db.execSQL(SQL24);
 				Log.w(HornetDatabase.class.getName(), "\n"+SQL25);
 				db.execSQL(SQL25);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL26);
+				db.execSQL(SQL26);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL27);
+				db.execSQL(SQL27);
 				db.setTransactionSuccessful();
 			/*} catch (SQLException e) {
 			e.printStackTrace();

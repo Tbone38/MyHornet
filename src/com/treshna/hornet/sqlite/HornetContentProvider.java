@@ -22,7 +22,7 @@ public class HornetContentProvider extends ContentProvider {
 	private Context ctx;
 	@Override
 	public boolean onCreate() {
-        ctx = getContext();
+        ctx = getContext();//WHYYYY
         hornetDb = new HornetDatabase(ctx);
         return true;
     }
@@ -281,6 +281,11 @@ public class HornetContentProvider extends ContentProvider {
         	getContext().getContentResolver().notifyChange(uri, null);
         	return rows;
         }
+        case ContentDescriptor.ProgrammeGroup.PATH_TOKEN:{
+        	int rows = db.delete(ContentDescriptor.ProgrammeGroup.NAME, selection, selectionArgs);
+        	getContext().getContentResolver().notifyChange(uri, null);
+        	return rows;
+        }
         
         case ContentDescriptor.TOKEN_DROPTABLE:{ //special case, drops tables/deletes database.
         	FileHandler fh = new FileHandler(ctx);
@@ -512,6 +517,11 @@ public class HornetContentProvider extends ContentProvider {
             	getContext().getContentResolver().notifyChange(uri, null);
             	return ContentDescriptor.ResourceType.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
             }
+            case ContentDescriptor.ProgrammeGroup.PATH_TOKEN:{
+            	long id = db.insert(ContentDescriptor.ProgrammeGroup.NAME, null, values);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return ContentDescriptor.ProgrammeGroup.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
+            }
             default: {
                 throw new UnsupportedOperationException("URI: " + uri + " not supported.");
             }
@@ -573,6 +583,21 @@ public class HornetContentProvider extends ContentProvider {
             	}
             	//Log.w("TAG", builder.buildQuery( null, null, null, null, null, null));
             	return builder.query(db, projection, selection, selectionArgs, "m."+ContentDescriptor.Member.Cols.MID, null, sortOrder);
+            }
+            case ContentDescriptor.Member.PATH_INCLUDE_TOKEN:{ //this includes expired members.
+            	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+            	builder.setTables(ContentDescriptor.Member.NAME+" m "
+            			+"LEFT JOIN "+ContentDescriptor.MemberBalance.NAME+" mb "
+            			+"ON (m."+ContentDescriptor.Member.Cols.MID+" = mb."+ContentDescriptor.MemberBalance.Cols.MID
+            			+") "
+            			+"LEFT JOIN "+ContentDescriptor.Membership.NAME+" ms "
+            			+"ON (ms."+ContentDescriptor.Membership.Cols.MID+" = m."+ContentDescriptor.Member.Cols.MID
+            			+") AND ms."+ContentDescriptor.Membership.Cols.HISTORY+" = 'f' "
+            			+"LEFT JOIN "+ContentDescriptor.Image.NAME+" i "
+            			+"ON (i."+ContentDescriptor.Image.Cols.MID+" = m."+ContentDescriptor.Member.Cols.MID
+            			+") AND i."+ContentDescriptor.Image.Cols.IS_PROFILE+" = 1"
+            	);
+            	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
             }
             case ContentDescriptor.Member.PATH_FOR_ID_TOKEN:{
                 SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
@@ -948,6 +973,11 @@ public class HornetContentProvider extends ContentProvider {
             	builder.setTables(ContentDescriptor.ResourceType.NAME);
             	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
             }
+            case ContentDescriptor.ProgrammeGroup.PATH_TOKEN:{
+            	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+            	builder.setTables(ContentDescriptor.ProgrammeGroup.NAME);
+            	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+            }
             default: throw new UnsupportedOperationException("URI: " + uri + " not supported.");
         }
 	}
@@ -1146,6 +1176,11 @@ public class HornetContentProvider extends ContentProvider {
             }
             case ContentDescriptor.Bookingtype.PATH_TOKEN:{
             	int result = db.update(ContentDescriptor.Bookingtype.NAME, values, selection, selectionArgs);
+            	getContext().getContentResolver().notifyChange(uri, null);
+            	return result;
+            }
+            case ContentDescriptor.ProgrammeGroup.PATH_TOKEN:{
+            	int result = db.update(ContentDescriptor.ProgrammeGroup.NAME, values, selection, selectionArgs);
             	getContext().getContentResolver().notifyChange(uri, null);
             	return result;
             }

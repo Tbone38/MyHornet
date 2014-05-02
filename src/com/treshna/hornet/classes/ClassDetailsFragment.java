@@ -16,6 +16,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -33,22 +34,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.treshna.hornet.MainActivity;
-import com.treshna.hornet.R;
 import com.treshna.hornet.MainActivity.TagFoundListener;
-import com.treshna.hornet.R.id;
-import com.treshna.hornet.R.layout;
+import com.treshna.hornet.R;
+import com.treshna.hornet.member.MemberAddFragment;
 import com.treshna.hornet.network.HornetDBService;
 import com.treshna.hornet.services.Services;
 import com.treshna.hornet.sqlite.ContentDescriptor;
-import com.treshna.hornet.sqlite.ContentDescriptor.Booking;
-import com.treshna.hornet.sqlite.ContentDescriptor.Class;
-import com.treshna.hornet.sqlite.ContentDescriptor.FreeIds;
-import com.treshna.hornet.sqlite.ContentDescriptor.Member;
-import com.treshna.hornet.sqlite.ContentDescriptor.Membership;
-import com.treshna.hornet.sqlite.ContentDescriptor.Swipe;
-import com.treshna.hornet.sqlite.ContentDescriptor.TableIndex;
-import com.treshna.hornet.sqlite.ContentDescriptor.Booking.Cols;
-import com.treshna.hornet.sqlite.ContentDescriptor.TableIndex.Values;
 
 
 public class ClassDetailsFragment extends ListFragment implements TagFoundListener, LoaderManager.LoaderCallbacks<Cursor>,
@@ -157,9 +148,9 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 		
 		//find-member
 		addmember = (AutoCompleteTextView) page.findViewById(R.id.classAddMember);
-		cur = contentResolver.query(ContentDescriptor.Member.CONTENT_URI, new String[] {ContentDescriptor.Member.Cols.FNAME,
+		cur = contentResolver.query(ContentDescriptor.Member.URI_INCLUDE, new String[] {ContentDescriptor.Member.Cols.FNAME,
 				ContentDescriptor.Member.Cols.SNAME}, null, null, null);
-		
+		//above cursor includes expired members.
 		membernames = new ArrayList<String>();
 		while (cur.moveToNext()) {
 			membernames.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.FNAME))+" "
@@ -278,6 +269,7 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 			// get the name from the edit-text, look up member,
 			// add member(ship?) to the list.
 			int maxStudents = 0, curStudents, online = 0;
+			String multibook = null;
 			ContentResolver contentResolver;
 			contentResolver = getActivity().getContentResolver();
 			Cursor cur = contentResolver.query(ContentDescriptor.Class.CONTENT_URI, null, ContentDescriptor.Class.Cols.CID+" = ?",
@@ -285,6 +277,7 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 			if (cur.moveToFirst()) {
 				maxStudents = cur.getInt(cur.getColumnIndex(ContentDescriptor.Class.Cols.MAX_ST));
 				online = cur.getInt(cur.getColumnIndex(ContentDescriptor.Class.Cols.ONLINE));
+				multibook = cur.getString(cur.getColumnIndex(ContentDescriptor.Class.Cols.MULTIBOOK));
 			}
 			cur.close();
 			//how many students are currently signed up?
@@ -316,28 +309,46 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 			if (cur.getCount() <= 0) {
 				//not sure what happened.
 				Log.e(TAG, "no members found by that name");
+				//prompt to add Member.
+				alertAddMember(membername);
+				return;
+				//
 			} else if (cur.getCount() >= 2) {
 				// 2 or more members returned with that name, what should I do?
 				Log.e(TAG, "2 or more members found with that name");
 			}
 			String memberid;
 			if (cur.moveToFirst()) {
+				//check the multibook stuff here.
 				firstname = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.FNAME));
 				lastname = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.SNAME));
 				memberid = cur.getString(1); //changing this will break things!
-				/*for (int i = 0; i<cur.getColumnCount(); i +=1) {
-					Log.v(TAG, cur.getColumnName(i)+": "+cur.getString(i));
-				}*/
-
 				cur.close();
-				// show pop-up to select membership ?
-				// if no memberships exist then complain?
+
 				showAlert(memberid, firstname, lastname);
 			}
 			
 			break;
 		}
 		}
+	}
+	
+	public void alertAddMember(final String membername) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		builder.setTitle("Add Member?")
+		.setMessage("Member not found in database, do you want to add them?")
+		.setNegativeButton("Cancel", null)
+		.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				Fragment f = new MemberAddFragment(); //we're probably going to need to add something to tell the app to come back here after.
+				Bundle bdl = new Bundle(2);
+				bdl.putString(Services.Statics.MID, membername);
+				bdl.putBoolean("class", true); //doesn't matter what we put in there, we're only checking if its there at all.
+				f.setArguments(bdl);
+				((MainActivity) getActivity()).changeFragment(f, "AddMember");
+			}})
+		.show();
 	}
 		
 	public void showAlert(final String memberid, final String firstname, final String surname) {
@@ -379,17 +390,17 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
             		//no memberships found for this member, ignore and continue?
             		selectedMSID = null;
             		//show an error that no memberships were found.
-            		Toast.makeText(getActivity(), "Cannot add Booking without membership", Toast.LENGTH_LONG).show();
+            		//Toast.makeText(getActivity(), "Cannot add Booking without membership", Toast.LENGTH_LONG).show();
             		dialog.dismiss();
             	} else if (rg.getChildCount() > 0) {
 
 	            	int cid = rg.getCheckedRadioButtonId();     	
 	            	RadioButton rb = (RadioButton) rg.findViewById(cid);
 	            	selectedMSID = (String) rb.getTag();
-	            	//System.out.print("\n\nSelected Membership with ID:"+selectedMSID);
+            	}
 	            	
 	            	startTransaction(selectedMSID, memberid, firstname, surname);
-            	}}
+            	}
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
         	@Override
@@ -466,7 +477,9 @@ public class ClassDetailsFragment extends ListFragment implements TagFoundListen
 		
 		ContentValues values = new ContentValues();
 		values.put(ContentDescriptor.Booking.Cols.MID, memberid);
-		values.put(ContentDescriptor.Booking.Cols.MSID, membership);
+		if (membership != null) {
+			values.put(ContentDescriptor.Booking.Cols.MSID, membership);
+		}
 		values.put(ContentDescriptor.Booking.Cols.RID, resourceid);
 		values.put(ContentDescriptor.Booking.Cols.STIMEID, startid);
 		values.put(ContentDescriptor.Booking.Cols.STIME, stime);

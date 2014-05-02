@@ -54,6 +54,8 @@ public class MemberAddFragment extends Fragment implements OnClickListener, Date
 	DatePickerFragment mDatePicker;
 	private View view;
 	private LayoutInflater mInflater;
+	private String membername = null;
+	private boolean class_add = false;
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -62,6 +64,16 @@ public class MemberAddFragment extends Fragment implements OnClickListener, Date
 		mInflater = inflater;
 		view = (View) mInflater.inflate(R.layout.fragment_member_add, null); 
 		Services.setContext(getActivity());
+		
+		if (this.getArguments() != null) {
+			Bundle args = this.getArguments(); 
+			if (args.containsKey(Services.Statics.MID)) {
+				membername = getArguments().getString(Services.Statics.MID);
+			}
+			if (args.containsKey("class")) {
+				class_add = true;
+			}
+		}
 		
 		/*
 		 * This was the private-hidden setting used for determining if the last
@@ -90,6 +102,17 @@ public class MemberAddFragment extends Fragment implements OnClickListener, Date
 		buttondob.setOnClickListener(this);
 		mDatePicker = new DatePickerFragment();
 		mDatePicker.setDatePickerSelectListener(this);
+		
+		if (membername != null) {
+			EditText firstname = (EditText) view.findViewById(R.id.memberFirstName), 
+					surname = (EditText) view.findViewById(R.id.memberSurname);
+			if (membername.indexOf(" ") > 0) {
+				firstname.setText(membername.substring(0, membername.indexOf(" ")));
+				surname.setText(membername.substring(membername.indexOf(" "), membername.length()));
+			} else {
+				firstname.setText(membername);
+			}
+		}
 		
 		displayID();
 		
@@ -125,26 +148,22 @@ public class MemberAddFragment extends Fragment implements OnClickListener, Date
 				tag.add(memberid);
 				tag.add(null);
 				
-				Fragment f = new MemberDetailsFragment();
-				Bundle bdl = new Bundle(1);
-				bdl.putStringArrayList(VisitorsViewAdapter.EXTRA_ID, tag);
-				f.setArguments(bdl);
-				((MainActivity)getActivity()).changeFragment(f, "memberDetails");
-				/*Intent i = new Intent(getActivity(), EmptyActivity.class);
-				i.putExtra(Services.Statics.KEY, Services.Statics.FragmentType.MemberDetails.getKey());
-				i.putStringArrayListExtra(VisitorsViewAdapter.EXTRA_ID, tag);
-				this.startActivity(i);*/
-				
-				f = new MembershipAdd();
-				bdl = new Bundle(1);
-				bdl.putString(Services.Statics.MID, memberid);
-				f.setArguments(bdl);
-				((MainActivity)getActivity()).changeFragment(f, "MembershipAdd");
-				/*i = new Intent(getActivity(), EmptyActivity.class);
-				i.putExtra(Services.Statics.MID, memberid);
-				i.putExtra(Services.Statics.KEY, Services.Statics.FragmentType.MembershipAdd.getKey());
-				this.startActivity(i);*/
-				
+				if (!class_add) {
+					Fragment f = new MemberDetailsFragment();
+					Bundle bdl = new Bundle(1);
+					bdl.putStringArrayList(VisitorsViewAdapter.EXTRA_ID, tag);
+					f.setArguments(bdl);
+					((MainActivity)getActivity()).changeFragment(f, "memberDetails");
+					
+					f = new MembershipAdd();
+					bdl = new Bundle(1);
+					bdl.putString(Services.Statics.MID, memberid);
+					f.setArguments(bdl);
+					((MainActivity)getActivity()).changeFragment(f, "MembershipAdd");
+				} else {
+					((MainActivity)getActivity()).onBackPressed();
+					//we should probably add them to the class that we were in before.
+				}
 				
 			}else {
 				updateView(emptyFields);

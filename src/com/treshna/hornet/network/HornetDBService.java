@@ -2208,6 +2208,7 @@ public class HornetDBService extends Service {
     			values.put(ContentDescriptor.Class.Cols.DESC, rs.getString("description"));
     			values.put(ContentDescriptor.Class.Cols.MAX_ST, rs.getString("max_students"));
     			values.put(ContentDescriptor.Class.Cols.PRICE, rs.getString("price"));
+    			values.put(ContentDescriptor.Class.Cols.MULTIBOOK, rs.getString("multiplebookings"));
     			if (rs.getString("onlinebook").compareTo("t") ==0) {
     				values.put(ContentDescriptor.Class.Cols.ONLINE, 1);
     			} else {
@@ -5167,7 +5168,26 @@ public class HornetDBService extends Service {
     		cur.close();
     	}
     	
+    	return result;
+    }
+    
+    private int getProgrammeGroups(long last_update) { 
+    	int result = 0;
     	
+    	if (!openConnection()) {
+    		return -1;
+    	}
+    	
+    	try {
+    		ResultSet rs = connection.getProgrammeGroups(last_update);
+    		while (rs.next()) {
+    			
+    		}
+    	} catch (SQLException e) {
+    		statusMessage = e.getLocalizedMessage();
+    		Log.e(TAG, "", e);
+    		return -2;
+    	}
     	return result;
     }
 }

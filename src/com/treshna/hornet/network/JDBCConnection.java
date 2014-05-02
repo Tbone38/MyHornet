@@ -633,7 +633,7 @@ public class JDBCConnection {
     
     public ResultSet getClasses(String lastsync) throws SQLException, NullPointerException {
 	    	ResultSet rs = null;
-	    	String query = "SELECT id, name, max_students,  description, price, onlinebook FROM class "
+	    	String query = "SELECT id, name, max_students,  description, price, onlinebook, multiplebookings FROM class "
 	    	+" WHERE lastupdate > ?";
 	   
 	    	Date lastupdate = new Date(Long.valueOf(lastsync));
@@ -952,6 +952,7 @@ public class JDBCConnection {
 	    		pStatement.setTimestamp(1, new java.sql.Timestamp(last_sync));
 	    		rs = pStatement.executeQuery();
 	    	} catch (SQLException e) {
+	    		Log.d(TAG, "", e);
 	    		this.closePreparedStatement();
 	    		pStatement = con.prepareStatement("SELECT id, serial FROM idcard;");
 	    		rs = pStatement.executeQuery(); 
@@ -1497,6 +1498,13 @@ public ResultSet getReportTypes() throws SQLException {
     	pStatement.setInt(4, rid);
 
     	return pStatement.executeUpdate();
+    }
+    
+    public ResultSet getProgrammeGroups(long last_sync) throws SQLException {
+    	pStatement = con.prepareStatement("SELECT id, name, issuecard, historic FROM programmeGroup WHERE lastupdate > ?;");
+    	pStatement.setTimestamp(1, new java.sql.Timestamp(last_sync));
+    	
+    	return pStatement.executeQuery();
     }
 
     public SQLWarning getWarnings() throws SQLException, NullPointerException {
