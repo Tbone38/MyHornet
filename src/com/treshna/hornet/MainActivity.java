@@ -22,6 +22,7 @@ import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
@@ -32,6 +33,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.Tab;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -381,7 +383,8 @@ public class MainActivity extends NFCActivity {
 	
 	private void doSync() {
 		boolean dosync = false;
-
+		
+		int show_count = Integer.parseInt(Services.getAppSettings(getApplicationContext(), "show_count"));
 		String first_sync = Services.getAppSettings(getApplicationContext(), "first_sync");
 		dosync = (first_sync.compareTo("-1")==0);
 		
@@ -391,8 +394,30 @@ public class MainActivity extends NFCActivity {
     	 	this.startService(updateInt);
         	FullSync task = new FullSync();
         	task.execute(null, null);
+		} else if (show_count < 3) { //we really only want show this the first few times we load up.
+			new Handler().postDelayed(openDrawerRunnable(), 000);
+			new Handler().postDelayed(closeDrawerRunnable(), 1750);
+			Services.setPreference(getApplicationContext(), "show_count", String.valueOf((show_count+1)));
 		}
 	}
+	
+	private Runnable openDrawerRunnable() {
+	    return new Runnable() {
+	        @Override
+	        public void run() {
+	        	mDrawerLayout.openDrawer(Gravity.START);
+	        }
+	    };
+	 }
+	
+	private Runnable closeDrawerRunnable() {
+	    return new Runnable() {
+	        @Override
+	        public void run() {
+	        	mDrawerLayout.closeDrawers();
+	        }
+	    };
+	 }
 	
 	@Override
 	public void onPause() {

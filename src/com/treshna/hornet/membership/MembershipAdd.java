@@ -152,7 +152,8 @@ public class MembershipAdd extends Fragment implements OnClickListener, DatePick
 
 		
 		Spinner membershipgroup = (Spinner) page.findViewById(R.id.membershipgrouptype);
-		cur = contentResolver.query(ContentDescriptor.Programme.GROUP_URI, null, null, null, ContentDescriptor.Programme.Cols.GID);
+		//cur = contentResolver.query(ContentDescriptor.Programme.GROUP_URI, null, null, null, ContentDescriptor.Programme.Cols.GID);
+		cur = contentResolver.query(ContentDescriptor.ProgrammeGroup.CONTENT_URI, null, null, null, ContentDescriptor.ProgrammeGroup.Cols.ID);
 		if (cur.getCount() <= 1) {
 			membershipgroup.setVisibility(View.GONE);
 			TextView membership_label = (TextView) page.findViewById(R.id.membershipgrouptypeL);
@@ -160,7 +161,7 @@ public class MembershipAdd extends Fragment implements OnClickListener, DatePick
 		}
 		ArrayList<String> membershipgroups = new ArrayList<String>();
 		while (cur.moveToNext()) {
-			membershipgroups.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Programme.Cols.GNAME)));
+			membershipgroups.add(cur.getString(cur.getColumnIndex(ContentDescriptor.ProgrammeGroup.Cols.NAME)));
 		}
 		cur.close();
 		
@@ -173,11 +174,11 @@ public class MembershipAdd extends Fragment implements OnClickListener, DatePick
 			@Override
 			public void onItemSelected(AdapterView<?> parentView, View selectedView,
 					int position, long id) {
-				cur = contentResolver.query(ContentDescriptor.Programme.GROUP_URI, null, null, null, ContentDescriptor.Programme.Cols.GID);
+				cur = contentResolver.query(ContentDescriptor.ProgrammeGroup.CONTENT_URI, null, null, null, ContentDescriptor.ProgrammeGroup.Cols.ID);
 				if (!cur.moveToPosition(position)) {
 					//error!
 				}
-				groupid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Programme.Cols.GID));
+				groupid = cur.getInt(cur.getColumnIndex(ContentDescriptor.ProgrammeGroup.Cols.ID));
 				cur.close();
 				
 				Spinner membershiptype = (Spinner) page.findViewById(R.id.membershiptype);
@@ -408,9 +409,9 @@ public class MembershipAdd extends Fragment implements OnClickListener, DatePick
 		input.add(0, memberid);
 		
 		Spinner group = (Spinner) page.findViewById(R.id.membershipgrouptype);
-		cur = contentResolver.query(ContentDescriptor.Programme.GROUP_URI, null, null, null, null);
+		cur = contentResolver.query(ContentDescriptor.ProgrammeGroup.CONTENT_URI, null, null, null, ContentDescriptor.ProgrammeGroup.Cols.ID);
 		cur.moveToPosition(group.getSelectedItemPosition());
-		int pgid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Programme.Cols.GID));
+		int pgid = cur.getInt(cur.getColumnIndex(ContentDescriptor.ProgrammeGroup.Cols.ID));
 		cur.close();
 		input.add(1, String.valueOf(pgid));
 		

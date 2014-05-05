@@ -853,13 +853,13 @@ public class HornetContentProvider extends ContentProvider {
             	builder.setTables(ContentDescriptor.Programme.NAME);
             	return builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
             }
-            case ContentDescriptor.Programme.PATH_FOR_GROUP_TOKEN:{
+            /*case ContentDescriptor.Programme.PATH_FOR_GROUP_TOKEN:{
             	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
             	builder.setTables(ContentDescriptor.Programme.NAME);
             	return builder.query(db, new String[] {ContentDescriptor.Programme.Cols.GID,
             			ContentDescriptor.Programme.Cols.GNAME}, selection, selectionArgs, 
             			ContentDescriptor.Programme.Cols.GNAME, null, sortOrder);
-            }
+            }*/
             case ContentDescriptor.Door.PATH_TOKEN:{
             	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
             	builder.setTables(ContentDescriptor.Door.NAME);

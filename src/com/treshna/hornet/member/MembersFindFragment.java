@@ -325,10 +325,10 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 		 
 		 Spinner select_programmegroup = (Spinner) v.findViewById(R.id.programmegroup_spinner);
 		 ArrayList<String> programmegroups = new ArrayList<String>();
-		 Cursor cur = contentResolver.query(ContentDescriptor.Programme.GROUP_URI, null, null, null, null);
+		 Cursor cur = contentResolver.query(ContentDescriptor.ProgrammeGroup.CONTENT_URI, null, null, null, null);
 		 programmegroups.add(" ");
 		 while (cur.moveToNext()) {
-			 programmegroups.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Programme.Cols.GNAME)));
+			 programmegroups.add(cur.getString(cur.getColumnIndex(ContentDescriptor.ProgrammeGroup.Cols.NAME)));
 		 }
 		 cur.close();
 		 

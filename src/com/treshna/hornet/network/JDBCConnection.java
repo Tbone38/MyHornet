@@ -1231,7 +1231,7 @@ public class JDBCConnection {
     public ResultSet getKPIs() throws SQLException {
     	boolean kpi_available = false;
     	try {									//currently set to 319 for demo-ing purposes.
-    		pStatement = con.prepareStatement("SELECT * FROM checkversion_atleast(319);"); //THIS needs to be 320
+    		pStatement = con.prepareStatement("SELECT * FROM checkversion_atleast(320);"); 
     		ResultSet rs = pStatement.executeQuery();
     		rs.next();
     		if (rs.getInt(1)==0) {
@@ -1501,10 +1501,38 @@ public ResultSet getReportTypes() throws SQLException {
     }
     
     public ResultSet getProgrammeGroups(long last_sync) throws SQLException {
-    	pStatement = con.prepareStatement("SELECT id, name, issuecard, historic FROM programmeGroup WHERE lastupdate > ?;");
+    	pStatement = con.prepareStatement("SELECT id, name, issuecard, historic FROM programmegroup WHERE lastupdate > ?;");
     	pStatement.setTimestamp(1, new java.sql.Timestamp(last_sync));
     	
     	return pStatement.executeQuery();
+    }
+    public ResultSet getProgrammeGroups() throws SQLException {
+    	pStatement = con.prepareStatement("SELECT id, name, issuecard, historic FROM programmegroup ;");
+    	
+    	return pStatement.executeQuery();
+    }
+    
+    //uploadProgrammeGroup, updateProgrammeGroup.
+    public int uploadProgrammeGroup(int id, String name, String historic, String issuecards) throws SQLException {
+    	pStatement = con.prepareStatement("INSERT INTO programmegroup (id, name, historic, issuecard) VALUES (?, ?, ?::BOOLEAN, ?::BOOLEAN);");
+    	pStatement.setInt(1, id);
+    	pStatement.setString(2, name);
+    	pStatement.setString(3, historic);
+    	pStatement.setString(4, issuecards);
+    	
+    	Log.w(TAG, pStatement.toString());
+    	return pStatement.executeUpdate();
+    }
+    
+    public int updateProgrammeGroup(int id, String name, String historic, String issuescards) throws SQLException {
+    	pStatement = con.prepareStatement("UPDATE programmegroup SET (name, historic, issuecard) = (?, ?::BOOLEAN, ?::BOOLEAN) WHERE id = ?");
+    	
+    	pStatement.setString(1, name);
+    	pStatement.setString(2, historic);
+    	pStatement.setString(3, issuescards);
+    	pStatement.setInt(4, id);
+    	
+    	return pStatement.executeUpdate();
     }
 
     public SQLWarning getWarnings() throws SQLException, NullPointerException {

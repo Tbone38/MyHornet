@@ -104,17 +104,13 @@ KEY:
                 get password encryption working.
                 Format/Default time to 12hr. (?)
                 Booking view showing multiple days for selected resource.
-                get DD working for bluepay..?
-                Cancel Member Hold. --I think adjusting the expiry is better.
                 Improve sync-times/OutOfMemory Issues.
                 Record Emails/SMS sent from app in gymmaster device.
                 Test Access Control, does it/can we get it working with the GymMaster Access/Security Control (Using Views?)?
                 Issue with sync table: the servertime isn't being set correctly.
                 Fix the PollingHandler running on the UI thread. (blocking etc).
                 Improve Performance of the Booking Overview page.
-                Membership complete "Add Tag" doesn't work. Find out why...
-                ReDesign member Details Layout:
-                    - Heading
+                Membership complete "Add Tag" doesn't work. Resolved, needs testing.
                 Do an app walkthrough
                 Make the sync process more robust by checking that each function returns 0 or more. 
                     If we get less than 0 than we've encountered an error, try continuing but don't update the "last_sync" time..?
@@ -134,8 +130,11 @@ KEY:
                     How do we handle casuals?
                 Gallery seems to behaive weirdly (multiple images show up as profile, even when only one is..?)
                 Bug with removing member from class. It sometimes gets really odd. Look at whats causing it (weird issue with the list binding?)
-		Set all the toasts to go through the Services.app so that they take into consideration user settings.
-		Show further details in class View when tablet-horizontal.
+				Set all the toasts to go through the Services.app so that they take into consideration user settings.
+				Show further details in class View when tablet-horizontal.
+				Change the setup to have lists/etc to allow easy editing of current items, as well as adding new items.
+				Fix image behaviour.
+				Hold/Free Time switch, free time hides the Hold Fee radios, as well as the prorata check boxes.
 
     
     v119:

@@ -184,12 +184,14 @@ public class HornetDBService extends Service {
 			getIdCardID();
 			getImageID();
 			getResourceID();
+			getProgrammeGroupID();
 			int sid_count = getSuspendID();
 			if (sid_count < 0) {
 				Services.showToast(getApplicationContext(), statusMessage, handler);
 			}
 			
 			//do uploads //ORDER MATTERS!
+			uploadProgrammeGroup();
 			uploadMember();
 			uploadProspects();
 			uploadMembership();
@@ -201,6 +203,7 @@ public class HornetDBService extends Service {
 			uploadBookings();
 			insertResource();
 			updateResource();
+			updateProgrammeGroup();
 			int classcount = uploadClass();
 			Log.d(TAG, "Uploaded "+classcount+" Classes");
 			int upload_sid_count = uploadSuspends();
@@ -223,6 +226,7 @@ public class HornetDBService extends Service {
 			getResource(last_sync);
 			getMember(last_sync);
 			getProgrammes(last_sync);
+			getProgrammeGroups(last_sync);
 			getMembership(last_sync);
 			getMembershipSuspends(last_sync);
 			getClasses(last_sync);
@@ -330,6 +334,7 @@ public class HornetDBService extends Service {
 		   
 		   getResourceType(last_sync);
 		   getProgrammes(0);
+		   getProgrammeGroups(0);
 		   getBookings(0);
 		   getClasses(-1);
 		   getImageID();
@@ -370,6 +375,7 @@ public class HornetDBService extends Service {
 		   getMemberNoteID();
 		   getBookingID();
 		   getResourceID();
+		   getProgrammeGroupID();
 		   int midcount = getMemberID();
 		   if (midcount != 0) statusMessage = " Sign-up's available";
 		   if (statusMessage != null && statusMessage.length() > 3 ) {
@@ -5179,15 +5185,160 @@ public class HornetDBService extends Service {
     	}
     	
     	try {
-    		ResultSet rs = connection.getProgrammeGroups(last_update);
-    		while (rs.next()) {
+    		ResultSet rs;
+    		try {
+    			 rs = connection.getProgrammeGroups(last_update);
+    		} catch (SQLException e) {
+    			connection.closePreparedStatement();
+    			rs = connection.getProgrammeGroups();
+    		}
     			
+    		while (rs.next()) {
+    			ContentValues values = new ContentValues();
+    			values.put(ContentDescriptor.ProgrammeGroup.Cols.ID, rs.getString("id"));
+    			values.put(ContentDescriptor.ProgrammeGroup.Cols.NAME, rs.getString("name"));
+    			values.put(ContentDescriptor.ProgrammeGroup.Cols.ISSUECARD, rs.getString("issuecard"));
+    			values.put(ContentDescriptor.ProgrammeGroup.Cols.HISTORIC, rs.getString("historic"));
+    			
+    			cur = contentResolver.query(ContentDescriptor.ProgrammeGroup.CONTENT_URI, null, ContentDescriptor.ProgrammeGroup.Cols.ID+" = ?",
+    					new String[] {rs.getString("id")}, null);
+    			if (cur.moveToFirst()) { //update 
+    				contentResolver.update(ContentDescriptor.ProgrammeGroup.CONTENT_URI, values, ContentDescriptor.ProgrammeGroup.Cols.ID+" = ?",
+    						new String[] {rs.getString("id")});
+    			} else {
+    				contentResolver.insert(ContentDescriptor.ProgrammeGroup.CONTENT_URI, values);
+    			}
+    			cur.close();
+    			result +=1;
     		}
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
     		Log.e(TAG, "", e);
     		return -2;
     	}
+    	closeConnection();
+    	
+    	return result;
+    }
+    
+    private int getProgrammeGroupID() {
+    	int result = 0;
+    	int free_count = 0;
+    	
+    	cur = contentResolver.query(ContentDescriptor.FreeIds.CONTENT_URI, null, ContentDescriptor.FreeIds.Cols.TABLEID+" = ?",
+    			new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.ProgrammeGroup.getKey())}, null);
+    	free_count = cur.getCount();
+    	cur.close();
+    	
+    	if (!openConnection()) {
+    		return -1;
+    	}
+    	
+    	for (int i=(10-free_count);i > 0; i--){
+    		try {
+    			ResultSet rs = connection.startStatementQuery("SELECT nextval('programmegroup_id_seq');");
+    			
+    			rs.next();
+    			
+    			ContentValues values = new ContentValues();
+    			values.put(ContentDescriptor.FreeIds.Cols.ROWID, rs.getString("nextval"));
+    			values.put(ContentDescriptor.FreeIds.Cols.TABLEID,
+    					ContentDescriptor.TableIndex.Values.ProgrammeGroup.getKey());
+    			
+    			contentResolver.insert(ContentDescriptor.FreeIds.CONTENT_URI, values);
+    			connection.closeStatementQuery();
+    			result +=1;
+    		} catch (SQLException e) {
+    			statusMessage = e.getLocalizedMessage();
+    			Log.e(TAG, "", e);
+    			return -2;
+    		}
+    	}
+    	
+    	closeConnection();
+    	return result;
+    }
+    
+    private int updateProgrammeGroup() {
+    	int result = 0;
+    	
+    	Cursor pendings = contentResolver.query(ContentDescriptor.PendingUpdates.CONTENT_URI, null, ContentDescriptor.PendingUpdates.Cols.TABLEID+" = ?",
+    			new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.ProgrammeGroup.getKey())}, null);
+    	
+    	if (!openConnection()) {
+    		return -1;
+    	}
+    	
+    	while (pendings.moveToNext()) {
+    		String pendingid = pendings.getString(pendings.getColumnIndex(ContentDescriptor.PendingUpdates.Cols.ROWID));
+    		try {
+	    		cur = contentResolver.query(ContentDescriptor.ProgrammeGroup.CONTENT_URI, null, ContentDescriptor.ProgrammeGroup.Cols.ID+" = ?", 
+	    				new String[] {pendingid}, null);
+	    		if (!cur.moveToFirst()) {
+	    			//throw a fit.
+	    			Log.e(TAG, "Could not find row for id = "+pendings.getString(pendings.getColumnIndex(ContentDescriptor.PendingUpdates.Cols.ROWID)),
+	    					new Exception());
+	    		} else {
+	    			connection.updateProgrammeGroup(cur.getInt(cur.getColumnIndex(ContentDescriptor.ProgrammeGroup.Cols.ID)),
+	    					cur.getString(cur.getColumnIndex(ContentDescriptor.ProgrammeGroup.Cols.NAME)),
+	    					cur.getString(cur.getColumnIndex(ContentDescriptor.ProgrammeGroup.Cols.HISTORIC)),
+	    					cur.getString(cur.getColumnIndex(ContentDescriptor.ProgrammeGroup.Cols.ISSUECARD)));
+	    			
+	    			result +=1;
+	    			connection.closePreparedStatement();
+	    		}
+    		} catch (SQLException e) {
+	    		statusMessage = e.getLocalizedMessage();
+	    		Log.e(TAG, "", e);
+	    		/*Return? */
+    		} finally {
+    			contentResolver.delete(ContentDescriptor.PendingUpdates.CONTENT_URI, ContentDescriptor.PendingUpdates.Cols.ROWID+" = ? AND "
+    					+ContentDescriptor.PendingUpdates.Cols.TABLEID+" = ?", new String[] {pendingid, 
+    					String.valueOf(ContentDescriptor.TableIndex.Values.ProgrammeGroup.getKey())});
+    		}
+    	}
+    	
+    	closeConnection();
+    	return result;
+    }
+    
+    private int uploadProgrammeGroup() {
+    	int result = 0;
+    	
+    	Cursor pendings = contentResolver.query(ContentDescriptor.PendingUploads.CONTENT_URI, null, ContentDescriptor.PendingUploads.Cols.TABLEID+" = ?",
+    			new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.ProgrammeGroup.getKey())}, null);
+    	
+    	if (!openConnection()) {
+    		return -1;
+    	}
+    	
+    	while (pendings.moveToNext()) {
+    		String pendingid = pendings.getString(pendings.getColumnIndex(ContentDescriptor.PendingUploads.Cols.ROWID));
+    		try {
+    			cur = contentResolver.query(ContentDescriptor.ProgrammeGroup.CONTENT_URI, null, ContentDescriptor.ProgrammeGroup.Cols.ID+" = ?",
+    					new String[] {pendingid}, null);
+    			if (cur.moveToFirst()) {
+	    			connection.uploadProgrammeGroup(cur.getInt(cur.getColumnIndex(ContentDescriptor.ProgrammeGroup.Cols.ID)),
+	    					cur.getString(cur.getColumnIndex(ContentDescriptor.ProgrammeGroup.Cols.NAME)),
+	    					cur.getString(cur.getColumnIndex(ContentDescriptor.ProgrammeGroup.Cols.HISTORIC)),
+	    					cur.getString(cur.getColumnIndex(ContentDescriptor.ProgrammeGroup.Cols.ISSUECARD)));
+	    			result +=1;
+	    			connection.closePreparedStatement();
+    			} else {
+    				Log.e(TAG, "Could not find ProgrammeGroup with id "+pendingid, new Exception());
+    			}
+    		} catch (SQLException e) {
+    			statusMessage = e.getLocalizedMessage();
+    			Log.e(TAG, "", e);
+    			/*return -2;DO WE RETURN HERE?*/
+    		} finally {
+    			contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, ContentDescriptor.PendingUploads.Cols.ROWID+" = ? AND "
+    					+ContentDescriptor.PendingUpdates.Cols.TABLEID+" = ?", new String[] {pendingid, String.valueOf(
+    					ContentDescriptor.TableIndex.Values.ProgrammeGroup.getKey())});
+    		}
+    	}
+    	
+    	closeConnection();
     	return result;
     }
 }

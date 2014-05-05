@@ -135,7 +135,6 @@ public class ContentDescriptor {
 	     matcher.addURI(authority, IdCard.PATH, IdCard.PATH_TOKEN);
 	     matcher.addURI(authority, PaymentMethod.PATH, PaymentMethod.PATH_TOKEN);
 	     matcher.addURI(authority, Programme.PATH, Programme.PATH_TOKEN);
-	     matcher.addURI(authority, Programme.PATH_FOR_GROUP, Programme.PATH_FOR_GROUP_TOKEN);
 	     matcher.addURI(authority, Visitor.PATH_VISIT_PROGRAMME, Visitor.TOKEN_VISIT_PROGRAMME);
 	     
 	     matcher.addURI(authority, Door.PATH, Door.PATH_TOKEN);
@@ -608,10 +607,10 @@ public class ContentDescriptor {
 	 		public static final int PATH_TOKEN = 360;
 	 		public static final String PATH_FOR_ID = "Programme/*";
 	 		public static final int PATH_FOR_ID_TOKEN = 370;
-	 		public static final String PATH_FOR_GROUP = "ProgrammeGroup";
-	 		public static final int PATH_FOR_GROUP_TOKEN = 371;
+	 		//public static final String PATH_FOR_GROUP = "ProgrammeGroup";
+	 		//public static final int PATH_FOR_GROUP_TOKEN = 371;
 	 		
-	 		public static final Uri GROUP_URI = BASE_URI.buildUpon().appendPath(PATH_FOR_GROUP).build();
+	 		//public static final Uri GROUP_URI = BASE_URI.buildUpon().appendPath(PATH_FOR_GROUP).build();
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
 	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.programme";
 	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.programme";
@@ -1404,6 +1403,11 @@ public class ContentDescriptor {
 	 		public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(PATH).build();
 	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.programmegroup";
 	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.programmegroup";
+	 		
+	 		public static class Triggers {
+	 			public static final String ON_INSERT = "programmegroup_insert";
+	 			public static final String ON_UPDATE = "programmegroup_update";
+	 		}
 	 		
 	 		public static class Cols implements BaseColumns {
 	 			public static final String ID = "programmegroupid";

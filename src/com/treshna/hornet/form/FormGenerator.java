@@ -49,6 +49,16 @@ public class FormGenerator {
 		return theView;
 	}
 	
+	private void setLabelRed(View v) {
+		TextView label = (TextView) v.findViewById(R.id.label);
+		label.setTextColor(Color.RED);
+	}
+	
+	private void setLabelBlack(View v) {
+		TextView label = (TextView) v.findViewById(R.id.label);
+		label.setTextColor(Color.BLACK);
+	}
+	
 	public void addEditText(String label_text, int id, String key, String default_text) {
 		RelativeLayout editLayout = (RelativeLayout) mInflater.inflate(R.layout.item_edit_text, null);
 		editLayout.setId(id);
@@ -65,20 +75,21 @@ public class FormGenerator {
 		mView.addView(editLayout);
 	}
 	
-	public String getEditText(int id) {
+	public String getEditText(int id, String defaultText) {
 		String result = null;
 		RelativeLayout resource_name = (RelativeLayout) mView.findViewById(id);
 		EditText name_edit = (EditText) resource_name.findViewById(R.id.edit_text);
 		if (name_edit.getText().toString().isEmpty() || name_edit.getText().toString().replace(" ", "").isEmpty()) {
-			TextView label = (TextView) resource_name.findViewById(R.id.label);
-			label.setTextColor(Color.RED);
+			setLabelRed(resource_name);
+		} else if (defaultText != null && name_edit.getText().toString().compareTo(defaultText) == 0) {
+			setLabelRed(resource_name);
 		} else {
-			TextView label = (TextView) resource_name.findViewById(R.id.label);
-			label.setTextColor(Color.BLACK);
+			setLabelBlack(resource_name);
 			result = name_edit.getText().toString();
 		}
 		return result;
 	}
+	
 	
 	public void addSpinner(String label_text, int id, String key, ArrayList<String> contents) {
 		RelativeLayout spinnerLayout = (RelativeLayout) mInflater.inflate(R.layout.item_spinner, null);
@@ -142,11 +153,9 @@ public class FormGenerator {
 		TextView click = (TextView) clickLayout.findViewById(R.id.clickable_text);
 		if (click.getText().toString().compareTo(default_text) == 0 || 
 				click.getText().toString().replace(" ", "").isEmpty()) {
-			TextView label = (TextView) clickLayout.findViewById(R.id.label);
-			label.setTextColor(Color.RED);
+			setLabelRed(clickLayout);
 		} else {
-			TextView label = (TextView) clickLayout.findViewById(R.id.label);
-			label.setTextColor(Color.BLACK);
+			setLabelBlack(clickLayout);
 			result = click.getText().toString();
 		}
 		

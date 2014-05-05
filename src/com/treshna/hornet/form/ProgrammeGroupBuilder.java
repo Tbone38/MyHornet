@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Toast;
 
 import com.treshna.hornet.R;
 import com.treshna.hornet.sqlite.ContentDescriptor;
@@ -59,7 +60,7 @@ public class ProgrammeGroupBuilder implements FormGenerator.FormBuilder, OnClick
 	private boolean isValid() {
 		boolean is_validated = true;
 		
-		is_validated = (formgen.getEditText(RES_NAME_ID) == null) ? false : true;
+		is_validated = (formgen.getEditText(RES_NAME_ID, null) == null) ? false : true;
 		
 		
 		return is_validated;
@@ -68,7 +69,7 @@ public class ProgrammeGroupBuilder implements FormGenerator.FormBuilder, OnClick
 	private void saveProgrammeGroup() {
 		ContentValues values = new ContentValues();
 		
-		values.put(ContentDescriptor.ProgrammeGroup.Cols.NAME, formgen.getEditText(RES_NAME_ID));
+		values.put(ContentDescriptor.ProgrammeGroup.Cols.NAME, formgen.getEditText(RES_NAME_ID, null));
 		values.put(ContentDescriptor.ProgrammeGroup.Cols.ISSUECARD, ((formgen.getCheckBox(RES_ISSUECARDS_ID) == false)? "f" : "t"));
 		values.put(ContentDescriptor.ProgrammeGroup.Cols.HISTORIC, ((formgen.getCheckBox(RES_HIST_ID) == false)? "f" : "t"));
 		values.put(ContentDescriptor.ProgrammeGroup.Cols.DEVICESIGNUP, "t");
@@ -80,8 +81,9 @@ public class ProgrammeGroupBuilder implements FormGenerator.FormBuilder, OnClick
 			Cursor cur = mResolver.query(ContentDescriptor.FreeIds.CONTENT_URI, null, ContentDescriptor.FreeIds.Cols.TABLEID+" = ?",
 					new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.ProgrammeGroup.getKey())}, null);
 			if (!cur.moveToFirst()) {
-				//no ids available. throw a fit!
-				throw new RuntimeException("FRIDAYS!"); //FIXME show a toast? 
+				//Services.showToast(mActivity, "No Programme Group ID's are available. Try syncing the device first.", null); 
+				Toast.makeText(mActivity, "No Programme Group ID's are available. Try syncing the device first.", Toast.LENGTH_LONG).show();
+				return;
 			}
 			pgID = cur.getInt(cur.getColumnIndex(ContentDescriptor.FreeIds.Cols.ROWID));
 			cur.close();
@@ -103,6 +105,7 @@ public class ProgrammeGroupBuilder implements FormGenerator.FormBuilder, OnClick
 			//save it.
 			if (isValid()) {
 				saveProgrammeGroup();
+				mActivity.onBackPressed();
 			}
 			break;
 		}

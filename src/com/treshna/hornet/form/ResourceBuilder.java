@@ -66,7 +66,7 @@ public class ResourceBuilder implements FormGenerator.FormBuilder, OnClickListen
 	private boolean isValid() {
 		boolean is_validated = true;
 		
-		is_validated = (formgen.getEditText(RES_NAME_ID) == null) ? false : true;
+		is_validated = (formgen.getEditText(RES_NAME_ID, null) == null) ? false : true;
 		
 		
 		return is_validated;
@@ -74,7 +74,7 @@ public class ResourceBuilder implements FormGenerator.FormBuilder, OnClickListen
 	
 	private void saveResource() {
 		ContentValues values = new ContentValues();
-		values.put(ContentDescriptor.Resource.Cols.NAME, formgen.getEditText(RES_NAME_ID));
+		values.put(ContentDescriptor.Resource.Cols.NAME, formgen.getEditText(RES_NAME_ID, null));
 		if (formgen.getCheckBox(RES_HIST_ID)) {
 			values.put(ContentDescriptor.Resource.Cols.HISTORY, "t");
 		} else {

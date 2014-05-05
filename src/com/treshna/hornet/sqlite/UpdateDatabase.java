@@ -920,6 +920,22 @@ public class UpdateDatabase {
 				+ProgrammeGroup.Cols.HISTORIC+" TEXT DEFAULT 'f', "+ProgrammeGroup.Cols.ISSUECARD+" TEXT DEFAULT 't', "
 				+ProgrammeGroup.Cols.DEVICESIGNUP+" TEXT DEFAULT 'f' "
 				+");";
+		
+		private static final String SQL28 = "CREATE TRIGGER "+ProgrammeGroup.Triggers.ON_INSERT+" AFTER INSERT ON "+ProgrammeGroup.NAME
+				+" FOR EACH ROW WHEN new."+ProgrammeGroup.Cols.DEVICESIGNUP+" = 't' "
+				+"BEGIN "
+					+"INSERT OR REPLACE INTO "+PendingUploads.NAME
+					+" ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
+					+" VALUES (new."+ProgrammeGroup.Cols.ID+", "+TableIndex.Values.ProgrammeGroup.getKey()+" );"
+				+"END;";
+		
+		private static final String SQL29 = "CREATE TRIGGER "+ProgrammeGroup.Triggers.ON_UPDATE+" AFTER UPDATE ON "+ProgrammeGroup.NAME
+				+" FOR EACH ROW WHEN new."+ProgrammeGroup.Cols.DEVICESIGNUP+" = 't' "
+				+"BEGIN "
+					+"INSERT OR REPLACE INTO "+PendingUpdates.NAME
+					+" ("+PendingUpdates.Cols.ROWID+", "+PendingUpdates.Cols.TABLEID+")"
+					+" VALUES (old."+ProgrammeGroup.Cols.ID+", "+TableIndex.Values.ProgrammeGroup.getKey()+");"
+				+"END;";
 				
 		public static void patchNinetySix(SQLiteDatabase db) {
 			db.beginTransaction();
@@ -978,6 +994,10 @@ public class UpdateDatabase {
 				db.execSQL(SQL26);
 				Log.w(HornetDatabase.class.getName(), "\n"+SQL27);
 				db.execSQL(SQL27);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL28);
+				db.execSQL(SQL28);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL29);
+				db.execSQL(SQL29);
 				db.setTransactionSuccessful();
 			/*} catch (SQLException e) {
 			e.printStackTrace();

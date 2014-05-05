@@ -282,15 +282,18 @@ public class Services {
 	public static void showToast(final Context ctx, final String message, Handler handler) {
 		
 		DEBUG = PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean("toast", true);
-		
-		if (DEBUG == true) {
-			handler.post(new Runnable() {  
-					@Override  
-					public void run() {  
-						if (message != null && !message.isEmpty() && message.length() >= 5) {
-							Toast.makeText(ctx, message, Toast.LENGTH_LONG).show();
-						}
-					}});
+		if (handler != null) {
+			if (DEBUG == true) {
+				handler.post(new Runnable() {  
+						@Override  
+						public void run() {  
+							if (message != null && !message.isEmpty() && message.length() >= 5) {
+								Toast.makeText(ctx, message, Toast.LENGTH_LONG).show();
+							}
+						}});
+			}
+		} else {
+			Toast.makeText(ctx, message, Toast.LENGTH_LONG).show();
 		}
 	}
 	
