@@ -10,9 +10,11 @@
   <string name="membership_length">Duration</string>
   <string name="membership_reason">Reason For Hold</string>
   <string name="membership_holdfee">Hold Fee</string>
+  <string name="hold_type">Type</string>
+  <string name="membership_hold">Hold</string>
   <string name="holdfee_free">Free</string>
   <string name="holdfee_free_hint">Membership is Free through the period.</string>
-  <string name="holdfee_free_time">Free Time *</string>
+  <string name="holdfee_free_time">Free Time</string>
   <string name="holdfee_free_time_hint">Extends the membership by adding free time.</string>
   <string name="holdfee_free_time_details">* this option extends membership, ignoring Prorata and End Hold configuration.</string>
   <string name="holdfee_fullcost">Full Cost</string>

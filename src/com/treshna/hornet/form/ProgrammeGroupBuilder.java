@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
@@ -21,7 +22,7 @@ public class ProgrammeGroupBuilder implements FormGenerator.FormBuilder, OnClick
 	private ContentResolver mResolver;
 	
 	private static final int RES_NAME_ID = 1;
-	private static final int RES_ISSUECARDS_ID = 3;
+	private static final int RES_ISSUECARDS_ID = 2;
 	private static final int RES_HIST_ID = 3;
 	private static final int RES_SAVE_ID = 4;
 	private static final int RES_CANCEL_ID = 5;
@@ -39,7 +40,22 @@ public class ProgrammeGroupBuilder implements FormGenerator.FormBuilder, OnClick
 	public View generateForm() {
 		
 		if (pgID > 0) { //do a look up, use those values as default in the edit field. handle on the on save clicking.
-			
+			Cursor cur = mResolver.query(ContentDescriptor.ProgrammeGroup.CONTENT_URI, null, ContentDescriptor.ProgrammeGroup.Cols.ID+" = ?",
+					new String [] {String.valueOf(pgID)}, null);
+			if (cur.moveToFirst()) {
+				formgen.addHeading(mActivity.getString(R.string.programme_group_edit));
+				
+				formgen.addEditText(mActivity.getString(R.string.programme_group_name), RES_NAME_ID, ProgrammeGroup.Cols.NAME, 
+						cur.getString(cur.getColumnIndex(ContentDescriptor.ProgrammeGroup.Cols.NAME)));
+				
+				formgen.addCheckBox(mActivity.getString(R.string.programme_group_issue_card), RES_ISSUECARDS_ID, ProgrammeGroup.Cols.ISSUECARD, 
+					(cur.getString(cur.getColumnIndex(ContentDescriptor.ProgrammeGroup.Cols.ISSUECARD)).compareTo("t")==0)? true : false);
+				
+				formgen.addCheckBox(mActivity.getString(R.string.programme_group_historic), RES_HIST_ID, ProgrammeGroup.Cols.HISTORIC, 
+					(cur.getString(cur.getColumnIndex(ContentDescriptor.ProgrammeGroup.Cols.HISTORIC)).compareTo("t")==0)? true : false);
+				
+				formgen.addButtonRow(mActivity.getString(R.string.buttonSave), mActivity.getString(R.string.buttonCancel), RES_SAVE_ID, RES_CANCEL_ID, this);
+			}
 		} else {
 			
 			formgen.addHeading(mActivity.getString(R.string.programme_group_add));
@@ -77,6 +93,7 @@ public class ProgrammeGroupBuilder implements FormGenerator.FormBuilder, OnClick
 		if (pgID > 0) {
 			mResolver.update(ContentDescriptor.ProgrammeGroup.CONTENT_URI, values, ContentDescriptor.ProgrammeGroup.Cols.ID+" = ?",
 					new String[] {String.valueOf(pgID)});
+			mResolver.notifyChange(ContentDescriptor.ProgrammeGroup.CONTENT_URI, null);
 		} else { //INSERT, with a key.
 			Cursor cur = mResolver.query(ContentDescriptor.FreeIds.CONTENT_URI, null, ContentDescriptor.FreeIds.Cols.TABLEID+" = ?",
 					new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.ProgrammeGroup.getKey())}, null);

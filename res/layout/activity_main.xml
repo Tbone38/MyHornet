@@ -23,7 +23,7 @@
     	    android:choiceMode="singleChoice"
     	    android:divider="@android:color/transparent"
     	    android:dividerHeight="1dp"
-    	    android:background="@color/white" />
+    	    android:background="@color/action_bar" />
     		<RelativeLayout
     		    android:id="@+id/button_lastsync"
     		    android:layout_width="match_parent"

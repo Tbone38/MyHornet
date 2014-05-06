@@ -41,7 +41,8 @@
         android:allowClearUserData="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/CustomActionBarTheme" >
+        <!-- android:theme="@style/AppTheme" -->
         <provider
             android:name="com.treshna.hornet.sqlite.HornetContentProvider"
             android:authorities="com.treshna.hornet"
@@ -53,7 +54,7 @@
         <activity
             android:name="com.treshna.hornet.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/Theme.AppCompat.Light"
+            android:theme="@style/CustomActionBarTheme"
             android:windowSoftInputMode="stateHidden" >
             <intent-filter>
                 <action android:name="android.nfc.action.TECH_DISCOVERED" />
@@ -71,7 +72,7 @@
         <activity
             android:name="com.treshna.hornet.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:theme="@style/Theme.AppCompat.Light" >
+            android:theme="@style/CustomActionBarTheme" >
         </activity>
         <activity
             android:name="com.treshna.hornet.services.CameraWrapper"

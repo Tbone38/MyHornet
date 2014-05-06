@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/listRow"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp"
+    android:paddingLeft="10dp"
+    android:layout_margin="7dp"
+    android:descendantFocusability="blocksDescendants"
+    android:baselineAligned="false"
+    android:clickable="true"
+    android:background="@drawable/navigation_selector"
+    android:orientation="horizontal" >
+    <TextView
+        android:id="@+id/programme_group_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight=".3"
+        android:text="Group Name" 
+        android:textSize="18sp"
+        android:textIsSelectable="false"
+        android:clickable="false"
+    	android:focusable="false"
+    	android:focusableInTouchMode="false"
+        android:paddingLeft="10dp"/>
+    <TextView
+        android:id="@+id/programme_group_cards"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight=".3"
+        android:text="Membership Cards" 
+        android:textSize="18sp"
+        android:textIsSelectable="false"
+        android:clickable="false"
+    	android:focusable="false"
+    	android:focusableInTouchMode="false"
+        android:paddingLeft="10dp"/>
+    
+    <TextView
+        android:id="@+id/programme_group_historic"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight=".3"
+        android:text="Historic" 
+        android:textSize="18sp"
+        android:textIsSelectable="false"
+        android:clickable="false"
+    	android:focusable="false"
+    	android:focusableInTouchMode="false"
+        android:paddingLeft="10dp"/>
+    
+</LinearLayout>

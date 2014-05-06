@@ -20,8 +20,8 @@
         
         <item >Setup</item>
         <item >Add Class</item>
-        <item>Add Resource</item>
-        <item>Add ProgrammeGroup</item>
+        <item>Resources</item>
+        <item>Programme Groups</item>
     </string-array>
      
     <!-- Nav Drawer List Item Icons -->

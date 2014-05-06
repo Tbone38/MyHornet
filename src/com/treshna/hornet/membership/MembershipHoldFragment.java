@@ -6,45 +6,38 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
+import android.annotation.SuppressLint;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.RadioGroup.OnCheckedChangeListener;
+import android.widget.Switch;
+import android.widget.TextView;
+
 import com.treshna.hornet.R;
-import com.treshna.hornet.R.id;
-import com.treshna.hornet.R.layout;
-import com.treshna.hornet.R.string;
 import com.treshna.hornet.network.HornetDBService;
 import com.treshna.hornet.services.DatePickerFragment;
 import com.treshna.hornet.services.Services;
 import com.treshna.hornet.sqlite.ContentDescriptor;
 
-import android.annotation.SuppressLint;
-import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.graphics.Color;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.NavUtils;
-import android.support.v7.app.ActionBar;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.View.OnClickListener;
-import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.RadioGroup.OnCheckedChangeListener;
-import android.widget.TextView;
-
 
 public class MembershipHoldFragment extends Fragment implements OnClickListener, DatePickerFragment.DatePickerSelectListener,
-		OnCheckedChangeListener{
+		OnCheckedChangeListener, android.widget.CompoundButton.OnCheckedChangeListener{
 	
 	private String sdatevalue;
 	DatePickerFragment sdatePicker;
@@ -99,6 +92,9 @@ public class MembershipHoldFragment extends Fragment implements OnClickListener,
 		cancel.setClickable(true);
 		cancel.setOnClickListener(this);
 		
+		Switch switch_view = (Switch) view.findViewById(R.id.holdfee_freetime);
+		switch_view.setOnCheckedChangeListener(this);
+		
 		if (theid > 0) {
 			fillinViews();
 		}
@@ -125,8 +121,7 @@ public class MembershipHoldFragment extends Fragment implements OnClickListener,
 		}
 		int radioid = 0;
 		if (holdfee == null|| holdfee.compareTo("")==0) {
-			//its a free time.
-			radioid = R.id.holdfee_free_time;
+
 		} else if (holdfee.compareTo("FREE")==0){
 			radioid = R.id.holdfee_free;
 		} else if (holdfee.compareTo("FULLCOST")==0){
@@ -253,7 +248,7 @@ public class MembershipHoldFragment extends Fragment implements OnClickListener,
 		
 		if (edatevalue != null) {
 			
-			enddate.setText(edatevalue+"	- "+calcDuration(sdatevalue, edatevalue));
+			enddate.setText(edatevalue+"	-	"+calcDuration(sdatevalue, edatevalue));
 		} else {
 		}
 		
@@ -344,27 +339,29 @@ public class MembershipHoldFragment extends Fragment implements OnClickListener,
 		String allow_entry, prorata;
 		RadioGroup rg = (RadioGroup) view.findViewById(R.id.holdfee);
 		int selectedRadio = rg.getCheckedRadioButtonId();
-		switch (selectedRadio){
-		case (R.id.holdfee_free_time):{
+		Switch free_time = (Switch) view.findViewById(R.id.holdfee_freetime);
+		if (free_time.isChecked()) {
 			values.put(ContentDescriptor.MembershipSuspend.Cols.ALLOWENTRY, "t");
 			values.put(ContentDescriptor.MembershipSuspend.Cols.EXTEND_MEMBERSHIP, "t");
 			values.put(ContentDescriptor.MembershipSuspend.Cols.FREEZE, "t");
 			values.put(ContentDescriptor.MembershipSuspend.Cols.PROMOTION, "t");
 			holdfee = null;
-			break;
-		} case (R.id.holdfee_free):{
-			holdfee = "FREE";
-			break;
-		} case (R.id.holdfee_fullcost):{
-			holdfee = "FULLCOST";
-			break;
-		} case (R.id.holdfee_ongoingfee):{
-			holdfee = "ONGOINGFEE";
-			break;
-		} case (R.id.holdfee_setupcost):{
-			holdfee = "SETUPFEE";
-			break;
-		}
+		} else {
+			switch (selectedRadio){ //fix this
+			case (R.id.holdfee_free):{
+				holdfee = "FREE";
+				break;
+			} case (R.id.holdfee_fullcost):{
+				holdfee = "FULLCOST";
+				break;
+			} case (R.id.holdfee_ongoingfee):{
+				holdfee = "ONGOINGFEE";
+				break;
+			} case (R.id.holdfee_setupcost):{
+				holdfee = "SETUPFEE";
+				break;
+			}
+			}
 		}
 
 		if (holdfee != null && (holdfee.contains("SETUPFEE")|| holdfee.contains("ONGOINGFEE"))) {
@@ -522,6 +519,38 @@ public class MembershipHoldFragment extends Fragment implements OnClickListener,
 		}
 		}
 		
+	}
+
+	@Override
+	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+		RadioGroup rg = (RadioGroup) view.findViewById(R.id.holdfee);;
+		CheckBox prorata = (CheckBox) view.findViewById(R.id.hold_prorata), 
+				endonreturn = (CheckBox) view.findViewById(R.id.hold_endonreturn);
+		TextView input_heading = (TextView) view.findViewById(R.id.hold_fee_input_H),
+				radio_heading = (TextView) view.findViewById(R.id.holdfeeL);
+		EditText input = (EditText) view.findViewById(R.id.hold_fee_input);
+		
+		if (isChecked) {
+			//we hide the views that are irrelephant.
+			input_heading.setVisibility(View.GONE);
+			input.getEditableText().clear();
+			input.setVisibility(View.GONE);
+			
+			radio_heading.setVisibility(View.GONE);
+			rg.setVisibility(View.GONE);
+			prorata.setVisibility(View.GONE);
+			endonreturn.setVisibility(View.GONE);
+		} else {
+			radio_heading.setVisibility(View.VISIBLE);
+			rg.setVisibility(View.VISIBLE);
+			rg.check(rg.getCheckedRadioButtonId());
+			if (!input_heading.getText().toString().isEmpty()) {
+				input_heading.setVisibility(View.VISIBLE);
+				input.setVisibility(View.VISIBLE);
+			}
+			prorata.setVisibility(View.VISIBLE);
+			endonreturn.setVisibility(View.VISIBLE);
+		}
 	}
 
 }

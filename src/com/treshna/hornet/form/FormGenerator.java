@@ -91,7 +91,7 @@ public class FormGenerator {
 	}
 	
 	
-	public void addSpinner(String label_text, int id, String key, ArrayList<String> contents) {
+	public void addSpinner(String label_text, int id, String key, ArrayList<String> contents, int position) {
 		RelativeLayout spinnerLayout = (RelativeLayout) mInflater.inflate(R.layout.item_spinner, null);
 		spinnerLayout.setId(id);
 		
@@ -103,8 +103,12 @@ public class FormGenerator {
 			
 			ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(mContext,
 					android.R.layout.simple_spinner_item, contents);
-				dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-				spinner.setAdapter(dataAdapter);
+			dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			spinner.setAdapter(dataAdapter);
+				
+			if (position > 0 ) {
+				spinner.setSelection(position);
+			}
 		}
 		
 		mIdMap.put(key, id);

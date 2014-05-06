@@ -39,10 +39,26 @@
 	 	    android:layout_margin="3dp"/>
 	 	
 	 	<TextView
-	 	    android:id="@+id/holdfeeL"
+	 	    android:id="@+id/switch_label"
 	 	    android:layout_width="wrap_content"
 	 	    android:layout_height="wrap_content"
 	 	    android:layout_below="@id/membershipname"
+	 	    android:textSize="16sp"
+	 	    android:text="@string/hold_type" />
+	 	
+	 	<Switch 
+	 	    android:id="@+id/holdfee_freetime"
+	 	    android:layout_height="wrap_content"
+	 	    android:layout_width="wrap_content"
+	 	    android:layout_below="@id/switch_label"
+	 	    android:textOn="@string/holdfee_free_time"
+	 	    android:textOff="@string/membership_hold"/>
+	 	
+	 	<TextView
+	 	    android:id="@+id/holdfeeL"
+	 	    android:layout_width="wrap_content"
+	 	    android:layout_height="wrap_content"
+	 	    android:layout_below="@id/holdfee_freetime"
 	 	    android:textSize="16sp"
 	 	    android:gravity="center"
 	 	    android:padding="5dp"
@@ -60,14 +76,6 @@
 	 	        android:text="@string/holdfee_free"
 	 	        android:hint="@string/holdfee_free_hint"
 	 	        android:checked="true"
-	 	        android:textSize="15sp"
-	 	        android:padding="1dp"/>
-	 	    <RadioButton 
-	 	        android:id="@+id/holdfee_free_time"
-	 	        android:layout_width="wrap_content"
-	 	        android:layout_height="wrap_content"
-	 	        android:text="@string/holdfee_free_time"
-	 	        android:hint="@string/holdfee_free_time_hint"
 	 	        android:textSize="15sp"
 	 	        android:padding="1dp"/>
 	 	    <RadioButton 
@@ -205,23 +213,12 @@
 		    android:hint="@string/hold_prorata_hint"
 		    android:text="@string/hold_prorata"
 		    android:checked="true" />
-		
-		<TextView
-		    android:id="@+id/free_time_note"
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:layout_below="@id/hold_prorata"
-		    android:paddingTop="5dp"
-		    android:paddingLeft="10dp"
-		    android:paddingBottom="5dp"
-		    android:textSize="13sp"
-		    android:text="@string/holdfee_free_time_details" />
-	 	
-	 	<LinearLayout
+	
+		<LinearLayout
 	 	    android:id="@+id/buttonrow"
 	 	    android:layout_width="match_parent"
 	 	    android:layout_height="wrap_content"
-	 	    android:layout_below="@id/free_time_note"
+	 	    android:layout_below="@id/hold_prorata"
 	 	    android:orientation="horizontal"
 	 	    android:baselineAligned="false" >
 		 	<LinearLayout

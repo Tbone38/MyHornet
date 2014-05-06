@@ -39,7 +39,35 @@ public class ResourceBuilder implements FormGenerator.FormBuilder, OnClickListen
 	public View generateForm() {
 		
 		if (resourceID > 0) { //do a look up, use those values as default in the edit field. handle on the on save clicking.
+			Cursor cur = contentResolver.query(ContentDescriptor.Resource.CONTENT_URI, null, ContentDescriptor.Resource.Cols.ID+" = ?",
+					new String[] {String.valueOf(resourceID)},null);
 			
+			if (cur.moveToFirst()) {
+			
+				formgen.addHeading(mActivity.getString(R.string.resource_edit));
+				
+				formgen.addEditText(mActivity.getString(R.string.resource_name), RES_NAME_ID, ContentDescriptor.Resource.Cols.NAME, 
+						cur.getString(cur.getColumnIndex(ContentDescriptor.Resource.Cols.NAME)));
+				
+				int selectedPos = 0;
+				Cursor cur2 = contentResolver.query(ContentDescriptor.ResourceType.CONTENT_URI, null, null, null, null);
+				ArrayList<String> resourcetypes = new ArrayList<String>();
+				while (cur2.moveToNext()) {
+					resourcetypes.add(cur2.getString(cur2.getColumnIndex(ContentDescriptor.ResourceType.Cols.NAME)));
+					if (cur2.getString(cur2.getColumnIndex(ContentDescriptor.ResourceType.Cols.NAME)).compareTo(
+							cur.getString(cur.getColumnIndex(ContentDescriptor.Resource.Cols.RTNAME))) == 0)
+					{
+						selectedPos = cur2.getPosition();
+					}
+				}
+				cur2.close();
+				formgen.addSpinner(mActivity.getString(R.string.resource_type), RES_TYPE_ID, ContentDescriptor.Resource.Cols.RTID, resourcetypes, selectedPos);
+				
+				formgen.addCheckBox(mActivity.getString(R.string.resource_historic), RES_HIST_ID, ContentDescriptor.Resource.Cols.HISTORY, 
+						(cur.getString(cur.getColumnIndex(ContentDescriptor.Resource.Cols.HISTORY)).compareTo("t")==0) ? true : false);
+				
+				formgen.addButtonRow(mActivity.getString(R.string.buttonOK), mActivity.getString(R.string.buttonCancel), RES_SAVE_ID, RES_CANCEL_ID, this);
+			}
 		} else {
 			
 			formgen.addHeading(mActivity.getString(R.string.resource_add));
@@ -52,7 +80,7 @@ public class ResourceBuilder implements FormGenerator.FormBuilder, OnClickListen
 				resourcetypes.add(cur.getString(cur.getColumnIndex(ContentDescriptor.ResourceType.Cols.NAME)));
 			}
 			cur.close();
-			formgen.addSpinner(mActivity.getString(R.string.resource_type), RES_TYPE_ID, ContentDescriptor.Resource.Cols.RTID, resourcetypes);
+			formgen.addSpinner(mActivity.getString(R.string.resource_type), RES_TYPE_ID, ContentDescriptor.Resource.Cols.RTID, resourcetypes, -1);
 			
 			formgen.addCheckBox(mActivity.getString(R.string.resource_historic), RES_HIST_ID, ContentDescriptor.Resource.Cols.HISTORY, false);
 			
@@ -88,6 +116,7 @@ public class ResourceBuilder implements FormGenerator.FormBuilder, OnClickListen
 			throw new RuntimeException("SOMEBODIES DELETED DATA WHILE WE WERE ATTEMPTING TO USE IT. OR SOMEONE'S BAD AT SQLite.");
 		}
 		values.put(ContentDescriptor.Resource.Cols.RTID, cur.getInt(cur.getColumnIndex(ContentDescriptor.ResourceType.Cols.ID)));
+		values.put(ContentDescriptor.Resource.Cols.RTNAME, cur.getString(cur.getColumnIndex(ContentDescriptor.ResourceType.Cols.NAME)));
 		cur.close();
 		
 		values.put(ContentDescriptor.Resource.Cols.DEVICESIGNUP, "t");		

@@ -26,6 +26,7 @@ import com.treshna.hornet.R;
 import com.treshna.hornet.booking.BookingDetailsSuperFragment;
 import com.treshna.hornet.classes.ClassCreateFragment;
 import com.treshna.hornet.form.FormFragment;
+import com.treshna.hornet.form.FormList;
 import com.treshna.hornet.member.MemberAddFragment;
 import com.treshna.hornet.network.HornetDBService;
 import com.treshna.hornet.report.KeyPerformanceIndexFragment;
@@ -109,7 +110,8 @@ public class SlideMenuClickListener implements OnItemClickListener, OnClickListe
         	tag = "classCreate";
         	break;
         case 14: {
-        	fragment = new FormFragment();
+        	//fragment = new FormFragment();
+        	fragment = new FormList();
         	Bundle bdl = new Bundle(1);
         	bdl.putInt(Services.Statics.KEY, FormFragment.RESOURCE);
         	fragment.setArguments(bdl);
@@ -117,7 +119,7 @@ public class SlideMenuClickListener implements OnItemClickListener, OnClickListe
         	break;
         }
         case 15:{
-        	fragment = new FormFragment();
+        	fragment = new FormList();
         	Bundle bdl = new Bundle(1);
         	bdl.putInt(Services.Statics.KEY, FormFragment.PROGRAMMEGROUP);
         	fragment.setArguments(bdl);

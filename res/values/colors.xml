@@ -7,6 +7,7 @@
     <color name="grey">#FF808080</color>
     <color name="silver">#FFC0C0C0</color>
     <color name="gym">#FF5FBDBC</color>
+    <color name="gym_title">#FF156966</color>
     <color name="wheat">#FFF5DEB3</color>
     <color name="palegreen">#FF7CFC00</color>
     <color name="navy">#FF000080</color>
@@ -18,6 +19,7 @@
     <color name="overlay">#A0FFFFFF</color>
     <color name="grey_cf">#FF615F5F</color>
     
+    <color name="action_bar">#FFFFFAF0</color>
     <color name="android_blue">#FF33B5E5</color>
     <color name="android_blue_dark">#FF0099CC</color>
     <color name="visitors_green">#FF8EAD00</color>

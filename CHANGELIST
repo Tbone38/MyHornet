@@ -95,8 +95,9 @@ KEY:
                 "Sync Set to never" toast has been disabled.
                 Class Create - Selectable End Date;
                 Redid the UI for Adding Members to classes, when horizontal (tablets).
-		fixed the Booking Overview page to use an actual list, still seems to be as slow, if not slower, than before.
-		Prompts to add member if not found when adding to class.
+                fixed the Booking Overview page to use an actual list, still seems to be as slow, if not slower, than before.
+                Prompts to add member if not found when adding to class.
+                Added lists/etc to allow easy editing of DataBase, as well as adding new items.
 
             TODO:
                 Handle permissions/Roles for different staff, to limit what certain staff can see.
@@ -130,11 +131,11 @@ KEY:
                     How do we handle casuals?
                 Gallery seems to behaive weirdly (multiple images show up as profile, even when only one is..?)
                 Bug with removing member from class. It sometimes gets really odd. Look at whats causing it (weird issue with the list binding?)
-				Set all the toasts to go through the Services.app so that they take into consideration user settings.
-				Show further details in class View when tablet-horizontal.
-				Change the setup to have lists/etc to allow easy editing of current items, as well as adding new items.
-				Fix image behaviour.
-				Hold/Free Time switch, free time hides the Hold Fee radios, as well as the prorata check boxes.
+                Set all the toasts to go through the Services.app so that they take into consideration user settings.
+                Show further details in class View when tablet-horizontal.
+                Fix image behaviour.
+                Hold/Free Time switch, free time hides the Hold Fee radios, as well as the prorata check boxes. --CHNAGES MADE. TEST THEY WORK.
+                Colours might need tinkered with.
 
     
     v119:

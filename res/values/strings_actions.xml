@@ -12,6 +12,9 @@
 	<string name="action_tag">Assign Tag</string>
 	<string name="action_kpi">KPIs</string>
 	<string name="action_add_booking">Add Booking</string>
+	<string name="action_edit">Edit</string>
+	<string name="action_add">Add</string>
+	<string name="action_delete">Delete</string>
 	<string name="report_types_test">Test Report Types</string>
 	
 </resources>
