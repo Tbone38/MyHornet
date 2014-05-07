@@ -12,4 +12,44 @@
 	<string name="programme_group_name">Programme Group Name</string>
 	<string name="programme_group_historic">Historic Group</string>
 	<string name="programme_group_issue_card">Issues Cards By Default</string>
+	
+	<string name="booking_type_add">Add Booking Type</string>
+	<string name="booking_type_edit">Edit Booking Type</string>
+	<string name="booking_type_name">Booking Type Name</string>
+	<string name="booking_type_price">Price</string>
+	<string name="booking_type_rebooking_time">Minimum Time Between Rebooking</string>
+	<string name="booking_type_default_time">Default Booking Time</string>
+	<string name="booking_type_description">Description</string>
+	<string name="booking_type_online">Enable Booking Online</string>
+	<string name="booking_type_membership">Enable Booking only for membership</string>
+	<string name="booking_type_historic">Historic Booking</string>
+	
+	<string-array name="booking_type_time_between_values">
+	    <item>N/A</item>
+	    <item>1 Day</item>
+	    <item>3 Days</item>
+	    <item>5 Days</item>
+	    <item>1 Week</item>
+	    <item>2 Weeks</item>
+	    <item>18 Days</item>
+	    <item>4 Weeks</item>
+	    <item>6 Weeks</item>
+	    <item>10 Weeks</item>
+	    <item>12 Weeks</item>
+	    <item>One use Only</item>
+	</string-array>
+	
+	<string-array name="booking_type_time_values">
+	    <item>N/A</item>
+	    <item>10 mins</item>
+	    <item>15 mins</item>
+	    <item>20 mins</item>
+	    <item>30 mins</item>
+	    <item>45 mins</item>
+	    <item>1 hour</item>
+	    <item>1 hour 15 mins</item>
+	    <item>1 hour 30 mins</item>
+	    <item>2 hours</item>
+	    <item>3 hours</item>
+	</string-array>
 </resources>

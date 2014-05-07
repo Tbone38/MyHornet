@@ -1659,6 +1659,12 @@ public class HornetDBService extends Service {
     				values.put(ContentDescriptor.Bookingtype.Cols.EXTERNAL, rs.getString("externalname"));
     				values.put(ContentDescriptor.Bookingtype.Cols.HISTORY, rs.getString("history"));
     				values.put(ContentDescriptor.Bookingtype.Cols.LASTUPDATE, rs.getTimestamp("lastupdate").getTime()*1000);
+    				values.put(ContentDescriptor.Bookingtype.Cols.LENGTH, rs.getString("length"));
+    				values.put(ContentDescriptor.Bookingtype.Cols.MAXBETWEEN, rs.getString("maxintbetween"));
+    				values.put(ContentDescriptor.Bookingtype.Cols.DESCRIPTION, rs.getString("description"));
+    				values.put(ContentDescriptor.Bookingtype.Cols.ONLINEBOOK, rs.getString("onlinebook"));
+    				values.put(ContentDescriptor.Bookingtype.Cols.MS_ONLY, rs.getString("msh_onlybook"));
+    				values.put(ContentDescriptor.Bookingtype.Cols.DEVICE_SIGNUP, "f");
     				
     				cur = contentResolver.query(ContentDescriptor.Bookingtype.CONTENT_URI, null, ContentDescriptor.Bookingtype.Cols.BTID+" = ?",
     						new String[] {rs.getString("id")}, null);

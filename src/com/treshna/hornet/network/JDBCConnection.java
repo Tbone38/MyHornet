@@ -401,7 +401,8 @@ public class JDBCConnection {
     public ResultSet getBookingTypes(long last_sync) throws SQLException, NullPointerException{
 
 	    	ResultSet rs = null;
-	    	pStatement = con.prepareStatement("select id, name, price, externalname, history, lastupdate from bookingtype WHERE "
+	    	pStatement = con.prepareStatement("select id, name, price, externalname, history, lastupdate, length, maxintbetween, onlinebook, "
+	    			+ "msh_onlybook, description from bookingtype WHERE "
 	    			+ "lastupdate > ?;");
 	    	
 	    	pStatement.setTimestamp(1, new java.sql.Timestamp(last_sync));

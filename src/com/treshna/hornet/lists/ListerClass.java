@@ -1,4 +1,4 @@
-package com.treshna.hornet.form;
+package com.treshna.hornet.lists;
 
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -16,6 +16,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.treshna.hornet.R;
+import com.treshna.hornet.lists.FormList.Lister;
 
 
 public class ListerClass implements LoaderManager.LoaderCallbacks<Cursor>, android.view.ActionMode.Callback,

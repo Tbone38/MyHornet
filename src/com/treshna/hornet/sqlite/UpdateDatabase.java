@@ -936,6 +936,29 @@ public class UpdateDatabase {
 					+" ("+PendingUpdates.Cols.ROWID+", "+PendingUpdates.Cols.TABLEID+")"
 					+" VALUES (old."+ProgrammeGroup.Cols.ID+", "+TableIndex.Values.ProgrammeGroup.getKey()+");"
 				+"END;";
+		
+		private static final String SQL30 = "ALTER TABLE "+Bookingtype.NAME+" ADD COLUMN "+Bookingtype.Cols.LENGTH + " TEXT ;";
+		private static final String SQL31 = "ALTER TABLE "+Bookingtype.NAME+" ADD COLUMN "+Bookingtype.Cols.MAXBETWEEN+" TEXT;";
+		private static final String SQL32 = "ALTER TABLE "+Bookingtype.NAME+" ADD COLUMN "+Bookingtype.Cols.ONLINEBOOK+" TEXT ;";
+		private static final String SQL33 = "ALTER TABLE "+Bookingtype.NAME+" ADD COLUMN "+Bookingtype.Cols.MS_ONLY+" TEXT DEFAULT 'f'";
+		private static final String SQL34 = "ALTER TABLE "+Bookingtype.NAME+" ADD COLUMN "+Bookingtype.Cols.DESCRIPTION+" TEXT ;";
+		private static final String SQL35 = "ALTER TABLE "+Bookingtype.NAME+" ADD COLUMN "+Bookingtype.Cols.DEVICE_SIGNUP+" TEXT DEFAULT 'f';";
+		
+		private static final String SQL36 = "CREATE TRIGGER "+Bookingtype.Triggers.ON_INSERT+" AFTER INSERT ON "+Bookingtype.NAME
+				+" FOR EACH ROW WHEN new."+Bookingtype.Cols.DEVICE_SIGNUP+" = 't'"
+				+" BEGIN"
+					+" INSERT OR REPLACE INTO "+PendingUploads.NAME
+					+" ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
+					+" VALUES (new."+Bookingtype.Cols.ID+", "+TableIndex.Values.Bookingtype.getKey()+");"
+				+" END;";
+		
+		private static final String SQL37 = "CREATE TRIGGER "+Bookingtype.Triggers.ON_UPDATE+" AFTER UPDATE ON "+Bookingtype.NAME
+				+" FOR EACH ROW WHEN new."+Bookingtype.Cols.DEVICE_SIGNUP+" = 't'"
+				+" BEGIN"
+					+" INSERT OR REPLACE INTO "+PendingUpdates.NAME
+					+" ("+PendingUpdates.Cols.ROWID+", "+PendingUpdates.Cols.TABLEID+")"
+					+" VALUES (old."+Bookingtype.Cols.ID+","+TableIndex.Values.Bookingtype.getKey()+");"
+				+" END;";
 				
 		public static void patchNinetySix(SQLiteDatabase db) {
 			db.beginTransaction();
@@ -998,6 +1021,22 @@ public class UpdateDatabase {
 				db.execSQL(SQL28);
 				Log.w(HornetDatabase.class.getName(), "\n"+SQL29);
 				db.execSQL(SQL29);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL30);
+				db.execSQL(SQL30);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL31);
+				db.execSQL(SQL31);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL32);
+				db.execSQL(SQL32);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL33);
+				db.execSQL(SQL33);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL34);
+				db.execSQL(SQL34);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL35);
+				db.execSQL(SQL35);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL36);
+				db.execSQL(SQL36);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL37);
+				db.execSQL(SQL37);
 				db.setTransactionSuccessful();
 			/*} catch (SQLException e) {
 			e.printStackTrace();

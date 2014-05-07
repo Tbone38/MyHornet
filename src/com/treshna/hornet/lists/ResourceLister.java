@@ -1,4 +1,4 @@
-package com.treshna.hornet.form;
+package com.treshna.hornet.lists;
 
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import com.treshna.hornet.MainActivity;
 import com.treshna.hornet.R;
+import com.treshna.hornet.form.FormFragment;
 import com.treshna.hornet.services.Services;
 import com.treshna.hornet.sqlite.ContentDescriptor;
 

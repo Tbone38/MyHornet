@@ -26,7 +26,7 @@ import com.treshna.hornet.R;
 import com.treshna.hornet.booking.BookingDetailsSuperFragment;
 import com.treshna.hornet.classes.ClassCreateFragment;
 import com.treshna.hornet.form.FormFragment;
-import com.treshna.hornet.form.FormList;
+import com.treshna.hornet.lists.FormList;
 import com.treshna.hornet.member.MemberAddFragment;
 import com.treshna.hornet.network.HornetDBService;
 import com.treshna.hornet.report.KeyPerformanceIndexFragment;
@@ -122,6 +122,14 @@ public class SlideMenuClickListener implements OnItemClickListener, OnClickListe
         	fragment = new FormList();
         	Bundle bdl = new Bundle(1);
         	bdl.putInt(Services.Statics.KEY, FormFragment.PROGRAMMEGROUP);
+        	fragment.setArguments(bdl);
+        	tag = "formFragment";
+        	break;
+        }
+        case 16:{
+        	fragment = new FormList();
+        	Bundle bdl = new Bundle(1);
+        	bdl.putInt(Services.Statics.KEY, FormFragment.BOOKINGTYPE);
         	fragment.setArguments(bdl);
         	tag = "formFragment";
         	break;

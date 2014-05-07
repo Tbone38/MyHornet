@@ -531,6 +531,11 @@ public class ContentDescriptor {
 	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.bookingtype";
 	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.bookingtype";
 	 		
+	 		public static class Triggers {
+	 			public static final String ON_INSERT = "bookingtype_insert";
+	 			public static final String ON_UPDATE = "bookingtype_update";
+	 		}
+	 		
 	 		public static class Cols {
 	 			public static final String ID = BaseColumns._ID;
 	 			public static final String BTID = "bookingtypeid";
@@ -542,6 +547,14 @@ public class ContentDescriptor {
 	 			public static final String LASTUPDATE = "lastupdate";
 	 			
 	 			public static final String HISTORY = "history";
+	 			
+	 			//added in v120.
+	 			public static final String LENGTH = "length";
+	 			public static final String MAXBETWEEN = "maxintbetween";
+	 			public static final String ONLINEBOOK = "onlinebook";
+	 			public static final String MS_ONLY = "msh_onlybook";
+	 			public static final String DESCRIPTION = "description";
+	 			public static final String DEVICE_SIGNUP = "devicesignup";
 	 		}
 	 	}
 	 	
@@ -1086,7 +1099,7 @@ public class ContentDescriptor {
 	 			Booking(1), Class(2), Swipe(3),Membership(4) /*when adding memberships*/,
 	 					Member(5) /*when adding members/prospects*/,Image(6),
 	 					MembershipSuspend(7), MemberNotes(8), RollCall(9), RollItem(10),
-	 					Idcard(11), Prospect(12), Resource(13), ProgrammeGroup(14);
+	 					Idcard(11), Prospect(12), Resource(13), ProgrammeGroup(14), Bookingtype(15);
 	 			
 	 			private final int key;
 	 			
