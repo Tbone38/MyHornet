@@ -78,18 +78,15 @@ public class ReportListingActivity extends ListFragment {
 					HashMap<String,String> selectedRowData = (HashMap<String, String>) reportName.getTag();
 					
 					//Checking that a report name was clicked on (not a type)
-					 if ((selectedRowData.get("istype").compareTo("f")== 0)){
+					 if ((selectedRowData.get("istype").compareTo("f")== 0)) {
 							Intent intent = new Intent(view.getContext(),ReportDateOptionsActivity.class);
 							intent.putExtra("report_id", Integer.parseInt(selectedRowData.get("id")));
 							intent.putExtra("report_name" , selectedRowData.get("name").toString());
 							intent.putExtra("report_function_name",selectedRowData.get("function_name").toString());
 							startActivity(intent);
 					 }
-
-				}  
-				
-				
-			} );
+				}  				
+			});
 			
 			ListAdapter listAdapter = new ArrayAdapter<HashMap<String,String>>(getActivity(),
 					R.layout.report_types_and_names_row, this.resultMapList)					
@@ -110,7 +107,7 @@ public class ReportListingActivity extends ListFragment {
 				HashMap<String,String> dataRow = this.getItem(position);
 				for (Entry<String,String> col : dataRow.entrySet()){
 						
-						if (col.getKey().compareTo("name")== 0){
+						if (col.getKey().compareTo("name")== 0) {
 							
 						  	layoutParams = new RelativeLayout.LayoutParams( LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT );
 						  	layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
@@ -133,7 +130,8 @@ public class ReportListingActivity extends ListFragment {
 							linLayout.addView(textView);
 						}
 						
-						if (col.getKey().compareTo("description")== 0){
+						if (col.getKey().compareTo("description")== 0) {
+							
 						  	layoutParams = new RelativeLayout.LayoutParams( LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT );
 						  	layoutParams.addRule(RelativeLayout.BELOW, 5);
 						  	layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
@@ -163,8 +161,6 @@ public class ReportListingActivity extends ListFragment {
 		private HornetDBService sync;
 		private ResultSet result = null;
 		
-		
-
 		
 		public GetReportTypesAndNamesNameData () {
 			sync = new HornetDBService();

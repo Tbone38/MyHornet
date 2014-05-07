@@ -1,0 +1,64 @@
+
+ Filters               Implementation 
+
+ Payment Methods	Name
+ Booking Resource	ID
+ Task Event            ID 
+ Booking Type          ID 
+ Renewed Member        ID 
+ Programme Group       ID
+ Assigned To		ID
+ Supplier Name		No Filters t
+
+o implement
+ Sale-Origin		Name
+ Sale Type		Name
+ Ongoing Programme	ID
+ Paid Through		Name
+ Group-Programme       ID
+ Promotion	       ID		   
+ Booking Result		ID
+ Company	       ID
+ Ignore Charges		Boolean
+ Personal Trainer	ID
+
+   Report Type    |             Report Names             |    filter_name    
+------------------+--------------------------------------+-------------------
+ Retention        | All Completed Task                   | Assigned To
+ Retention        | All Worked On Task                   | Assigned To
+ Booking          | All Member Bookings                  | Booking Resource
+ Booking          | All Member Bookings                  | Booking Result
+ Booking          | Cancelled Members Booking            | Booking Type
+ Booking          | All Member Bookings                  | Booking Type
+ Member           | Member Made Booking                  | Booking Type
+ Sales Enquires   | All Enquiries                        | Company
+ Member           | Current Members                      | Group-Programme
+ Member           | Lost Members                         | Group-Programme
+ Financial        | Debtors                              | Group-Programme
+ Member           | Expiring Members                     | Group-Programme
+ Member           | Current Visiting Members             | Group-Programme
+ Member           | Starting Memberships                 | Group-Programme
+ Financial        | Debtors                              | Ignore Charges
+ Financial        | Membership Future Revenue            | Ongoing Programme
+ Financial        | All Payments                         | Paid Through
+ Financial        | All Payments                         | Payment Methods
+ Personal Trainer | Individual PT Performance            | Personal Trainer
+ Financial        | Debtors                              | Programme Group
+ Retention        | Recently Not Visiting                | Programme Group
+ Member           | Starting Memberships                 | Programme Group
+ Retention        | Not Visiting                         | Programme Group
+ Member           | Expiring Members                     | Programme Group
+ Member           | Lost Members                         | Programme Group
+ Member           | Current Visiting Members             | Programme Group
+ Member           | Current Members                      | Programme Group
+ Sales Enquires   | All Enquiries                        | Promotion
+ Member           | Expiring Members                     | Renewed Member
+ Financial        | All Sales                            | Sale-Origin
+ Financial        | All Sales                            | Sale Type
+ Financial        | Product Purchases For a Given Period | Supplier Name
+ Financial        | Product Sales For a Given Period     | Supplier Name
+ Financial        | Inventory Stock Level                | Supplier Name
+ Financial        | All Products                         | Supplier Name
+ Retention        | All Completed Task                   | Task Event
+ Retention        | All Worked On Task                   | Task Event
+

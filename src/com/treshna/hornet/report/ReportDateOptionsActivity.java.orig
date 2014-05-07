@@ -1,4 +1,4 @@
-package com.treshna.hornet;
+package com.treshna.hornet.report;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -10,8 +10,16 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
+<<<<<<< HEAD:src/com/treshna/hornet/report/ReportDateOptionsActivity.java
+import com.treshna.hornet.R;
+import com.treshna.hornet.R.id;
+import com.treshna.hornet.R.layout;
+import com.treshna.hornet.services.DatePickerFragment;
+
+=======
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+>>>>>>> tony/master:src/com/treshna/hornet/ReportDateOptionsActivity.java
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
@@ -54,7 +62,6 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 	private TextView startDateText = null;
 	private TextView endDateText = null;
 	private int reportId = 0;
-	private DatePickerFragment datePickerFragment = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -277,13 +284,11 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 						}						
 									
 			}
-			
 
 			@Override
 			public void onNothingSelected(AdapterView<?> parent) {
 				// TODO Auto-generated method stub			
 			}
-			
 		});
 	}
 		
@@ -466,8 +471,6 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 			e.printStackTrace();
 		}
 		
-		//Calendar cal = Calendar.getInstance();
-	
 		return 	date;
 	}
 	

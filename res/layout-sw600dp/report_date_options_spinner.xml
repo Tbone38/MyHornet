@@ -4,7 +4,7 @@
         android:id="@+id/spinnerItems"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="7dp"
+        android:padding="15dp"
         android:textStyle="bold"
         android:background="@color/report_date_spinner_grey"
-        android:textSize="15sp" />
+        android:textSize="20sp" />

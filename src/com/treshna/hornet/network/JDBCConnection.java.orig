@@ -3,7 +3,11 @@
  */
 package com.treshna.hornet.network;
 
+<<<<<<< HEAD:src/com/treshna/hornet/network/JDBCConnection.java
 import java.net.SocketException;
+=======
+import java.sql.Array;
+>>>>>>> tony/master:src/com/treshna/hornet/JDBCConnection.java
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -604,7 +608,6 @@ public class JDBCConnection {
 	    	if (where == null || where.isEmpty()) {
 	    		return 0;
 	    	}
-	    	//find a way to make this easier to read.
 	    	String set = "UPDATE "+tablename+" SET (";
 	    	String value = "(";
 	    	for (int i = 0; i < values.size(); i++) {
@@ -1251,8 +1254,6 @@ public class JDBCConnection {
     	}
     }
     
-    
-    
     public ResultSet getFinance(long lastupdate) throws SQLException {
     	//what our members have payed.
     	String query = "SELECT payment.id AS id, payment.memberid AS memberid, payment.membershipid AS membershipid,"
@@ -1320,6 +1321,8 @@ public class JDBCConnection {
     	return pStatement.executeQuery();
     }
     
+<<<<<<< HEAD:src/com/treshna/hornet/network/JDBCConnection.java
+=======
 
     public ResultSet getReportTypes() throws SQLException {
     	    this.pStatement = con.prepareStatement("Select id, name, view_name, reportgroup from Report_Type");
@@ -1414,6 +1417,7 @@ public class JDBCConnection {
     	}
     }
      
+>>>>>>> tony/master:src/com/treshna/hornet/JDBCConnection.java
     public ResultSet getDevice(int deviceid) throws SQLException {
     	if (deviceid <= 0) {
     		return null;
@@ -1480,8 +1484,8 @@ public class JDBCConnection {
     	return pStatement.executeUpdate();
     }
     
-
-    public ResultSet getReportTypes() throws SQLException {
+<<<<<<< HEAD:src/com/treshna/hornet/network/JDBCConnection.java
+public ResultSet getReportTypes() throws SQLException {
     	    this.pStatement = con.prepareStatement("Select id, name, view_name, reportgroup from Report_Type");
     	    return this.pStatement.executeQuery();
     }
@@ -1535,8 +1539,8 @@ public class JDBCConnection {
     		throw new SQLException(e);
     	}
     }
-     
-public void fixDuplicatePopUp() throws SQLException {
+    
+    public void fixDuplicatePopUp() throws SQLException {
     	String query = "DO $$ "
     			+"DECLARE "
 	    	        +"r RECORD; "
@@ -1634,6 +1638,8 @@ public void fixDuplicatePopUp() throws SQLException {
     	return pStatement.executeUpdate();
     }
 
+=======
+>>>>>>> tony/master:src/com/treshna/hornet/JDBCConnection.java
     public SQLWarning getWarnings() throws SQLException, NullPointerException {
     	return con.getWarnings();
     }
