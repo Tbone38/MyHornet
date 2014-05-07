@@ -48,7 +48,7 @@ public class BookingTypeLister extends ListerClass {
 			Fragment f = new FormFragment();
 			Bundle bdl = new Bundle(2);
 			bdl.putInt(Services.Statics.KEY, FormFragment.BOOKINGTYPE);
-			bdl.putInt(Services.Statics.ID_KEY, cur.getInt(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.ID)));
+			bdl.putInt(Services.Statics.ID_KEY, cur.getInt(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.BTID)));
 			f.setArguments(bdl);
 			String tag = "formFragment";
         	((MainActivity)mActivity).changeFragment(f, tag);

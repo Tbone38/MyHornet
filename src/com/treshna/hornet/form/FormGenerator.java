@@ -75,6 +75,26 @@ public class FormGenerator {
 		mView.addView(editLayout);
 	}
 	
+	public void setEditTextType(int id, int editorinfotype) {
+		RelativeLayout edit_layout = (RelativeLayout) mView.findViewById(id);
+		EditText edit_text = (EditText) edit_layout.findViewById(R.id.edit_text);
+		edit_text.setInputType(editorinfotype);
+	}
+	
+	/**
+	 * This function does NOT do any value checking, it just sets the label one colour or the other.
+	 * @param id
+	 * @param is_red
+	 */
+	public void setEditLabelColour(int id, boolean is_red) {
+		RelativeLayout edit_layout = (RelativeLayout) mView.findViewById(id);
+		if (is_red) {
+			setLabelRed(edit_layout);
+		} else {
+			setLabelBlack(edit_layout);
+		}
+	}
+	
 	public String getEditText(int id, String defaultText) {
 		String result = null;
 		RelativeLayout resource_name = (RelativeLayout) mView.findViewById(id);

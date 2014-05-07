@@ -1576,7 +1576,82 @@ public void fixDuplicatePopUp() throws SQLException {
     	
     	return pStatement.executeUpdate();
     }
+    
+    public int insertBookingType(int btid, String name, String price, String length, String desc, String maxbetween, boolean online, 
+    		boolean msh_only, boolean history) throws SQLException {
+    	pStatement = con.prepareStatement("INSERT INTO bookingtype (id, name, price, length, history, description, maxintbetween, "
+    			+ "onlinebook, msh_onlybook) VALUES (?, ?, ?::MONEY, ?::INTERVAL, ?, ?, ?::INTERVAL, ?, ?);");
+    	
+    	pStatement.setInt(1, btid);
+    	pStatement.setString(2, name);
+    	if (price != null) {
+    		pStatement.setString(3, "$"+price);
+    	} else {
+    		pStatement.setNull(3, java.sql.Types.FLOAT);
+    	}
+    	
+    	if (length != null) {
+    		pStatement.setString(4, length);
+    	} else {
+    		pStatement.setNull(4, java.sql.Types.VARCHAR);
+    	}
+    	
+    	pStatement.setBoolean(5, history);
+    	if (desc != null) {
+    		pStatement.setString(6, desc);
+    	} else {
+    		pStatement.setNull(6, java.sql.Types.VARCHAR);
+    	}
+    	if (maxbetween != null) {
+    		pStatement.setString(7, maxbetween);
+    	} else {
+    		pStatement.setNull(7, java.sql.Types.VARCHAR);
+    	}
+    	pStatement.setBoolean(8, online);
+    	pStatement.setBoolean(9, msh_only);
+    	
+    	return pStatement.executeUpdate();
+    }
 
+    public int updateBookingType(int btid, String name, String price, String length, String desc, String maxbetween, boolean online, 
+    		boolean msh_only, boolean history) throws SQLException {
+    	pStatement = con.prepareStatement("UPDATE bookingtype SET (name, price, length, description, maxintbetween, onlinebook, msh_onlybook, history) "
+    			+ "= (?, ?::MONEY, ?::INTERVAL, ?, ?::INTERVAL, ?, ?, ?) WHERE id = ?");
+    	
+    	pStatement.setString(1, name);
+    	if (price != null) {
+    		pStatement.setString(2, "$"+price);
+    	}else {
+    		pStatement.setNull(2, java.sql.Types.FLOAT);
+    	}
+    	
+    	if (length != null) {
+    		pStatement.setString(3, length);
+    	} else {
+    		pStatement.setNull(3, java.sql.Types.VARCHAR);
+    	}
+    	
+    	
+    	if (desc != null) {
+    		pStatement.setString(4, desc);
+    	} else {
+    		pStatement.setNull(4, java.sql.Types.VARCHAR);
+    	}
+    	
+    	if (maxbetween != null) {
+    		pStatement.setString(5, maxbetween);
+    	} else {
+    		pStatement.setNull(5, java.sql.Types.VARCHAR);
+    	}
+    	
+    	pStatement.setBoolean(6, online);
+    	pStatement.setBoolean(7, msh_only);
+    	pStatement.setBoolean(8, history);
+    	pStatement.setInt(9, btid);
+    	
+    	return pStatement.executeUpdate();
+    }
+    
     public SQLWarning getWarnings() throws SQLException, NullPointerException {
     	return con.getWarnings();
     }

@@ -42,7 +42,7 @@ public class FormFragment extends Fragment {
 			break;
 		}
 		case (BOOKINGTYPE):{
-			builder = null;
+			builder = new BookingtypeBuilder(getActivity(), id);
 			break;
 		}
 		}

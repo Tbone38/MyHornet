@@ -24,7 +24,7 @@
 	<string name="booking_type_membership">Enable Booking only for membership</string>
 	<string name="booking_type_historic">Historic Booking</string>
 	
-	<string-array name="booking_type_time_between_values">
+	<string-array name="booking_type_time_between_keys">
 	    <item>N/A</item>
 	    <item>1 Day</item>
 	    <item>3 Days</item>
@@ -39,7 +39,23 @@
 	    <item>One use Only</item>
 	</string-array>
 	
-	<string-array name="booking_type_time_values">
+	<string-array name="booking_type_time_between_values">
+	    <item></item>
+	    <item>1 day</item>
+	    <item>3 days</item>
+	    <item>5 days</item>
+	    <item>7 days</item>
+	    <item>14 days</item>
+	    <item>18 days</item>
+	    <item>28 days</item>
+	    <item>42 days</item>
+	    <item>70 days</item>
+	    <item>84 days</item>
+	    <item>10 years</item>
+	    
+	</string-array>
+	
+	<string-array name="booking_type_time_keys">
 	    <item>N/A</item>
 	    <item>10 mins</item>
 	    <item>15 mins</item>
@@ -51,5 +67,19 @@
 	    <item>1 hour 30 mins</item>
 	    <item>2 hours</item>
 	    <item>3 hours</item>
+	</string-array>
+	
+	<string-array name="booking_type_time_values">
+	    <item></item>
+	    <item>00:10:00</item>
+	    <item>00:15:00</item>
+	    <item>00:20:00</item>
+	    <item>00:30:00</item>
+	    <item>00:45:00</item>
+	    <item>01:00:00</item>
+	    <item>01:15:00</item>
+	    <item>01:30:00</item>
+	    <item>02:00:00</item>
+	    <item>03:00:00</item>
 	</string-array>
 </resources>

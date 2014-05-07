@@ -393,6 +393,7 @@ public class ReportMainActivity extends ListActivity {
 						ArrayList<String> tag = new ArrayList<String>();
 						tag.add(idView.getText().toString());
 						tag.add(null);
+						//FIXME:THIS NEEDS FIXED.
 						/*Intent intent = new Intent(ReportMainActivity.this, EmptyActivity.class);
 						intent.putExtra(Services.Statics.KEY, Services.Statics.FragmentType.MemberDetails.getKey());
 						intent.putStringArrayListExtra(VisitorsViewAdapter.EXTRA_ID, tag);

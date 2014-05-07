@@ -5423,4 +5423,31 @@ public class HornetDBService extends Service {
     	closeConnection();
     	return result;
     }
+    
+    private int insertBookingType() {
+    	int result = 0;
+    	
+    	Cursor pendings = contentResolver.query(ContentDescriptor.PendingUploads.CONTENT_URI, null, ContentDescriptor.PendingUploads.Cols.TABLEID+" = ?",
+    			new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Bookingtype.getKey())}, null);
+    	
+    	if (!openConnection()) {
+    		return -1;
+    	}
+    	
+    	while (pendings.moveToNext()) {
+    		String btid = pendings.getString(pendings.getColumnIndex(ContentDescriptor.PendingUploads.Cols.ROWID));
+    		
+    		cur = contentResolver.query(ContentDescriptor.Bookingtype.CONTENT_URI, null, ContentDescriptor.Bookingtype.Cols.ID+" = ?", 
+    				new String[] {btid}, null);
+    		if (cur.moveToFirst()) {
+    			//do value checking here to make sure you're not passing empty strings.
+    		}
+    		
+    		contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, ContentDescriptor.PendingUploads.Cols.ROWID+" = ? AND "
+    				+ContentDescriptor.PendingUploads.Cols.TABLEID+" = ?", new String[] {btid, String.valueOf(
+						ContentDescriptor.TableIndex.Values.Bookingtype.getKey())});
+    	}
+    	
+    	return result;
+    }
 }
