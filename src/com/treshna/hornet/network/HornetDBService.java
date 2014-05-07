@@ -185,6 +185,7 @@ public class HornetDBService extends Service {
 			getImageID();
 			getResourceID();
 			getProgrammeGroupID();
+			getBookingTypeID();
 			int sid_count = getSuspendID();
 			if (sid_count < 0) {
 				Services.showToast(getApplicationContext(), statusMessage, handler);
@@ -200,10 +201,12 @@ public class HornetDBService extends Service {
 			uploadMemberNotes();
 			uploadImage();
 			updateImage();
+			uploadBookingTypes();
 			uploadBookings();
 			insertResource();
 			updateResource();
 			updateProgrammeGroup();
+			updateBookingTypes();
 			int classcount = uploadClass();
 			Log.d(TAG, "Uploaded "+classcount+" Classes");
 			int upload_sid_count = uploadSuspends();
@@ -376,6 +379,7 @@ public class HornetDBService extends Service {
 		   getBookingID();
 		   getResourceID();
 		   getProgrammeGroupID();
+		   getBookingTypeID();
 		   int midcount = getMemberID();
 		   if (midcount != 0) statusMessage = " Sign-up's available";
 		   if (statusMessage != null && statusMessage.length() > 3 ) {
@@ -5424,7 +5428,45 @@ public class HornetDBService extends Service {
     	return result;
     }
     
-    private int insertBookingType() {
+    private int getBookingTypeID(){
+    	int result = 0;
+    	int free_count = 0;
+    	
+    	cur = contentResolver.query(ContentDescriptor.FreeIds.CONTENT_URI, null, ContentDescriptor.FreeIds.Cols.TABLEID+" = ?",
+    			new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Bookingtype.getKey())}, null);
+    	free_count = cur.getCount();
+    	cur.close();
+    	
+    	if (!openConnection()) {
+    		return -1;
+    	}
+    	
+    	for (int i=(10-free_count);i > 0; i--) {
+    		try {
+    			ResultSet rs = connection.startStatementQuery("SELECT nextval('bookingtype_id_seq');");
+    			rs.next();
+    			
+    			ContentValues values = new ContentValues();
+    			values.put(ContentDescriptor.FreeIds.Cols.ROWID, rs.getString("nextval"));
+    			values.put(ContentDescriptor.FreeIds.Cols.TABLEID,
+    					ContentDescriptor.TableIndex.Values.Bookingtype.getKey());
+    			
+    			contentResolver.insert(ContentDescriptor.FreeIds.CONTENT_URI, values);
+    			result +=1;
+    			rs.close();
+    			connection.closeStatementQuery();
+    		} catch (SQLException e) {
+    			statusMessage = e.getLocalizedMessage();
+    			Log.e(TAG, "", e);
+    			return -2;
+    		}
+    	}
+    	
+    	closeConnection();
+    	return result;
+    }
+    
+    private int uploadBookingTypes() {
     	int result = 0;
     	
     	Cursor pendings = contentResolver.query(ContentDescriptor.PendingUploads.CONTENT_URI, null, ContentDescriptor.PendingUploads.Cols.TABLEID+" = ?",
@@ -5435,17 +5477,166 @@ public class HornetDBService extends Service {
     	}
     	
     	while (pendings.moveToNext()) {
-    		String btid = pendings.getString(pendings.getColumnIndex(ContentDescriptor.PendingUploads.Cols.ROWID));
+    		String id = pendings.getString(pendings.getColumnIndex(ContentDescriptor.PendingUploads.Cols.ROWID));
     		
     		cur = contentResolver.query(ContentDescriptor.Bookingtype.CONTENT_URI, null, ContentDescriptor.Bookingtype.Cols.ID+" = ?", 
-    				new String[] {btid}, null);
+    				new String[] {id}, null);
     		if (cur.moveToFirst()) {
     			//do value checking here to make sure you're not passing empty strings.
+    			String price, length, desc, maxbetween;
+    			boolean online, msh_only, history;
+    			
+    			if (cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.PRICE)) != null &&
+    					!cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.PRICE)).isEmpty()) {
+    				price = cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.PRICE)).replace("$", "");
+    				//pass it in without the $, as we'll append it to the front ourself..?
+    			} else {
+    				price = null;
+    			}
+    			
+    			if (cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.LENGTH)) != null &&
+    					!cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.LENGTH)).isEmpty()) {
+    				length = cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.LENGTH));
+    			} else {
+    				length = null;
+    			}
+    			
+    			if (cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.DESCRIPTION)) != null &&
+    					!cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.DESCRIPTION)).isEmpty()) {
+    				desc = cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.DESCRIPTION));
+    			} else {
+    				desc = null;
+    			}
+    			
+    			if (cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.MAXBETWEEN)) != null &&
+    					!cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.MAXBETWEEN)).isEmpty()) {
+    				maxbetween = cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.MAXBETWEEN));
+    			} else {
+    				maxbetween = null;
+    			}
+    			
+    			if (cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.ONLINEBOOK)) != null &&
+    					cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.ONLINEBOOK)).compareTo("t") == 0) {
+    				online = true;
+    			} else {
+    				online = false;
+    			}
+    			
+    			if (cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.MS_ONLY)) != null &&
+    					cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.MS_ONLY)).compareTo("t") == 0) {
+    				msh_only = true;
+    			} else {
+    				msh_only = false;
+    			}
+    			
+    			if (cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.HISTORY)) != null &&
+    					cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.HISTORY)).compareTo("t") == 0) {
+    				history = true;
+    			} else {
+    				history = false;
+    			}
+    			try {
+    				connection.insertBookingType(cur.getInt(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.BTID)),
+	    					cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.NAME)),
+	    					price, length, desc, maxbetween, online, msh_only, history);
+    				result +=1;
+    			} catch (SQLException e) {
+    				statusMessage = e.getLocalizedMessage();
+    				Log.e(TAG, "", e);
+    				return -2;
+    			}
     		}
-    		
+    		cur.close();
     		contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, ContentDescriptor.PendingUploads.Cols.ROWID+" = ? AND "
-    				+ContentDescriptor.PendingUploads.Cols.TABLEID+" = ?", new String[] {btid, String.valueOf(
-						ContentDescriptor.TableIndex.Values.Bookingtype.getKey())});
+    				+ContentDescriptor.PendingUploads.Cols.TABLEID+" = ?", new String[] {id, String.valueOf(
+					ContentDescriptor.TableIndex.Values.Bookingtype.getKey())});
+    	}
+    	
+    	return result;
+    }
+    
+    private int updateBookingTypes(){
+    	int result = 0;
+    	
+    	Cursor pendings = contentResolver.query(ContentDescriptor.PendingUpdates.CONTENT_URI, null, ContentDescriptor.PendingUpdates.Cols.TABLEID+" = ?",
+    			new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Bookingtype.getKey())}, null);
+    	
+    	if (!openConnection()) {
+    		return -1;
+    	}
+    	
+    	while (pendings.moveToNext()) {
+    		String id = cur.getString(cur.getColumnIndex(ContentDescriptor.PendingUpdates.Cols.ROWID));
+    		cur = contentResolver.query(ContentDescriptor.Bookingtype.CONTENT_URI, null, ContentDescriptor.Bookingtype.Cols.ID+" = ?",
+    				new String[] {id}, null);
+    		if (cur.moveToFirst()) {
+    			String price, length, desc, maxbetween;
+    			boolean online, msh_only, history;
+    			
+    			if (cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.PRICE)) != null &&
+    					!cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.PRICE)).isEmpty()) {
+    				price = cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.PRICE)).replace("$", "");
+    				//pass it in without the $, as we'll append it to the front ourself..?
+    			} else {
+    				price = null;
+    			}
+    			
+    			if (cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.LENGTH)) != null &&
+    					!cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.LENGTH)).isEmpty()) {
+    				length = cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.LENGTH));
+    			} else {
+    				length = null;
+    			}
+    			
+    			if (cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.DESCRIPTION)) != null &&
+    					!cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.DESCRIPTION)).isEmpty()) {
+    				desc = cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.DESCRIPTION));
+    			} else {
+    				desc = null;
+    			}
+    			
+    			if (cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.MAXBETWEEN)) != null &&
+    					!cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.MAXBETWEEN)).isEmpty()) {
+    				maxbetween = cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.MAXBETWEEN));
+    			} else {
+    				maxbetween = null;
+    			}
+    			
+    			if (cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.ONLINEBOOK)) != null &&
+    					cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.ONLINEBOOK)).compareTo("t") == 0) {
+    				online = true;
+    			} else {
+    				online = false;
+    			}
+    			
+    			if (cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.MS_ONLY)) != null &&
+    					cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.MS_ONLY)).compareTo("t") == 0) {
+    				msh_only = true;
+    			} else {
+    				msh_only = false;
+    			}
+    			
+    			if (cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.HISTORY)) != null &&
+    					cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.HISTORY)).compareTo("t") == 0) {
+    				history = true;
+    			} else {
+    				history = false;
+    			}
+    			try {
+    				connection.updateBookingType(cur.getInt(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.BTID)),
+    						cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.NAME)),
+    						price, length, desc, maxbetween, online, msh_only, history);
+    				result +=1;
+    			} catch (SQLException e) {
+    				statusMessage = e.getLocalizedMessage();
+    				Log.e(TAG, "", e);
+    				return -2;
+    			}
+    		}
+    		cur.close();
+    		contentResolver.delete(ContentDescriptor.PendingUpdates.CONTENT_URI, ContentDescriptor.PendingUpdates.Cols.ROWID+" = ? AND "
+    				+ContentDescriptor.PendingUpdates.Cols.TABLEID+" = ?", new String[] {id, String.valueOf(
+    				ContentDescriptor.TableIndex.Values.Bookingtype.getKey())});
     	}
     	
     	return result;

@@ -53,7 +53,8 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 	private TextView endDateText = null;
 	private int reportId = 0;
 	private DatePickerFragment datePickerFragment = null;
-
+	protected ProgressDialog progress;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -627,10 +628,30 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 		GetFirstReportFilterData  firstReportFilterThread = new GetFirstReportFilterData(1);
 		firstReportFilterThread.execute();
 	}
+  
+  @Override
+  protected void onResume() {
+	  super.onResume();
+	  
+	  if (progress != null) {
+		  progress.show();
+	  }
+  }
+  
+  @Override
+  protected void onPause(){
+	  super.onPause();
+	  
+	  if (progress != null && progress.isShowing()) {
+		  //progress.hide();
+		  progress.dismiss();
+		  progress = null;
+	  }
+  }
 	
 
   protected class GetReportFilterFieldsByReportId extends AsyncTask<String, Integer, Boolean> {
-		protected ProgressDialog progress;
+		
 		protected HornetDBService sync;
 		
 	
@@ -651,7 +672,10 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 		
 
 		protected void onPostExecute(Boolean success) {
-			progress.dismiss();
+			if (progress != null && progress.isShowing()) {
+				progress.dismiss();
+			}
+			progress = null;
 			if (success) {
 
 				if (reportFiltersMapList.size() > 0) {
@@ -694,6 +718,9 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 		
 		@Override
 		protected void onPreExecute() {
+			if (ReportDateOptionsActivity.this.isFinishing()) {
+				return;
+			}
 			progress = ProgressDialog.show(ReportDateOptionsActivity.this, "Retrieving..", 
 					 "Retrieving First Report Filter Data...");
 		}
@@ -713,7 +740,11 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 
 		@Override
 		protected void onPostExecute(Boolean success) {
-			progress.dismiss();
+			if (progress != null && progress.isShowing()) {
+				
+				progress.dismiss();
+			}
+			progress = null;
 			if (success) {
 				//Calls back to the owning activity to call the thread to retrieve the joining tables
 				//ReportDateOptionsActivity.this.getJoiningTablesData(reportFunctionName);
