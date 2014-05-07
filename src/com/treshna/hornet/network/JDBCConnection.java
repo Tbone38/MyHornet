@@ -1321,15 +1321,6 @@ public class JDBCConnection {
     }
     
 
-    public ResultSet getReportTypes() throws SQLException {
-    	    this.pStatement = con.prepareStatement("Select id, name, view_name, reportgroup from Report_Type");
-    	    return this.pStatement.executeQuery();
-    }
-    public ResultSet getReportNamesByReportTypeId(int report_type_id) throws SQLException {
-    	this.pStatement = con.prepareStatement("Select id, name from user_report where report_type_id = ?");
-    	this.pStatement.setInt(1,report_type_id);
-    	return this.pStatement.executeQuery();
-    }
     public ResultSet getEmailAddressesByIds(Integer []ids, String tableName) throws SQLException {
 
     	String query = "Select email from " + tableName + " where id in (";
@@ -1354,13 +1345,6 @@ public class JDBCConnection {
     	return this.pStatement.executeQuery();
     }
     
-    public ResultSet getJoiningTablesByFunctionName(String functionName) throws SQLException {
-    	String query = "Select joining_query from report_function_table where function_name = ?";
-    	this.pStatement = con.prepareStatement(query);
-    	this.pStatement.setString(1,functionName);
-    	return this.pStatement.executeQuery();
-    }
-    
     public ResultSet getReportFilterFieldsByReportId(int reportId) throws SQLException {
     	String query = "Select filter_name, field from report_filter where user_report_id = ?";
     	this.pStatement = con.prepareStatement(query);
@@ -1373,48 +1357,7 @@ public class JDBCConnection {
     	return this.pStatement.executeQuery();
     }
     
-
-    public ResultSet getReportTypesAndNames() throws SQLException {
-    	String query = "SELECT id, name, function_name, description, report_type_id AS order, false as istype FROM user_report" 
-    	+" UNION SELECT id, name, view_name, NULL::text, id AS order, true as istype FROM report_type ORDER BY \"order\", \"istype\" DESC, name,id";
-	    this.pStatement = con.prepareStatement(query);
-	    return this.pStatement.executeQuery();
-    }
-    
-    public ResultSet getReportColumnsByReportId(int reportId) throws SQLException {
-	    this.pStatement = con.prepareStatement("Select id AS \"report_field_id\", column_name from report_field where user_report_id = ? Order By id");
-	    this.pStatement.setInt(1, reportId);
-	    return this.pStatement.executeQuery();
-    }
-    
-    public ResultSet getReportColumnsFieldsByReportId(int reportId) throws SQLException {
-    	String query = "SELECT report_field.source_field_id, report_field.id AS column_id, report_field.column_name"
-         +", (SELECT field FROM report_source_field WHERE id = report_field.source_field_id) AS field"
-         + " FROM report_field WHERE user_report_id = ? ORDER BY sort_order, column_name";
-	    this.pStatement = con.prepareStatement(query);
-	    this.pStatement.setInt(1, reportId);
-	    return this.pStatement.executeQuery();
-    }
-    
-    public ResultSet getReportDataByDateRange( String finalQuery) throws SQLException {
-    	this.pStatement = con.prepareStatement(finalQuery);    	
-    	return this.pStatement.executeQuery();
-    }
-    
-    public ResultSet getReportDataByDateRangeTwo(String mainQuery, Date startDate, Date endDate) throws SQLException {
-    	try {
-    		con.clearWarnings(); 	
-    	this.pStatement = con.prepareStatement(mainQuery);
-    	this.pStatement.setDate(1, new java.sql.Date(startDate.getTime()));
-    	this.pStatement.setDate(2, new java.sql.Date(endDate.getTime()));    	
-    	return this.pStatement.executeQuery();
-    	} catch (SQLException e) {
-    		Log.e(TAG, "SQL ERROR:"+con.getWarnings(), e);
-    		throw new SQLException(e);
-    	}
-    }
-     
-    public ResultSet getDevice(int deviceid) throws SQLException {
+   public ResultSet getDevice(int deviceid) throws SQLException {
     	if (deviceid <= 0) {
     		return null;
     	}

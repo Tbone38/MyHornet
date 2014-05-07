@@ -1,32 +1,48 @@
 package com.treshna.hornet;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
-import android.app.AlertDialog;
+import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.TypedArray;
+import android.database.Cursor;
+import android.graphics.drawable.AnimationDrawable;
 import android.net.wifi.WifiManager;
+import android.nfc.NfcAdapter;
+import android.nfc.Tag;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.Tab;
-import android.support.v7.app.ActionBarActivity;
-import android.view.LayoutInflater;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.treshna.hornet.booking.BookingsListSuperFragment;
 import com.treshna.hornet.booking.BookingsOverviewFragment;
@@ -38,6 +54,10 @@ import com.treshna.hornet.navigation.SlideMenuClickListener;
 import com.treshna.hornet.navigation.TabListener;
 import com.treshna.hornet.network.HornetDBService;
 import com.treshna.hornet.network.PollingHandler;
+import com.treshna.hornet.report.ReportDateOptionsActivity;
+import com.treshna.hornet.report.ReportListingActivity;
+import com.treshna.hornet.report.ReportNamesActivity;
+import com.treshna.hornet.report.Report_Types_ListActivity;
 import com.treshna.hornet.services.Services;
 import com.treshna.hornet.setup.SetupActivity;
 import com.treshna.hornet.sqlite.ContentDescriptor;
@@ -601,7 +621,7 @@ public class MainActivity extends NFCActivity {
 		 	PollingHandler polling = Services.getFreqPollingHandler();
 	    	polling.startService();
 	    	return true;
-	    }
+	    }*/
 	    case (R.id.action_halt): {
 	    	PollingHandler polling = Services.getFreqPollingHandler();
 	    	polling.stopPolling(false);

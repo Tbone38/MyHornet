@@ -1,4 +1,4 @@
-package com.treshna.hornet;
+package com.treshna.hornet.report;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -17,20 +16,19 @@ import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.treshna.hornet.R;
+import com.treshna.hornet.network.HornetDBService;
+import com.treshna.hornet.services.DatePickerFragment;
 
 
 public class ReportDateOptionsActivity extends FragmentActivity implements DatePickerFragment.DatePickerSelectListener { 

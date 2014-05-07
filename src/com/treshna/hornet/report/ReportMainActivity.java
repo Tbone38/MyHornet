@@ -3,25 +3,14 @@ package com.treshna.hornet.report;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Array;
-import java.math.BigDecimal;
 import java.sql.Date;
-import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
-import com.treshna.hornet.R;
-import com.treshna.hornet.R.color;
-import com.treshna.hornet.R.id;
-import com.treshna.hornet.R.layout;
-import com.treshna.hornet.network.HornetDBService;
-
-import android.R.attr;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.TargetApi;
@@ -32,17 +21,14 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.util.Patterns;
 import android.util.TypedValue;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -51,14 +37,17 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.treshna.hornet.EmailSender;
+import com.treshna.hornet.R;
+import com.treshna.hornet.network.HornetDBService;
+import com.treshna.hornet.services.Services;
+import com.treshna.hornet.visitor.VisitorsViewAdapter;
 
 
 public class ReportMainActivity extends ListActivity {
@@ -404,10 +393,10 @@ public class ReportMainActivity extends ListActivity {
 						ArrayList<String> tag = new ArrayList<String>();
 						tag.add(idView.getText().toString());
 						tag.add(null);
-						Intent intent = new Intent(ReportMainActivity.this, EmptyActivity.class);
+						/*Intent intent = new Intent(ReportMainActivity.this, EmptyActivity.class);
 						intent.putExtra(Services.Statics.KEY, Services.Statics.FragmentType.MemberDetails.getKey());
 						intent.putStringArrayListExtra(VisitorsViewAdapter.EXTRA_ID, tag);
-						ReportMainActivity.this.startActivity(intent);
+						ReportMainActivity.this.startActivity(intent);*/
 					}
 				}
 				
