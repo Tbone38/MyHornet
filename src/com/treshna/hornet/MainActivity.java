@@ -1,6 +1,7 @@
 package com.treshna.hornet;
 
 import java.text.DecimalFormat;
+
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -55,7 +56,7 @@ import com.treshna.hornet.navigation.TabListener;
 import com.treshna.hornet.network.HornetDBService;
 import com.treshna.hornet.network.PollingHandler;
 import com.treshna.hornet.report.ReportDateOptionsActivity;
-import com.treshna.hornet.report.ReportListingActivity;
+import com.treshna.hornet.report.ReportListingFragment;
 import com.treshna.hornet.report.ReportNamesActivity;
 import com.treshna.hornet.report.Report_Types_ListActivity;
 import com.treshna.hornet.services.Services;
@@ -730,7 +731,7 @@ public class MainActivity extends NFCActivity {
 	}
 	private void startReportTypesAndNamesActivity (Context view)
 	{
-		Intent intent = new Intent(view,ReportListingActivity.class);
+		Intent intent = new Intent(view,ReportListingFragment.class);
 		this.startActivity(intent);
 	}
 	private void startReportDateOptionsActivity (Context view)
