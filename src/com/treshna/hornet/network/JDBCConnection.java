@@ -1587,7 +1587,7 @@ public void fixDuplicatePopUp() throws SQLException {
     	if (price != null) {
     		pStatement.setString(3, "$"+price);
     	} else {
-    		pStatement.setNull(3, java.sql.Types.FLOAT);
+    		pStatement.setNull(3, java.sql.Types.VARCHAR);
     	}
     	
     	if (length != null) {
@@ -1622,7 +1622,7 @@ public void fixDuplicatePopUp() throws SQLException {
     	if (price != null) {
     		pStatement.setString(2, "$"+price);
     	}else {
-    		pStatement.setNull(2, java.sql.Types.FLOAT);
+    		pStatement.setNull(2, java.sql.Types.VARCHAR);
     	}
     	
     	if (length != null) {

@@ -11,6 +11,7 @@ import com.treshna.hornet.sqlite.ContentDescriptor.Bookingtype;
 import com.treshna.hornet.sqlite.ContentDescriptor.CancellationFee;
 import com.treshna.hornet.sqlite.ContentDescriptor.Class;
 import com.treshna.hornet.sqlite.ContentDescriptor.Company;
+import com.treshna.hornet.sqlite.ContentDescriptor.Door;
 import com.treshna.hornet.sqlite.ContentDescriptor.Enquiry;
 import com.treshna.hornet.sqlite.ContentDescriptor.FreeIds;
 import com.treshna.hornet.sqlite.ContentDescriptor.IdCard;
@@ -959,6 +960,14 @@ public class UpdateDatabase {
 					+" ("+PendingUpdates.Cols.ROWID+", "+PendingUpdates.Cols.TABLEID+")"
 					+" VALUES (old."+Bookingtype.Cols.ID+","+TableIndex.Values.Bookingtype.getKey()+");"
 				+" END;";
+		
+		private static final String SQL38 = "ALTER TABLE "+Door.NAME+" ADD COLUMN "+Door.Cols.STATUS+" INTEGER DEFAULT 1 ;";
+		private static final String SQL39 = "ALTER TABLE "+Door.NAME+" ADD COLUMN "+Door.Cols.BOOKING+" INTEGER DEFAULT 1 ;";
+		private static final String SQL40 = "ALTER TABLE "+Door.NAME+" ADD COLUMN "+Door.Cols.WOMENONLY+" TEXT DEFAULT 'f' ;";
+		private static final String SQL41 = "ALTER TABLE "+Door.NAME+" ADD COLUMN "+Door.Cols.CONCESSION+" INTEGER DEFAULT 0 ;";
+		private static final String SQL42 = "ALTER TABLE "+Door.NAME+" ADD COLUMN "+Door.Cols.LASTVISITS+" TEXT NOT NULL DEFAULT 't' ;";
+		private static final String SQL43 = "ALTER TABLE "+Door.NAME+" ADD COLUMN "+Door.Cols.COMPANY+" INTEGER ;";
+		private static final String SQL44 = "ALTER TABLE "+Door.NAME+" ADD COLUMN "+Door.Cols.DEVICESIGNUP+" TEXT DEFAULT 'f';";
 				
 		public static void patchNinetySix(SQLiteDatabase db) {
 			db.beginTransaction();
@@ -1037,6 +1046,20 @@ public class UpdateDatabase {
 				db.execSQL(SQL36);
 				Log.w(HornetDatabase.class.getName(), "\n"+SQL37);
 				db.execSQL(SQL37);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL38);
+				db.execSQL(SQL38);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL39);
+				db.execSQL(SQL39);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL40);
+				db.execSQL(SQL40);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL41);
+				db.execSQL(SQL41);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL42);
+				db.execSQL(SQL42);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL43);
+				db.execSQL(SQL43);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL44);
+				db.execSQL(SQL44);
 				db.setTransactionSuccessful();
 			/*} catch (SQLException e) {
 			e.printStackTrace();
