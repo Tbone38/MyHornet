@@ -84,11 +84,6 @@ public class ReportListingFragment extends ListFragment {
 					//Checking that a report name was clicked on (not a type)
 					 if ((selectedRowData.get("istype").compareTo("f")== 0)) {
 						 
-							/*Intent intent = new Intent(view.getContext(),ReportDateOptionsActivity.class);
-							intent.putExtra("report_id", Integer.parseInt(selectedRowData.get("id")));
-							intent.putExtra("report_name" , selectedRowData.get("name").toString());
-							intent.putExtra("report_function_name",selectedRowData.get("function_name").toString());
-							startActivity(intent);*/
 						    Fragment dateOptionsFragment =  new ReportDateOptionsFragment();
 							Bundle bdl = new Bundle(1);
 							bdl.putInt("report_id", Integer.parseInt(selectedRowData.get("id")));
