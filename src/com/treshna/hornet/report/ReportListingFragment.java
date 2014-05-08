@@ -34,7 +34,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 //public class ReportListingActivity extends ListActivity {
-public class ReportListingActivity extends ListFragment {
+public class ReportListingFragment extends ListFragment {
 	private LayoutInflater mInflater;
 	private View view;
 	private ArrayList<HashMap<String,String>> resultMapList = null;
@@ -182,7 +182,7 @@ public class ReportListingActivity extends ListFragment {
 			progress.dismiss();
 			if (success) {
 
-				ReportListingActivity.this.buildListAdapter();
+				buildListAdapter();
 				
 			} else {
 				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());

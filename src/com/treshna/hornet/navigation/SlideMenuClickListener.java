@@ -30,7 +30,7 @@ import com.treshna.hornet.lists.FormList;
 import com.treshna.hornet.member.MemberAddFragment;
 import com.treshna.hornet.network.HornetDBService;
 import com.treshna.hornet.report.KeyPerformanceIndexFragment;
-import com.treshna.hornet.report.ReportListingActivity;
+import com.treshna.hornet.report.ReportListingFragment;
 import com.treshna.hornet.roll.RollListFragment;
 import com.treshna.hornet.services.Services;
 
@@ -99,7 +99,7 @@ public class SlideMenuClickListener implements OnItemClickListener, OnClickListe
         	break;
         case 9:
         	tag = "reports";
-        	fragment = new ReportListingActivity(); 
+        	fragment = new ReportListingFragment(); 
         	break;
         case 11:
         	tag = "rolllist";
