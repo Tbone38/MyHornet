@@ -15,9 +15,12 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -31,17 +34,21 @@ import com.treshna.hornet.network.HornetDBService;
 import com.treshna.hornet.services.DatePickerFragment;
 
 
-public class ReportDateOptionsActivity extends FragmentActivity implements DatePickerFragment.DatePickerSelectListener { 
+public class ReportDateOptionsFragment extends Fragment implements DatePickerFragment.DatePickerSelectListener { 
 	private HashMap<String,Object> reportData = new HashMap<String,Object>() ;
 	private ArrayList<HashMap<String,String>> reportFiltersMapList = new ArrayList<HashMap<String,String>>();
 	private ArrayList<HashMap<String,String>> firstReportFilterMapList = new ArrayList<HashMap<String,String>>();
 	private ArrayList<HashMap<String,String>> secondReportFilterMapList = new ArrayList<HashMap<String,String>>();
 	//private String reportFilterTableNamesQuery = null;
 	private DatePickerFragment startDatePicker = null;
+	private LayoutInflater mInflater = null;
+	private View view = null;
 	private int filterCount = 0;
 	private boolean firstFilterSelectionMade = false;
 	private TextView firstFilterTitle = null;
 	private TextView secondFilterTitle = null;
+
+
 	private String[] filterQueries = null;
 	private	Button btnStartButton = null;
 	private	Button btnEndButton = null;
@@ -56,33 +63,33 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 	protected ProgressDialog progress;
 	
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		this.setContentView(R.layout.report_user_date_options);
-		Intent intent = this.getIntent();
-		//datePickerFragment = new DatePickerFragment();
-		TextView reportNameTxt = (TextView) findViewById(R.id.report_date_options_report_name);
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		mInflater = inflater;
+		view = mInflater.inflate(R.layout.report_user_date_options,null);
+		TextView reportNameTxt = (TextView) view.findViewById(R.id.report_date_options_report_name);
 		startDatePicker =  new  DatePickerFragment();
 		endDatePicker = new  DatePickerFragment();
-		startDateText = (TextView) findViewById(R.id.startDateTxt);
-		endDateText = (TextView) findViewById(R.id.endDateTxt);
+		startDateText = (TextView) view.findViewById(R.id.startDateTxt);
+		endDateText = (TextView) view.findViewById(R.id.endDateTxt);
 		setDateTextView(endDateText, selectedEndDate);
-		Button createButton =  (Button) findViewById(R.id.btnCreateReport);
-		Button columnOptionsButton =  (Button) findViewById(R.id.btnColumnOptions);
-		LinearLayout layout = (LinearLayout) findViewById(R.id.dateOptions);
+		Button createButton =  (Button) view.findViewById(R.id.btnCreateReport);
+		Button columnOptionsButton =  (Button) view.findViewById(R.id.btnColumnOptions);
+		LinearLayout layout = (LinearLayout) view.findViewById(R.id.dateOptions);
 		
-		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		
 		if (layout.getTag().toString().compareTo("Large") == 0) {
-			btnStartButton = (Button) findViewById(R.id.btnSelectStartDate);
-			btnEndButton = (Button) findViewById(R.id.btnSelectEndDate);
+			btnStartButton = (Button) view.findViewById(R.id.btnSelectStartDate);
+			btnEndButton = (Button) view.findViewById(R.id.btnSelectEndDate);
 		}
-		reportNameTxt.setText(intent.getStringExtra("report_name").trim());
-		firstFilterTitle = (TextView) findViewById(R.id.firstFilterTitle);
-		secondFilterTitle = (TextView) findViewById(R.id.secondFilterTitle);
-		reportId = intent.getIntExtra("report_id", 0);
-		reportData.put("report_name", intent.getStringExtra("report_name"));
-		reportData.put("report_function_name", intent.getStringExtra("report_function_name"));
+		Bundle fragmentData = getArguments();
+		reportNameTxt.setText(fragmentData.getString("report_name").trim());
+		firstFilterTitle = (TextView) view.findViewById(R.id.firstFilterTitle);
+		secondFilterTitle = (TextView) view.findViewById(R.id.secondFilterTitle);
+		reportId = fragmentData.getInt("report_id", 0);
+		reportData.put("report_name", fragmentData.getString("report_name"));
+		reportData.put("report_function_name", fragmentData.getString("report_function_name"));
 		setUpQuickSelectSpinner();
 		getReportFilterFieldsByReportId();
 
@@ -93,7 +100,7 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 
 				@Override
 				public void onClick(View v) {
-					startDatePicker.show( ReportDateOptionsActivity.this.getSupportFragmentManager(), "Start Date Picker");			
+					startDatePicker.show( ReportDateOptionsFragment.this.getFragmentManager(), "Start Date Picker");			
 				}
 				
 			});
@@ -102,7 +109,7 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 
 				@Override
 				public void onClick(View v) {
-					endDatePicker.show(ReportDateOptionsActivity.this.getSupportFragmentManager(), "End Date Picker");	
+					endDatePicker.show(ReportDateOptionsFragment.this.getFragmentManager(), "End Date Picker");	
 				}
 				
 			});		
@@ -129,14 +136,16 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 			}
 		});
 		
-		
+		// TODO Auto-generated method stub
+		return view;
 	}
+
 	
 	private void setUpQuickSelectSpinner () {
 		
-		final Spinner datePresetsSpinner = (Spinner) findViewById(R.id.datePresetsSpinner);
+		final Spinner datePresetsSpinner = (Spinner) view.findViewById(R.id.datePresetsSpinner);
 		String[] spinnerOptions = {"Today", "This Month", "Last Month", "Last Two Months", "Last Six Months", "Last Year"};
-		ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(this, R.layout.report_date_options_spinner , spinnerOptions);
+		ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(getActivity(), R.layout.report_date_options_spinner , spinnerOptions);
 		datePresetsSpinner.setAdapter(spinnerAdapter);
 		datePresetsSpinner.setPrompt("Select Date Presets");
 		datePresetsSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -161,7 +170,7 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 	
 	private void setUpFirstFilterSpinner() {
 		
-		final Spinner firstFilterSpinner = (Spinner) findViewById(R.id.firstFilterSpinner);
+		final Spinner firstFilterSpinner = (Spinner) view.findViewById(R.id.firstFilterSpinner);
 		
 		ArrayList<String> filterOptionsList = new ArrayList<String>();
 		
@@ -198,7 +207,7 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 		
 		}
 	
-		ArrayAdapter<String> filterAdapter = new ArrayAdapter<String>(this, R.layout.report_date_options_spinner , filterOptionsList);
+		ArrayAdapter<String> filterAdapter = new ArrayAdapter<String>(getActivity(), R.layout.report_date_options_spinner , filterOptionsList);
 		firstFilterSpinner.setAdapter(filterAdapter);
 		firstFilterSpinner.setPrompt("Select Filter");
 		firstFilterSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -209,7 +218,7 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 					String filterField = null;
 					String selectedParam =  (String) firstFilterSpinner.getSelectedItem();
 											
-						String filterType = ReportQueryResources.getFilterTypeByName(getApplicationContext(),reportFiltersMapList.get(0).get("filter_name"));
+						String filterType = ReportQueryResources.getFilterTypeByName(getActivity(),reportFiltersMapList.get(0).get("filter_name"));
 						
 						
 						//Checking for filters implemented by id...
@@ -225,7 +234,7 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 											
 											if (filterQueries.length > 1) {
 												
-												filterQueries[1] = ReportQueryResources.getFilterQueryByName(getApplicationContext(), "Programme");
+												filterQueries[1] = ReportQueryResources.getFilterQueryByName(getActivity(), "Programme");
 												
 											}
 										
@@ -243,7 +252,7 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 											
 											if (filterQueries.length > 1) {
 											
-												filterQueries[1] = ReportQueryResources.getFilterQueryByName(getApplicationContext(), "Group_Programme");
+												filterQueries[1] = ReportQueryResources.getFilterQueryByName(getActivity(), "Group_Programme");
 												
 												addSelectedParamToQuery(selectedId);
 											}
@@ -288,7 +297,7 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 		
 	private void setUpSecondFilterSpinner() {
 		
-		final Spinner secondFilterSpinner = (Spinner) findViewById(R.id.secondFilterSpinner);
+		final Spinner secondFilterSpinner = (Spinner) view.findViewById(R.id.secondFilterSpinner);
 		
 		ArrayList<String> filterOptionsList = new ArrayList<String>();
 
@@ -323,7 +332,7 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 
 		}
 		
-		ArrayAdapter<String> filterAdapter = new ArrayAdapter<String>(this, R.layout.report_date_options_spinner , filterOptionsList);
+		ArrayAdapter<String> filterAdapter = new ArrayAdapter<String>(getActivity(), R.layout.report_date_options_spinner , filterOptionsList);
 		secondFilterSpinner.setAdapter(filterAdapter);
 		secondFilterSpinner.setPrompt("Select Filter");
 		secondFilterSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -333,7 +342,7 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 					int position, long id) {
 					String filterField = null;
 					String selectedName =  (String) secondFilterSpinner.getSelectedItem();
-					String filterType = ReportQueryResources.getFilterTypeByName(getApplicationContext(),reportFiltersMapList.get(1).get("filter_name"));
+					String filterType = ReportQueryResources.getFilterTypeByName(getActivity(),reportFiltersMapList.get(1).get("filter_name"));
 					
 					Log.i("Second Filter Type:", filterType);
 					//Fetching id field to apply filters for reports with the Programme-Group filter...
@@ -487,7 +496,7 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 		reportData.put("start_date",selectedStartDate);
 		reportData.put("end_date",  selectedEndDate);
 		
-		Intent reportMainIntent = new Intent(this.getApplicationContext(), activity);
+		Intent reportMainIntent = new Intent(getActivity(), activity);
 		reportMainIntent.putExtra("report_id", reportId);
 		//Pushing UI and upstream data through to the report column options intent..
 		for (Map.Entry<String,Object> param: reportData.entrySet()){
@@ -563,7 +572,7 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 		filterQueries = new String [reportFiltersMapList.size()];
 		int index = 0;
 		for (HashMap<String,String> reportFiltersMap: reportFiltersMapList){
-			filterQueries[index] = ReportQueryResources.getFilterQueryByName(getApplicationContext(),reportFiltersMap.get("filter_name"));
+			filterQueries[index] = ReportQueryResources.getFilterQueryByName(getActivity(),reportFiltersMap.get("filter_name"));
 			index ++;
 		}
 	}
@@ -630,7 +639,7 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 	}
   
   @Override
-  protected void onResume() {
+  public void onResume() {
 	  super.onResume();
 	  
 	  if (progress != null) {
@@ -639,7 +648,7 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
   }
   
   @Override
-  protected void onPause(){
+  public void onPause() {
 	  super.onPause();
 	  
 	  if (progress != null && progress.isShowing()) {
@@ -660,13 +669,13 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 		}
 		
 		protected void onPreExecute() {
-			progress = ProgressDialog.show(ReportDateOptionsActivity.this, "Retrieving..", 
+			progress = ProgressDialog.show(getActivity(), "Retrieving..", 
 					 "Retrieving Report Filter Data...");
 		}
 		
 		@Override
 		protected Boolean doInBackground(String... params) {
-			reportFiltersMapList = sync.getReportFilterFieldsByReportId(ReportDateOptionsActivity.this, reportId);
+			reportFiltersMapList = sync.getReportFilterFieldsByReportId(getActivity(), reportId);
 	        return true;
 		}
 		
@@ -679,11 +688,11 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 			if (success) {
 
 				if (reportFiltersMapList.size() > 0) {
-					LinearLayout firstFilterLayout = (LinearLayout) findViewById(R.id.firstFilterLayout);
+					LinearLayout firstFilterLayout = (LinearLayout) view.findViewById(R.id.firstFilterLayout);
 					firstFilterLayout.setVisibility(View.VISIBLE);
 					firstFilterTitle.setText(reportFiltersMapList.get(0).get("filter_name"));				
 					if (reportFiltersMapList.size() > 1) {
-						LinearLayout secondFilterLayout = (LinearLayout) findViewById(R.id.secondFilterLayout);
+						LinearLayout secondFilterLayout = (LinearLayout) view.findViewById(R.id.secondFilterLayout);
 						secondFilterLayout.setVisibility(View.VISIBLE);
 						secondFilterTitle.setText(reportFiltersMapList.get(1).get("filter_name"));
 					}
@@ -699,7 +708,7 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 				
 				
 			} else {
-				AlertDialog.Builder builder = new AlertDialog.Builder(ReportDateOptionsActivity.this);
+				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 				builder.setTitle("Error Occurred")
 				.setMessage(sync.getStatus())
 				.setPositiveButton("OK", null)
@@ -713,15 +722,15 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 		
 		
 		public GetFirstReportFilterData (int filterCount) {
-			ReportDateOptionsActivity.this.filterCount = filterCount;
+			ReportDateOptionsFragment.this.filterCount = filterCount;
 		}
 		
 		@Override
 		protected void onPreExecute() {
-			if (ReportDateOptionsActivity.this.isFinishing()) {
+			if (getActivity().isFinishing()) {
 				return;
 			}
-			progress = ProgressDialog.show(ReportDateOptionsActivity.this, "Retrieving..", 
+			progress = ProgressDialog.show(getActivity(), "Retrieving..", 
 					 "Retrieving First Report Filter Data...");
 		}
 
@@ -729,11 +738,11 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 		protected Boolean doInBackground(String... params) {
 			if (filterCount == 0) {
 				
-				firstReportFilterMapList = sync.getFirstReportFilterData(getApplicationContext(),filterQueries[filterCount]);
+				firstReportFilterMapList = sync.getFirstReportFilterData(getActivity(),filterQueries[filterCount]);
 				
 			} else if (filterCount == 1) {
 				
-				secondReportFilterMapList = sync.getFirstReportFilterData(getApplicationContext(),filterQueries[filterCount]);
+				secondReportFilterMapList = sync.getFirstReportFilterData(getActivity(),filterQueries[filterCount]);
 			}
 			return true;
 		}
@@ -777,7 +786,7 @@ public class ReportDateOptionsActivity extends FragmentActivity implements DateP
 			    }
 				
 			} else {
-				AlertDialog.Builder builder = new AlertDialog.Builder(ReportDateOptionsActivity.this);
+				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 				builder.setTitle("Error Occurred")
 				.setMessage(sync.getStatus())
 				.setPositiveButton("OK", null)

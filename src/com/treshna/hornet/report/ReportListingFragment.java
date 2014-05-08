@@ -5,10 +5,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import com.treshna.hornet.MainActivity;
 import com.treshna.hornet.R;
 import com.treshna.hornet.R.id;
 import com.treshna.hornet.R.layout;
+import com.treshna.hornet.member.MemberDetailsFragment;
 import com.treshna.hornet.network.HornetDBService;
+import com.treshna.hornet.visitor.VisitorsViewAdapter;
 
 import android.annotation.TargetApi;
 import android.app.ActionBar.LayoutParams;
@@ -19,6 +22,7 @@ import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -79,11 +83,19 @@ public class ReportListingFragment extends ListFragment {
 					
 					//Checking that a report name was clicked on (not a type)
 					 if ((selectedRowData.get("istype").compareTo("f")== 0)) {
-							Intent intent = new Intent(view.getContext(),ReportDateOptionsActivity.class);
+						 
+							/*Intent intent = new Intent(view.getContext(),ReportDateOptionsActivity.class);
 							intent.putExtra("report_id", Integer.parseInt(selectedRowData.get("id")));
 							intent.putExtra("report_name" , selectedRowData.get("name").toString());
 							intent.putExtra("report_function_name",selectedRowData.get("function_name").toString());
-							startActivity(intent);
+							startActivity(intent);*/
+						    Fragment dateOptionsFragment =  new ReportDateOptionsFragment();
+							Bundle bdl = new Bundle(1);
+							bdl.putInt("report_id", Integer.parseInt(selectedRowData.get("id")));
+							bdl.putString("report_name" , selectedRowData.get("name").toString());
+							bdl.putString("report_function_name",selectedRowData.get("function_name"));
+							dateOptionsFragment.setArguments(bdl);
+							((MainActivity)getActivity()).changeFragment(dateOptionsFragment, "reportMainListing");
 					 }
 				}  				
 			});
