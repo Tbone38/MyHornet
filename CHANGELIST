@@ -136,7 +136,6 @@ KEY:
                 Fix image behaviour.
                 Hold/Free Time switch, free time hides the Hold Fee radios, as well as the prorata check boxes. --CHNAGES MADE. TEST THEY WORK.
                 Colours might need tinkered with.
-		Bookingtype trigger handling -- updates/inserts.
 
     
     v119:

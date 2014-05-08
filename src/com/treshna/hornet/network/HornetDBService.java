@@ -51,7 +51,6 @@ public class HornetDBService extends Service {
 	private static ContentResolver contentResolver = null;
     private static  Cursor cur = null; 
     private JDBCConnection connection = null;
-    private String imageWhereQuery = "";
     private String statusMessage = "";
     private static Handler handler;
     private static int currentCall;
@@ -647,7 +646,7 @@ public class HornetDBService extends Service {
 	    		Log.e(TAG,"",e);	
 	    	}
     	}
-        closeConnection();
+        cleanUp();
         Services.setPreference(getApplicationContext(), "lastsync", String.valueOf(this_sync));//String.valueOf(System.currentTimeMillis())   	
 		return true;
     }
@@ -847,7 +846,7 @@ public class HornetDBService extends Service {
 					String.valueOf(ContentDescriptor.TableIndex.Values.Image.getKey()), String.valueOf(rowList.get(i))});
     	}
     	
-    	closeConnection();
+    	cleanUp();
     	
     	return result;
     }
@@ -952,7 +951,7 @@ public class HornetDBService extends Service {
     		cur.close();
     	}
     	
-    	closeConnection();
+    	cleanUp();
     	return result;
     }
     
@@ -984,13 +983,11 @@ public class HornetDBService extends Service {
     	
     	Log.v(TAG, "Updating Member for ID:"+memberid);
     	int result = 0;
-    	String where = "id = "+memberid, cardno, street, suburb, 
+    	String  cardno, street, suburb, 
     			city, areacode, gender, dob, phcell, phhome, phwork,
     			email, emergency_name, emergency_relationship, emergency_cell,
     			emergency_home, emergency_work, medical, medication, medicationdosage;
     	
-    	
-    	ArrayList<String[]> values = new ArrayList<String[]>();
 		if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Member.Cols.CARDNO))) {
 			cardno = cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.CARDNO));
 		} else {
@@ -1178,7 +1175,7 @@ public class HornetDBService extends Service {
     		}
 
     	}
-    	closeConnection();
+    	cleanUp();
     	return count;
     }
     
@@ -1258,7 +1255,7 @@ public class HornetDBService extends Service {
     			//either the connection or the resultSet is null. likely because of bad settings.
     		}
     	}
-    	closeConnection();
+    	cleanUp();
     	return result;
     }
     
@@ -1291,7 +1288,7 @@ public class HornetDBService extends Service {
     		statusMessage = e.getLocalizedMessage();
     		Log.e(TAG, "", e);
     	}
-    	closeConnection();
+    	cleanUp();
     	
     	return result;
     }
@@ -1383,7 +1380,7 @@ public class HornetDBService extends Service {
     	}
     	
     	Log.v(TAG, "Uploaded "+result+" Bookings");
-    	closeConnection();
+    	cleanUp();
     	
     	return result;
     }
@@ -1453,7 +1450,7 @@ public class HornetDBService extends Service {
     		
     	}
     	Log.v(TAG, "Updated "+result+" Booking!");
-    	closeConnection();
+    	cleanUp();
     	return result;
     }
     
@@ -1635,7 +1632,7 @@ public class HornetDBService extends Service {
     		Log.e(TAG, "", e);
     		statusMessage = e.getLocalizedMessage();
     	}
-    	closeConnection();
+    	cleanUp();
 
     	Log.v(TAG, "BookingCount:"+result);
     	Services.setPreference(getApplicationContext(), "b_lastsync", String.valueOf(this_sync));
@@ -1686,7 +1683,7 @@ public class HornetDBService extends Service {
     		statusMessage = e.getLocalizedMessage();
     		Log.e(TAG, "", e);
     	}
-    	closeConnection();
+    	cleanUp();
     	Log.d(TAG, "GOT "+result+" BOOKING TYPES");
     	return result;
     }
@@ -1741,7 +1738,7 @@ public class HornetDBService extends Service {
     		statusMessage = e.getLocalizedMessage();
     		Log.e(TAG, "", e);
     	}
-    	closeConnection();
+    	cleanUp();
     	return result;
     }
     
@@ -1874,7 +1871,7 @@ public class HornetDBService extends Service {
     		statusMessage = e.getLocalizedMessage();
     		Log.e(TAG, "", e);
     	}
-    	closeConnection();
+    	cleanUp();
     	
     	return result;
     }
@@ -1915,7 +1912,7 @@ public class HornetDBService extends Service {
     		Log.e(TAG, "Membership Error:", e);
     	}
 
-    	closeConnection();
+    	cleanUp();
     	return result;
     }
     
@@ -1972,7 +1969,7 @@ public class HornetDBService extends Service {
 	    		statusMessage = e.getLocalizedMessage();
 	    		Log.e(TAG, "", e);
 	    	}
-    		closeConnection();
+    		cleanUp();
     	}
     	cur.close();
     	contentResolver.delete(ContentDescriptor.Swipe.CONTENT_URI, null, null);
@@ -2014,7 +2011,7 @@ public class HornetDBService extends Service {
     		statusMessage = e.getLocalizedMessage();
     		Log.e(TAG, "" , e);
     	}
-    	closeConnection();
+    	cleanUp();
     	Log.d(TAG, "UPDATED "+result+" OPEN HOURS");
     	return result;
     }
@@ -2195,7 +2192,7 @@ public class HornetDBService extends Service {
     		
     		result += 1;
     	}
-    	closeConnection();
+    	cleanUp();
     	
     	return result;
     }
@@ -2250,7 +2247,7 @@ public class HornetDBService extends Service {
     		Log.e(TAG, "", e);
     		return -2;
     	}
-    	closeConnection();
+    	cleanUp();
     	
     	return result;
     }
@@ -2497,7 +2494,7 @@ public class HornetDBService extends Service {
     	if (cur != null && !cur.isClosed()) {
     		cur.close();
     	}
-    	closeConnection();
+    	cleanUp();
     	
     	return result;
     }
@@ -2528,7 +2525,7 @@ public class HornetDBService extends Service {
     	return connected;
     }
     
-    private void closeConnection() {
+    private void cleanUp() {
     	/*if (cur != null && !cur.isClosed()) {
     		cur.close();
     		cur = null;
@@ -2599,7 +2596,7 @@ public class HornetDBService extends Service {
 	    	connection.closeStatementQuery();
     	}
     	
-    	closeConnection();
+    	cleanUp();
     	return result;
     }
     
@@ -2665,7 +2662,7 @@ public class HornetDBService extends Service {
     		return -3;
     	}
     	
-    	closeConnection();
+    	cleanUp();
     	
     	return result;
     }
@@ -2763,7 +2760,7 @@ public class HornetDBService extends Service {
     				new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.MembershipSuspend.getKey()),
     				String.valueOf(rows.get(i))});
     	}
-    	closeConnection();
+    	cleanUp();
     	return result;
     }
     
@@ -2852,7 +2849,7 @@ public class HornetDBService extends Service {
     		}
     	}
     	
-    	closeConnection();
+    	cleanUp();
     	
     	return result;
     }
@@ -2898,7 +2895,7 @@ public class HornetDBService extends Service {
     		Log.e(TAG, "", e);
     		return -3;
     	}
-    	closeConnection();
+    	cleanUp();
     	
     	return result;
     }
@@ -2952,7 +2949,7 @@ public class HornetDBService extends Service {
     		connection.closePreparedStatement();
     	}
     	
-    	closeConnection();
+    	cleanUp();
     	
     	return result;
     }
@@ -2988,7 +2985,7 @@ public class HornetDBService extends Service {
     		return -3;
     	}
     	
-    	closeConnection();
+    	cleanUp();
     	return result;
     }
     
@@ -3041,7 +3038,7 @@ public class HornetDBService extends Service {
     		Log.e(TAG, "", e);
     		return -3;
     	}
-    	closeConnection();
+    	cleanUp();
     	return result;	
     }
     
@@ -3066,7 +3063,7 @@ public class HornetDBService extends Service {
     	
     	resultMapList = this.resultSetToMapList(result);
 		   
-    		this.closeConnection();
+    		this.cleanUp();
     	
 		return resultMapList;
 	
@@ -3091,7 +3088,7 @@ public class HornetDBService extends Service {
     	
     	resultMapList = this.resultSetToMapList(result);
 		   
-    		this.closeConnection();
+    		this.cleanUp();
     	
 		return resultMapList;
 	
@@ -3117,7 +3114,7 @@ public class HornetDBService extends Service {
 	  	
 	  		resultMapList = this.resultSetToMapList(result);
 			   
-	  		this.closeConnection();
+	  		this.cleanUp();
 	  	
 			return resultMapList;  
   }
@@ -3142,7 +3139,7 @@ public class HornetDBService extends Service {
   	
   		resultMapList = this.resultSetToMapList(result);
 		   
-  		this.closeConnection();
+  		this.cleanUp();
   	
 		return resultMapList;
 	
@@ -3155,8 +3152,6 @@ public class HornetDBService extends Service {
     	this.setup(context);
     	ArrayList<HashMap<String, String>> resultMapList  = null;
     	ResultSet result = null;
-    	String id, name, viewName, reportGroup;
-    	int columnCount = 0;
     	
     	if (!this.openConnection()){
     			
@@ -3168,12 +3163,10 @@ public class HornetDBService extends Service {
 			e.printStackTrace();
 		}
     	
-    	
     	resultMapList = this.resultSetToMapList(result);
 		   
-    	this.closeConnection();
-    	
-		return resultMapList;
+    	this.cleanUp();
+    	return resultMapList;
 	
     }
  
@@ -3197,7 +3190,7 @@ public class HornetDBService extends Service {
  	
  	resultMapList = this.resultSetToMapList(result);
 		   
- 		this.closeConnection();
+ 		this.cleanUp();
  	
 		return resultMapList;
 	
@@ -3223,7 +3216,7 @@ public class HornetDBService extends Service {
 	 	
 	 		resultMapList = this.resultSetToMapList(result);
 			   
-	 		this.closeConnection();
+	 		this.cleanUp();
 	 	
 			return resultMapList;
 		
@@ -3249,7 +3242,7 @@ public class HornetDBService extends Service {
 	 	
 	 		resultMapList = this.resultSetToMapList(result);
 			   
-	 		this.closeConnection();
+	 		this.cleanUp();
 	 	
 			return resultMapList;
 		
@@ -3275,7 +3268,7 @@ public class HornetDBService extends Service {
 	 	
 	 		resultMapList = this.resultSetToMapList(result);
 			   
-	 		this.closeConnection();
+	 		this.cleanUp();
 	 	
 			return resultMapList;
  } 
@@ -3300,7 +3293,7 @@ public class HornetDBService extends Service {
 	 	
 	 		resultMapList = this.resultSetToMapList(result);
 			   
-	 		this.closeConnection();
+	 		this.cleanUp();
 	 	
 			return resultMapList;
 		
@@ -3403,7 +3396,7 @@ public class HornetDBService extends Service {
     			return -2;
     		}
     	}
-    	closeConnection();
+    	cleanUp();
     	return result;
     }
     
@@ -3474,7 +3467,7 @@ public class HornetDBService extends Service {
     				new String[] {String.valueOf(pendingRows.get(i))});
     	}
     	
-    	closeConnection();
+    	cleanUp();
     	
     	return result;
     }
@@ -3514,7 +3507,7 @@ public class HornetDBService extends Service {
     		Log.e(TAG, "", e);
     		return -2;
     	}
-    	closeConnection();
+    	cleanUp();
     	
     	return result;
     }
@@ -3543,7 +3536,7 @@ public class HornetDBService extends Service {
     	}
 
     	updateDevice();
-    	closeConnection();
+    	cleanUp();
     	connection.closeConnection();
     	
     	return true;
@@ -3766,7 +3759,7 @@ public class HornetDBService extends Service {
     		return -2;
     	}
     	
-    	closeConnection();
+    	cleanUp();
     	
     	return result;
     }
@@ -3928,7 +3921,7 @@ public class HornetDBService extends Service {
     				String.valueOf(ContentDescriptor.TableIndex.Values.Membership.getKey())});
     	}
     	
-    	closeConnection();
+    	cleanUp();
     	
     	return result;
     }
@@ -4000,7 +3993,7 @@ public class HornetDBService extends Service {
     		}}
     	}
     	
-    	closeConnection();
+    	cleanUp();
     	return result;
     }
     
@@ -4029,7 +4022,7 @@ public class HornetDBService extends Service {
     		return -3;
     	}
     	
-    	closeConnection();
+    	cleanUp();
     	
     	return result;
     }
@@ -4071,7 +4064,7 @@ public class HornetDBService extends Service {
     	    		return -2;
     	    	}
     	}
-    	closeConnection();
+    	cleanUp();
     	 
     	return result;
     }
@@ -4131,7 +4124,7 @@ public class HornetDBService extends Service {
     			return -2;
     		}
     	}
-    	closeConnection();
+    	cleanUp();
     	return result;
     }
     
@@ -4184,7 +4177,7 @@ public class HornetDBService extends Service {
 	    		return -2;
 	    	}
 		}
-    	closeConnection();
+    	cleanUp();
     	
     	return result;
     }
@@ -4243,7 +4236,7 @@ public class HornetDBService extends Service {
 			}
 		}
 	
-    	closeConnection();
+    	cleanUp();
     	
     	return result;
     }
@@ -4329,7 +4322,7 @@ public class HornetDBService extends Service {
     		Log.e(TAG, "", e);
     		return -2;
     	}
-    	closeConnection();
+    	cleanUp();
     	
     	return result;
     }
@@ -4429,12 +4422,12 @@ public class HornetDBService extends Service {
     		Log.e(TAG, "", e);
     		return -3;
     	}
-    	closeConnection();
+    	cleanUp();
     	
     	return result;
     }
     
-    private boolean uploadLog(){ //TODO: fix this. it uploads a ton of fairly useless shit.
+    private boolean uploadLog(){ 
     	JSONHandler json = new JSONHandler(getApplicationContext());
     	String te_username = "", schemaversion = "", company_name = "", appid = "";
     	
@@ -4492,7 +4485,7 @@ public class HornetDBService extends Service {
     	}
     	//do other magic handling here.
     	
-    	closeConnection();
+    	cleanUp();
     	Log.d(TAG, "Finished upload.");
     	return result;
     }
@@ -4526,7 +4519,7 @@ public class HornetDBService extends Service {
     		return -2;
     	}
     	
-    	closeConnection();
+    	cleanUp();
     	return result;
     }
     
@@ -4605,7 +4598,7 @@ public class HornetDBService extends Service {
     				new String[] {String.valueOf(membershipid)});
     	}
     	
-    	closeConnection();
+    	cleanUp();
     	
     	return result;
     }
@@ -4634,7 +4627,7 @@ public class HornetDBService extends Service {
     		ContentValues values;
     		rs = connection.getKPIs();
     		if (rs == null) {
-    			statusMessage = "KPI's not available in this version of GymMaster. Please update to Version 320.";
+    			statusMessage = "KPI's not available for mobile in this version of GymMaster. Please update to Version 320.";
     			return 0;
     		}
     		while (rs.next()) {
@@ -4667,7 +4660,7 @@ public class HornetDBService extends Service {
     	}
     	
     	updateDevice();
-    	closeConnection();
+    	cleanUp();
     	connection.closeConnection();
     	
     	return result;
@@ -4725,7 +4718,7 @@ public class HornetDBService extends Service {
     		return -2;
     	}
     	
-    	closeConnection();
+    	cleanUp();
     	
     	return result;
     }
@@ -4785,7 +4778,7 @@ public class HornetDBService extends Service {
     		return -2;
     	}
     	
-    	closeConnection();
+    	cleanUp();
     	return result;
     }
     
@@ -4853,7 +4846,7 @@ public class HornetDBService extends Service {
     		Log.e(TAG, "", e);
     		return false;
     	}
-    	closeConnection();
+    	cleanUp();
     	return true;
     }
     
@@ -4982,7 +4975,7 @@ public class HornetDBService extends Service {
     					String.valueOf(ContentDescriptor.TableIndex.Values.Prospect.getKey())});
     		}
     		
-    		closeConnection();		
+    		cleanUp();		
     	}
     	cur.close();
     	
@@ -5123,7 +5116,7 @@ public class HornetDBService extends Service {
     	getImages(0, 0);
     	
     	updateDevice();
-    	closeConnection();
+    	cleanUp();
     	connection.closeConnection();
     }
     
@@ -5189,7 +5182,7 @@ public class HornetDBService extends Service {
     			return -2;
     		}
     	}
-    	closeConnection();
+    	cleanUp();
     	return result;
     }
     
@@ -5226,7 +5219,7 @@ public class HornetDBService extends Service {
     		cur.close();
     	}
     	pendings.close();
-    	closeConnection();
+    	cleanUp();
     	
     	return result;
     }
@@ -5302,7 +5295,7 @@ public class HornetDBService extends Service {
     		Log.e(TAG, "", e);
     		return -2;
     	}
-    	closeConnection();
+    	cleanUp();
     	
     	return result;
     }
@@ -5341,7 +5334,7 @@ public class HornetDBService extends Service {
     		}
     	}
     	
-    	closeConnection();
+    	cleanUp();
     	return result;
     }
     
@@ -5384,7 +5377,7 @@ public class HornetDBService extends Service {
     		}
     	}
     	
-    	closeConnection();
+    	cleanUp();
     	return result;
     }
     
@@ -5424,7 +5417,7 @@ public class HornetDBService extends Service {
     		}
     	}
     	
-    	closeConnection();
+    	cleanUp();
     	return result;
     }
     
@@ -5462,7 +5455,7 @@ public class HornetDBService extends Service {
     		}
     	}
     	
-    	closeConnection();
+    	cleanUp();
     	return result;
     }
     
@@ -5566,7 +5559,7 @@ public class HornetDBService extends Service {
     	}
     	
     	while (pendings.moveToNext()) {
-    		String id = cur.getString(cur.getColumnIndex(ContentDescriptor.PendingUpdates.Cols.ROWID));
+    		String id = pendings.getString(pendings.getColumnIndex(ContentDescriptor.PendingUpdates.Cols.ROWID));
     		cur = contentResolver.query(ContentDescriptor.Bookingtype.CONTENT_URI, null, ContentDescriptor.Bookingtype.Cols.ID+" = ?",
     				new String[] {id}, null);
     		if (cur.moveToFirst()) {

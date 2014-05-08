@@ -8,3 +8,4 @@ gradlew.bat
 .swp
 .settings
 build/
+project.properties

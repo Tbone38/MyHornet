@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.treshna.hornet.MainActivity.TagFoundListener;
@@ -93,7 +94,8 @@ public class ClassDetailsSuperFragment extends Fragment implements OnMemberSelec
 	@Override
 	public void onMemberSelect(String id) {
 		if (view.getTag().toString().compareTo("single_panel") != 0) {
-			ListView theList = (ListView) view.findViewById(android.R.id.list);
+			RelativeLayout memberfind = (RelativeLayout) view.findViewById(R.id.member_find);
+			ListView theList = (ListView) memberfind.findViewById(android.R.id.list);
 			theList.invalidateViews();
 			cf.showAlert(id, null, null);
 		} 

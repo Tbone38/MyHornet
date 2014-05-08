@@ -1240,7 +1240,7 @@ public class JDBCConnection {
     			kpi_available = true;
     		} 
     	} catch (SQLException e) {
-    		Log.e(TAG, "ERROR",e);
+    		Log.i(TAG, "ERROR",e);
     	}
     	
     	if (kpi_available) {

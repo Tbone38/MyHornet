@@ -236,6 +236,7 @@ public class BookingtypeBuilder implements FormGenerator.FormBuilder, OnClickLis
 			//save it.
 			if (isValid()) {
 				saveBookingType();
+				mActivity.onBackPressed();
 			}
 			break;
 		}

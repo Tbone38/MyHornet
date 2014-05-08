@@ -56,7 +56,11 @@ public class BookingTypeAdapter extends AdapterSuperClass {
 		
 		holder.position = position;
 		holder.name.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.NAME)));
-		holder.price.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.PRICE)));
+		if (cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.PRICE)) != null) {
+			holder.price.setText("$ "+cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.PRICE)).replace("$", ""));
+		}else {
+			holder.price.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.PRICE)));
+		}
 		
 		convertView.setClickable(true);
 		convertView.setOnClickListener(this);

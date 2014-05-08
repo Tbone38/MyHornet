@@ -19,7 +19,9 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
-public class PollingHandler extends BroadcastReceiver {
+import com.treshna.hornet.services.Services.ThreadResult;
+
+public class PollingHandler extends BroadcastReceiver implements ThreadResult {
 	public static final String POLLING_START = "polling_start";
 	private Context context = null;
 	private PendingIntent pintent = null;
@@ -27,14 +29,15 @@ public class PollingHandler extends BroadcastReceiver {
 	private Calendar cal = Calendar.getInstance();
 	private String message;
 	private Handler handler;
-	
 	private boolean conStatus = false;
 	private boolean serverExists = false;
 	
 	private boolean isPolling = true;
 	
 	private long start_time;
-	private static final String TAG = "com.treshna.hornet.pollingHandler";
+	private static final String TAG = "pollingHandler";
+	
+	
 	
 	public PollingHandler(Context context, PendingIntent pIntent) {
 		this.context = context;
@@ -42,7 +45,7 @@ public class PollingHandler extends BroadcastReceiver {
 		handler = new Handler();
 		alarm = (AlarmManager)this.context.getSystemService(Context.ALARM_SERVICE);
 		start_time = 0;
-		if ((conStatus = isConnected()) == true && (serverExists = serverExists()) == true) setPolling();
+		serverExists();
 	}
 	
 	public boolean getIsPolling(){
@@ -61,13 +64,19 @@ public class PollingHandler extends BroadcastReceiver {
 		final String action = intent.getAction();
 		if (action.equals(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION)) {
 			if (intent.getBooleanExtra(WifiManager.EXTRA_SUPPLICANT_CONNECTED, false)) {
-				this.serverExists = serverExists();
+				//this.serverExists = serverExists();
+				serverExists();
 				this.conStatus = true;
 			} else {
 				this.serverExists = false;
 				this.conStatus = false;
 			}
 		}
+		
+	}
+	
+	
+	private void process() {
 		if ( conStatus == true) {
 			setPolling();
 		} else {
@@ -75,21 +84,7 @@ public class PollingHandler extends BroadcastReceiver {
 			stopPolling(true);
 		}
 		//System.out.print("\nConnection Status: "+conStatus+"\n");
-		Log.v(TAG, "Connection Status: "+conStatus);
-	}
-	
-	public boolean startService() {
-		conStatus = isConnected();
-		serverExists = serverExists();
-		if (conStatus == true) {
-			this.isPolling = true;
-			setPolling();
-			return true;
-		} else {
-			makeToast();
-			stopPolling(true);
-			return false;
-		}
+		Log.v(TAG, "Connection Status: "+conStatus+"\nServer Status:"+serverExists);
 	}
 	
 	private boolean isConnected() {
@@ -103,20 +98,16 @@ public class PollingHandler extends BroadcastReceiver {
 		 return result;
 	}
 	
-	private boolean serverExists() {
-		getDataThread gdt = new getDataThread();
+	private void serverExists() {
+		this.conStatus = isConnected();
+		getDataThread gdt = new getDataThread(this);
 		gdt.start();
 		try {
 			gdt.join(5000); //stop after 5 secs
 		} catch (InterruptedException e) {
 			// something interrupted the main threads wait.
-			return false;
+			this.serverExists = false;
 		}
-		
-		this.serverExists = gdt.serverExists;
-		//System.out.print("\nServer Status: "+serverExists+"\n");
-		Log.v(TAG, "Server Status: "+serverExists);
-		return this.serverExists;
 	}
 	/**
 	 * sets the alarm manager to start sync's based on settings configuration.
@@ -163,50 +154,54 @@ public class PollingHandler extends BroadcastReceiver {
 	/*************************************/
 	private class getDataThread extends Thread {
 		//Threading because networking.
+		ThreadResult reshandler;
+		public getDataThread(ThreadResult resultHandler) {
+			super();
+			reshandler = resultHandler;
+		}
+		
 		private boolean serverExists = false;
 	    @Override
 	    public void run() {
 	        super.run();
-	        // This needs redesigned to be threaded off of the UI. currently it's holding up the app.
 	        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 			InetAddress server = null;
 			try {
 				 server = InetAddress.getByName(preferences.getString("address", "-1"));	  
 			} catch (UnknownHostException e) {
-				this.serverExists = false;
-				return;
 			}
 			if (server == null) { 
-				//System.out.print("\n\n **inetAddress threw an exception");
 				Log.e(TAG, "**inetAddress threw an exception");
-				this.serverExists = false;
-				return;
-			}
+			} else {
 			/* wait up to 10 seconds for a response,
 			 * as the function is called before the wireless has correctly reconnected,
 			 * the wait time allows for the reconnection to occur. 
 			 */
-			try { 
-				int i;
-				for (i=2; i!=0; i--) {
-					if (server.isReachable(2000)) {
-						this.serverExists = true;
-						break;
+				try { 
+					int i;
+					for (i=2; i!=0; i--) {
+						if (server.isReachable(2000)) {
+							this.serverExists = true;
+							break;
+						}
+						getDataThread.sleep((long) 3000);
 					}
-					getDataThread.sleep((long) 3000);
-					//this.sleep(((long) 3000)); <- doesn't work because static.
+					//if (serverExists) return;
+					
+				} catch (IOException e) {
+					//Log.e(TAG, "**isReachable() threw an exception");
+				} catch (InterruptedException e) {
+					//the sleep was interupted.
 				}
-				if (serverExists) return;
-				
-			} catch (IOException e) {
-				//System.out.print("\n\n **isReachable() threw an exception");
-				Log.e(TAG, "**isReachable() threw an exception");
-				this.serverExists = false;
-			} catch (InterruptedException e) {
-				//the sleep was interupted.
 			}
-			this.serverExists = false;
+			reshandler.setResult(serverExists);
 	    }
 	}
 	/*************************************/
+
+	@Override
+	public void setResult(boolean result) {
+		this.serverExists = result;
+		process();
+	}
 }

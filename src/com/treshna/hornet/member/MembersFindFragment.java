@@ -40,6 +40,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -183,6 +184,7 @@ public class MembersFindFragment extends ListFragment implements LoaderManager.L
 			mAdapter = new MembersFindAdapter(parent,R.layout.row_member_find, null, from, to, false, mCallback);
 		}
 		setListAdapter(mAdapter);
+		getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		System.out.print("\n\nADAPTER SET: ");
 		
 		loadermanager.initLoader(0, null, this);

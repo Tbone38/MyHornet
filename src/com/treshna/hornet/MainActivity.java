@@ -1,7 +1,6 @@
 package com.treshna.hornet;
 
 import java.text.DecimalFormat;
-
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -55,7 +54,7 @@ import com.treshna.hornet.navigation.SlideMenuClickListener;
 import com.treshna.hornet.navigation.TabListener;
 import com.treshna.hornet.network.HornetDBService;
 import com.treshna.hornet.network.PollingHandler;
-import com.treshna.hornet.report.ReportDateOptionsActivity;	
+import com.treshna.hornet.report.ReportDateOptionsFragment;
 import com.treshna.hornet.report.ReportListingFragment;
 import com.treshna.hornet.report.ReportNamesActivity;
 import com.treshna.hornet.report.Report_Types_ListActivity;
@@ -250,7 +249,8 @@ public class MainActivity extends NFCActivity {
 		
 		cur = contentResolver.query(ContentDescriptor.Booking.CONTENT_URI, null, ContentDescriptor.Booking.Cols.ARRIVAL+" >= "
 				+ "strftime('%s', current_date)*1000 AND "+ContentDescriptor.Booking.Cols.ARRIVAL+" <= "
-				+ "strftime('%s', current_date, '+1 day', '-1 minute')*1000 AND "+ContentDescriptor.Booking.Cols.CLASSID+" = 0 ",
+				+ "strftime('%s', current_date, '+1 day', '-1 minute')*1000 AND "+ContentDescriptor.Booking.Cols.CLASSID+" = 0 AND "
+				+ContentDescriptor.Booking.Cols.RESULT+" != 5",
 				null, null);
 		
 		bookingcount = cur.getCount();
@@ -736,7 +736,7 @@ public class MainActivity extends NFCActivity {
 	}
 	private void startReportDateOptionsActivity (Context view)
 	{
-		Intent intent = new Intent(view,ReportDateOptionsActivity.class);
+		Intent intent = new Intent(view,ReportDateOptionsFragment.class);
 		intent.putExtra("report_name", "Expiring Members");
 		this.startActivity(intent);
 	}
