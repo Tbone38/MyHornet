@@ -54,8 +54,7 @@ import com.treshna.hornet.navigation.NavDrawerListAdapter;
 import com.treshna.hornet.navigation.SlideMenuClickListener;
 import com.treshna.hornet.navigation.TabListener;
 import com.treshna.hornet.network.HornetDBService;
-import com.treshna.hornet.network.PollingHandler;
-import com.treshna.hornet.report.ReportDateOptionsActivity;	
+import com.treshna.hornet.network.PollingHandler;	
 import com.treshna.hornet.report.ReportListingFragment;
 import com.treshna.hornet.report.ReportNamesActivity;
 import com.treshna.hornet.report.Report_Types_ListActivity;
@@ -719,27 +718,6 @@ public class MainActivity extends NFCActivity {
 
 	}
 
-	private void startReportTypesActivity (Context view)
-	{
-		Intent intent = new Intent(view,Report_Types_ListActivity.class);
-		this.startActivity(intent);
-	}
-	private void startReportNamesActivity (Context view)
-	{
-		Intent intent = new Intent(view,ReportNamesActivity.class);
-		this.startActivity(intent);
-	}
-	private void startReportTypesAndNamesActivity (Context view)
-	{
-		Intent intent = new Intent(view,ReportListingFragment.class);
-		this.startActivity(intent);
-	}
-	private void startReportDateOptionsActivity (Context view)
-	{
-		Intent intent = new Intent(view,ReportDateOptionsActivity.class);
-		intent.putExtra("report_name", "Expiring Members");
-		this.startActivity(intent);
-	}
 }
 
 	

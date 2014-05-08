@@ -10,6 +10,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import android.app.AlertDialog;
+import android.app.ListFragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -29,6 +30,7 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.treshna.hornet.MainActivity;
 import com.treshna.hornet.R;
 import com.treshna.hornet.network.HornetDBService;
 import com.treshna.hornet.services.DatePickerFragment;
@@ -40,26 +42,23 @@ public class ReportDateOptionsFragment extends Fragment implements DatePickerFra
 	private ArrayList<HashMap<String,String>> firstReportFilterMapList = new ArrayList<HashMap<String,String>>();
 	private ArrayList<HashMap<String,String>> secondReportFilterMapList = new ArrayList<HashMap<String,String>>();
 	//private String reportFilterTableNamesQuery = null;
-	private DatePickerFragment startDatePicker = null;
 	private LayoutInflater mInflater = null;
 	private View view = null;
 	private int filterCount = 0;
 	private boolean firstFilterSelectionMade = false;
 	private TextView firstFilterTitle = null;
 	private TextView secondFilterTitle = null;
-
-
 	private String[] filterQueries = null;
 	private	Button btnStartButton = null;
 	private	Button btnEndButton = null;
 	private String secondFilterQuery = null;
 	private Date selectedStartDate = new Date();
 	private Date selectedEndDate = new Date();
+	private DatePickerFragment startDatePicker = null;
 	private DatePickerFragment endDatePicker = null;
 	private TextView startDateText = null;
 	private TextView endDateText = null;
 	private int reportId = 0;
-	private DatePickerFragment datePickerFragment = null;
 	protected ProgressDialog progress;
 	
 	@Override
@@ -69,7 +68,9 @@ public class ReportDateOptionsFragment extends Fragment implements DatePickerFra
 		view = mInflater.inflate(R.layout.report_user_date_options,null);
 		TextView reportNameTxt = (TextView) view.findViewById(R.id.report_date_options_report_name);
 		startDatePicker =  new  DatePickerFragment();
+		startDatePicker.setDatePickerSelectListener(this);
 		endDatePicker = new  DatePickerFragment();
+		endDatePicker.setDatePickerSelectListener(this);
 		startDateText = (TextView) view.findViewById(R.id.startDateTxt);
 		endDateText = (TextView) view.findViewById(R.id.endDateTxt);
 		setDateTextView(endDateText, selectedEndDate);
@@ -100,7 +101,7 @@ public class ReportDateOptionsFragment extends Fragment implements DatePickerFra
 
 				@Override
 				public void onClick(View v) {
-					startDatePicker.show( ReportDateOptionsFragment.this.getFragmentManager(), "Start Date Picker");			
+					startDatePicker.show(getActivity().getSupportFragmentManager(), "Start Date Picker");			
 				}
 				
 			});
@@ -109,7 +110,7 @@ public class ReportDateOptionsFragment extends Fragment implements DatePickerFra
 
 				@Override
 				public void onClick(View v) {
-					endDatePicker.show(ReportDateOptionsFragment.this.getFragmentManager(), "End Date Picker");	
+					endDatePicker.show(getActivity().getSupportFragmentManager(), "End Date Picker");	
 				}
 				
 			});		
@@ -482,44 +483,58 @@ public class ReportDateOptionsFragment extends Fragment implements DatePickerFra
 
 	private void loadMainReport(){
 		
-		loadIntent("date_options", ReportMainActivity.class);
+		loadFragment("date_options", ReportMainActivity.class);
 	
 	}
 	
 	private void loadColumnOptions() {
 		
-		loadIntent("column_options", ReportColumnOptionsActivity.class);
+		loadFragment("column_options", ReportColumnOptionsActivity.class);
 	}
 	
-	private void loadIntent(String callingActivity, Class<?> activity) {
-	
+	private void loadFragment(String callingActivity, Class<?> activity) {
+		Fragment newFragment = null;
 		reportData.put("start_date",selectedStartDate);
 		reportData.put("end_date",  selectedEndDate);
 		
-		Intent reportMainIntent = new Intent(getActivity(), activity);
-		reportMainIntent.putExtra("report_id", reportId);
+		if (callingActivity.compareTo("column_options")== 0)
+		{
+			newFragment =  new ReportColumnOptionsFragment();
+			
+		} else if (callingActivity.compareTo("date_options")== 0) {
+			
+			newFragment =  new ReportMainFragment();
+		}
+		
+		Bundle bdl = new Bundle(1);
+		newFragment.setArguments(bdl);
+		bdl.putInt("report_id", reportId);
 		//Pushing UI and upstream data through to the report column options intent..
 		for (Map.Entry<String,Object> param: reportData.entrySet()){
 			//Casting the date values to time-stamp to pass through the intent..
-				if ((param.getKey().toString().compareTo("start_date") == 0) || (param.getKey().toString().compareTo("end_date") == 0) ){
-					reportMainIntent.putExtra(param.getKey().toString(), ((Date) param.getValue()).getTime());
+				if ((param.getKey().toString().compareTo("start_date") == 0) || (param.getKey().toString().compareTo("end_date") == 0) ) {
+					
+					bdl.putLong(param.getKey().toString(), ((Date) param.getValue()).getTime());
+					
 				} else {
-					reportMainIntent.putExtra(param.getKey().toString(),  param.getValue().toString());
-				}
-			
+					
+					bdl.putString(param.getKey().toString(),  param.getValue().toString());
+				}			
 		}
-		reportMainIntent.putExtra("calling_activity", callingActivity);     
-						
-		this.startActivity(reportMainIntent);
+		
+		bdl.putString("calling_activity", callingActivity); 
+		
+		((MainActivity)getActivity()).changeFragment(newFragment, "reportColumnOptions");				
 	 }
 
 	@Override
 	public void onDateSelect(String date, DatePickerFragment theDatePicker) {
-		if (theDatePicker == startDatePicker){
+		
+		if (theDatePicker == startDatePicker) {
 			 selectedStartDate = dateFromPicker(date);
 			 this.setDateTextView(startDateText, selectedStartDate);
 		}
-		else if (theDatePicker == endDatePicker){
+		else if (theDatePicker == endDatePicker) {
 			selectedEndDate = dateFromPicker(date);
 			this.setDateTextView(endDateText, selectedEndDate);
 		}
