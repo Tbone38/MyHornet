@@ -968,6 +968,21 @@ public class UpdateDatabase {
 		private static final String SQL42 = "ALTER TABLE "+Door.NAME+" ADD COLUMN "+Door.Cols.LASTVISITS+" TEXT NOT NULL DEFAULT 't' ;";
 		private static final String SQL43 = "ALTER TABLE "+Door.NAME+" ADD COLUMN "+Door.Cols.COMPANY+" INTEGER ;";
 		private static final String SQL44 = "ALTER TABLE "+Door.NAME+" ADD COLUMN "+Door.Cols.DEVICESIGNUP+" TEXT DEFAULT 'f';";
+		private static final String SQL45 = "CREATE TRIGGER "+Door.Triggers.ON_INSERT+" AFTER INSERT ON "+Door.NAME
+				+" FOR EACH ROW WHEN new."+Door.Cols.DEVICESIGNUP+" = 't'"
+				+" BEGIN"
+					+" INSERT OR REPLACE INTO "+PendingUploads.NAME
+					+" ("+PendingUploads.Cols.ROWID+", "+PendingUploads.Cols.TABLEID+")"
+					+" VALUES (new."+Door.Cols._ID+", "+TableIndex.Values.Door.getKey()+");"
+				+"END;";
+		
+		private static final String SQL46 = "CREATE TRIGGER "+Door.Triggers.ON_UPDATE+" AFTER UPDATE ON "+Door.NAME
+				+" FOR EACH ROW WHEN new."+Door.Cols.DEVICESIGNUP+" = 't'"
+				+" BEGIN"
+					+" INSERT OR REPLACE INTO"+PendingUpdates.NAME
+					+" ("+PendingUpdates.Cols.ROWID+", "+PendingUpdates.Cols.TABLEID+")"
+					+" VALUES (old."+Door.Cols._ID+", "+TableIndex.Values.Door.getKey()+");"
+				+"END;";
 				
 		public static void patchNinetySix(SQLiteDatabase db) {
 			db.beginTransaction();
@@ -1060,6 +1075,10 @@ public class UpdateDatabase {
 				db.execSQL(SQL43);
 				Log.w(HornetDatabase.class.getName(), "\n"+SQL44);
 				db.execSQL(SQL44);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL45);
+				db.execSQL(SQL45);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL46);
+				db.execSQL(SQL46);
 				db.setTransactionSuccessful();
 			/*} catch (SQLException e) {
 			e.printStackTrace();

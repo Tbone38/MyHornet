@@ -909,7 +909,7 @@ public class HornetDBService extends Service {
         	dob = Services.dateFormat(dob, "dd/MM/yyyy", "dd MMM yyyy");
         	
         	try {
-	    		result += connection.addMember(cur.getInt(cur.getColumnIndex(ContentDescriptor.Member.Cols.MID)),
+	    		result += connection.uploadMember(cur.getInt(cur.getColumnIndex(ContentDescriptor.Member.Cols.MID)),
 						cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.SNAME)),
 						cur.getString(cur.getColumnIndex(ContentDescriptor.Member.Cols.FNAME)),
 						gender,
@@ -1949,10 +1949,10 @@ public class HornetDBService extends Service {
     			ResultSet rs;
     			String tempmess;
     			
-	    		rs = connection.tagInsert(door, id);
+	    		rs = connection.uploadTag(door, id);
 	    		rs.close();
 	    		connection.closePreparedStatement();
-	    		connection.swipeProcessLog();
+	    		connection.getSwipeProcessLog();
 	    		connection.closePreparedStatement();
 	    		rs = connection.getTagUpdate(door);
 	    		tempmess = null;
@@ -2310,7 +2310,7 @@ public class HornetDBService extends Service {
     			cardno = cur.getInt(cur.getColumnIndex(ContentDescriptor.IdCard.Cols.CARDID));
     			cur.close();
     			
-    			rs = connection.findMemberByCard(cardno);
+    			rs = connection.getMemberByCard(cardno);
     			if (! rs.next()) {
     				Log.e(TAG, "Count not find member for card no:"+cardno);
     				contentResolver.delete(ContentDescriptor.Swipe.CONTENT_URI, ContentDescriptor.Swipe.Cols.ID+" = ? ",
@@ -3489,6 +3489,12 @@ public class HornetDBService extends Service {
     			
     			values.put(ContentDescriptor.Door.Cols.DOORID, rs.getInt("id"));
     			values.put(ContentDescriptor.Door.Cols.DOORNAME, rs.getString("name"));
+    			values.put(ContentDescriptor.Door.Cols.STATUS, rs.getInt("status"));
+    			values.put(ContentDescriptor.Door.Cols.BOOKING, rs.getInt("booking_checkin"));
+    			values.put(ContentDescriptor.Door.Cols.WOMENONLY, rs.getString("womenonly"));
+    			values.put(ContentDescriptor.Door.Cols.CONCESSION, rs.getInt("concessionhandling"));
+    			values.put(ContentDescriptor.Door.Cols.LASTVISITS, rs.getString("showlastvisits"));
+    			values.put(ContentDescriptor.Door.Cols.COMPANY, rs.getInt("companyid"));
     			
     			cur = contentResolver.query(ContentDescriptor.Door.CONTENT_URI, null, ContentDescriptor.Door.Cols.DOORID+" = ?", 
     					new String[] {String.valueOf(rs.getInt("id"))}, null);
@@ -4954,7 +4960,7 @@ public class HornetDBService extends Service {
     			continue;
     		}
     		try {
-    			result += connection.insertEnquiry(cur2.getString(cur2.getColumnIndex(ContentDescriptor.Enquiry.Cols.SNAME)),
+    			result += connection.uploadEnquiry(cur2.getString(cur2.getColumnIndex(ContentDescriptor.Enquiry.Cols.SNAME)),
     					cur2.getString(cur2.getColumnIndex(ContentDescriptor.Enquiry.Cols.FNAME)),
     					cur2.getString(cur2.getColumnIndex(ContentDescriptor.Enquiry.Cols.GENDER)),
     					cur2.getString(cur2.getColumnIndex(ContentDescriptor.Enquiry.Cols.EMAIL)),
@@ -5199,7 +5205,7 @@ public class HornetDBService extends Service {
     				new String[] {pendings.getString(pendings.getColumnIndex(ContentDescriptor.PendingUploads.Cols.ROWID))}, null);
     		if (cur.moveToFirst()) {
     			try {
-    				connection.insertResource(cur.getInt(cur.getColumnIndex(ContentDescriptor.Resource.Cols.ID)),
+    				connection.uploadResource(cur.getInt(cur.getColumnIndex(ContentDescriptor.Resource.Cols.ID)),
     						cur.getString(cur.getColumnIndex(ContentDescriptor.Resource.Cols.NAME)),
     						cur.getInt(cur.getColumnIndex(ContentDescriptor.Resource.Cols.RTID)), 
     						cur.getString(cur.getColumnIndex(ContentDescriptor.Resource.Cols.HISTORY)));
@@ -5529,7 +5535,7 @@ public class HornetDBService extends Service {
     				history = false;
     			}
     			try {
-    				connection.insertBookingType(cur.getInt(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.BTID)),
+    				connection.uploadBookingType(cur.getInt(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.BTID)),
 	    					cur.getString(cur.getColumnIndex(ContentDescriptor.Bookingtype.Cols.NAME)),
 	    					price, length, desc, maxbetween, online, msh_only, history);
     				result +=1;
@@ -5630,6 +5636,77 @@ public class HornetDBService extends Service {
     		contentResolver.delete(ContentDescriptor.PendingUpdates.CONTENT_URI, ContentDescriptor.PendingUpdates.Cols.ROWID+" = ? AND "
     				+ContentDescriptor.PendingUpdates.Cols.TABLEID+" = ?", new String[] {id, String.valueOf(
     				ContentDescriptor.TableIndex.Values.Bookingtype.getKey())});
+    	}
+    	
+    	return result;
+    }
+    
+    private int getDoorID(){
+    	int result = 0;
+    	
+    	cur = contentResolver.query(ContentDescriptor.FreeIds.CONTENT_URI, null, ContentDescriptor.FreeIds.Cols.TABLEID+" = ?",
+    			new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Door.getKey())}, null);
+    	int free_count = cur.getCount();
+    	cur.close();
+    	
+    	if (!openConnection()) {
+    		return -1;
+    	}
+    	
+    	for (int i=(5-free_count); i> 0; i--) {
+    		try {
+    			ResultSet rs = connection.startStatementQuery("SELECT nextval('door_id_seq');");
+    			rs.next();
+    			
+    			ContentValues values = new ContentValues();
+    			values.put(ContentDescriptor.FreeIds.Cols.ROWID, rs.getInt("nextval"));
+    			values.put(ContentDescriptor.FreeIds.Cols.TABLEID, 
+    					ContentDescriptor.TableIndex.Values.Door.getKey());
+    			
+    			contentResolver.insert(ContentDescriptor.FreeIds.CONTENT_URI, values);
+    			result +=1;
+    		} catch (SQLException e) {
+    			statusMessage = e.getLocalizedMessage();
+    			Log.e(TAG, "", e);
+    			return -2;
+    		}
+    	}
+    	
+    	cleanUp();
+    	return result;
+    }
+    
+    private int uploadDoor() {
+    	int result = 0;
+    	
+    	Cursor pendings = contentResolver.query(ContentDescriptor.PendingUploads.CONTENT_URI, null, ContentDescriptor.PendingUploads.Cols.TABLEID+" = ?",
+    			new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Door.getKey())}, null);
+    	
+    	if (!openConnection()) {
+    		return -1;
+    	}
+    	
+    	
+    	while (pendings.moveToNext()) {
+    		String id = pendings.getString(pendings.getColumnIndex(ContentDescriptor.PendingUploads.Cols.ROWID));
+    		
+    		cur = contentResolver.query(ContentDescriptor.Door.CONTENT_URI, null, ContentDescriptor.Door.Cols._ID+" = ?",
+    				new String[] {id}, null);
+    		
+    		if (cur.moveToFirst()) {
+    			try {
+    				connection.uploadDoor(id,
+    						cur.getString(cur.getColumnIndex(ContentDescriptor.Door.Cols.DOORNAME)),
+    						status, booking_checkin, womenonly, concessionhandling, showvisits, companyid)
+    			} catch (SQLException e) {
+    				statusMessage = e.getLocalizedMessage();
+    				Log.e(TAG, "", e);
+    				return -2;
+    			}
+    		}
+    		contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, ContentDescriptor.PendingUploads.Cols.ROWID+" = ? AND "
+    				+ContentDescriptor.PendingUploads.Cols.TABLEID+" = ?", new String[] {id, String.valueOf(
+    				ContentDescriptor.TableIndex.Values.Door.getKey())});
     	}
     	
     	return result;

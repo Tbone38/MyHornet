@@ -1114,7 +1114,8 @@ public class ContentDescriptor {
 	 			Booking(1), Class(2), Swipe(3),Membership(4) /*when adding memberships*/,
 	 					Member(5) /*when adding members/prospects*/,Image(6),
 	 					MembershipSuspend(7), MemberNotes(8), RollCall(9), RollItem(10),
-	 					Idcard(11), Prospect(12), Resource(13), ProgrammeGroup(14), Bookingtype(15);
+	 					Idcard(11), Prospect(12), Resource(13), ProgrammeGroup(14), Bookingtype(15),
+	 					Door(16);
 	 			
 	 			private final int key;
 	 			

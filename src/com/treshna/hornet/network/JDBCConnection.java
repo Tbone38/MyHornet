@@ -204,7 +204,7 @@ public class JDBCConnection {
 	   return pStatement.executeUpdate();
    }
     
-    public ResultSet tagInsert(int door, String serial) throws SQLException, NullPointerException{
+    public ResultSet uploadTag(int door, String serial) throws SQLException, NullPointerException{
 	    	ResultSet result = null;
     	
 	    	pStatement = con.prepareStatement("select * from swipe(?, ?, true);");
@@ -215,7 +215,7 @@ public class JDBCConnection {
 	    	return result;
     }
     
-    public void swipeProcessLog() throws SQLException {
+    public void getSwipeProcessLog() throws SQLException {
     	pStatement = con.prepareStatement("SELECT swipe_processlog(NULL::INTEGER);");
     	
     	pStatement.execute();
@@ -238,7 +238,7 @@ public class JDBCConnection {
 			return rs;
     }
     
-    public int addMember(int id, String surname, String firstname, String gender, String email, String dob,
+    public int uploadMember(int id, String surname, String firstname, String gender, String email, String dob,
     		String street, String suburb, String city, String postal, String hphone, String cphone, String medical) throws SQLException, NullPointerException{
 
 			pStatement = con.prepareStatement("INSERT INTO member ( surname, firstname, gender, email, dob, "
@@ -272,46 +272,6 @@ public class JDBCConnection {
 
     }
     
-    public int addProspect(String surname, String firstname, String gender, String email, String dob,
-    		String street, String suburb, String city, String postal, String hphone, String cphone, String medical){
-
-    	try {
-			
-    		pStatement = con.prepareStatement("INSERT INTO enquiry ( surname, firstname, gender, email, dob, "
-					+"addressstreet, addresssuburb, addresscity, addressareacode, " 
-					+"phonehome, phonecell, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");			
-			
-    		
-			pStatement.setString(1, surname);
-			pStatement.setString(2, firstname);
-			pStatement.setString(3, gender);
-			pStatement.setString(4, email);
-			SimpleDateFormat input = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-			Date date = null;
-			try {
-				date = input.parse(dob);
-			} catch (ParseException e) {
-				//date issue, shouldn't occur.
-			}
-			pStatement.setDate(5, new java.sql.Date(date.getTime()));
-			pStatement.setString(6, street);
-			pStatement.setString(7, suburb);
-			pStatement.setString(8, city);
-			pStatement.setString(9, postal);
-			pStatement.setString(10, hphone);
-			pStatement.setString(11, cphone);
-			String notes = "Medical Condition: "+medical.substring(0);
-			pStatement.setString(12, notes);
-			
-			return pStatement.executeUpdate();
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-			error = "error occured adding Prospect, prospect was not added.";
-    		errorLevel = SERR;
-    		return 0;
-		}
-    }
     public ResultSet getResource(long last_sync) throws SQLException, NullPointerException {
 	    	ResultSet rs = null;
 	    	pStatement = con.prepareStatement("select resource.id as resourceid, resource.name as resourcename, "
@@ -841,7 +801,7 @@ public class JDBCConnection {
     	return rs;
     }*/
     
-    public ResultSet findMemberByCard(int cardno) throws SQLException, NullPointerException {
+    public ResultSet getMemberByCard(int cardno) throws SQLException, NullPointerException {
 	    	ResultSet rs;
 	    	
 	    	pStatement = con.prepareStatement("select id as membershipid, memberid from membership where cardno = ?");
@@ -1029,7 +989,8 @@ public class JDBCConnection {
     
     public ResultSet getDoors() throws SQLException, NullPointerException {
 	    	ResultSet rs = null;
-	    	pStatement = con.prepareStatement("SELECT id, name FROM door;");
+	    	pStatement = con.prepareStatement("SELECT id, name, status, booking_checkin, womenonly, "
+	    			+ "concessionhandling, showlastvisits, companyid FROM door;");
 	    	
 	    	rs = pStatement.executeQuery();
 	    	return rs;
@@ -1367,7 +1328,7 @@ public class JDBCConnection {
     	return pStatement.executeQuery();
     }
     
-    public int insertEnquiry( String surname, String firstname, String gender, String email, String dob,
+    public int uploadEnquiry( String surname, String firstname, String gender, String email, String dob,
     		String street, String suburb, String city, String postal, String hphone, String cphone, String notes) throws SQLException {
     	
     	pStatement = con.prepareStatement("INSERT INTO enquiry (surname, firstname, gender, email, dob, addressstreet, addresssuburb, "
@@ -1520,7 +1481,7 @@ public void fixDuplicatePopUp() throws SQLException {
     	return pStatement.executeQuery();
     }
     //do I need to add start/end time handling?
-    public int insertResource(int rid, String name, int rtid, String history) throws SQLException {
+    public int uploadResource(int rid, String name, int rtid, String history) throws SQLException {
     	pStatement = con.prepareStatement("INSERT INTO resource (id, name, resourcetypeid, history) VALUES (?, ?, ?, ?::BOOLEAN);");
     	
     	pStatement.setInt(1, rid);
@@ -1577,7 +1538,7 @@ public void fixDuplicatePopUp() throws SQLException {
     	return pStatement.executeUpdate();
     }
     
-    public int insertBookingType(int btid, String name, String price, String length, String desc, String maxbetween, boolean online, 
+    public int uploadBookingType(int btid, String name, String price, String length, String desc, String maxbetween, boolean online, 
     		boolean msh_only, boolean history) throws SQLException {
     	pStatement = con.prepareStatement("INSERT INTO bookingtype (id, name, price, length, history, description, maxintbetween, "
     			+ "onlinebook, msh_onlybook) VALUES (?, ?, ?::MONEY, ?::INTERVAL, ?, ?, ?::INTERVAL, ?, ?);");
@@ -1648,6 +1609,62 @@ public void fixDuplicatePopUp() throws SQLException {
     	pStatement.setBoolean(7, msh_only);
     	pStatement.setBoolean(8, history);
     	pStatement.setInt(9, btid);
+    	
+    	return pStatement.executeUpdate();
+    }
+    
+    public int uploadDoor(int id, String name, int status, int booking_checkin, String womenonly, int concessionhandling, 
+    		String showvisits, int companyid) throws SQLException {
+    	pStatement = con.prepareStatement("INSERT INTO DOOR (id, name, status, booking_checkin, womenonly, concessionhandling,"
+    			+ " showlastvisits, companyid) VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
+    	
+    	pStatement.setInt(1, id);
+    	pStatement.setString(2, name);
+    	pStatement.setInt(3, status);
+    	pStatement.setInt(4, booking_checkin);
+    	
+    	if (womenonly == null || womenonly.compareTo("f") == 0) {
+    		pStatement.setBoolean(5, false);
+    	} else {
+    		pStatement.setBoolean(5, true);
+    	}
+    	pStatement.setInt(6, concessionhandling);
+    	
+    	if (showvisits == null || showvisits.compareTo("f") == 0) {
+    		pStatement.setBoolean(7, false);
+    	} else {
+    		pStatement.setBoolean(7, true);
+    	}
+    	//should probably do checking 
+    	pStatement.setInt(8, companyid);
+    	
+    	return pStatement.executeUpdate();
+    }
+    
+    public int updateDoor(int id, String name, int status, int booking_checkin, String womenonly, int concessionhandling,
+    		String showvisits, int companyid) throws SQLException {
+    	pStatement = con.prepareStatement("UPDATE DOOR SET (name, status, booking_checkin, womenonly, concessionhandling,"
+    			+ "showlastvisits, companyid) = (?, ?, ?, ?, ?, ?, ?) WHERE id = ?;");
+    	
+    	pStatement.setString(1, name);
+    	pStatement.setInt(2, status);
+    	pStatement.setInt(3, booking_checkin);
+    	
+    	if (womenonly == null || womenonly.compareTo("f") == 0) {
+    		pStatement.setBoolean(4, false);
+    	} else {
+    		pStatement.setBoolean(4, true);
+    	}
+    	pStatement.setInt(5, concessionhandling);
+    	
+    	if (showvisits == null || showvisits.compareTo("f") == 0) {
+    		pStatement.setBoolean(6, false);
+    	} else {
+    		pStatement.setBoolean(6, true);
+    	}
+    	//should probably do checking 
+    	pStatement.setInt(7, companyid);
+    	pStatement.setInt(8, id);
     	
     	return pStatement.executeUpdate();
     }
