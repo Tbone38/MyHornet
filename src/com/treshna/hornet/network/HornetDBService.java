@@ -5694,10 +5694,32 @@ public class HornetDBService extends Service {
     				new String[] {id}, null);
     		
     		if (cur.moveToFirst()) {
+    			int status  = -1, booking_checkin = -1, concessionhandling = -1, companyid = -1;
+    			String womenonly = null, showvisits = null;
+    			
+    			if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Door.Cols.STATUS))) {
+    				status = cur.getInt(cur.getColumnIndex(ContentDescriptor.Door.Cols.STATUS));
+    			}
+    			if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Door.Cols.BOOKING))) {
+    				booking_checkin = cur.getInt(cur.getColumnIndex(ContentDescriptor.Door.Cols.BOOKING));
+    			}
+    			if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Door.Cols.CONCESSION))) {
+    				concessionhandling = cur.getInt(cur.getColumnIndex(ContentDescriptor.Door.Cols.CONCESSION));
+    			}
+    			if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Door.Cols.COMPANY))) {
+    				companyid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Door.Cols.COMPANY));
+    			}
+    			if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Door.Cols.WOMENONLY))) {
+    				womenonly = cur.getString(cur.getColumnIndex(ContentDescriptor.Door.Cols.WOMENONLY));
+    			}
+    			if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Door.Cols.LASTVISITS))) {
+    				showvisits = cur.getString(cur.getColumnIndex(ContentDescriptor.Door.Cols.LASTVISITS));
+    			}
+    			
     			try {
-    				connection.uploadDoor(id,
+    				connection.uploadDoor(Integer.parseInt(id),
     						cur.getString(cur.getColumnIndex(ContentDescriptor.Door.Cols.DOORNAME)),
-    						status, booking_checkin, womenonly, concessionhandling, showvisits, companyid)
+    						status, booking_checkin, womenonly, concessionhandling, showvisits, companyid);
     			} catch (SQLException e) {
     				statusMessage = e.getLocalizedMessage();
     				Log.e(TAG, "", e);
