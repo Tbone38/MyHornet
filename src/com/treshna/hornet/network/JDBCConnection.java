@@ -1620,23 +1620,39 @@ public void fixDuplicatePopUp() throws SQLException {
     	
     	pStatement.setInt(1, id);
     	pStatement.setString(2, name);
-    	pStatement.setInt(3, status);
-    	pStatement.setInt(4, booking_checkin);
+    	if (status >= 0) {
+    		pStatement.setInt(3, status);
+    	} else {
+    		pStatement.setNull(3, java.sql.Types.INTEGER);
+    	}
+    	if (booking_checkin >= 0) {
+    		pStatement.setInt(4, booking_checkin);
+    	} else {
+    		pStatement.setNull(4, java.sql.Types.INTEGER);
+    	}
     	
     	if (womenonly == null || womenonly.compareTo("f") == 0) {
-    		pStatement.setBoolean(5, false);
+    		pStatement.setBoolean(5, false); //default false
     	} else {
     		pStatement.setBoolean(5, true);
     	}
-    	pStatement.setInt(6, concessionhandling);
     	
-    	if (showvisits == null || showvisits.compareTo("f") == 0) {
-    		pStatement.setBoolean(7, false);
+    	if (concessionhandling >= 0) {
+    		pStatement.setInt(6, concessionhandling);
     	} else {
-    		pStatement.setBoolean(7, true);
+    		pStatement.setNull(6, java.sql.Types.INTEGER);
     	}
-    	//should probably do checking 
-    	pStatement.setInt(8, companyid);
+    	
+    	if (showvisits == null || showvisits.compareTo("t") == 0) {
+    		pStatement.setBoolean(7, true); //default true
+    	} else {
+    		pStatement.setBoolean(7, false);
+    	}
+    	if (companyid > 0) {
+    		pStatement.setInt(8, companyid);
+    	} else {
+    		pStatement.setNull(8, java.sql.Types.INTEGER);
+    	}
     	
     	return pStatement.executeUpdate();
     }
@@ -1647,23 +1663,37 @@ public void fixDuplicatePopUp() throws SQLException {
     			+ "showlastvisits, companyid) = (?, ?, ?, ?, ?, ?, ?) WHERE id = ?;");
     	
     	pStatement.setString(1, name);
-    	pStatement.setInt(2, status);
+    	if (status >= 0) {
+    		pStatement.setInt(2, status);
+    	} else {
+    		pStatement.setNull(2, java.sql.Types.INTEGER);
+    	}
     	pStatement.setInt(3, booking_checkin);
+    	pStatement.setNull(2, java.sql.Types.INTEGER);
     	
     	if (womenonly == null || womenonly.compareTo("f") == 0) {
     		pStatement.setBoolean(4, false);
     	} else {
     		pStatement.setBoolean(4, true);
     	}
-    	pStatement.setInt(5, concessionhandling);
     	
-    	if (showvisits == null || showvisits.compareTo("f") == 0) {
-    		pStatement.setBoolean(6, false);
+    	if (concessionhandling >= 0) { 
+    		pStatement.setInt(5, concessionhandling);
     	} else {
-    		pStatement.setBoolean(6, true);
+    		pStatement.setNull(5, java.sql.Types.INTEGER);
     	}
-    	//should probably do checking 
-    	pStatement.setInt(7, companyid);
+    	
+    	if (showvisits == null || showvisits.compareTo("t") == 0) {
+    		pStatement.setBoolean(6, true);
+    	} else {
+    		pStatement.setBoolean(6, false);
+    	}
+    	//should probably do checking
+    	if (companyid > 0) {
+    		pStatement.setInt(7, companyid);
+    	} else {
+    		pStatement.setNull(7, java.sql.Types.INTEGER);
+    	}
     	pStatement.setInt(8, id);
     	
     	return pStatement.executeUpdate();
