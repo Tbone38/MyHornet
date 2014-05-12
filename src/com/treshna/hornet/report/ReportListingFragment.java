@@ -22,8 +22,10 @@ import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,27 +45,75 @@ public class ReportListingFragment extends ListFragment {
 	private View view;
 	private ArrayList<HashMap<String,String>> resultMapList = null;
 
-	/*@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-		super.onCreate(savedInstanceState);
-		this.setContentView(R.layout.report_types_and_names_list);
-		//Call the thread for dowloading data from central db
-		GetReportTypesAndNamesNameData syncTypesAndNames = new GetReportTypesAndNamesNameData();
-		syncTypesAndNames.execute(null,null);
-		
-	}*/
 	@Override
 	  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 		mInflater = inflater;
 		view = mInflater.inflate(R.layout.report_types_and_names_list, null);
-		GetReportTypesAndNamesNameData syncTypesAndNames = new GetReportTypesAndNamesNameData();
-		syncTypesAndNames.execute(null,null);
-		
-		
+		//getTypesAndNamesData();
 		return view;
 	}
 	
+	
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		
+		if (savedInstanceState != null) {
+			
+			resultMapList = savedInstanceState.getParcelable("ReportListingData");
+			
+			Log.i("Retrieved List Size", resultMapList.size()+"");
+			
+		} else {
+			
+			getTypesAndNamesData();
+			
+			Log.i("onCreate", "Running query thread...");
+		}
+		
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		
+		Log.i("Report_Listing","Saving Report Data......");
+		outState.putParcelableArrayList("ReportListingData", (ArrayList<? extends Parcelable>) resultMapList);
+		
+	}
+	
+	
+		
+	@Override
+	public void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		
+		
+	}
+
+
+
+	@Override
+	public void onViewStateRestored(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onViewStateRestored(savedInstanceState);
+		
+		if (savedInstanceState != null) {
+			
+			resultMapList = savedInstanceState.getParcelable("ReportListingData");
+			
+			Log.i("Retrieved List Size", resultMapList.size()+"");
+			
+		} else {
+					
+			Log.i("onViewStateRestored", "Running query thread...");
+		}
+	}
+
+
+
 	private void buildListAdapter() {
 		
 		TextView titleView = (TextView) view.findViewById(R.id.reports_listing_title);
@@ -162,6 +212,11 @@ public class ReportListingFragment extends ListFragment {
 					
 			this.setListAdapter(listAdapter);
 	  }
+	}
+	
+	private void getTypesAndNamesData() {
+		GetReportTypesAndNamesNameData syncTypesAndNames = new GetReportTypesAndNamesNameData();
+		syncTypesAndNames.execute(null,null);
 	}
 	private class GetReportTypesAndNamesNameData extends AsyncTask<String, Integer, Boolean> {
 		private ProgressDialog progress;

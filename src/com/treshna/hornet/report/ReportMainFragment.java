@@ -25,6 +25,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.util.Patterns;
 import android.util.TypedValue;
@@ -45,7 +46,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.treshna.hornet.EmailSender;
+import com.treshna.hornet.MainActivity;
 import com.treshna.hornet.R;
+import com.treshna.hornet.member.MemberSlideFragment;
 import com.treshna.hornet.network.HornetDBService;
 import com.treshna.hornet.services.Services;
 import com.treshna.hornet.visitor.VisitorsViewAdapter;
@@ -72,6 +75,8 @@ public class ReportMainFragment extends ListFragment {
 	private int[] selectedColumnIds = null;
 	private LayoutInflater mInflater = null;
 	private View view = null;
+	private ProgressDialog progress;
+	private HornetDBService sync;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -110,7 +115,7 @@ public class ReportMainFragment extends ListFragment {
 		});		
 		this.getColumnData(reportId);
 		
-		return super.onCreateView(inflater, container, savedInstanceState);
+		return view;
 	}
 	
 	
@@ -393,16 +398,21 @@ public class ReportMainFragment extends ListFragment {
 				@Override
 				public void onItemClick(AdapterView<?> parent, View view,
 						int position, long id) {
+					
 					TextView idView = (TextView) view.findViewById(2);
+				    
 					if (idView != null){
+			            //Displaying the member details view upon clicking on a row - on reports with member related data..
 						ArrayList<String> tag = new ArrayList<String>();
-						tag.add(idView.getText().toString());
+						String memberId = idView.getText().toString();
+						tag.add(memberId);
 						tag.add(null);
-						//FIXME:THIS NEEDS FIXED.
-						/*fragmentData fragmentData = new fragmentData(ReportMainActivity.this, EmptyActivity.class);
-						fragmentData.putExtra(Services.Statics.KEY, Services.Statics.FragmentType.MemberDetails.getKey());
-						fragmentData.putStringArrayListExtra(VisitorsViewAdapter.EXTRA_ID, tag);
-						ReportMainActivity.this.startActivity(fragmentData);*/
+						Fragment f = new MemberSlideFragment();
+						Bundle bdl = new Bundle(1);
+				        bdl.putString(Services.Statics.MID, memberId);
+						f.setArguments(bdl);
+						((MainActivity)getActivity()).changeFragment(f, "memberDetails");
+
 					}
 				}
 				
@@ -415,6 +425,7 @@ public class ReportMainFragment extends ListFragment {
 		}
 		
 	    buildColumnHeaders();
+	    
 		ListAdapter listAdapter = new ArrayAdapter<HashMap<String,String>>(getActivity(),R.layout.report_main_row,
 				this.resultMapList){
 
@@ -503,7 +514,19 @@ public class ReportMainFragment extends ListFragment {
  }
 	
 	
- private void setOrientation(HashMap<String,String> dataRow) {
+ @Override
+public void onPause() {
+	super.onPause();
+	  if (progress != null && progress.isShowing()) {
+		  //progress.hide();
+		  progress.dismiss();
+		  progress = null;
+	  }
+	 getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+}
+
+
+private void setOrientation(HashMap<String,String> dataRow) {
 	 
 		//Forcing landscape view for reports with greater than 5 columns..
 		int maxProtraitColumns = 5;
@@ -532,9 +555,12 @@ public class ReportMainFragment extends ListFragment {
 	}
 	
 private void buildColumnHeaders() {
+	
 			LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams( LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT );
-			LinearLayout reportColumnHeadingLayout = (LinearLayout) view.findViewById(R.id.report_list_headings);
-			TextView reportNameTextView = (TextView) view.findViewById(R.id.report_main_title);
+			LinearLayout reportColumnHeadingLayout = null;
+			TextView reportNameTextView = null;
+			reportColumnHeadingLayout =(LinearLayout) view.findViewById(R.id.report_list_headings);
+			reportNameTextView = (TextView) view.findViewById(R.id.report_main_title);
 			reportNameTextView.setText(reportName);
 			
 		if (resultMapList.size() > 0){
@@ -559,6 +585,7 @@ private void buildColumnHeaders() {
 			reportColumnHeadingLayout.addView(buildColumnHeaderTextView("No Data Available",  Gravity.CENTER, 22));
 			
 		}
+		
 	}
 	
 	
@@ -648,12 +675,47 @@ private void buildColumnHeaders() {
 		syncColumns.execute(null,null);
 		
 	}
-	
+	 private void showQueryThreadFailedDialogue() {
+		 
+			if (getActivity() != null) {
+				
+				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+				builder.setTitle("Error Occurred")
+				.setMessage(sync.getStatus())
+				.setPositiveButton("OK", null)
+				.show();
+			}
+		 
+	 }
+	 
+	 private void displayQueryThreadProgressDialogue(String message) {
+		 
+			if (getActivity() != null) {
+				
+				progress = ProgressDialog.show(getActivity(), "Retrieving..", message);
+				
+			} else {
+				
+				progress = null;
+				
+			}
+	 }
+	 
+	 private void dismissThreadDialogue() {
+		 
+			if (progress != null && progress.isShowing()) {
+				
+				progress.dismiss();
+				
+			}
+	 }
+	 
+	 
 	
 
 	protected class GetReportDataByDateRange extends AsyncTask<String, Integer, Boolean> {
-		private ProgressDialog progress;
-		private HornetDBService sync;
+		
+	
 		private String finalQuery = null;
 		
 	
@@ -664,48 +726,43 @@ private void buildColumnHeaders() {
 		}
 		
 		protected void onPreExecute() {
-			progress = ProgressDialog.show(getActivity(), "Retrieving..", 
-					 "Retrieving Report Data By Date Range...");
+			
+			displayQueryThreadProgressDialogue("Retrieving Report Data By Date Range...");
 		}
+		
 		
 		@Override
 		protected Boolean doInBackground(String... params) {
+			
+			if (progress == null) {
+				
+				return false;
+			}
+			
 			resultMapList = sync.getReportDataByDateRange(getActivity(),finalQuery);
+			
 	        return true;
 		}
 		
 
 		protected void onPostExecute(Boolean success) {
-			progress.dismiss();
+			
+			dismissThreadDialogue();
+			
 			if (success) {		
-				/*System.out.println("\nReport-Type_Data");
-				
-				System.out.println("Result List Size: " + resultMapList.size());
-				
-				for (HashMap<String,String> resultMap: resultMapList){
-				
-					for (HashMap.Entry entry: resultMap.entrySet()){
-						 System.out.println("Field: " + entry.getKey() + " Value: " + entry.getValue());					 
-					}
-				
-				}*/
 
-				ReportMainFragment.this.buildListAdapter();
+				buildListAdapter();
 				
 			} else {
-				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-				builder.setTitle("Error Occurred")
-				.setMessage(sync.getStatus())
-				.setPositiveButton("OK", null)
-				.show();
+				
+				showQueryThreadFailedDialogue();
 			}
 	    }
 	 }
 	
 	protected class GetReportColumnsFieldsByReportId extends AsyncTask<String, Integer, Boolean> {
-		protected ProgressDialog progress;
-		protected HornetDBService sync;
 		private int reportId = 0;
+		
 		
 		public GetReportColumnsFieldsByReportId () {
 			sync = new HornetDBService();
@@ -720,36 +777,38 @@ private void buildColumnHeaders() {
 		}
 		
 		protected void onPreExecute() {
-			progress = ProgressDialog.show(getActivity(), "Retrieving..", 
-					 "Retrieving Report Column Data...");
+			
+			displayQueryThreadProgressDialogue("Retrieving Report Column Data...");
+	
 		}
 		
 		@Override
 		protected Boolean doInBackground(String... params) {
+			
+			if (progress == null) {
+				return false;
+			}
 			columnsMapList = sync.getReportColumnsFieldsByReportId(getActivity(),reportId);
 	        return true;
 		}
 		
 
 		protected void onPostExecute(Boolean success) {
-			progress.dismiss();
+			
+			dismissThreadDialogue();
+			
 			if (success) {
+				
 				//Calls back to the owning activity to call the thread to retrieve the joining tables
 				ReportMainFragment.this.getJoiningTablesData(reportFunctionName);
 				
 			} else {
-				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-				builder.setTitle("Error Occurred")
-				.setMessage(sync.getStatus())
-				.setPositiveButton("OK", null)
-				.show();
+				showQueryThreadFailedDialogue();
 			}
 	    }
 	 }
 	
 	protected class GetEmailAddressesByIds extends AsyncTask<String, Integer, Boolean> {
-		protected ProgressDialog progress;
-		protected HornetDBService sync;
 		private Integer[] reportIds = null;
 		private String tableName = null;
 		
@@ -765,31 +824,30 @@ private void buildColumnHeaders() {
 		}
 		
 		protected void onPreExecute() {
-			progress = ProgressDialog.show(getActivity(), "Retrieving..", 
-					 "Retrieving Email Addresses...");
+			
+			displayQueryThreadProgressDialogue("Retrieving Email Addresses...");
 		}
+		
 		
 		@Override
 		protected Boolean doInBackground(String... params) {
+			
+			if (progress == null) {
+				return false;
+			}
 			emailsMapList = sync.getEmailAddressesByIds(getActivity(), reportIds, tableName);
 	        return true;
 		}
 		
 
 		protected void onPostExecute(Boolean success) {
-			progress.dismiss();
+			
+			dismissThreadDialogue();
+			
 			if (success) {
+				
 				String errorMessage = "No valid Emails for Members in this Report";
-				//Calls back to the owning activity to call the thread to retrieve the joining tables
-				System.out.println("Email List Size: " + emailsMapList.size());
-				
-				for (HashMap<String,String> resultMap: emailsMapList){
-				
-					for (HashMap.Entry entry: resultMap.entrySet()){
-						 System.out.println("Field: " + entry.getKey() + " Value: " + entry.getValue());					 
-					}
-				
-				}
+
 				if (getEmailsAddressesAsArray().length > 0){
 					EmailSender email = new EmailSender(getActivity(), getClientPrimaryEmail(),getEmailsAddressesAsArray(),null);
 					email.sendToClientEmail();
@@ -800,11 +858,8 @@ private void buildColumnHeaders() {
 				
 				
 			} else {
-				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-				builder.setTitle("Error Occurred")
-				.setMessage(sync.getStatus())
-				.setPositiveButton("OK", null)
-				.show();
+				
+				showQueryThreadFailedDialogue();
 			}
 	    }
 	 }
@@ -819,28 +874,37 @@ private void buildColumnHeaders() {
 
 		@Override
 		protected void onPreExecute() {
-			progress = ProgressDialog.show(getActivity(), "Retrieving..", 
-					 "Retrieving Report Joining Table Data...");
+			
+			displayQueryThreadProgressDialogue("Retrieving Report Joining Table Data...");
+
 		}
 
 		@Override
 		protected Boolean doInBackground(String... params) {
+			
+			if (progress == null) {
+				
+				return false;
+			}
+			
 			joiningTablesMapList = sync.getJoiningTablesByFunctionName(getActivity(), functionName);
+			
 			return true;
 		}
 
 		@Override
 		protected void onPostExecute(Boolean success) {
-			progress.dismiss();
+			
+			dismissThreadDialogue();
+			
 			if (success) {
+				
 				buildQuery();
 				
 			} else {
-				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-				builder.setTitle("Error Occurred")
-				.setMessage(sync.getStatus())
-				.setPositiveButton("OK", null)
-				.show();
+				
+				showQueryThreadFailedDialogue();
+
 			}
 	      }
 		}				

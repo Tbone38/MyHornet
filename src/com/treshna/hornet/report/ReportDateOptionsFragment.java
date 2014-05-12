@@ -77,9 +77,6 @@ public class ReportDateOptionsFragment extends Fragment implements DatePickerFra
 		Button createButton =  (Button) view.findViewById(R.id.btnCreateReport);
 		Button columnOptionsButton =  (Button) view.findViewById(R.id.btnColumnOptions);
 		LinearLayout layout = (LinearLayout) view.findViewById(R.id.dateOptions);
-		
-		getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-		
 		if (layout.getTag().toString().compareTo("Large") == 0) {
 			btnStartButton = (Button) view.findViewById(R.id.btnSelectStartDate);
 			btnEndButton = (Button) view.findViewById(R.id.btnSelectEndDate);
@@ -586,7 +583,7 @@ public class ReportDateOptionsFragment extends Fragment implements DatePickerFra
 		
 		filterQueries = new String [reportFiltersMapList.size()];
 		int index = 0;
-		for (HashMap<String,String> reportFiltersMap: reportFiltersMapList){
+		for (HashMap<String,String> reportFiltersMap: reportFiltersMapList) {
 			filterQueries[index] = ReportQueryResources.getFilterQueryByName(getActivity(),reportFiltersMap.get("filter_name"));
 			index ++;
 		}
@@ -671,6 +668,7 @@ public class ReportDateOptionsFragment extends Fragment implements DatePickerFra
 		  progress.dismiss();
 		  progress = null;
 	  }
+	  getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
   }
 	
 
@@ -769,33 +767,19 @@ public class ReportDateOptionsFragment extends Fragment implements DatePickerFra
 				progress.dismiss();
 			}
 			progress = null;
+			
 			if (success) {
-				//Calls back to the owning activity to call the thread to retrieve the joining tables
-				//ReportDateOptionsActivity.this.getJoiningTablesData(reportFunctionName);
-				/*System.out.println("\nReport-Type_Data");
-				
-				System.out.println("Result List Size: " + firstReportFilterMapList.size());
-				
-				for (HashMap<String,String> resultMap: firstReportFilterMapList){
-				
-					for (HashMap.Entry entry: resultMap.entrySet()){
-						 System.out.println("Field: " + entry.getKey() + " Value: " + entry.getValue());					 
-					}
-				
-				}*/
-				
+			
 				Log.i("Filter Count", filterCount+"");
+				
 				if (filterCount == 0) {
-					setUpFirstFilterSpinner();
 					
-					if (filterQueries.length > 1) {
-
-						//Log.i("Filter Name: ", reportFiltersMapList.get(1).get("filter_name"));
-						//addSelectedParamToQuery("Full Membership Fee");
-						//getSecondReportFilterData();
-					}
-				}
-				else if (filterCount == 1) {
+					setUpFirstFilterSpinner();
+					Log.i("Orientation", "Set To Portrait");
+					getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+					
+				} else if (filterCount == 1) {
+					
 				    setUpSecondFilterSpinner();
 
 			    }

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.zip.Inflater;
 
+import com.treshna.hornet.MainActivity;
 import com.treshna.hornet.R;
 import com.treshna.hornet.R.id;
 import com.treshna.hornet.R.layout;
@@ -16,9 +17,11 @@ import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,6 +35,7 @@ import android.widget.CheckBox;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class ReportColumnOptionsFragment extends ListFragment {
@@ -46,6 +50,8 @@ public class ReportColumnOptionsFragment extends ListFragment {
 	private ArrayList<CheckBox> colCheckBoxes = null;
 	private String reportName = null;
 	private String reportFunctionName = null;
+	private ProgressDialog progress = null;
+	private HornetDBService sync = null;
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -66,8 +72,18 @@ public class ReportColumnOptionsFragment extends ListFragment {
 			
 			@Override
 			public void onClick(View v) {
+
 			     getCheckedColumns();
-				 loadMainReportActivity();
+			     
+			    if (isAnyColumnChecked()) {
+			    	
+			    	loadMainReportFragment();
+			    	
+			    } else {
+			    	
+			    	Toast.makeText(getActivity(), "You must select at least one column", Toast.LENGTH_SHORT).show();
+			    }
+				 
 			}
 		});
 	    
@@ -78,7 +94,7 @@ public class ReportColumnOptionsFragment extends ListFragment {
 	}
 	
 	private void buildListAdapter() {
-		if (this.resultMapList.size() > 0){
+		if (this.resultMapList.size() > 0 && getActivity() != null){
 			ListAdapter listAdapter = new ArrayAdapter<HashMap<String,String>>(getActivity(),R.layout.report_column_options_row,
 					this.resultMapList){
 
@@ -149,19 +165,27 @@ public class ReportColumnOptionsFragment extends ListFragment {
 		return colNamesList;
 	}
 	
-	private void loadMainReportActivity() {
-		Intent mainReportIntent = new Intent(getActivity(), ReportMainActivity.class);
-		mainReportIntent.putExtra("report_id", reportId);
-		mainReportIntent.putExtra("report_name", reportName);
-		mainReportIntent.putExtra("calling_activity", "column_options");
-		mainReportIntent.putExtra("report_function_name", reportFunctionName);
-		mainReportIntent.putExtra("selected_column_ids", selectedColumns);
-		mainReportIntent.putExtra("start_date", startDate);
-		mainReportIntent.putExtra("end_date", endDate);
-		startActivity(mainReportIntent);
+	private void loadMainReportFragment() {
+		
+		
+
+		//Modified to call report main fragment - 09-05-2014
+		Fragment reportMainFragment = new ReportMainFragment();
+		Bundle fragmentData = new Bundle();
+		fragmentData.putInt("report_id", reportId);
+		fragmentData.putString("report_name", reportName);
+		fragmentData.putString("calling_activity", "column_options");
+		fragmentData.putString("report_function_name", reportFunctionName);
+		fragmentData.putIntArray("selected_column_ids", selectedColumns);
+		fragmentData.putLong("start_date", startDate);
+		fragmentData.putLong("end_date", endDate);
+		reportMainFragment.setArguments(fragmentData);
+		((MainActivity)getActivity()).changeFragment(reportMainFragment, "reportMainFragment");
+		
 	}
 	
 	private void getCheckedColumns () {
+		
 	  this.selectedColumns = new int[(colCheckBoxes.size())];
 	  int columnIndex = 0;
   
@@ -170,10 +194,24 @@ public class ReportColumnOptionsFragment extends ListFragment {
 		  	if (checkBox.isChecked())
 			    selectedColumns[columnIndex] = Integer.parseInt(checkBox.getTag().toString());
 		  		columnIndex += 1;	  
-	  }   	  
-}
+	  }
+	  
+	  
+	}
+	
+	private boolean isAnyColumnChecked() {
+		
+		for (int i = 0; i < selectedColumns.length; i++) {
+			
+			if (selectedColumns[i] != 0){
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	private void PrintQueryResultData () {
+		
 		for (HashMap<String,String> resultMap: this.resultMapList){
 			for (Entry<String,String> column: resultMap.entrySet()){
 				System.out.println(column.getKey()+ " " + column.getValue());
@@ -181,11 +219,44 @@ public class ReportColumnOptionsFragment extends ListFragment {
 		}
 	}
 	
-	
+	 
+	private void displayQueryThreadProgressDialogue(String message) {
+		 
+			if (getActivity() != null) {
+				
+				progress = ProgressDialog.show(getActivity(), "Retrieving..", message);
+				
+			} else {
+				
+				progress = null;
+				
+			}
+	 }
+	 private void dismissThreadDialogue() {
+		 
+			if (progress != null && progress.isShowing()) {
+				
+				progress.dismiss();
+				
+			}
+	 }
+	 
+	 private void showQueryThreadFailedDialogue() {
+		 
+			if (getActivity() != null) {
+				
+				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+				builder.setTitle("Error Occurred")
+				.setMessage(sync.getStatus())
+				.setPositiveButton("OK", null)
+				.show();
+			}
+		 
+	 }
 	
 	protected class GetReportColumnOptions extends AsyncTask<String, Integer, Boolean> {
-		private ProgressDialog progress;
-		private HornetDBService sync;
+
+
 		private ResultSet result = null;
 		
 			
@@ -196,42 +267,33 @@ public class ReportColumnOptionsFragment extends ListFragment {
 		
 		
 		protected void onPreExecute() {
-			progress = ProgressDialog.show(getActivity(), "Retrieving..", 
-					 "Retrieving Report Column Names...");
+			
+			displayQueryThreadProgressDialogue("Retrieving Report Column Names...");
+			
 		}
 		
 		@Override
 		protected Boolean doInBackground(String... params) {
+			
+			if (progress == null) {
+				return false;
+			}
 			resultMapList = sync.getReportColumnsByReportId(getActivity(), reportId);
 	        return true;
 		}
 		
 
 		protected void onPostExecute(Boolean success) {
-			progress.dismiss();
+			
+			dismissThreadDialogue();
+			
 			if (success) {
-			/*
-				System.out.println("\nReport-Type_Data");
-				
-				System.out.println("Result List Size: " + resultMapList.size());
-				
-				for (HashMap<String,String> resultMap: resultMapList){
-				
-					for (HashMap.Entry entry: resultMap.entrySet()){
-						 System.out.println("Field: " + entry.getKey() + " Value: " + entry.getValue());					 
-					}
-				
-				}*/
-				//Calls back to the owning activity to build the adapter
-				//ReportColumnOptionsActivity.this.buildListAdapter();
-				ReportColumnOptionsFragment.this.buildListAdapter();
+	
+				buildListAdapter();
 				
 			} else {
-				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-				builder.setTitle("Error Occurred")
-				.setMessage(sync.getStatus())
-				.setPositiveButton("OK", null)
-				.show();
+				
+				showQueryThreadFailedDialogue();
 			}
 	    }
 	 }
