@@ -33,9 +33,6 @@ public class FormList extends ListFragment {
 		public ActionMode getActionMode();
 		public void startActionMode(View view);
 		public void setTitle(TextView view);
-		/*public void onCreateContextMenu(ContextMenu menu,
-				View v,
-                ContextMenuInfo menuInfo);*/
 		public void setPosition(int position);
 	}
 	
@@ -58,17 +55,18 @@ public class FormList extends ListFragment {
 		//this.registerForContextMenu(mList);
 		
 		switch (buildertype){
-		case (FormFragment.RESOURCE):{
+		case (FormFragment.RESOURCE):
 			mLister = new ResourceLister(getActivity(), mList);
 			break;
-		}
-		case (FormFragment.PROGRAMMEGROUP):{
+		case (FormFragment.PROGRAMMEGROUP):
 			mLister = new ProgrammeGroupLister(getActivity(), mList);
 			break;
-		}
-		case (FormFragment.BOOKINGTYPE):{
+		case (FormFragment.BOOKINGTYPE):
 			mLister = new BookingTypeLister(getActivity(), mList);
-		}
+			break;
+		case (FormFragment.DOOR):
+			mLister = new DoorLister(getActivity(), mList);
+			break;
 		}
 		
 		mCallback = (LoaderManager.LoaderCallbacks<Cursor>) mLister;
@@ -76,14 +74,6 @@ public class FormList extends ListFragment {
 		mLister.setTitle((TextView) view.findViewById(R.id.heading));
 		return view;
 	}
-	
-	/*@Override
-	public void onCreateContextMenu(ContextMenu menu, View v,
-	                                ContextMenuInfo menuInfo) {
-	    super.onCreateContextMenu(menu, v, menuInfo);
-	    
-	    mLister.onCreateContextMenu(menu, v, menuInfo);
-	}*/
 	
 	@Override
 	public void onResume() {

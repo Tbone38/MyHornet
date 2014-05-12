@@ -15,6 +15,7 @@ public class FormFragment extends Fragment {
 	public static final int RESOURCE = 1;
 	public static final int PROGRAMMEGROUP = 2;
 	public static final int BOOKINGTYPE = 3;
+	public static final int DOOR = 4;
 	
 	private View page;
 	private FormBuilder builder;
@@ -43,6 +44,10 @@ public class FormFragment extends Fragment {
 		}
 		case (BOOKINGTYPE):{
 			builder = new BookingtypeBuilder(getActivity(), id);
+			break;
+		}
+		case (DOOR):{
+			builder = new DoorBuilder(getActivity(), id);
 			break;
 		}
 		}

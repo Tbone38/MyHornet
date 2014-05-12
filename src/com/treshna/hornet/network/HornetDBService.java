@@ -185,6 +185,7 @@ public class HornetDBService extends Service {
 			getResourceID();
 			getProgrammeGroupID();
 			getBookingTypeID();
+			getDoorID();
 			int sid_count = getSuspendID();
 			if (sid_count < 0) {
 				Services.showToast(getApplicationContext(), statusMessage, handler);
@@ -202,10 +203,12 @@ public class HornetDBService extends Service {
 			updateImage();
 			uploadBookingTypes();
 			uploadBookings();
+			uploadDoor();
 			insertResource();
 			updateResource();
 			updateProgrammeGroup();
 			updateBookingTypes();
+			updateDoor();
 			int classcount = uploadClass();
 			Log.d(TAG, "Uploaded "+classcount+" Classes");
 			int upload_sid_count = uploadSuspends();
@@ -3490,7 +3493,7 @@ public class HornetDBService extends Service {
     			values.put(ContentDescriptor.Door.Cols.DOORID, rs.getInt("id"));
     			values.put(ContentDescriptor.Door.Cols.DOORNAME, rs.getString("name"));
     			values.put(ContentDescriptor.Door.Cols.STATUS, rs.getInt("status"));
-    			values.put(ContentDescriptor.Door.Cols.BOOKING, rs.getInt("booking_checkin"));
+    			values.put(ContentDescriptor.Door.Cols.CHECKOUT, rs.getString("checkout"));
     			values.put(ContentDescriptor.Door.Cols.WOMENONLY, rs.getString("womenonly"));
     			values.put(ContentDescriptor.Door.Cols.CONCESSION, rs.getInt("concessionhandling"));
     			values.put(ContentDescriptor.Door.Cols.LASTVISITS, rs.getString("showlastvisits"));
@@ -3545,6 +3548,32 @@ public class HornetDBService extends Service {
     	cleanUp();
     	connection.closeConnection();
     	
+    	return true;
+    }
+    
+    public boolean openDoor(int doorid, Context context) {
+    	Log.d(TAG, "Manually Opening Door "+doorid);
+    	
+    	if (context != null) {
+    		setup(context);
+    	}
+    	if (!openConnection()) {
+    		return false;
+    	}
+    	/*if (!getDeviceDetails()) {
+    		return false;
+    	}*/
+    	try {
+    		connection.OpenDoor(doorid);
+    	} catch (SQLException e) {
+    		statusMessage = e.getLocalizedMessage();
+    		Log.e(TAG, "", e);
+    		return false;
+    	}
+    	
+    	//updateDevice();
+    	cleanUp();
+    	connection.closeConnection();
     	return true;
     }
     
@@ -5688,20 +5717,20 @@ public class HornetDBService extends Service {
     	
     	
     	while (pendings.moveToNext()) {
-    		String id = pendings.getString(pendings.getColumnIndex(ContentDescriptor.PendingUploads.Cols.ROWID));
+    		String rowid = pendings.getString(pendings.getColumnIndex(ContentDescriptor.PendingUploads.Cols.ROWID));
     		
     		cur = contentResolver.query(ContentDescriptor.Door.CONTENT_URI, null, ContentDescriptor.Door.Cols._ID+" = ?",
-    				new String[] {id}, null);
+    				new String[] {rowid}, null);
     		
     		if (cur.moveToFirst()) {
-    			int status  = -1, booking_checkin = -1, concessionhandling = -1, companyid = -1;
-    			String womenonly = null, showvisits = null;
+    			int status  = -1, concessionhandling = -1, companyid = -1;
+    			String womenonly = null, showvisits = null, checkout = null;
     			
     			if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Door.Cols.STATUS))) {
     				status = cur.getInt(cur.getColumnIndex(ContentDescriptor.Door.Cols.STATUS));
     			}
-    			if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Door.Cols.BOOKING))) {
-    				booking_checkin = cur.getInt(cur.getColumnIndex(ContentDescriptor.Door.Cols.BOOKING));
+    			if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Door.Cols.CHECKOUT))) {
+    				checkout = cur.getString(cur.getColumnIndex(ContentDescriptor.Door.Cols.CHECKOUT));
     			}
     			if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Door.Cols.CONCESSION))) {
     				concessionhandling = cur.getInt(cur.getColumnIndex(ContentDescriptor.Door.Cols.CONCESSION));
@@ -5717,9 +5746,9 @@ public class HornetDBService extends Service {
     			}
     			
     			try {
-    				connection.uploadDoor(Integer.parseInt(id),
+    				connection.uploadDoor(cur.getInt(cur.getColumnIndex(ContentDescriptor.Door.Cols.DOORID)),
     						cur.getString(cur.getColumnIndex(ContentDescriptor.Door.Cols.DOORNAME)),
-    						status, booking_checkin, womenonly, concessionhandling, showvisits, companyid);
+    						status, checkout, womenonly, concessionhandling, showvisits, companyid);
     			} catch (SQLException e) {
     				statusMessage = e.getLocalizedMessage();
     				Log.e(TAG, "", e);
@@ -5727,7 +5756,65 @@ public class HornetDBService extends Service {
     			}
     		}
     		contentResolver.delete(ContentDescriptor.PendingUploads.CONTENT_URI, ContentDescriptor.PendingUploads.Cols.ROWID+" = ? AND "
-    				+ContentDescriptor.PendingUploads.Cols.TABLEID+" = ?", new String[] {id, String.valueOf(
+    				+ContentDescriptor.PendingUploads.Cols.TABLEID+" = ?", new String[] {rowid, String.valueOf(
+    				ContentDescriptor.TableIndex.Values.Door.getKey())});
+    	}
+    	
+    	return result;
+    }
+    
+    private int updateDoor() {
+    	int result = 0;
+    	
+    	Cursor pendings = contentResolver.query(ContentDescriptor.PendingUpdates.CONTENT_URI, null, ContentDescriptor.PendingUpdates.Cols.TABLEID+" = ?",
+    			new String[] {String.valueOf(ContentDescriptor.PendingUpdates.CONTENT_URI)}, null);
+    	
+    	if (!openConnection()) {
+    		return -1;
+    	}
+    	
+    	while (pendings.moveToNext()) {
+    		String rowid = pendings.getString(pendings.getColumnIndex(ContentDescriptor.PendingUpdates.Cols.ROWID));
+    		
+    		cur = contentResolver.query(ContentDescriptor.Door.CONTENT_URI, null, ContentDescriptor.Door.Cols._ID+" = ?", 
+    				new String[] {rowid}, null);
+    		if (cur.moveToFirst()) {
+    			
+    			int status  = -1, concessionhandling = -1, companyid = -1;
+    			String womenonly = null, showvisits = null, checkout = null;
+    			
+    			if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Door.Cols.STATUS))) {
+    				status = cur.getInt(cur.getColumnIndex(ContentDescriptor.Door.Cols.STATUS));
+    			}
+    			if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Door.Cols.CHECKOUT))) {
+    				checkout = cur.getString(cur.getColumnIndex(ContentDescriptor.Door.Cols.CHECKOUT));
+    			}
+    			if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Door.Cols.CONCESSION))) {
+    				concessionhandling = cur.getInt(cur.getColumnIndex(ContentDescriptor.Door.Cols.CONCESSION));
+    			}
+    			if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Door.Cols.COMPANY))) {
+    				companyid = cur.getInt(cur.getColumnIndex(ContentDescriptor.Door.Cols.COMPANY));
+    			}
+    			if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Door.Cols.WOMENONLY))) {
+    				womenonly = cur.getString(cur.getColumnIndex(ContentDescriptor.Door.Cols.WOMENONLY));
+    			}
+    			if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Door.Cols.LASTVISITS))) {
+    				showvisits = cur.getString(cur.getColumnIndex(ContentDescriptor.Door.Cols.LASTVISITS));
+    			}
+    			try {
+    				connection.updateDoor(cur.getInt(cur.getColumnIndex(ContentDescriptor.Door.Cols.DOORID)),
+    						cur.getString(cur.getColumnIndex(ContentDescriptor.Door.Cols.DOORNAME)),
+    						status, checkout, womenonly, concessionhandling, showvisits, companyid);
+    				result +=1;
+    			} catch (SQLException e) {
+    				statusMessage = e.getLocalizedMessage();
+    				Log.e(TAG, "", e);
+    				return -2;
+    			}
+    		}
+    		cur.close();
+    		contentResolver.delete(ContentDescriptor.PendingUpdates.CONTENT_URI, ContentDescriptor.PendingUpdates.Cols.ROWID+" = ? AND "
+    				+ContentDescriptor.PendingUpdates.Cols.TABLEID+" = ?", new String[] {rowid, String.valueOf(
     				ContentDescriptor.TableIndex.Values.Door.getKey())});
     	}
     	
