@@ -921,9 +921,24 @@ public class ContentDescriptor {
 	 		public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.treshna.door";
 	 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.treshna.door";
 	 		
+	 		public static class Triggers {
+	 			public static final String ON_INSERT = "door_insert";
+	 			public static final String ON_UPDATE = "door_update";
+//	 			todo Deletes...?
+	 		}
+	 		
 	 		public static class Cols implements BaseColumns {
 	 			public static final String DOORID = "doorid";
 	 			public static final String DOORNAME = "doorname";
+	 			
+	 			//added in v120.
+	 			public static final String STATUS = "status"; //0 locked, 1 active, 2 open/unlocked
+	 			public static final String BOOKING = "booking_checkin"; //0 never , 1 if a booking has been made, 2 require a booking (unimplemented)
+	 			public static final String WOMENONLY = "womenonly";
+	 			public static final String CONCESSION = "concessionhandling"; //0=count visits, 1=Don't count visits, 2=count visits prefer concession memberships
+	 			public static final String LASTVISITS = "showlastvisits";
+	 			public static final String COMPANY = "companyid";
+	 			public static final String DEVICESIGNUP = "device_signup";
 	 		}
 	 	}
 	 	
@@ -1099,7 +1114,8 @@ public class ContentDescriptor {
 	 			Booking(1), Class(2), Swipe(3),Membership(4) /*when adding memberships*/,
 	 					Member(5) /*when adding members/prospects*/,Image(6),
 	 					MembershipSuspend(7), MemberNotes(8), RollCall(9), RollItem(10),
-	 					Idcard(11), Prospect(12), Resource(13), ProgrammeGroup(14), Bookingtype(15);
+	 					Idcard(11), Prospect(12), Resource(13), ProgrammeGroup(14), Bookingtype(15),
+	 					Door(16);
 	 			
 	 			private final int key;
 	 			

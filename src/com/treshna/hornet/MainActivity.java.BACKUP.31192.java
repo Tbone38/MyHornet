@@ -1,7 +1,6 @@
 package com.treshna.hornet;
 
 import java.text.DecimalFormat;
-
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -14,6 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.database.Cursor;
@@ -54,10 +54,14 @@ import com.treshna.hornet.navigation.NavDrawerListAdapter;
 import com.treshna.hornet.navigation.SlideMenuClickListener;
 import com.treshna.hornet.navigation.TabListener;
 import com.treshna.hornet.network.HornetDBService;
-import com.treshna.hornet.network.PollingHandler;	
+import com.treshna.hornet.network.PollingHandler;
+<<<<<<< HEAD
+=======
+import com.treshna.hornet.report.ReportDateOptionsFragment;
 import com.treshna.hornet.report.ReportListingFragment;
 import com.treshna.hornet.report.ReportNamesActivity;
 import com.treshna.hornet.report.Report_Types_ListActivity;
+>>>>>>> f0021cb13ada6501a66fb56c23cdf96e29aeb49d
 import com.treshna.hornet.services.Services;
 import com.treshna.hornet.setup.SetupActivity;
 import com.treshna.hornet.sqlite.ContentDescriptor;
@@ -718,6 +722,27 @@ public class MainActivity extends NFCActivity {
 
 	}
 
+	private void startReportTypesActivity (Context view)
+	{
+		Intent intent = new Intent(view,Report_Types_ListActivity.class);
+		this.startActivity(intent);
+	}
+	private void startReportNamesActivity (Context view)
+	{
+		Intent intent = new Intent(view,ReportNamesActivity.class);
+		this.startActivity(intent);
+	}
+	private void startReportTypesAndNamesActivity (Context view)
+	{
+		Intent intent = new Intent(view,ReportListingFragment.class);
+		this.startActivity(intent);
+	}
+	private void startReportDateOptionsActivity (Context view)
+	{
+		Intent intent = new Intent(view,ReportDateOptionsFragment.class);
+		intent.putExtra("report_name", "Expiring Members");
+		this.startActivity(intent);
+	}
 }
 
 	

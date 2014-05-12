@@ -44,6 +44,10 @@ public class Services {
 	private static Context theCtx;
 	private static final String TAG = "Services";
 	
+	public interface ThreadResult {
+		void setResult(boolean result);
+	}
+	
 	/** Always returns date format as "dd MMM yyyy"
 	 * 
 	 */

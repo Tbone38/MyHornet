@@ -520,7 +520,7 @@ public class MainActivity extends NFCActivity {
 	public void changeFragment(Fragment f, String tag) {
 		FragmentManager fm = this.getSupportFragmentManager();
 		ActionBar ab = getSupportActionBar();
-		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+		
 		
 		if (f != null) {
 			cFragment = f;

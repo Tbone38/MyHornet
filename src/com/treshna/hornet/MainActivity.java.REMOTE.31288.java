@@ -1,7 +1,6 @@
 package com.treshna.hornet;
 
 import java.text.DecimalFormat;
-
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -54,7 +53,8 @@ import com.treshna.hornet.navigation.NavDrawerListAdapter;
 import com.treshna.hornet.navigation.SlideMenuClickListener;
 import com.treshna.hornet.navigation.TabListener;
 import com.treshna.hornet.network.HornetDBService;
-import com.treshna.hornet.network.PollingHandler;	
+import com.treshna.hornet.network.PollingHandler;
+import com.treshna.hornet.report.ReportDateOptionsFragment;
 import com.treshna.hornet.report.ReportListingFragment;
 import com.treshna.hornet.report.ReportNamesActivity;
 import com.treshna.hornet.report.Report_Types_ListActivity;
@@ -520,7 +520,7 @@ public class MainActivity extends NFCActivity {
 	public void changeFragment(Fragment f, String tag) {
 		FragmentManager fm = this.getSupportFragmentManager();
 		ActionBar ab = getSupportActionBar();
-		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+		
 		
 		if (f != null) {
 			cFragment = f;
@@ -718,6 +718,27 @@ public class MainActivity extends NFCActivity {
 
 	}
 
+	private void startReportTypesActivity (Context view)
+	{
+		Intent intent = new Intent(view,Report_Types_ListActivity.class);
+		this.startActivity(intent);
+	}
+	private void startReportNamesActivity (Context view)
+	{
+		Intent intent = new Intent(view,ReportNamesActivity.class);
+		this.startActivity(intent);
+	}
+	private void startReportTypesAndNamesActivity (Context view)
+	{
+		Intent intent = new Intent(view,ReportListingFragment.class);
+		this.startActivity(intent);
+	}
+	private void startReportDateOptionsActivity (Context view)
+	{
+		Intent intent = new Intent(view,ReportDateOptionsFragment.class);
+		intent.putExtra("report_name", "Expiring Members");
+		this.startActivity(intent);
+	}
 }
 
 	
