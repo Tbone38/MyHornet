@@ -1,7 +1,6 @@
 package com.treshna.hornet;
 
 import java.text.DecimalFormat;
-
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -14,6 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.database.Cursor;
