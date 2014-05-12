@@ -522,7 +522,7 @@ public void onPause() {
 		  progress.dismiss();
 		  progress = null;
 	  }
-//	 getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+	 getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
 }
 
 
@@ -738,6 +738,7 @@ private void buildColumnHeaders() {
 				
 				return false;
 			}
+			
 			resultMapList = sync.getReportDataByDateRange(getActivity(),finalQuery);
 			
 	        return true;

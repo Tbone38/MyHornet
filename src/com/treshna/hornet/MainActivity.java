@@ -447,7 +447,6 @@ public class MainActivity extends NFCActivity {
 	public void onBackPressed() {
 		//this needs some minor tweaks. consider adding a queue.
 		//also: this is disgusting. MAKE IT LOOK NICE.
-		//setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
 		if (cFragment instanceof BookingsListSuperFragment) {
 			BookingsListSuperFragment f = (BookingsListSuperFragment) cFragment;
 			if (f.getCurrentFragment() instanceof BookingsOverviewFragment) {

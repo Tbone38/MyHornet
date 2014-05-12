@@ -35,6 +35,7 @@ import android.widget.CheckBox;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class ReportColumnOptionsFragment extends ListFragment {
@@ -71,10 +72,21 @@ public class ReportColumnOptionsFragment extends ListFragment {
 			
 			@Override
 			public void onClick(View v) {
+
 			     getCheckedColumns();
-				 loadMainReportFragment();
+			     
+			    if (isAnyColumnChecked()) {
+			    	
+			    	loadMainReportFragment();
+			    	
+			    } else {
+			    	
+			    	Toast.makeText(getActivity(), "You must select at least one column", Toast.LENGTH_SHORT).show();
+			    }
+				 
 			}
 		});
+	    
 	    this.getReportColumnOptions();
 	    
 		return view;
@@ -154,6 +166,8 @@ public class ReportColumnOptionsFragment extends ListFragment {
 	}
 	
 	private void loadMainReportFragment() {
+		
+		
 
 		//Modified to call report main fragment - 09-05-2014
 		Fragment reportMainFragment = new ReportMainFragment();
@@ -171,6 +185,7 @@ public class ReportColumnOptionsFragment extends ListFragment {
 	}
 	
 	private void getCheckedColumns () {
+		
 	  this.selectedColumns = new int[(colCheckBoxes.size())];
 	  int columnIndex = 0;
   
@@ -179,10 +194,24 @@ public class ReportColumnOptionsFragment extends ListFragment {
 		  	if (checkBox.isChecked())
 			    selectedColumns[columnIndex] = Integer.parseInt(checkBox.getTag().toString());
 		  		columnIndex += 1;	  
-	  }   	  
-}
+	  }
+	  
+	  
+	}
+	
+	private boolean isAnyColumnChecked() {
+		
+		for (int i = 0; i < selectedColumns.length; i++) {
+			
+			if (selectedColumns[i] != 0){
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	private void PrintQueryResultData () {
+		
 		for (HashMap<String,String> resultMap: this.resultMapList){
 			for (Entry<String,String> column: resultMap.entrySet()){
 				System.out.println(column.getKey()+ " " + column.getValue());
