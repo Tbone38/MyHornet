@@ -979,7 +979,7 @@ public class UpdateDatabase {
 		private static final String SQL46 = "CREATE TRIGGER "+Door.Triggers.ON_UPDATE+" AFTER UPDATE ON "+Door.NAME
 				+" FOR EACH ROW WHEN new."+Door.Cols.DEVICESIGNUP+" = 't'"
 				+" BEGIN"
-					+" INSERT OR REPLACE INTO"+PendingUpdates.NAME
+					+" INSERT OR REPLACE INTO "+PendingUpdates.NAME
 					+" ("+PendingUpdates.Cols.ROWID+", "+PendingUpdates.Cols.TABLEID+")"
 					+" VALUES (old."+Door.Cols._ID+", "+TableIndex.Values.Door.getKey()+");"
 				+"END;";

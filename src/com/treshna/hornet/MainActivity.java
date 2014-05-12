@@ -464,8 +464,8 @@ public class MainActivity extends NFCActivity {
 					f.onBackPressed();				
 				} else {
 					super.onBackPressed();
-				}
-			} else {
+				}	
+			} else  {
 				//what fragment were we displaying??
 				super.onBackPressed();
 			}

@@ -49,13 +49,13 @@ public class ReportListingFragment extends ListFragment {
 	  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 		mInflater = inflater;
 		view = mInflater.inflate(R.layout.report_types_and_names_list, null);
-		//getTypesAndNamesData();
+		getTypesAndNamesData();
 		return view;
 	}
 	
 	
 	
-	@Override
+	/*@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
@@ -107,11 +107,11 @@ public class ReportListingFragment extends ListFragment {
 			Log.i("Retrieved List Size", resultMapList.size()+"");
 			
 		} else {
-					
+				
+			
 			Log.i("onViewStateRestored", "Running query thread...");
 		}
-	}
-
+	}*/
 
 
 	private void buildListAdapter() {
