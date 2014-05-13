@@ -1007,10 +1007,8 @@ public class JDBCConnection {
     }
     
     public boolean OpenDoor(int doorid) throws SQLException, NullPointerException {
-    	pStatement = con.prepareStatement("NOTIFY opendoor?;");
-    	pStatement.setInt(1, doorid);
+    	pStatement = con.prepareStatement("NOTIFY opendoor"+doorid+";");
     	
-    	Log.v(TAG,pStatement.toString());
     	return pStatement.execute();
     }
 

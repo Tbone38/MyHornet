@@ -10,7 +10,6 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Toast;
 
 import com.treshna.hornet.R;
@@ -132,7 +131,7 @@ public class DoorBuilder implements FormGenerator.FormBuilder, OnClickListener {
 		values.put(ContentDescriptor.Door.Cols.WOMENONLY, (formgen.getCheckBox(DOOR_WOMEN_ID)) ? "t" : "f");
 		values.put(ContentDescriptor.Door.Cols.LASTVISITS, (formgen.getCheckBox(DOOR_VISITS_ID)) ? "t" : "f");
 		
-		{ //spinner handling! ewwww grosss!
+		{ 	//spinner handling! ewwww grosss!
 			int selected_status = formgen.getSpinnerPosition(DOOR_STATUS_ID);
 			String[] statuss = mActivity.getResources().getStringArray(R.array.door_status_values);
 			values.put(ContentDescriptor.Door.Cols.STATUS, statuss[selected_status]);
@@ -204,6 +203,11 @@ public class DoorBuilder implements FormGenerator.FormBuilder, OnClickListener {
 			return sync.openDoor(doorID, mActivity);
 		}
 		
+		protected void onPostExecute(Boolean success) {
+			if (!success) {
+				Toast.makeText(mActivity, sync.getStatus(), Toast.LENGTH_LONG).show();
+			}
+		}
 	}
 
 }

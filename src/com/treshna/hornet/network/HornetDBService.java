@@ -3552,6 +3552,7 @@ public class HornetDBService extends Service {
     }
     
     public boolean openDoor(int doorid, Context context) {
+    	boolean result = false;
     	Log.d(TAG, "Manually Opening Door "+doorid);
     	
     	if (context != null) {
@@ -3564,7 +3565,7 @@ public class HornetDBService extends Service {
     		return false;
     	}*/
     	try {
-    		connection.OpenDoor(doorid);
+    		result = connection.OpenDoor(doorid);
     	} catch (SQLException e) {
     		statusMessage = e.getLocalizedMessage();
     		Log.e(TAG, "", e);
@@ -3574,7 +3575,7 @@ public class HornetDBService extends Service {
     	//updateDevice();
     	cleanUp();
     	connection.closeConnection();
-    	return true;
+    	return result;
     }
     
     private int getMemberNotes(long last_update) {
