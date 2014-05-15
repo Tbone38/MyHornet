@@ -71,6 +71,7 @@ public class VisitorsViewAdapter extends SimpleCursorAdapter {
 		tagInfo.add(cursor.getString(cursor.getColumnIndex(ContentDescriptor.Visitor.Cols.DATETIME)));
 		rowView.setTag(tagInfo);
 		rowView.setClickable(true);
+		
 		if (theClicker != null) {
 			rowView.setOnClickListener(theClicker);
 		} else {

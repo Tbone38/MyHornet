@@ -480,16 +480,16 @@ public class ReportDateOptionsFragment extends Fragment implements DatePickerFra
 
 	private void loadMainReport(){
 		
-		loadFragment("date_options", ReportMainActivity.class);
+		loadFragment("date_options");
 	
 	}
 	
 	private void loadColumnOptions() {
 		
-		loadFragment("column_options", ReportColumnOptionsActivity.class);
+		loadFragment("column_options");
 	}
 	
-	private void loadFragment(String callingActivity, Class<?> activity) {
+	private void loadFragment(String callingActivity) {
 		Fragment newFragment = null;
 		reportData.put("start_date",selectedStartDate);
 		reportData.put("end_date",  selectedEndDate);
@@ -502,7 +502,7 @@ public class ReportDateOptionsFragment extends Fragment implements DatePickerFra
 			
 			newFragment =  new ReportMainFragment();
 		}
-		
+
 		Bundle bdl = new Bundle(1);
 		newFragment.setArguments(bdl);
 		bdl.putInt("report_id", reportId);

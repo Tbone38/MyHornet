@@ -3,7 +3,6 @@
  */
 package com.treshna.hornet.network;
 
-import java.net.SocketException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -14,7 +13,6 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -82,7 +80,7 @@ public class JDBCConnection {
     	this.ctx = context;
     }
 
-    public synchronized void openConnection() throws ClassNotFoundException, SQLException {
+    public synchronized void openConnection() throws ClassNotFoundException, SQLException, PSQLException {
             if (con != null) {
                     try {
                         con.close();
@@ -1283,18 +1281,37 @@ public class JDBCConnection {
     
 
     public ResultSet getEmailAddressesByIds(Integer []ids, String tableName) throws SQLException {
+    	String query = null;
+    	String idString = "";
+     	
 
-    	String query = "Select email from " + tableName + " where id in (";
+    	
+    	if (tableName.compareTo("enquiry")== 0) {
+    		
+    		query = "Select enquiry_id, email from " + tableName + " where enquiry_id in (";
+    		
+    	} else {
+    		
+    		query = "Select email from " + tableName + " where id in (";
+    		
+    	}
+    	
     	for (int i=0; i< ids.length; i++) {
-    		query += ids[i];
-    		if (i != (ids.length-1)){
-    			query += ",";
+    		
+    			idString += ids[i];
+    		
+    		if (i != (ids.length-1)) {
+    			
+    			idString += ",";
+    			
     		} else {
-    			query = query+");";
+    			
+    			idString = idString+");";
     		}
     	
     	}
     	
+    	query += idString;
     	
     	System.out.println("Ids Length: " +ids.length);
     	System.out.println("Email Query: " +query);
@@ -1401,6 +1418,7 @@ public class JDBCConnection {
     	return this.pStatement.executeQuery();
     }
     public ResultSet getReportTypesAndNames() throws SQLException {
+    	
     	String query = "SELECT id, name, function_name, description, report_type_id AS order, false as istype FROM user_report" 
     	+" UNION SELECT id, name, view_name, NULL::text, id AS order, true as istype FROM report_type ORDER BY \"order\", \"istype\" DESC, name,id";
 	    this.pStatement = con.prepareStatement(query);

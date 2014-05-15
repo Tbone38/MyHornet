@@ -29,6 +29,7 @@ import com.treshna.hornet.form.FormFragment;
 import com.treshna.hornet.lists.FormList;
 import com.treshna.hornet.member.MemberAddFragment;
 import com.treshna.hornet.network.HornetDBService;
+import com.treshna.hornet.network.JDBCConnection;
 import com.treshna.hornet.report.KeyPerformanceIndexFragment;
 import com.treshna.hornet.report.ReportListingFragment;
 import com.treshna.hornet.roll.RollListFragment;
@@ -40,6 +41,7 @@ public class SlideMenuClickListener implements OnItemClickListener, OnClickListe
     private ListView mDrawerList;
     private LinearLayout mDrawerView;
     private Activity activity;
+    private HornetDBService dbService = null;
 	
     
 	public SlideMenuClickListener(DrawerLayout drawerLayout, ListView drawerList, Activity ma, LinearLayout drawer) {
@@ -47,6 +49,7 @@ public class SlideMenuClickListener implements OnItemClickListener, OnClickListe
 		this.mDrawerList = drawerList;
 		this.mDrawerView = drawer;
 		this.activity = ma;
+		dbService = new HornetDBService();
 	}
 	
 	@Override
@@ -99,8 +102,19 @@ public class SlideMenuClickListener implements OnItemClickListener, OnClickListe
         	break;
         case 9:
         	tag = "reports";
-        	fragment = new ReportListingFragment(); 
+        	
+        	if (dbService.hasConnectivity(activity.getApplicationContext())) {
+        		
+        		fragment = new ReportListingFragment();
+        		
+        	} else {
+        		
+        		Toast.makeText(activity, "No Database Connection Available", Toast.LENGTH_LONG).show();
+        		return;
+        	}
+        	
         	break;
+        	
         case 11:
         	tag = "rolllist";
         	fragment = new RollListFragment();

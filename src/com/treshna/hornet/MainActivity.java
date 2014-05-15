@@ -56,8 +56,6 @@ import com.treshna.hornet.navigation.TabListener;
 import com.treshna.hornet.network.HornetDBService;
 import com.treshna.hornet.network.PollingHandler;	
 import com.treshna.hornet.report.ReportListingFragment;
-import com.treshna.hornet.report.ReportNamesActivity;
-import com.treshna.hornet.report.Report_Types_ListActivity;
 import com.treshna.hornet.services.Services;
 import com.treshna.hornet.setup.SetupActivity;
 import com.treshna.hornet.sqlite.ContentDescriptor;

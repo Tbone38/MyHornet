@@ -38,6 +38,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 //public class ReportListingActivity extends ListActivity {
 public class ReportListingFragment extends ListFragment {
@@ -241,12 +242,26 @@ public class ReportListingFragment extends ListFragment {
 		
 
 		protected void onPostExecute(Boolean success) {
-			progress.dismiss();
-			if (success) {
-
-				buildListAdapter();
+			
+			if (progress != null) {
 				
+				progress.dismiss();
+			}
+				
+			if (success) {
+								
+				if (resultMapList != null) {
+					
+					buildListAdapter();
+					
+				} else {
+					
+					Toast.makeText(getActivity(), "No Connection to Database", Toast.LENGTH_LONG).show();
+					getActivity().onBackPressed();
+				}
+		
 			} else {
+				
 				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 				builder.setTitle("Error Occurred")
 				.setMessage(sync.getStatus())
