@@ -1,7 +1,6 @@
 package com.treshna.hornet.network;
 
 import java.sql.ResultSet;
-
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -10,9 +9,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
+
+import org.postgresql.util.PSQLException;
 
 import android.app.Service;
 import android.content.ContentResolver;
@@ -125,6 +127,17 @@ public class HornetDBService extends Service {
         super.onDestroy();
         connection.closeConnection();
         Log.d(TAG, "Database Service destroyed");
+    }
+  
+    public boolean hasConnectivity(Context context) {
+    		this.setup(context);
+    	return Services.getFreqPollingHandler().getServerExists();
+    	/*if (!openConnection()) {
+    		return false;
+    	} else {
+    		connection.closeConnection();
+    		return true;
+    	}*/
     }
     /**
      * this functions starts a series of network operations determined by the call.
@@ -2502,7 +2515,7 @@ public class HornetDBService extends Service {
     	return result;
     }
     
-    private boolean openConnection(){
+    private boolean openConnection() {
     	boolean connected = false;
     	if (connection != null) {
 			connected = connection.isConnected();
@@ -2514,7 +2527,13 @@ public class HornetDBService extends Service {
 	    		}
 	    		connection.openConnection();
 	    		connected = connection.isConnected();
-	    	} catch (SQLException e) {
+	    		
+	    	} catch (PSQLException e) {
+	    		statusMessage = e.getLocalizedMessage();
+	    		connected = false;
+	    	}
+	    	
+	    	catch (SQLException e) {
 	    		statusMessage = e.getLocalizedMessage();
 	    		e.printStackTrace();
 	    		Services.showToast(getApplicationContext(), statusMessage, handler);
@@ -2523,7 +2542,8 @@ public class HornetDBService extends Service {
 	    		//Postgresql JDBC driver missing!!
 	    		//if we got here there was an issue with the installation.
 	    		throw new RuntimeException(e);
-	    	}
+	    	} 
+	    	
     	}
     	return connected;
     }
@@ -3044,33 +3064,7 @@ public class HornetDBService extends Service {
     	cleanUp();
     	return result;	
     }
-    
-    
-    
-    public ArrayList<HashMap<String, String>>  getReportTypes(Context context){
-    	
-    	this.setup(context);
-    	ArrayList<HashMap<String, String>> resultMapList  = null;
-    	ResultSet result = null;
-    	
-    	if (!this.openConnection()){
-    
-    	}
-    	
-    	try {
-			result = this.connection.getReportTypes();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-    	
-    	
-    	resultMapList = this.resultSetToMapList(result);
-		   
-    		this.cleanUp();
-    	
-		return resultMapList;
-	
-    }
+ 
     
   public ArrayList<HashMap<String, String>>  getReportNamesAndTypes(Context context){
     	
@@ -3079,12 +3073,16 @@ public class HornetDBService extends Service {
     	ResultSet result = null;
     	
     	if (!this.openConnection()){
-    
+    		
+    		return null;
     	}
     	
     	try {
+    		
 			result = this.connection.getReportTypesAndNames();
+			
 		} catch (SQLException e) {
+			
 			e.printStackTrace();
 		}
     	
@@ -3105,6 +3103,7 @@ public class HornetDBService extends Service {
 	  	
 	  	if (!this.openConnection()){
 	  		Log.e(TAG, "no Connection");
+	  		return null;
 	  	}
 	  	
 	  	try {
@@ -3122,13 +3121,17 @@ public class HornetDBService extends Service {
 			return resultMapList;  
   }
   
-  public ArrayList<HashMap<String, String>>  getReportDataByDateRange(Context context, String finalQuery){
+  public JDBCConnection getConnection() {
+	return connection;
+  }
+
+public ArrayList<LinkedHashMap<String, String>>  getReportDataByDateRange(Context context, String finalQuery){
   	
   	this.setup(context);
-  	ArrayList<HashMap<String, String>> resultMapList  = null;
+  	ArrayList<LinkedHashMap<String, String>> resultMapList  = null;
   	ResultSet result = null;
   	
-  	if (!this.openConnection()){
+  	if (!openConnection()){
   
   	}
   	
@@ -3140,38 +3143,13 @@ public class HornetDBService extends Service {
 		}
   	
   	
-  		resultMapList = this.resultSetToMapList(result);
+  		resultMapList = resultSetToLinkedMapList(result);
 		   
   		this.cleanUp();
   	
 		return resultMapList;
 	
   }
-    
- 
-    
- public ArrayList<HashMap<String, String>>  getReportNamesByReportTypeId(Context context, int reportTypeId){
-    	
-    	this.setup(context);
-    	ArrayList<HashMap<String, String>> resultMapList  = null;
-    	ResultSet result = null;
-    	
-    	if (!this.openConnection()){
-    			
-    	}
-    	
-    	try {
-			result = this.connection.getReportNamesByReportTypeId(reportTypeId);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-    	
-    	resultMapList = this.resultSetToMapList(result);
-		   
-    	this.cleanUp();
-    	return resultMapList;
-	
-    }
  
  public ArrayList<HashMap<String, String>>  getReportColumnsByReportId(Context context, int reportId) {
  	
@@ -3320,18 +3298,21 @@ public class HornetDBService extends Service {
     	   	 * from the connection object for return to the UI. 
     	   	 */
     	try {
+    		int index = 0;
 			while (result.next()){
 				resultMap = new HashMap<String,String>();
 			   for (int i = 1; i <= resultMeta.getColumnCount(); i++)				     
 				   
 			   {
 				   
-				   //System.out.println("Column Name:" +resultMeta.getColumnName(i) + " Value: " +result.getString(resultMeta.getColumnName(i)));
+				   if (index == 0) {
+					   System.out.println("Column Name:" +resultMeta.getColumnName(i) + " Value: " +result.getString(resultMeta.getColumnName(i)));
+				   }
 				   resultMap.put(resultMeta.getColumnName(i), result.getString(resultMeta.getColumnName(i)));		
 			   }
 			   
 			   resultMapList.add(resultMap);
-			   
+			   index++;
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -3339,6 +3320,54 @@ public class HornetDBService extends Service {
 		}
     	
     	return resultMapList;
+    }
+    
+    private ArrayList<LinkedHashMap<String, String>> resultSetToLinkedMapList(ResultSet result) {
+    	
+    	ArrayList<LinkedHashMap<String, String>> resultLinkedMapList =  new ArrayList<LinkedHashMap<String, String>>();
+    	
+    	ResultSetMetaData resultMeta = null;
+       	LinkedHashMap<String, String> resultMap = null;
+    	
+    	try {
+			resultMeta = result.getMetaData();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+    	   	/*Extracting key-value pairings for each record
+    	   	 * into a list of linked hash-maps, this to detach the data
+    	   	 * from the connection object for return to the UI, use of a 
+    	   	 * linked map maintains the order of the fields. 
+    	   	 */
+    	try {
+    		
+    		int index = 0;
+    		
+			while (result.next()){
+				
+				resultMap = new LinkedHashMap<String,String>();
+			   for (int i = 1; i <= resultMeta.getColumnCount(); i++)				     
+				   
+			   {		   
+				   if (index == 0) {
+					   System.out.println("Column Name:" +resultMeta.getColumnName(i) + " Value: " +result.getString(resultMeta.getColumnName(i)));
+				   }
+				   resultMap.put(resultMeta.getColumnName(i), result.getString(resultMeta.getColumnName(i)));		
+			   }
+			   
+			   resultLinkedMapList.add(resultMap);
+			   
+			   index++;
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	return resultLinkedMapList;
     }
     
     private int getMembershipID(){

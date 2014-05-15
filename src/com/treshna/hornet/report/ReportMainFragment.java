@@ -7,6 +7,7 @@ import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
@@ -56,7 +57,7 @@ import com.treshna.hornet.visitor.VisitorsViewAdapter;
 
 public class ReportMainFragment extends ListFragment {
 	
-	private ArrayList<HashMap<String,String>> resultMapList = null;
+	private ArrayList<LinkedHashMap<String,String>> resultMapList = null;
 	private ArrayList<HashMap<String,String>> columnsMapList =  null;
 	private ArrayList<HashMap<String,String>> joiningTablesMapList =  null;
 	private ArrayList<HashMap<String,String>> emailsMapList =  null;
@@ -95,6 +96,7 @@ public class ReportMainFragment extends ListFragment {
 		firstFilter = fragmentData.getString("second_filter_field");
 		reportName = fragmentData.getString("report_name");
 		reportFunctionName = fragmentData.getString("report_function_name");
+		//Removing place holder text from report function name
 		queryFunctionParamsCut = reportFunctionName.substring(0,reportFunctionName.indexOf('('));
 		btnEmail = (Button) view.findViewById(R.id.btnEmail);
 		btnEmail.setOnClickListener(new OnClickListener() {
@@ -269,11 +271,12 @@ public class ReportMainFragment extends ListFragment {
 	private void buildQuery() {
 		
 		StringBuilder queryBuilder = new StringBuilder();
-		queryBuilder.append("SELECT ");
+		
 		boolean isSelected = true;
-		//boolean containsMemberColumn = false;
 		boolean isMemberIdAdded = false;
 		boolean isEnquiryIdAdded = false;
+		
+		queryBuilder.append("SELECT ");
 		for (HashMap<String,String> columnsMap : columnsMapList ) {
 			//Check if coming from column options..
 			if (callingActivity.compareTo("column_options")== 0) {
@@ -281,34 +284,30 @@ public class ReportMainFragment extends ListFragment {
 				if (this.isColumnSelected(Integer.parseInt(columnsMap.get("column_id")))) {
 					isSelected = true;				}
 			}
-			
-			for (Map.Entry<String,String> field: columnsMap.entrySet()) {
-					//System.out.println(field.getKey() + " : " + field.getValue());
-				if (isSelected) {
-					//Adding the member.id column where other columns join the member table
-					if (columnsFieldsContainsTable("member") && !isMemberIdAdded) {
-						queryBuilder.append("member.id AS \"MemberID\", ");
-						isMemberIdAdded = true;
-					}
-					//Adding the enquiry.id column where other columns join the enquiry table
-					if (columnsFieldsContainsTable("enquiry") && !isEnquiryIdAdded) {
-						queryBuilder.append("enquiry.enquiry_id AS \"Enquiry Id\", ");
-						isEnquiryIdAdded = true;
-					}
-					
-					if (field.getKey().toString().compareTo("field")== 0) {
-							queryBuilder.append(field.getValue());
-							queryBuilder.append(" AS ");
-							
-					}
-					if (field.getKey().toString().compareTo("column_name")== 0) {
-								queryBuilder.append("\"" + field.getValue() + "\"");
-								queryBuilder.append(", ");
-					}				
+	
+			if (isSelected) {
+				//Adding the member.id column where other columns join the member table
+				if (columnsFieldsContainsTable("member") && !isMemberIdAdded) {
+					queryBuilder.append("member.id AS \"MemberID\", ");
+					isMemberIdAdded = true;
+				}
+				//Adding the enquiry.id column where other columns join the enquiry table
+				if (columnsFieldsContainsTable("enquiry") && !isEnquiryIdAdded) {
+					queryBuilder.append("enquiry.enquiry_id AS \"Enquiry Id\", ");
+					isEnquiryIdAdded = true;
+				}
 
-			   }
+				queryBuilder.append(columnsMap.get("field"));
+				//Add another item to the hash map in order to signify selection for the "order by" statement..
+				queryBuilder.append(" AS ");
+				columnsMap.put("isSelected", "true");		
+				queryBuilder.append("\"" + columnsMap.get("column_name") + "\"");
+				queryBuilder.append(", ");
 				
-	        }							
+	        } else {
+	        	
+	        	columnsMap.put("isSelected", "false");
+	        }	
 		 }
 
 			//remove the last comma...
@@ -317,10 +316,13 @@ public class ReportMainFragment extends ListFragment {
 			SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-M-dd");
 			String paramsWithBrackets = this.reportFunctionName.substring(reportFunctionName.indexOf('('),reportFunctionName.length());
 			String reportFunctionWithDateParams = "";
+	      	
 			if (paramsWithBrackets.length() > 2) {
-				reportFunctionWithDateParams =  this.queryFunctionParamsCut + "(" + "'" + dateFormatter.format(this.startDate) + "'" +"::Date"  + "," + "'" + dateFormatter.format(this.endDate) + "'" + "::Date" +  ')';
+							
+				reportFunctionWithDateParams =  queryFunctionParamsCut + "(" + "'" + dateFormatter.format(startDate) + "'" +"::Date"  + "," + "'" + dateFormatter.format(endDate) + "'" + "::Date" +  ')';
+				
 			} else {
-				reportFunctionWithDateParams =  this.queryFunctionParamsCut + "()";
+				reportFunctionWithDateParams =  queryFunctionParamsCut + "()";
 			}
 			queryBuilder.append(reportFunctionWithDateParams);
 			queryBuilder.append("As fun ");
@@ -334,6 +336,7 @@ public class ReportMainFragment extends ListFragment {
 			}
 			
 			boolean firstFilterAdded = false;
+			
 			if (firstFilter != null && !firstFilter.contains("'All'")) {
 				queryBuilder.append(" WHERE ");
 				queryBuilder.append(' ');
@@ -343,36 +346,38 @@ public class ReportMainFragment extends ListFragment {
 			}
 			
 			if (secondFilter != null && !secondFilter.contains("'All'")) {
+				
 				if (firstFilterAdded) {
+					
 					queryBuilder.append(" AND ");
+					
 				} else {
+					
 					queryBuilder.append(" WHERE ");
 				}
+				
 				queryBuilder.append(' ');
 				queryBuilder.append(secondFilter);
 				queryBuilder.append(' ');
 			}
+			//Adding the select columns to order by..
+				queryBuilder.append("ORDER BY ");
+			
+			for (HashMap<String,String> columnsMap : columnsMapList ) {
 				
+					if (columnsMap.get("isSelected").compareTo("true")== 0) {
+						
+						queryBuilder.append("\"" + columnsMap.get("column_name") + "\"");
+						queryBuilder.append(", ");
+						
+					} 		
+			}
+			
+			queryBuilder.replace(queryBuilder.length() - 2, queryBuilder.length(), " ");
 			queryBuilder.append(";");
 			System.out.println(queryBuilder.toString());
 			finalQuery = queryBuilder.toString();
-			this.getReportData(finalQuery);
-		
-		/*
-		//remove the last comma...
-		queryBuilder.replace(queryBuilder.length() - 2, queryBuilder.length(), " ");
-		queryBuilder.append(mainQuery);
-		queryBuilder.append("ORDER BY ");
-		//Adding the select columns to order by..
-		for (Map.Entry<String,String> field: fieldsMap.entrySet()){
-			  
-			if (this.isColumnSelected(field.getKey().toString())){
-				queryBuilder.append(field.getValue());
-				queryBuilder.append(',');
-				queryBuilder.append(' ');
-			}
-		}*/
-
+			getReportData(finalQuery);
 }	
 
 		
@@ -426,7 +431,7 @@ public class ReportMainFragment extends ListFragment {
 		
 	    buildColumnHeaders();
 	    
-		ListAdapter listAdapter = new ArrayAdapter<HashMap<String,String>>(getActivity(),R.layout.report_main_row,
+		ListAdapter listAdapter = new ArrayAdapter<LinkedHashMap<String,String>>(getActivity(),R.layout.report_main_row,
 				this.resultMapList){
 
 
@@ -571,7 +576,9 @@ private void buildColumnHeaders() {
 			setOrientation(dataRow);
 			
 			//Building column header row...
-
+			
+			//Reorder all maps in resultMapList to be sorted in the same order as columnsMapList
+			
 			for (Entry<String,String> row : dataRow.entrySet()){
 						
 				 if (!isColumnAllNull(row.getKey().toString())) {
@@ -749,7 +756,9 @@ private void buildColumnHeaders() {
 			
 			dismissThreadDialogue();
 			
-			if (success) {		
+			if (success) {
+				
+				printReportData();
 
 				buildListAdapter();
 				
@@ -759,6 +768,14 @@ private void buildColumnHeaders() {
 			}
 	    }
 	 }
+	
+	private void printReportData() {
+		HashMap<String,String>  dataMap = resultMapList.get(0);
+			 for (Entry dataEntry: dataMap.entrySet()){
+				 System.out.println("Field: " + dataEntry.getKey() + " Value: " + dataEntry.getValue());
+			 }
+		
+	}
 	
 	protected class GetReportColumnsFieldsByReportId extends AsyncTask<String, Integer, Boolean> {
 		private int reportId = 0;
@@ -803,6 +820,7 @@ private void buildColumnHeaders() {
 				ReportMainFragment.this.getJoiningTablesData(reportFunctionName);
 				
 			} else {
+				
 				showQueryThreadFailedDialogue();
 			}
 	    }
