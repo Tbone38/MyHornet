@@ -43,7 +43,7 @@ public class DoorLister extends ListerClass {
         	return true;
 		}
 		case (R.id.action_edit):{
-			Cursor cur = mResolver.query(ContentDescriptor.Door.CONTENT_URI, null, null, null, null);
+			Cursor cur = mResolver.query(ContentDescriptor.Door.CONTENT_URI, null, null, null, ContentDescriptor.Door.Cols.DOORID);
 			cur.moveToPosition(selectedItem);
 			Fragment f = new FormFragment();
 			Bundle bdl = new Bundle(2);
@@ -64,7 +64,7 @@ public class DoorLister extends ListerClass {
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
 		String[] columns = {ContentDescriptor.Door.Cols._ID,ContentDescriptor.Door.Cols.DOORID,
 				ContentDescriptor.Door.Cols.DOORNAME, ContentDescriptor.Door.Cols.STATUS};
-		return new CursorLoader(mActivity, ContentDescriptor.Door.CONTENT_URI, columns, null, null, null);
+		return new CursorLoader(mActivity, ContentDescriptor.Door.CONTENT_URI, columns, null, null, ContentDescriptor.Door.Cols.DOORID);
 	}
 
 	@Override

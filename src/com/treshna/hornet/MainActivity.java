@@ -322,7 +322,7 @@ public class MainActivity extends NFCActivity {
         mDrawerList.setSelection(getSelectedNavItem());
         
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-                R.drawable.ic_action_opennav, //nav menu toggle icon
+                R.drawable.ic_drawer, //nav menu toggle icon
                 R.string.app_name, 
                 R.string.app_name){
             @SuppressLint("NewApi")
@@ -346,7 +346,9 @@ public class MainActivity extends NFCActivity {
         
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
-        getActionBar().setHomeAsUpIndicator(null);
+        //getActionBar().setHomeAsUpIndicator(null);
+        /*getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);*/
 	}
 	
 	private void firstSetup() {
