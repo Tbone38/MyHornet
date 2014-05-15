@@ -962,12 +962,13 @@ public class UpdateDatabase {
 				+" END;";
 		
 		private static final String SQL38 = "ALTER TABLE "+Door.NAME+" ADD COLUMN "+Door.Cols.STATUS+" INTEGER DEFAULT 1 ;";
-		private static final String SQL39 = "ALTER TABLE "+Door.NAME+" ADD COLUMN "+Door.Cols.BOOKING+" INTEGER DEFAULT 1 ;";
+		private static final String SQL39 = "ALTER TABLE "+Door.NAME+" ADD COLUMN "+Door.Cols.CHECKOUT+" TEXT DEFAULT 'f' ;";
 		private static final String SQL40 = "ALTER TABLE "+Door.NAME+" ADD COLUMN "+Door.Cols.WOMENONLY+" TEXT DEFAULT 'f' ;";
 		private static final String SQL41 = "ALTER TABLE "+Door.NAME+" ADD COLUMN "+Door.Cols.CONCESSION+" INTEGER DEFAULT 0 ;";
 		private static final String SQL42 = "ALTER TABLE "+Door.NAME+" ADD COLUMN "+Door.Cols.LASTVISITS+" TEXT NOT NULL DEFAULT 't' ;";
 		private static final String SQL43 = "ALTER TABLE "+Door.NAME+" ADD COLUMN "+Door.Cols.COMPANY+" INTEGER ;";
 		private static final String SQL44 = "ALTER TABLE "+Door.NAME+" ADD COLUMN "+Door.Cols.DEVICESIGNUP+" TEXT DEFAULT 'f';";
+		
 		private static final String SQL45 = "CREATE TRIGGER "+Door.Triggers.ON_INSERT+" AFTER INSERT ON "+Door.NAME
 				+" FOR EACH ROW WHEN new."+Door.Cols.DEVICESIGNUP+" = 't'"
 				+" BEGIN"

@@ -987,7 +987,7 @@ public class JDBCConnection {
     
     public ResultSet getDoors() throws SQLException, NullPointerException {
 	    	ResultSet rs = null;
-	    	pStatement = con.prepareStatement("SELECT id, name, status, booking_checkin, womenonly, "
+	    	pStatement = con.prepareStatement("SELECT id, name, status, checkout, womenonly, "
 	    			+ "concessionhandling, showlastvisits, companyid FROM door;");
 	    	
 	    	rs = pStatement.executeQuery();
@@ -1004,12 +1004,10 @@ public class JDBCConnection {
 	    	return pStatement.execute();
     }
     
-    //this is currently unused.
-    public void OpenDoor(int doorid) throws SQLException, NullPointerException {
-    	pStatement = con.prepareStatement("NOTIFY opendoor?");
-    	pStatement.setInt(1, doorid);
+    public boolean OpenDoor(int doorid) throws SQLException, NullPointerException {
+    	pStatement = con.prepareStatement("NOTIFY opendoor"+doorid+";");
     	
-    	pStatement.execute();
+    	return pStatement.execute();
     }
 
     //stuff like this breaks on large databases.
@@ -1631,9 +1629,9 @@ public void fixDuplicatePopUp() throws SQLException {
     	return pStatement.executeUpdate();
     }
     
-    public int uploadDoor(int id, String name, int status, int booking_checkin, String womenonly, int concessionhandling, 
+    public int uploadDoor(int id, String name, int status, String checkout, String womenonly, int concessionhandling, 
     		String showvisits, int companyid) throws SQLException {
-    	pStatement = con.prepareStatement("INSERT INTO DOOR (id, name, status, booking_checkin, womenonly, concessionhandling,"
+    	pStatement = con.prepareStatement("INSERT INTO DOOR (id, name, status, checkout, womenonly, concessionhandling,"
     			+ " showlastvisits, companyid) VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
     	
     	pStatement.setInt(1, id);
@@ -1643,10 +1641,10 @@ public void fixDuplicatePopUp() throws SQLException {
     	} else {
     		pStatement.setNull(3, java.sql.Types.INTEGER);
     	}
-    	if (booking_checkin >= 0) {
-    		pStatement.setInt(4, booking_checkin);
+    	if (checkout == null || checkout.compareTo("f") == 0) {
+    		pStatement.setBoolean(4, false);
     	} else {
-    		pStatement.setNull(4, java.sql.Types.INTEGER);
+    		pStatement.setBoolean(4, true);
     	}
     	
     	if (womenonly == null || womenonly.compareTo("f") == 0) {
@@ -1675,7 +1673,7 @@ public void fixDuplicatePopUp() throws SQLException {
     	return pStatement.executeUpdate();
     }
     
-    public int updateDoor(int id, String name, int status, int booking_checkin, String womenonly, int concessionhandling,
+    public int updateDoor(int id, String name, int status, String checkout, String womenonly, int concessionhandling,
     		String showvisits, int companyid) throws SQLException {
     	pStatement = con.prepareStatement("UPDATE DOOR SET (name, status, booking_checkin, womenonly, concessionhandling,"
     			+ "showlastvisits, companyid) = (?, ?, ?, ?, ?, ?, ?) WHERE id = ?;");
@@ -1686,8 +1684,12 @@ public void fixDuplicatePopUp() throws SQLException {
     	} else {
     		pStatement.setNull(2, java.sql.Types.INTEGER);
     	}
-    	pStatement.setInt(3, booking_checkin);
-    	pStatement.setNull(2, java.sql.Types.INTEGER);
+    	
+    	if (checkout == null || checkout.compareTo("f") == 0) {
+    		pStatement.setBoolean(3, false);
+    	} else {
+    		pStatement.setBoolean(3, true);
+    	}
     	
     	if (womenonly == null || womenonly.compareTo("f") == 0) {
     		pStatement.setBoolean(4, false);

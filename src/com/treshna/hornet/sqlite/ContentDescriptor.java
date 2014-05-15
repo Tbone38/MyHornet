@@ -933,7 +933,7 @@ public class ContentDescriptor {
 	 			
 	 			//added in v120.
 	 			public static final String STATUS = "status"; //0 locked, 1 active, 2 open/unlocked
-	 			public static final String BOOKING = "booking_checkin"; //0 never , 1 if a booking has been made, 2 require a booking (unimplemented)
+	 			public static final String CHECKOUT = "checkout";
 	 			public static final String WOMENONLY = "womenonly";
 	 			public static final String CONCESSION = "concessionhandling"; //0=count visits, 1=Don't count visits, 2=count visits prefer concession memberships
 	 			public static final String LASTVISITS = "showlastvisits";

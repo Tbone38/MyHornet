@@ -82,4 +82,40 @@
 	    <item>02:00:00</item>
 	    <item>03:00:00</item>
 	</string-array>
+	
+	<string name="door_add">Add Door</string>
+	<string name="door_edit">Edit Door</string>
+	<string name="door_name">Door Name</string>
+	<string name="door_checkout">Exit Check Out Door</string>
+	<string name="door_women">Women Only Door</string>
+	<string name="door_show_visits">Show in Last Visits</string>
+	<string name="door_status">Status</string>
+	<string name="door_open_label">Open Now</string>
+	<string name="door_open">Open Door</string>
+	
+	<string-array name="door_status_keys">
+	    <item>Locked</item>
+	    <item>Active</item>
+	    <item>Open/Unlocked</item>
+	</string-array>
+	
+	<string-array name="door_status_values">
+	    <item>0</item>
+	    <item>1</item>
+	    <item>2</item>
+	</string-array>
+	
+	<string name="door_concession">Concession Handling</string>
+	<string-array name="door_concession_keys">
+	    <item>count visits</item>
+	    <item>concession preferred</item>
+	    <item>no counting of visits</item>
+	</string-array>
+	
+	<string-array name="door_concession_values">
+	    <item>0</item>
+	    <item>1</item>
+	    <item>2</item>
+	</string-array>
+	
 </resources>
