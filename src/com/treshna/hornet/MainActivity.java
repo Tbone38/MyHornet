@@ -45,17 +45,26 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.treshna.hornet.booking.BookingAddFragment;
 import com.treshna.hornet.booking.BookingsListSuperFragment;
 import com.treshna.hornet.booking.BookingsOverviewFragment;
 import com.treshna.hornet.booking.BookingsSlideFragment;
+import com.treshna.hornet.classes.ClassCreateFragment;
+import com.treshna.hornet.lists.BookingTypeLister;
+import com.treshna.hornet.lists.DoorLister;
+import com.treshna.hornet.lists.ProgrammeGroupLister;
+import com.treshna.hornet.lists.ResourceLister;
+import com.treshna.hornet.member.MemberAddFragment;
 import com.treshna.hornet.member.MembersFindSuperFragment;
 import com.treshna.hornet.navigation.NavDrawerItem;
 import com.treshna.hornet.navigation.NavDrawerListAdapter;
 import com.treshna.hornet.navigation.SlideMenuClickListener;
 import com.treshna.hornet.navigation.TabListener;
 import com.treshna.hornet.network.HornetDBService;
-import com.treshna.hornet.network.PollingHandler;	
+import com.treshna.hornet.network.PollingHandler;
+import com.treshna.hornet.report.KeyPerformanceIndexFragment;
 import com.treshna.hornet.report.ReportListingFragment;
+import com.treshna.hornet.roll.RollListFragment;
 import com.treshna.hornet.services.Services;
 import com.treshna.hornet.setup.SetupActivity;
 import com.treshna.hornet.sqlite.ContentDescriptor;
@@ -209,6 +218,44 @@ public class MainActivity extends NFCActivity {
 		}
 	}
 
+	public int getFragmentNavPosition(Object obj) {
+		if (obj.getClass() == MembersFindSuperFragment.class) {
+			return 1;
+		} else if (obj.getClass() == LastVisitorsSuperFragment.class) {
+			return 2;
+		} else if (obj.getClass() == BookingsListSuperFragment.class) {
+			return 3;
+		} else if (obj.getClass() == MemberAddFragment.class) {
+			return 5;
+		} else if (obj.getClass() == BookingAddFragment.class) { 
+			return 6;
+		} else if (obj.getClass() == KeyPerformanceIndexFragment.class) {
+			return 8;
+		} else if (obj.getClass() == ReportListingFragment.class) {
+			return 9;
+		} else if (obj.getClass() == RollListFragment.class) {
+			return 11;
+		} else if (obj.getClass() == ClassCreateFragment.class) {
+			return 13;
+		} else if (obj.getClass() == ResourceLister.class) {
+			return 14;
+		} else if (obj.getClass() == ProgrammeGroupLister.class) {
+			return 15;
+		} else if (obj.getClass() == BookingTypeLister.class) {
+			return 16;
+		} else if (obj.getClass() == DoorLister.class) {
+			return 17;
+		} else {
+			return 1;
+		}
+	}
+	
+	public void updateSelectedNavItem(int navitem) {
+		this.selectedNavItem = navitem;
+		mDrawerList.setItemChecked(navitem, true);
+        mDrawerList.setSelection(navitem);
+	}
+	
 	public void setSelectedNavItem(int navitem) {
 		this.selectedNavItem = navitem;
 	}
@@ -344,9 +391,8 @@ public class MainActivity extends NFCActivity {
         
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
-        //getActionBar().setHomeAsUpIndicator(null);
-        /*getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);*/
+        //getActionBar().setHomeAsUpIndicator(null); //uncomment this to use the default Drawer icon.
+
 	}
 	
 	private void firstSetup() {
@@ -587,7 +633,8 @@ public class MainActivity extends NFCActivity {
 		}
 	}
 	
-	public void startReciever(){
+	//called from the OnCreate.
+	private void startReciever(){
 		IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION);
         registerReceiver(Services.getFreqPollingHandler(), intentFilter);

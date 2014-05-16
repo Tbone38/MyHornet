@@ -83,6 +83,12 @@ public class MemberAddFragment extends Fragment implements OnClickListener, Date
 		return view;
 	}
 	
+	@Override
+	public void onResume() {
+		super.onResume();
+		((MainActivity)getActivity()).updateSelectedNavItem(((MainActivity)getActivity()).getFragmentNavPosition(this));
+	}
+	
 	private void setupView() {
 	    RadioButton radio = (RadioButton) view.findViewById(R.id.radioMember);
 		radio.setChecked(true);

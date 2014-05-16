@@ -91,9 +91,8 @@ public class PollingHandler extends BroadcastReceiver implements ThreadResult {
 		//get the current status of the network
 		 ConnectivityManager connectivityManager = (ConnectivityManager) this.context.getSystemService(Context.CONNECTIVITY_SERVICE);
 		 NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-		 //Do I want to checn here that were using WIFI and not data?
+		 //Do I want to check here that were using WIFI and not data?
 		 boolean result = activeNetworkInfo != null && activeNetworkInfo.isConnected();
-		 //System.out.print("\nConnection Status: "+result+"\n");
 		 Log.v(TAG, "Connection Status: "+result);
 		 return result;
 	}
@@ -113,15 +112,11 @@ public class PollingHandler extends BroadcastReceiver implements ThreadResult {
 	 * sets the alarm manager to start sync's based on settings configuration.
 	 */
 	private void setPolling() {
-		
-		
 		//does this needs to ramp up? It shouldn't ever be called in a situation where it'll fail.
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 		int pollingInterval = Integer.parseInt(preferences.getString("sync_frequency", "-1"));
 		if (pollingInterval == -1) {
-			//message = "sync set to never, please check application sync settings.";
-			//makeToast();
-			return;
+			return; //we used to a have a toast here.
 		}
 		stopPolling(true);
 		cal = Calendar.getInstance();

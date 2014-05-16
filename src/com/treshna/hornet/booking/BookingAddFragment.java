@@ -109,6 +109,12 @@ public class BookingAddFragment extends Fragment implements OnClickListener, OnM
 		 return page;
 	 }
 	
+	@Override
+	public void onResume() {
+		super.onResume();
+		((MainActivity)getActivity()).updateSelectedNavItem(((MainActivity)getActivity()).getFragmentNavPosition(this));
+	}
+	
 	public void setName(String fname, String sname) {
 		bookingFName = fname;
 		bookingSName = sname;

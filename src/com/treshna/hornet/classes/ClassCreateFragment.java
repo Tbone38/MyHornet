@@ -3,6 +3,7 @@ package com.treshna.hornet.classes;
 import java.util.ArrayList;
 import java.util.Date;
 
+import com.treshna.hornet.MainActivity;
 import com.treshna.hornet.R;
 import com.treshna.hornet.R.id;
 import com.treshna.hornet.R.layout;
@@ -139,6 +140,12 @@ public class ClassCreateFragment extends Fragment implements OnClickListener, Da
 		buttoncancel = (TextView) view.findViewById(R.id.buttonCancel);
 		buttoncancel.setClickable(true);
 		buttoncancel.setOnClickListener(this);
+	}
+	
+	@Override
+	public void onResume(){
+		super.onResume();
+		((MainActivity)getActivity()).updateSelectedNavItem(((MainActivity)getActivity()).getFragmentNavPosition(this));
 	}
 	
 	@Override

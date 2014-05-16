@@ -28,6 +28,7 @@ public class ProgrammeGroupLister extends ListerClass {
 		super(activity, list);
 		mAdapter = new ProgrammeGroupAdapter(mActivity, R.layout.row_programme_group, null, FROM, TO, this);
 		mList.setAdapter(mAdapter);
+		((MainActivity)mActivity).updateSelectedNavItem(((MainActivity)mActivity).getFragmentNavPosition(this));
 	}
 
 	@Override

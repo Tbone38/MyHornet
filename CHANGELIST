@@ -136,6 +136,8 @@ KEY:
                 Fix image behaviour.
                 Hold/Free Time switch, free time hides the Hold Fee radios, as well as the prorata check boxes. --CHNAGES MADE. TEST THEY WORK.
                 Colours might need tinkered with.
+                REDO the sync service/handling to match the following:
+                    http://developer.android.com/training/sync-adapters/creating-sync-adapter.html
 
     
     v119:
