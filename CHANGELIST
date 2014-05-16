@@ -98,6 +98,9 @@ KEY:
                 fixed the Booking Overview page to use an actual list, still seems to be as slow, if not slower, than before.
                 Prompts to add member if not found when adding to class.
                 Added lists/etc to allow easy editing of DataBase, as well as adding new items.
+				merged Tony's reports.
+				some item deletion done!
+		
 
             TODO:
                 Handle permissions/Roles for different staff, to limit what certain staff can see.
@@ -121,7 +124,6 @@ KEY:
                 Some kind of UI/form for adding various types of stuff.
                     (maybe we should use a builder?)
                     which we can then use to help resolve conflicts.
-                merge Tony's branch into main;
                 GET OFFLINE SWIPES WORKING.
                 Swiping from the left hand side interfares with the member swiping, etc. OR DOES IT?
                 Adding to Classes:
@@ -138,6 +140,8 @@ KEY:
                 Colours might need tinkered with.
                 REDO the sync service/handling to match the following:
                     http://developer.android.com/training/sync-adapters/creating-sync-adapter.html
+				need to do finish item deletes..
+					-Delete Doors needs handling (insertion into deleted_records) in GymMaster.
 
     
     v119:

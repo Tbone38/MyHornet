@@ -39,11 +39,12 @@
         android:textSize="18sp"
         android:text="@string/advanced_database_name" />
     
+    <!-- inputtype: for dbname is a dirty hack to get non-capital letters. -->
     <EditText 
         android:id="@+id/setup_database_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textCapWords"
+        android:inputType="text|textEmailAddress"
         android:padding="5dp"
         android:layout_marginLeft="3dp"
         android:hint="@string/advanced_hint"/>

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
@@ -16,7 +17,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.treshna.hornet.R;
-import com.treshna.hornet.lists.FormList.Lister;
 
 
 public class ListerClass implements LoaderManager.LoaderCallbacks<Cursor>, android.view.ActionMode.Callback,
@@ -27,12 +27,14 @@ public class ListerClass implements LoaderManager.LoaderCallbacks<Cursor>, andro
 	protected ListView mList;
 	protected int selectedItem = -1;
 	protected ContentResolver mResolver;
+	protected Fragment mCaller;
 	
-	public ListerClass(Activity activity, ListView list){
+	public ListerClass(Activity activity, ListView list, Fragment f){
 		mActivity = activity;
 		mList = list;
 		mList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);		
 		mResolver = mActivity.getContentResolver();
+		mCaller = f;
 	}
 
 	@Override

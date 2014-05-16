@@ -1719,6 +1719,20 @@ public void fixDuplicatePopUp() throws SQLException {
     	return pStatement.executeUpdate();
     }
     
+    public int deleteResource(int resourceid) throws SQLException {
+    	pStatement = con.prepareStatement("DELETE FROM resource WHERE id = ?");
+    	pStatement.setInt(1, resourceid);
+    	
+    	return pStatement.executeUpdate();
+    }
+    
+    public int deleteBookingtype(int bookingtypeid) throws SQLException {
+    	pStatement = con.prepareStatement("DELETE FROM bookingtype WHERE id = ?");
+    	pStatement.setInt(1, bookingtypeid);
+    	
+    	return pStatement.executeUpdate();
+    }
+    
     public SQLWarning getWarnings() throws SQLException, NullPointerException {
     	return con.getWarnings();
     }

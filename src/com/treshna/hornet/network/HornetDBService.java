@@ -229,6 +229,10 @@ public class HornetDBService extends Service {
 				Services.showToast(getApplicationContext(), statusMessage, handler);
 			}
 			
+			//do deletes here ?
+			deleteResource();
+			deleteBookingtype();
+			
 			//do bookings!
 			//getOpenHours(last_sync);
 			getOpenHours(0);
@@ -3122,6 +3126,7 @@ public class HornetDBService extends Service {
 			return resultMapList;  
   }
   
+  //why does this exist? what purpose does it have? whos calling it?
   public JDBCConnection getConnection() {
 	return connection;
   }
@@ -5848,6 +5853,69 @@ public ArrayList<LinkedHashMap<String, String>>  getReportDataByDateRange(Contex
     				ContentDescriptor.TableIndex.Values.Door.getKey())});
     	}
     	
+    	return result;
+    }
+    
+    private int deleteResource(){
+    	int result = 0;
+    	
+    	cur = contentResolver.query(ContentDescriptor.PendingDeletes.CONTENT_URI, null, ContentDescriptor.PendingDeletes.Cols.TABLEID+"  = ?",
+    			new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Resource.getKey())}, null);
+    	
+    	if (!openConnection()) {
+    		return -1;
+    	}
+    	
+    	while (cur.moveToNext()) {
+    		int rowid = cur.getInt(cur.getColumnIndex(ContentDescriptor.PendingDeletes.Cols.ROWID));
+    		try {
+    			result += connection.deleteResource(rowid);
+    			connection.closePreparedStatement();
+    			
+    			contentResolver.delete(ContentDescriptor.PendingDeletes.CONTENT_URI, ContentDescriptor.PendingDeletes.Cols.ROWID+" = ? AND "
+    					+ContentDescriptor.PendingDeletes.Cols.TABLEID+" = ?",new String[] {String.valueOf(rowid), String.valueOf(
+    					ContentDescriptor.TableIndex.Values.Resource.getKey())});
+    		} catch (SQLException e) {
+    			statusMessage = e.getLocalizedMessage();
+    			Log.e(TAG, "", e);
+    			return -2;
+    		}
+    	}
+    	cur.close();
+    	cleanUp();
+    	
+    	return result;
+    }
+    
+    private int deleteBookingtype() {
+    	int result = 0;
+    	
+    	cur = contentResolver.query(ContentDescriptor.PendingDeletes.CONTENT_URI, null, ContentDescriptor.PendingDeletes.Cols.TABLEID+" = ?",
+    			new String[] {String.valueOf(ContentDescriptor.TableIndex.Values.Bookingtype.getKey())}, null);
+    	
+    	if (!openConnection()) {
+    		return -1;
+    	}
+    	
+    	while (cur.moveToNext()) {
+    		int rowid = cur.getInt(cur.getColumnIndex(ContentDescriptor.PendingDeletes.Cols.ROWID));
+    		try {
+    			result += connection.deleteBookingtype(rowid);
+    			connection.closePreparedStatement();
+    			
+    			contentResolver.delete(ContentDescriptor.PendingDeletes.CONTENT_URI, ContentDescriptor.PendingDeletes.Cols.ROWID+" = ? AND "
+    					+ContentDescriptor.PendingDeletes.Cols.TABLEID+" = ?", new String[] {String.valueOf(rowid), String.valueOf(
+    					ContentDescriptor.TableIndex.Values.Bookingtype.getKey())});
+    		} catch (SQLException e) {
+    			statusMessage = e.getLocalizedMessage();
+    			Log.e(TAG, "", e);
+    			return -2; //these need replaced with conflict handling!
+    		}
+    		cur.close();
+    		cleanUp();
+    		
+    		return result;
+    	}
     	return result;
     }
 }
