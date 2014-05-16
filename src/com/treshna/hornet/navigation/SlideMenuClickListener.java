@@ -161,10 +161,10 @@ public class SlideMenuClickListener implements OnItemClickListener, OnClickListe
         }
         
     	((MainActivity)activity).changeFragment(fragment, tag);
-    	((MainActivity)activity).setSelectedNavItem(position);
+    	//((MainActivity)activity).setSelectedNavItem(position);
 
-        mDrawerList.setItemChecked(position, true);
-        mDrawerList.setSelection(position);
+        /*mDrawerList.setItemChecked(position, true);
+        mDrawerList.setSelection(position);*/
         //mDrawerLayout.closeDrawer(mDrawerList);
         mDrawerLayout.closeDrawer(mDrawerView);
     }

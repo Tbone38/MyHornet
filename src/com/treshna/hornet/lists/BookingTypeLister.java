@@ -27,6 +27,7 @@ public class BookingTypeLister extends ListerClass {
 		super(activity, list);
 		mAdapter = new BookingTypeAdapter(mActivity, R.layout.row_resource, null, FROM, TO, this);
 		mList.setAdapter(mAdapter);
+		((MainActivity)mActivity).updateSelectedNavItem(((MainActivity)mActivity).getFragmentNavPosition(this));
 	}
 
 	@Override

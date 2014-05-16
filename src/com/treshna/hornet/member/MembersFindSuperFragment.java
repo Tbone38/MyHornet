@@ -38,7 +38,7 @@ public class MembersFindSuperFragment extends Fragment implements OnMemberSelect
 	@Override
 	public void onResume(){
 		super.onResume();
-		
+		((MainActivity)getActivity()).updateSelectedNavItem(((MainActivity)getActivity()).getFragmentNavPosition(this));
 		refresh();
 	}
 	

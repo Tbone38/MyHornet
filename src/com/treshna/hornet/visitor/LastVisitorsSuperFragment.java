@@ -47,7 +47,7 @@ public class LastVisitorsSuperFragment extends Fragment {
 	@Override
 	public void onResume(){
 		super.onResume();
-		
+		((MainActivity)getActivity()).updateSelectedNavItem(((MainActivity)getActivity()).getFragmentNavPosition(this));
 		FragmentManager fragmentManager = this.getChildFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         LastVisitorsFragment f = new LastVisitorsFragment();

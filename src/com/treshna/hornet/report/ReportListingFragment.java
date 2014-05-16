@@ -54,7 +54,11 @@ public class ReportListingFragment extends ListFragment {
 		return view;
 	}
 	
-	
+	@Override
+	public void onResume() {
+		super.onResume();
+		((MainActivity)getActivity()).updateSelectedNavItem(((MainActivity)getActivity()).getFragmentNavPosition(this));
+	}
 	
 	/*@Override
 	public void onCreate(Bundle savedInstanceState) {

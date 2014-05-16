@@ -27,6 +27,7 @@ public class DoorLister extends ListerClass {
 		super(activity, list);
 		mAdapter = new DoorAdapter(mActivity, R.layout.row_programme_group, null, FROM, TO, this);
 		mList.setAdapter(mAdapter);
+		((MainActivity)mActivity).updateSelectedNavItem(((MainActivity)mActivity).getFragmentNavPosition(this));
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package com.treshna.hornet.roll;
 
 
+import com.treshna.hornet.MainActivity;
 import com.treshna.hornet.R;
 import com.treshna.hornet.R.id;
 import com.treshna.hornet.R.layout;
@@ -58,6 +59,7 @@ public class RollItemListFragment extends ListFragment implements LoaderManager.
 		super.onResume();
 		mLoader.restartLoader(0, null, this);
 		getActivity().setTitle("Roll Call");
+		((MainActivity)getActivity()).updateSelectedNavItem(((MainActivity)getActivity()).getFragmentNavPosition(this));
 	}
 		
 
