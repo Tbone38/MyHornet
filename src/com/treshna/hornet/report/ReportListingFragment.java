@@ -184,7 +184,7 @@ public class ReportListingFragment extends ListFragment {
 								//To highlight names as clickable..
 								textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
 								textView.setTypeface(null, Typeface.BOLD);
-								layoutParams.setMargins(35, 0, 0, 0);
+								layoutParams.setMargins(35, 10, 0, 0);
 							}
 							textView.setLayoutParams(layoutParams);
 							textView.setTag(dataRow);
@@ -199,7 +199,7 @@ public class ReportListingFragment extends ListFragment {
 						  	layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 							//Dynamically generate text views for each column name..
 							textView =  new TextView(getActivity());
-							layoutParams.setMargins(35, 0, 0, 0);
+							layoutParams.setMargins(35, 0, 0, 10);
 							textView.setLayoutParams(layoutParams);
 							textView.setText(col.getValue());
 							linLayout.addView(textView);

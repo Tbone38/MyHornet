@@ -144,7 +144,7 @@ public class ReportDateOptionsFragment extends Fragment implements DatePickerFra
 	private void setUpQuickSelectSpinner () {
 		
 		final Spinner datePresetsSpinner = (Spinner) view.findViewById(R.id.datePresetsSpinner);
-		String[] spinnerOptions = {"Today", "This Month", "Last Month", "Last Two Months", "Last Six Months", "Last Year"};
+		String[] spinnerOptions = {"Today", "This Month", "Last 30 Days", "Last Calendar Month", "Last Two Months", "Last Six Months", "Last Year"};
 		ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(getActivity(), R.layout.report_date_options_spinner , spinnerOptions);
 		datePresetsSpinner.setAdapter(spinnerAdapter);
 		datePresetsSpinner.setPrompt("Select Date Presets");
@@ -397,26 +397,31 @@ public class ReportDateOptionsFragment extends Fragment implements DatePickerFra
 	
 	private void setSelectedDate(String selectedOption) {
 		
-		if (selectedOption.compareTo("Last Two Months")== 0){
+		if (selectedOption.compareTo("Last Two Months")== 0) {
+			
 			selectedStartDate = resetDateByNumOfMonths ( -2, startDateText);
 			
-		} else if (selectedOption.compareTo("Last Six Months")== 0){
+		} else if (selectedOption.compareTo("Last Six Months")== 0) {
 			
 			selectedStartDate = resetDateByNumOfMonths ( -6, startDateText);
 			
-		} else if (selectedOption.compareTo("Last Year")== 0){
+		} else if (selectedOption.compareTo("Last Year")== 0) {
 			
 			selectedStartDate = resetDateByNumOfMonths ( -12, startDateText);
 			
-		} else if (selectedOption.compareTo("Last Month")== 0){
+		} else if (selectedOption.compareTo("Last 30 Days")== 0) {
 			
 			selectedStartDate = resetDateByNumOfMonths ( -1, startDateText);
 			
-		} else if (selectedOption.compareTo("This Month")== 0){
+	    } else if (selectedOption.compareTo("Last Calendar Month")== 0) {
+			
+			selectedStartDate = resetDateToStartOfLastMonth(startDateText);
+			
+		} else if (selectedOption.compareTo("This Month")== 0) {
 			
 			selectedStartDate = resetDateToStartOfCurrentMonth(startDateText);
 			
-		} else if (selectedOption.compareTo("Today")== 0){
+		} else if (selectedOption.compareTo("Today")== 0) {
 			
 			selectedStartDate = setStartDateToToday(startDateText);
 		}
@@ -442,6 +447,19 @@ public class ReportDateOptionsFragment extends Fragment implements DatePickerFra
 		 cal.setTime(selectedDate); 
 		 cal.add(Calendar.DAY_OF_MONTH, - cal.get(Calendar.DATE) + 1);
 		 
+		 selectedDate = cal.getTime();
+		 setDateTextView(dateDisplayView, selectedDate);
+		 return selectedDate;
+		
+	}
+	
+	private Date resetDateToStartOfLastMonth(TextView dateDisplayView) {
+		
+		 Date selectedDate = new Date(); 
+		 Calendar cal = Calendar.getInstance();
+		 cal.setTime(selectedDate); 
+		 cal.add(Calendar.MONTH, -1);
+		 cal.add(Calendar.DAY_OF_MONTH, - cal.get(Calendar.DATE) + 1);
 		 selectedDate = cal.getTime();
 		 setDateTextView(dateDisplayView, selectedDate);
 		 return selectedDate;
