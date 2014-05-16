@@ -29,6 +29,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.treshna.hornet.MainActivity;
 import com.treshna.hornet.R;
@@ -36,7 +37,8 @@ import com.treshna.hornet.network.HornetDBService;
 import com.treshna.hornet.services.DatePickerFragment;
 
 
-public class ReportDateOptionsFragment extends Fragment implements DatePickerFragment.DatePickerSelectListener { 
+public class ReportDateOptionsFragment extends Fragment implements DatePickerFragment.DatePickerSelectListener {
+	
 	private HashMap<String,Object> reportData = new HashMap<String,Object>() ;
 	private ArrayList<HashMap<String,String>> reportFiltersMapList = new ArrayList<HashMap<String,String>>();
 	private ArrayList<HashMap<String,String>> firstReportFilterMapList = new ArrayList<HashMap<String,String>>();
@@ -694,31 +696,40 @@ public class ReportDateOptionsFragment extends Fragment implements DatePickerFra
 		
 
 		protected void onPostExecute(Boolean success) {
+			
 			if (progress != null && progress.isShowing()) {
 				progress.dismiss();
 			}
-			progress = null;
+			
 			if (success) {
-
-				if (reportFiltersMapList.size() > 0) {
-					LinearLayout firstFilterLayout = (LinearLayout) view.findViewById(R.id.firstFilterLayout);
-					firstFilterLayout.setVisibility(View.VISIBLE);
-					firstFilterTitle.setText(reportFiltersMapList.get(0).get("filter_name"));				
-					if (reportFiltersMapList.size() > 1) {
-						LinearLayout secondFilterLayout = (LinearLayout) view.findViewById(R.id.secondFilterLayout);
-						secondFilterLayout.setVisibility(View.VISIBLE);
-						secondFilterTitle.setText(reportFiltersMapList.get(1).get("filter_name"));
+			
+				if (reportFiltersMapList != null) {
+					 		
+					if (reportFiltersMapList.size() > 0) {
+						LinearLayout firstFilterLayout = (LinearLayout) view.findViewById(R.id.firstFilterLayout);
+						firstFilterLayout.setVisibility(View.VISIBLE);
+						firstFilterTitle.setText(reportFiltersMapList.get(0).get("filter_name"));				
+						if (reportFiltersMapList.size() > 1) {
+							LinearLayout secondFilterLayout = (LinearLayout) view.findViewById(R.id.secondFilterLayout);
+							secondFilterLayout.setVisibility(View.VISIBLE);
+							secondFilterTitle.setText(reportFiltersMapList.get(1).get("filter_name"));
+						}
+						
+						getFilterQueriesFromXML();
+						printFilterQueries();
+						getFirstReportFilterData();
+						
+					} else {
+						
+						Log.i("","No Filters");
 					}
-					
-					getFilterQueriesFromXML();
-					printFilterQueries();
-					getFirstReportFilterData();
 					
 				} else {
 					
-					Log.i("","No Filters");
+					Toast.makeText(getActivity(), "No Connection to Database", Toast.LENGTH_LONG).show();
+					getActivity().onBackPressed();				
 				}
-				
+
 				
 			} else {
 				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());

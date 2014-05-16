@@ -757,8 +757,6 @@ private void buildColumnHeaders() {
 			dismissThreadDialogue();
 			
 			if (success) {
-				
-				printReportData();
 
 				buildListAdapter();
 				
@@ -770,11 +768,13 @@ private void buildColumnHeaders() {
 	 }
 	
 	private void printReportData() {
-		HashMap<String,String>  dataMap = resultMapList.get(0);
+		
+		if (resultMapList.size() > 0) {
+			HashMap<String,String>  dataMap = resultMapList.get(0);
 			 for (Entry dataEntry: dataMap.entrySet()){
 				 System.out.println("Field: " + dataEntry.getKey() + " Value: " + dataEntry.getValue());
 			 }
-		
+		}	
 	}
 	
 	protected class GetReportColumnsFieldsByReportId extends AsyncTask<String, Integer, Boolean> {
@@ -816,8 +816,17 @@ private void buildColumnHeaders() {
 			
 			if (success) {
 				
-				//Calls back to the owning activity to call the thread to retrieve the joining tables
-				ReportMainFragment.this.getJoiningTablesData(reportFunctionName);
+				if (columnsMapList != null) {
+					
+					getJoiningTablesData(reportFunctionName);
+					
+				} else {
+					
+					Toast.makeText(getActivity(), "No Connection to Database", Toast.LENGTH_LONG).show();
+					//This may need to redirect back to the main
+					getActivity().onBackPressed();
+					
+				}
 				
 			} else {
 				
@@ -864,14 +873,23 @@ private void buildColumnHeaders() {
 			
 			if (success) {
 				
-				String errorMessage = "No valid Emails for Members in this Report";
-
-				if (getEmailsAddressesAsArray().length > 0){
-					EmailSender email = new EmailSender(getActivity(), getClientPrimaryEmail(),getEmailsAddressesAsArray(),null);
-					email.sendToClientEmail();
+					String errorMessage = "No valid Emails for Members in this Report";
+					
+				if (emailsMapList != null) {
+					
+					if (getEmailsAddressesAsArray().length > 0){
+						EmailSender email = new EmailSender(getActivity(), getClientPrimaryEmail(),getEmailsAddressesAsArray(),null);
+						email.sendToClientEmail();
+					} else {
+						Toast message = Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT);
+						message.show();
+					}
+					
 				} else {
-					Toast message = Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT);
-					message.show();
+					
+					Toast.makeText(getActivity(), "No Connection to Database", Toast.LENGTH_LONG).show();
+					getActivity().onBackPressed();
+					
 				}
 				
 				
