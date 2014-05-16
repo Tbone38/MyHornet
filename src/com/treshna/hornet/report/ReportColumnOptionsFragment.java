@@ -94,6 +94,7 @@ public class ReportColumnOptionsFragment extends ListFragment {
 	}
 	
 	private void buildListAdapter() {
+		
 		if (this.resultMapList.size() > 0 && getActivity() != null){
 			ListAdapter listAdapter = new ArrayAdapter<HashMap<String,String>>(getActivity(),R.layout.report_column_options_row,
 					this.resultMapList){
@@ -152,7 +153,7 @@ public class ReportColumnOptionsFragment extends ListFragment {
 		int index = 0;
 		for (Entry<String, String> row : rowMap.entrySet()){
 			
-				System.out.println("Column Name: " + row.getValue());
+				//System.out.println("Column Name: " + row.getValue());
 				colName = new HashMap<String,String>();
 				colName.put("column_name", row.getKey());
 
@@ -166,8 +167,6 @@ public class ReportColumnOptionsFragment extends ListFragment {
 	}
 	
 	private void loadMainReportFragment() {
-		
-		
 
 		//Modified to call report main fragment - 09-05-2014
 		Fragment reportMainFragment = new ReportMainFragment();
@@ -189,13 +188,12 @@ public class ReportColumnOptionsFragment extends ListFragment {
 	  this.selectedColumns = new int[(colCheckBoxes.size())];
 	  int columnIndex = 0;
   
-	  for (CheckBox checkBox : colCheckBoxes){
+	  for (CheckBox checkBox : colCheckBoxes) {
 		  
 		  	if (checkBox.isChecked())
 			    selectedColumns[columnIndex] = Integer.parseInt(checkBox.getTag().toString());
 		  		columnIndex += 1;	  
-	  }
-	  
+	  }	
 	  
 	}
 	
@@ -288,8 +286,19 @@ public class ReportColumnOptionsFragment extends ListFragment {
 			dismissThreadDialogue();
 			
 			if (success) {
-	
-				buildListAdapter();
+				
+				//Error handling for db connection unavailable
+				
+				if (resultMapList != null) {
+					
+					buildListAdapter();
+
+				} else {
+				
+					Toast.makeText(getActivity(), "No Connection to Database", Toast.LENGTH_LONG).show();
+					getActivity().onBackPressed();
+		
+				}
 				
 			} else {
 				

@@ -490,6 +490,7 @@ public class HornetDBService extends Service {
 	private boolean getLastVisitors(){
 		Log.v(TAG, "Getting Last Visitors");
     	long this_sync = new Date().getTime();
+    	
     	if (!openConnection()) {
     		return false; //connection failed;
     	}
@@ -3072,14 +3073,14 @@ public class HornetDBService extends Service {
     	ArrayList<HashMap<String, String>> resultMapList  = null;
     	ResultSet result = null;
     	
-    	if (!this.openConnection()){
+    	if (!openConnection()){
     		
     		return null;
     	}
     	
     	try {
     		
-			result = this.connection.getReportTypesAndNames();
+			result = connection.getReportTypesAndNames();
 			
 		} catch (SQLException e) {
 			
@@ -3107,7 +3108,7 @@ public class HornetDBService extends Service {
 	  	}
 	  	
 	  	try {
-				result = this.connection.getEmailAddressesByIds(ids, tableName);
+				result = connection.getEmailAddressesByIds(ids, tableName);
 
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -3132,11 +3133,11 @@ public ArrayList<LinkedHashMap<String, String>>  getReportDataByDateRange(Contex
   	ResultSet result = null;
   	
   	if (!openConnection()){
-  
+  		return null;
   	}
   	
   	try {
-			result = this.connection.getReportDataByDateRange(finalQuery);
+			result = connection.getReportDataByDateRange(finalQuery);
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -3158,12 +3159,12 @@ public ArrayList<LinkedHashMap<String, String>>  getReportDataByDateRange(Contex
  	ResultSet result = null;
  
  	
- 	if (!this.openConnection()){
- 			
+ 	if (!openConnection()){
+ 		return null;
  	}
  	
  	try {
-			result = this.connection.getReportColumnsByReportId(reportId);
+			result = connection.getReportColumnsByReportId(reportId);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -3184,12 +3185,12 @@ public ArrayList<LinkedHashMap<String, String>>  getReportDataByDateRange(Contex
 	 	ResultSet result = null;
 	 
 	 	
-	 	if (!this.openConnection()){
-	 			
+	 	if (!openConnection()){
+	 		return null;	
 	 	}
 	 	
 	 	try {
-				result = this.connection.getReportColumnsFieldsByReportId(reportId);
+				result = connection.getReportColumnsFieldsByReportId(reportId);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -3210,12 +3211,12 @@ public ArrayList<LinkedHashMap<String, String>>  getReportDataByDateRange(Contex
 	 	ResultSet result = null;
 	 
 	 	
-	 	if (!this.openConnection()){
-	 			
+	 	if (!openConnection()){
+	 		return null;
 	 	}
 	 	
 	 	try {
-				result = this.connection.getReportFilterFieldsByReportId(reportId);
+				result = connection.getReportFilterFieldsByReportId(reportId);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -3236,12 +3237,12 @@ public ArrayList<LinkedHashMap<String, String>>  getReportDataByDateRange(Contex
 	 	ResultSet result = null;
 	 
 	 	
-	 	if (!this.openConnection()){
-	 			
+	 	if (!openConnection()){
+	 		return null;
 	 	}
 
 	 	try {
-				result = this.connection.getFirstReportFilterData(query);
+				result = connection.getFirstReportFilterData(query);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -3259,14 +3260,13 @@ public ArrayList<LinkedHashMap<String, String>>  getReportDataByDateRange(Contex
 	 	this.setup(context);
 	 	ArrayList<HashMap<String, String>> resultMapList  = null;
 	 	ResultSet result = null;
-	 
-	 	
-	 	if (!this.openConnection()){
-	 			
+	 	 	
+	 	if (!openConnection()){
+	 		return null;	
 	 	}
 	 	
 	 	try {
-				result = this.connection.getJoiningTablesByFunctionName(functionName);
+				result = connection.getJoiningTablesByFunctionName(functionName);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}

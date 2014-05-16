@@ -41,7 +41,6 @@ public class SlideMenuClickListener implements OnItemClickListener, OnClickListe
     private ListView mDrawerList;
     private LinearLayout mDrawerView;
     private Activity activity;
-    private HornetDBService dbService = null;
 	
     
 	public SlideMenuClickListener(DrawerLayout drawerLayout, ListView drawerList, Activity ma, LinearLayout drawer) {
@@ -49,7 +48,6 @@ public class SlideMenuClickListener implements OnItemClickListener, OnClickListe
 		this.mDrawerList = drawerList;
 		this.mDrawerView = drawer;
 		this.activity = ma;
-		dbService = new HornetDBService();
 	}
 	
 	@Override
@@ -100,20 +98,12 @@ public class SlideMenuClickListener implements OnItemClickListener, OnClickListe
         	tag = "kpi";
         	fragment = new KeyPerformanceIndexFragment();
         	break;
+        	
         case 9:
-        	tag = "reports";
         	
-        	if (dbService.hasConnectivity(activity.getApplicationContext())) {
-        		
-        		fragment = new ReportListingFragment();
-        		
-        	} else {
-        		
-        		Toast.makeText(activity, "No Database Connection Available", Toast.LENGTH_LONG).show();
-        		return;
-        	}
-        	
-        	break;
+        	tag = "reports";        	
+        	fragment = new ReportListingFragment();       	
+        	break; 
         	
         case 11:
         	tag = "rolllist";
