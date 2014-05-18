@@ -1,1 +1,4 @@
 project.properties may need the directory of the support-v7 changed for different directories/locations.
+
+#PAYMENT_AGAINST query?
+SELECT debitjournal.id,occurred, membershipid, memberid, paid, origin, note, debit, amount, voidamount, parentid FROM payment_against LEFT JOIN debitjournal ON (payment_against.debitjournalid = debitjournal.id) ORDER BY memberid, debitjournal.id, occurred

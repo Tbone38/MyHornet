@@ -894,12 +894,13 @@ BEGIN
 	  -- drop the inaccessible bits from the Mu serial 
 	--raise log 'SWP: select * from swipe(%,%,%);' ,doornumber, quote_literal(rawcardserial), manual::text ;
 
-
+	/*TODO: remove this, it's not needed.*/
 	cardserial=CASE 
 		WHEN rawcardserial LIKE 'Mu%' THEN 'Mv'||substring(rawcardserial,3,6)||substring(rawcardserial,11)
 		ELSE rawcardserial 
 		END;
 
+	/*This looks useful. Keep it. */
 	-- if NULL passed in as card number then deal with it nicely
 	IF cardserial IS NULL THEN
 		msgcol := 'ff0000';
@@ -911,7 +912,7 @@ BEGIN
 		RETURN ;
 	END IF;
 
-
+	/*Also Useful, keep it*/
 	-- validate door
 	if count(*) < 1 from door where id=doornumber THEN 
 		RETURN NEXT 'MSG00NO DOOR# '||doornumber;
@@ -923,13 +924,12 @@ BEGIN
 
 -- now the action starts
 --  get id number from card,
-	SELECT	 idcard.id,idcard.interclub_note,idcard.interclub_deny,idcard.interclub_memberid 
-				,additional_idcard.mastercardid , additional_idcard. name
-		INTO	 real_cardid  ,msg2                 ,icdeny               ,icmid 
-		    	,cardid, additionalcardname
-		FROM	 idcard 
-			LEFT JOIN additional_idcard ON additional_idcard.childcardid=idcard.id
-		WHERE idcard.serial = cardserial;
+	SELECT idcard.id,idcard.interclub_note,idcard.interclub_deny,idcard.interclub_memberid 
+			,additional_idcard.mastercardid , additional_idcard. name
+		INTO real_cardid,msg2,icdeny,icmid,cardid, additionalcardname
+	FROM idcard 
+		LEFT JOIN additional_idcard ON additional_idcard.childcardid=idcard.id
+	WHERE idcard.serial = cardserial;
 
 	if cardid is null then
 		cardid=real_cardid;
