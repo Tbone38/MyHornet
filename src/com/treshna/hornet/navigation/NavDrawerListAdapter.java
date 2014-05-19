@@ -13,6 +13,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.treshna.hornet.R;
+import com.treshna.hornet.R.color;
+import com.treshna.hornet.services.Services;
 
 public class NavDrawerListAdapter extends BaseAdapter {
     
@@ -79,10 +81,9 @@ public class NavDrawerListAdapter extends BaseAdapter {
 	        TextView txtTitle = (TextView) convertView.findViewById(R.id.title);
 	        TextView txtCount = (TextView) convertView.findViewById(R.id.counter);
 	        
-	        //sometimes when we change orientation, we get weird binding issues.
-	        //non headers being bound as headers..?
 	        if (imgIcon != null) {
 	        	imgIcon.setImageResource(navDrawerItems.get(position).getIcon());
+	        	
 	        }
 	        if (txtTitle != null) {
 	        	txtTitle.setText(navDrawerItems.get(position).getTitle());

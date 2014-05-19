@@ -43,7 +43,7 @@ public class NavDrawerItem {
     public int getIcon(){
         return this.icon;
     }
-     
+    
     public String getCount(){
         return this.count;
     }

@@ -44,9 +44,9 @@
         <item></item>
         <item>@drawable/ic_action_add_to_queue</item>
         <item>@drawable/ic_action_add_person</item>
-        <item>@drawable/ic_action_add_person</item>
-        <item>@drawable/ic_action_add_person</item>
-        <item>@drawable/ic_action_add_person</item>
+        <item>@drawable/ic_action_add_group</item>
+        <item>@drawable/glyphicons_book_open_edited</item>
+        <item>@drawable/glyphicons_exit_edited</item>
     </array>
      
     <!-- Content Description -->

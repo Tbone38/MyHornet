@@ -122,7 +122,6 @@ KEY:
                 Update Last Visitors on Manual Check In .. ?
                 Finish payment_against stuff.
                 Some kind of UI/form for adding various types of stuff.
-                    (maybe we should use a builder?)
                     which we can then use to help resolve conflicts.
                 GET OFFLINE SWIPES WORKING.
                 Swiping from the left hand side interfares with the member swiping, etc. OR DOES IT?
@@ -141,6 +140,8 @@ KEY:
                 REDO the sync service/handling to match the following:
                     http://developer.android.com/training/sync-adapters/creating-sync-adapter.html
                 Delete Doors needs handling (insertion into deleted_records) in GymMaster.
+		payment_against: need someone to make sense of it. the numbers don't seem to add up.
+		more icons!
 
     
     v119:
