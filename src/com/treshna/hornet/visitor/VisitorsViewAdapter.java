@@ -122,7 +122,8 @@ public class VisitorsViewAdapter extends SimpleCursorAdapter {
 		if (imgFile.exists() == true){
 			imageView.bringToFront();
 			imageView.setVisibility(View.VISIBLE);
-			new BitmapLoader(imgFile,imageView,110,110);
+			imageView.setTag(cursor.getInt(cursor.getColumnIndex(ContentDescriptor.Visitor.Cols.MID)));
+			new BitmapLoader(imgFile,imageView,110,110, cursor.getInt(cursor.getColumnIndex(ContentDescriptor.Visitor.Cols.MID)));
 		}
 		else {
 			imageView.setVisibility(View.INVISIBLE);

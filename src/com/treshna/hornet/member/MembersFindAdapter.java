@@ -144,9 +144,10 @@ public class MembersFindAdapter extends SimpleCursorAdapter implements OnClickLi
 				+"_"+cursor.getString(1)+".jpg"; //cursor.getColumnIndex(ContentDescriptor.Member.Cols.MID)
 		File imgFile = new File(imgDir);
 		ImageView imageView = (ImageView) rowLayout.findViewById(R.id.rowimage);
+		imageView.setTag(cursor.getInt(1));
 		imageView.setVisibility(View.VISIBLE);
 		if (imgFile.exists() == true){
-			new BitmapLoader(imgFile,imageView,80,80);
+			new BitmapLoader(imgFile,imageView,80,80, cursor.getInt(1));
 		}
 		else {
 			imageView.setVisibility(View.INVISIBLE);

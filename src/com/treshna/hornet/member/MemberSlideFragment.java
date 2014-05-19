@@ -107,11 +107,11 @@ public class MemberSlideFragment extends Fragment implements TagFoundListener{
 		File imgFile = null;
 		imgFile = new File(imgDir);
 		if (imgFile.exists() == true){
-			
-			new BitmapLoader(imgFile,img, 80, 80);
+			img.setTag(Integer.parseInt(memberID));
+			new BitmapLoader(imgFile,img, 80, 80, Integer.parseInt(memberID));
 		    img.setClickable(true);
 		//    img.setOnClickListener(this);
-		    img.setTag(1);
+		    
 		} else {
 			img.setClickable(true);
 		    //img.setOnClickListener(this);
