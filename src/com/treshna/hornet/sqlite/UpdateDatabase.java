@@ -984,6 +984,8 @@ public class UpdateDatabase {
 					+" ("+PendingUpdates.Cols.ROWID+", "+PendingUpdates.Cols.TABLEID+")"
 					+" VALUES (old."+Door.Cols._ID+", "+TableIndex.Values.Door.getKey()+");"
 				+"END;";
+		
+		private static final String SQL47 = "ALTER TABLE "+Resource.NAME+" ADD COLUMN "+Resource.Cols.RTID+" INTEGER ;";
 				
 		public static void patchNinetySix(SQLiteDatabase db) {
 			db.beginTransaction();
@@ -1078,8 +1080,10 @@ public class UpdateDatabase {
 				db.execSQL(SQL44);
 				Log.w(HornetDatabase.class.getName(), "\n"+SQL45);
 				db.execSQL(SQL45);
-				Log.w(HornetDatabase.class.getName(), "\n"+SQL46);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL46);				
 				db.execSQL(SQL46);
+				Log.w(HornetDatabase.class.getName(), "\n"+SQL47);
+				db.execSQL(SQL47);
 				db.setTransactionSuccessful();
 			/*} catch (SQLException e) {
 			e.printStackTrace();

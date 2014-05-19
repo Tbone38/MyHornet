@@ -98,6 +98,10 @@ KEY:
                 fixed the Booking Overview page to use an actual list, still seems to be as slow, if not slower, than before.
                 Prompts to add member if not found when adding to class.
                 Added lists/etc to allow easy editing of DataBase, as well as adding new items.
+                merged Tony's reports.
+                some item deletion done! 
+                more icons!
+                Fixed the bad image behaviour!
 
             TODO:
                 Handle permissions/Roles for different staff, to limit what certain staff can see.
@@ -119,9 +123,7 @@ KEY:
                 Update Last Visitors on Manual Check In .. ?
                 Finish payment_against stuff.
                 Some kind of UI/form for adding various types of stuff.
-                    (maybe we should use a builder?)
                     which we can then use to help resolve conflicts.
-                merge Tony's branch into main;
                 GET OFFLINE SWIPES WORKING.
                 Swiping from the left hand side interfares with the member swiping, etc. OR DOES IT?
                 Adding to Classes:
@@ -133,12 +135,12 @@ KEY:
                 Bug with removing member from class. It sometimes gets really odd. Look at whats causing it (weird issue with the list binding?)
                 Set all the toasts to go through the Services.app so that they take into consideration user settings.
                 Show further details in class View when tablet-horizontal.
-                Fix image behaviour.
                 Hold/Free Time switch, free time hides the Hold Fee radios, as well as the prorata check boxes. --CHNAGES MADE. TEST THEY WORK.
                 Colours might need tinkered with.
                 REDO the sync service/handling to match the following:
                     http://developer.android.com/training/sync-adapters/creating-sync-adapter.html
-
+                Delete Doors needs handling (insertion into deleted_records) in GymMaster.
+                payment_against: need someone to make sense of it. the numbers don't seem to add up.
     
     v119:
             Altered the add Member process.

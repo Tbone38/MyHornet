@@ -140,6 +140,7 @@ public class ResourceBuilder implements FormGenerator.FormBuilder, OnClickListen
 			contentResolver.delete(ContentDescriptor.FreeIds.CONTENT_URI, ContentDescriptor.FreeIds.Cols.ROWID+" = ? AND "
 					+ContentDescriptor.FreeIds.Cols.TABLEID+" = ?", new String [] {String.valueOf(resourceID),
 					String.valueOf(ContentDescriptor.TableIndex.Values.Resource.getKey())});
+			mActivity.onBackPressed();
 		}
 	}
 

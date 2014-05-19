@@ -56,16 +56,16 @@ public class FormList extends ListFragment {
 		
 		switch (buildertype){
 		case (FormFragment.RESOURCE):
-			mLister = new ResourceLister(getActivity(), mList);
+			mLister = new ResourceLister(getActivity(), mList, this);
 			break;
 		case (FormFragment.PROGRAMMEGROUP):
-			mLister = new ProgrammeGroupLister(getActivity(), mList);
+			mLister = new ProgrammeGroupLister(getActivity(), mList, this);
 			break;
 		case (FormFragment.BOOKINGTYPE):
-			mLister = new BookingTypeLister(getActivity(), mList);
+			mLister = new BookingTypeLister(getActivity(), mList, this);
 			break;
 		case (FormFragment.DOOR):
-			mLister = new DoorLister(getActivity(), mList);
+			mLister = new DoorLister(getActivity(), mList, this);
 			break;
 		}
 		
@@ -79,6 +79,10 @@ public class FormList extends ListFragment {
 	public void onResume() {
 		super.onResume();
 		mList.invalidateViews();
+		mLoader.restartLoader(0, null, mCallback);
+	}
+	
+	public void reDrawList() {
 		mLoader.restartLoader(0, null, mCallback);
 	}
 }

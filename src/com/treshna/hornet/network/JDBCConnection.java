@@ -1462,11 +1462,11 @@ public void fixDuplicatePopUp() throws SQLException {
 	    	        +"curmid INT; "
     	        +"BEGIN "
     	        	+"prevmid = 0; "
-	    	        +"FOR r IN "
+	    	        +"FOR r IN " //list all the images with is_profile = true, ordered by the memberid.
 	    	                +"SELECT id, memberid, is_profile FROM image WHERE id IN ("
 	    	                	+ "SELECT id FROM image i2 WHERE is_profile = true AND i2.memberid = memberid) "
 	    	                + "ORDER BY memberid "
-	    	        +"LOOP "
+	    	        +"LOOP " //if we get more than one, set subsequent image.is_profiles to false.
 	    	                +"curmid = r.memberid; "
 	    	                +"IF prevmid = curmid THEN "
 	    	                        +"UPDATE image SET (is_profile) = (false) WHERE id = r.id; "
@@ -1480,6 +1480,7 @@ public void fixDuplicatePopUp() throws SQLException {
     }
     
     //TODO: this won't work untill payment_against has a last_update column.
+	//how does payment_against work? I can seem to get the numbers to match properly..
     public ResultSet getPaymentAgainst(long last_sync) throws SQLException {
     	pStatement = con.prepareStatement("SELECT id, paymentid, debitjournal, amount, voidamount, lastupdate FROM payment_against WHERE "
     			+ "lastupdate >= ? ;");
@@ -1713,6 +1714,20 @@ public void fixDuplicatePopUp() throws SQLException {
     		pStatement.setNull(7, java.sql.Types.INTEGER);
     	}
     	pStatement.setInt(8, id);
+    	
+    	return pStatement.executeUpdate();
+    }
+    
+    public int deleteResource(int resourceid) throws SQLException {
+    	pStatement = con.prepareStatement("DELETE FROM resource WHERE id = ?");
+    	pStatement.setInt(1, resourceid);
+    	
+    	return pStatement.executeUpdate();
+    }
+    
+    public int deleteBookingtype(int bookingtypeid) throws SQLException {
+    	pStatement = con.prepareStatement("DELETE FROM bookingtype WHERE id = ?");
+    	pStatement.setInt(1, bookingtypeid);
     	
     	return pStatement.executeUpdate();
     }

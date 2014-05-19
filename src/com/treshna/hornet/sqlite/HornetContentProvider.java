@@ -286,6 +286,11 @@ public class HornetContentProvider extends ContentProvider {
         	getContext().getContentResolver().notifyChange(uri, null);
         	return rows;
         }
+        case ContentDescriptor.Resource.PATH_TOKEN:{
+        	int rows = db.delete(ContentDescriptor.Resource.NAME, selection, selectionArgs);
+        	getContext().getContentResolver().notifyChange(uri, null);
+        	return rows;
+        }
         
         case ContentDescriptor.TOKEN_DROPTABLE:{ //special case, drops tables/deletes database.
         	FileHandler fh = new FileHandler(ctx);
@@ -1206,6 +1211,12 @@ public class HornetContentProvider extends ContentProvider {
             				new String[] {rowid});
             	} else if (tablename.compareTo(ContentDescriptor.RollItem.NAME) == 0) {
             		return db.delete(ContentDescriptor.RollItem.NAME, ContentDescriptor.RollItem.Cols.ROLLITEMID+" = ?",
+            				new String[] {rowid});
+            	} else if (tablename.compareTo(ContentDescriptor.Resource.NAME) == 0) {
+            		return db.delete(ContentDescriptor.Resource.NAME, ContentDescriptor.Resource.Cols.ID+" = ?",
+            				new String[] {rowid});
+            	} else if (tablename.compareTo(ContentDescriptor.Bookingtype.NAME) == 0) {
+            		return db.delete(ContentDescriptor.Bookingtype.NAME, ContentDescriptor.Bookingtype.Cols.BTID+" = ?",
             				new String[] {rowid});
             	}
             	else {

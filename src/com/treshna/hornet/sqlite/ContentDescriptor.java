@@ -572,13 +572,14 @@ public class ContentDescriptor {
 	 		public static class Triggers {
 	 			public static final String ON_INSERT = "resource_insert";
 	 			public static final String ON_UPDATE = "resource_update";
+	 			//on deletion, we do manual insertions into the pendingDeletes table.
+	 			//because I'm not sure if we're ever intentionally deleting data.
 	 		}
 	 		
 	 		public static class Cols {
 	 			public static final String ID = BaseColumns._ID;
 	 			public static final String NAME = "name";
 	 			public static final String CID = "companyid";
-	 			public static final String RTID = "resourcetypeid"; //
 	 			public static final String RTNAME = "typename";
 	 			public static final String PERIOD = "period";
 	 			public static final String LASTUPDATE = "lastupdate";
@@ -586,7 +587,7 @@ public class ContentDescriptor {
 	 			//added v120
 	 			public static final String HISTORY = "historic";
 	 			public static final String DEVICESIGNUP = "devicesignup";
-	 			
+	 			public static final String RTID = "resourcetypeid"; //
 	 		}
 	 	}
 	 	
