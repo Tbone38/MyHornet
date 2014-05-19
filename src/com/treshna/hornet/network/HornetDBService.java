@@ -4955,6 +4955,7 @@ public ArrayList<LinkedHashMap<String, String>>  getReportDataByDateRange(Contex
     		//we'll need to do an insert.
     		query = "INSERT INTO sync (device, clienttime, completed) VALUES ('"+uniqueid+"',"+
     		"to_timestamp("+(double)(new Date().getTime()/1000d)+"), false) RETURNING *;";
+    		
     	} else {
     		query = "UPDATE sync SET (servertime, clienttime, completed) = (now(), to_timestamp("+(double)(new Date().getTime()/1000d)
     				+"),false) WHERE id = "+deviceid+" RETURNING *;";
