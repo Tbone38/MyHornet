@@ -67,13 +67,12 @@ public class ReportMainFragment extends ListFragment {
 	private String reportName = null;
 	private String reportFunctionName = null;
 	private String queryFunctionParamsCut = null;
-	private String numValueRegex = "(^\\$?[0-9]+\\.?[0-9]+)|([0-9]+)";
+	private String numValueRegex = "(^-?\\$?[0-9]+\\.?[0-9]+)|([0-9]+)";
 	private String callingActivity = null;
 	private String firstFilter = null;
 	private String secondFilter = null;
 	private Button btnEmailCSV = null;
 	private String finalQuery = null;
-	private TextView retrievedTextView = null;
 	private Date startDate = null;
 	private Date endDate = null;
 	private Button btnEmail = null;
@@ -97,7 +96,8 @@ public class ReportMainFragment extends ListFragment {
 		if (callingActivity.compareTo("column_options")==  0) {
 			selectedColumnIds = fragmentData.getIntArray("selected_column_ids");
 		}
-		firstFilter = fragmentData.getString("second_filter_field");
+		firstFilter = fragmentData.getString("first_filter_field");
+		secondFilter = fragmentData.getString("second_filter_field");
 		reportName = fragmentData.getString("report_name");
 		reportFunctionName = fragmentData.getString("report_function_name");
 		//Removing place holder text from report function name
@@ -329,6 +329,7 @@ public class ReportMainFragment extends ListFragment {
 			
 			boolean firstFilterAdded = false;
 			
+			//Log.i("Main -First Filter", firstFilter);
 			if (firstFilter != null && !firstFilter.contains("'All'")) {
 				queryBuilder.append(" WHERE ");
 				queryBuilder.append(' ');
@@ -370,7 +371,7 @@ public class ReportMainFragment extends ListFragment {
 			System.out.println(queryBuilder.toString());
 			finalQuery = queryBuilder.toString();
 			getReportData(finalQuery);
-}	
+	}	
 
 		
 	private boolean isColumnSelected(int columnId){
@@ -462,7 +463,7 @@ public class ReportMainFragment extends ListFragment {
 								if ((getActivity().getApplicationContext().getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE) {
 									textView.setPadding(0, 0, 60, 0);
 								} else {
-									textView.setPadding(0, 0, 10, 0);
+									textView.setPadding(0, 0, 40, 0);
 								}										
 							}
 							
@@ -489,7 +490,8 @@ public class ReportMainFragment extends ListFragment {
 	  }
 	
 	
- private boolean isAnyRowAllNums(String colName){
+  private boolean isAnyRowAllNums(String colName) {
+	 
 		for (HashMap<String,String> dataRow: resultMapList){
 			if (dataRow.get(colName) != null)
 				if (dataRow.get(colName).matches(numValueRegex)){
@@ -497,7 +499,7 @@ public class ReportMainFragment extends ListFragment {
 				}
 		}
 	  return false;
- }
+   }
  
  private void removeSpacesFromPhoneNumbers(HashMap<String,String> dataRow){
 		//Remove spaces from phone numbers..
@@ -552,7 +554,7 @@ private void setOrientation(HashMap<String,String> dataRow) {
 			
 		}
 		
-	}
+}
 	
 private void buildColumnHeaders() {
 	
