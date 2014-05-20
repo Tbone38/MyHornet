@@ -8,6 +8,7 @@ public class HornetApplication extends Application {
     private boolean sync_result = false;
     private boolean activity_showing = false;
     private Activity currentActivity = null;
+    private String sync_error = null;
     private static HornetApplication singleton;
     
     @Override
@@ -28,6 +29,10 @@ public class HornetApplication extends Application {
     	this.activity_showing = status;
     }
     
+    public void setSyncError(String error) {
+    	this.sync_error = error;
+    }
+    
     public void setCurrentActivity(Activity theActivity) {
     	this.currentActivity = theActivity;
     }
@@ -42,6 +47,10 @@ public class HornetApplication extends Application {
     
     public boolean getActivityStatus() {
     	return this.activity_showing;
+    }
+    
+    public String getSyncError() {
+    	return this.sync_error;
     }
     
     public Activity getCurrentActivity() {

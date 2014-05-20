@@ -72,9 +72,12 @@ public class PollingHandler extends BroadcastReceiver implements ThreadResult {
 				this.conStatus = false;
 			}
 		}
-		
 	}
 	
+	
+	public void startPolling(){
+		serverExists();
+	}
 	
 	private void process() {
 		if ( conStatus == true) {

@@ -171,6 +171,8 @@ public class SlideMenuClickListener implements OnItemClickListener, OnClickListe
 			Intent updateInt = new Intent(activity, HornetDBService.class);
             updateInt.putExtra(Services.Statics.KEY, Services.Statics.FREQUENT_SYNC);
             activity.startService(updateInt);
+            //?
+            Services.getFreqPollingHandler().startPolling();//ideally we should be doing this after the sync frequency has been changed.
             
             SharedPreferences preferences = activity.getSharedPreferences(activity.getPackageName() + 
             		"_preferences", Context.MODE_MULTI_PROCESS);
@@ -219,12 +221,10 @@ public class SlideMenuClickListener implements OnItemClickListener, OnClickListe
 			Services.getProgress().dismiss();
 			Services.setProgress(null);
 			if (success) {
-				//we'll need to refresh all our cursors some how...
-				/*ContentResolver contentResolver = activity.getContentResolver();
-				contentResolver.notifyAll();*/
+				//this can be solved by re-designing the sync_process.
 			} else {
 				message = (message == null)? "Error Encountered" : message;
-				Toast.makeText(activity, "Syncing took longer than 10 minutes, progress has been hidden.",Toast.LENGTH_LONG).show();
+				Toast.makeText(activity, message ,Toast.LENGTH_LONG).show();
 			}
 	    }
 

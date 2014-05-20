@@ -267,8 +267,9 @@ public class HornetDBService extends Service {
 		 	   	logger.writeLog();
 		   	  	uploadLog();
 		   	  	
-		   	  	mApplication.setSyncStatus(false);
 		   	  	mApplication.setSyncResult(true);
+		   	  	mApplication.setSyncStatus(false);
+		   	  	
 		   	  	
 	 	   		Services.setPreference(getApplicationContext(), "last_freq_sync", String.valueOf(this_sync));
 		 	   	Intent bcIntent = new Intent();
@@ -294,8 +295,8 @@ public class HornetDBService extends Service {
 			logger.writeLog();
 	   	  	uploadLog();
 	   	  	
+	   	  	mApplication.setSyncResult(true);
 	   	  	mApplication.setSyncStatus(false);
-	   	  	mApplication.setSyncResult(true); //where is this actually getting set?
 	   	  	
 	   	  	//Finish.
 			Services.setPreference(getApplicationContext(), "last_freq_sync", String.valueOf(this_sync));
@@ -381,8 +382,9 @@ public class HornetDBService extends Service {
 		   	   //rebuild times, then update the reference in date.
 			   logger.writeLog();
 		   	   uploadLog();
-			   mApplication.setSyncStatus(false);
 		   	   mApplication.setSyncResult(true);
+			   mApplication.setSyncStatus(false);
+
 		   	   
 		   	   thread.is_networking = false;
 			   Intent bcIntent = new Intent();
@@ -400,10 +402,10 @@ public class HornetDBService extends Service {
 		   getProgrammeGroupID();
 		   getBookingTypeID();
 		   int midcount = getMemberID();
-		   if (midcount != 0) statusMessage = " Sign-up's available";
+		   /*if (midcount != 0) statusMessage = " Sign-up's available";
 		   if (statusMessage != null && statusMessage.length() > 3 ) {
 				   Services.showToast(getApplicationContext(), statusMessage, handler);
-		   }
+		   }*/
 		   		   
 		   //stuff
 		   
@@ -431,8 +433,8 @@ public class HornetDBService extends Service {
 	   	  	//rebuild times, then update the reference in date.
 	   	  	logger.writeLog();
 	   	  	uploadLog();
-	   	  	mApplication.setSyncStatus(false);
 	   	  	mApplication.setSyncResult(true);
+	   	  	mApplication.setSyncStatus(false);
 
 		   if (statusMessage != null) {
 			   Services.showToast(getApplicationContext(), statusMessage, handler);

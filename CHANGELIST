@@ -133,8 +133,8 @@ KEY:
                     if membershipcount = 1 then default;    --Done
                     if membershipcount = 2 then prompt;     --Done
                     if membershipcount = 0 then prompt for payment? --TODO...?
-                    How do we handle casuals?
-*               Bug with removing member from class. It sometimes gets really odd. Look at whats causing it (weird issue with the list binding?)
+                    We add casuals as members..?
+                Bug with removing member from class. It sometimes gets really odd. --UNABLE TO REPRODUCE.
                 Set all the toasts to go through the Services.app so that they take into consideration user settings.
                 Show further details in class View when tablet-horizontal.
                 Colours might need tinkered with.
@@ -142,7 +142,8 @@ KEY:
                     http://developer.android.com/training/sync-adapters/creating-sync-adapter.html
                 Delete Doors needs handling (insertion into deleted_records) in GymMaster.
                 payment_against: need someone to make sense of it. the numbers don't seem to add up.
-*               Check/Fix auto-sync.
+				Redo the Settings Activity at somepoint to work with fragments..
+		
     
     v119:
             Altered the add Member process.
