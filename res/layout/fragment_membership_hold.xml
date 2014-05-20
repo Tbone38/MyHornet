@@ -157,26 +157,45 @@
 	 	    android:text="@string/membership_enddate"
 	 	    android:padding="5dp" 
 	 	    android:layout_margin="3dp"/>
-	 	
-	 	<TextView 
-	 	    android:id="@+id/hold_enddate"
+	 	<LinearLayout
+	 	    android:id="@+id/hold_endrow"
 	 	    android:layout_width="match_parent"
 	 	    android:layout_height="wrap_content"
 	 	    android:layout_below="@id/hold_enddateL"
 	 	    android:gravity="center_vertical"
-	 	    android:textSize="18sp"
-	 	    android:text="@string/defaultEndDate"
-	 	    android:padding="5dp"
-	 	    android:layout_marginTop="3dp"
-	 	    android:layout_marginBottom="3dp"
-	 	    android:layout_marginLeft="10dp"
-	 	    android:background="@drawable/button" />
+	 	    android:orientation="horizontal"
+	 	    android:background="@drawable/button">
+	 		<TextView 
+		 	    android:id="@+id/hold_enddate"
+		 	    android:layout_width="0dp"
+		 	    android:layout_height="wrap_content"
+		 	    android:layout_weight=".5"
+		 	    android:gravity="center_vertical"
+		 	    android:textSize="18sp"
+		 	    android:text="@string/defaultEndDate"
+		 	    android:padding="5dp"
+		 	    android:layout_marginTop="3dp"
+		 	    android:layout_marginBottom="3dp"
+		 	    android:layout_marginLeft="10dp"
+		 	     />
+	 		<TextView 
+	 		    android:id="@+id/hold_duration"
+	 		    android:layout_width="0dp"
+	 		    android:layout_height="wrap_content"
+	 		    android:layout_weight=".5"
+	 		    android:gravity="center_vertical"
+		 	    android:textSize="18sp"
+		 	    android:padding="5dp"
+		 	    android:layout_marginTop="3dp"
+		 	    android:layout_marginBottom="3dp"
+		 	    android:layout_marginLeft="10dp"/>    
+	 	</LinearLayout>
 	 	
 	 	<TextView 
 	 	    android:id="@+id/hold_reasonL"
 	 	    android:layout_width="wrap_content"
 	 	    android:layout_height="wrap_content"
-	 	    android:layout_below="@id/hold_enddate"
+	 	    android:layout_below="@id/hold_endrow"
 	 	    android:gravity="center"
 	 	    android:textSize="16sp"
 	 	    android:text="@string/membership_reason"

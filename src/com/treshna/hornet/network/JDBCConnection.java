@@ -819,10 +819,9 @@ public class JDBCConnection {
 	    			+ "promotion, fullcost, holdfee, prorata "
 	    			+ "FROM membership_suspend LEFT JOIN member ON "
 	    			+ "(membership_suspend.memberid = member.id) "
-	    			+ "WHERE member.status != 3 AND membership_suspend.created >= ?::TIMESTAMP WITHOUT TIME ZONE;");
+	    			+ "WHERE member.status != 3 AND membership_suspend.created >= ?;");
 	    	
-	    	pStatement.setString(1, Services.dateFormat(new Date(last_sync).toString(), 
-					"EEE MMM dd HH:mm:ss zzz yyyy", "dd-MMM-yyyy HH:mm:ss"));
+	    	pStatement.setTimestamp(1, new java.sql.Timestamp(last_sync));
 	    	
 	    	return pStatement.executeQuery();
     }

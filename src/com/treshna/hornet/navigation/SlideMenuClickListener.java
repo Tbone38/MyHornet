@@ -24,16 +24,18 @@ import com.treshna.hornet.HornetApplication;
 import com.treshna.hornet.MainActivity;
 import com.treshna.hornet.R;
 import com.treshna.hornet.booking.BookingDetailsSuperFragment;
+import com.treshna.hornet.booking.BookingsListSuperFragment;
 import com.treshna.hornet.classes.ClassCreateFragment;
 import com.treshna.hornet.form.FormFragment;
 import com.treshna.hornet.lists.FormList;
 import com.treshna.hornet.member.MemberAddFragment;
+import com.treshna.hornet.member.MembersFindSuperFragment;
 import com.treshna.hornet.network.HornetDBService;
-import com.treshna.hornet.network.JDBCConnection;
 import com.treshna.hornet.report.KeyPerformanceIndexFragment;
 import com.treshna.hornet.report.ReportListingFragment;
 import com.treshna.hornet.roll.RollListFragment;
 import com.treshna.hornet.services.Services;
+import com.treshna.hornet.visitor.LastVisitorsSuperFragment;
 
 public class SlideMenuClickListener implements OnItemClickListener, OnClickListener {
 
@@ -66,16 +68,19 @@ public class SlideMenuClickListener implements OnItemClickListener, OnClickListe
         switch (position) {
         case 1:
         	//Member Find
-        	((MainActivity)activity).genTabs();
+        	//((MainActivity)activity).genTabs();
+        	fragment = new MembersFindSuperFragment();
         	tag = "findmember";
             break;
         case 2: //last visitors;
-    		((MainActivity)activity).genTabs();
+    		//((MainActivity)activity).genTabs();
+        	fragment = new LastVisitorsSuperFragment();
         	tag = "lastvisitors";
             break;
         case 3: //bookings
         	tag = "bookings";
-        	((MainActivity)activity).genTabs();
+        	//((MainActivity)activity).genTabs();
+        	fragment = new BookingsListSuperFragment();
             break;
         case 5:
             fragment = new MemberAddFragment();
@@ -166,6 +171,8 @@ public class SlideMenuClickListener implements OnItemClickListener, OnClickListe
 			Intent updateInt = new Intent(activity, HornetDBService.class);
             updateInt.putExtra(Services.Statics.KEY, Services.Statics.FREQUENT_SYNC);
             activity.startService(updateInt);
+            //?
+            Services.getFreqPollingHandler().startPolling();//ideally we should be doing this after the sync frequency has been changed.
             
             SharedPreferences preferences = activity.getSharedPreferences(activity.getPackageName() + 
             		"_preferences", Context.MODE_MULTI_PROCESS);
@@ -214,12 +221,10 @@ public class SlideMenuClickListener implements OnItemClickListener, OnClickListe
 			Services.getProgress().dismiss();
 			Services.setProgress(null);
 			if (success) {
-				//we'll need to refresh all our cursors some how...
-				/*ContentResolver contentResolver = activity.getContentResolver();
-				contentResolver.notifyAll();*/
+				//this can be solved by re-designing the sync_process.
 			} else {
 				message = (message == null)? "Error Encountered" : message;
-				Toast.makeText(activity, "Syncing took longer than 10 minutes, progress has been hidden.",Toast.LENGTH_LONG).show();
+				Toast.makeText(activity, message ,Toast.LENGTH_LONG).show();
 			}
 	    }
 

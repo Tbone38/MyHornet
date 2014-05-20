@@ -20,7 +20,6 @@ KEY:
             Sometimes app needs to restart for the roll menu item to show up.
             Dates need to be handled better. Currently they're breaking on Dru's phone because the default format (Date().toString()) returns differently.
                 Fix is to call SimpleDateFormat.format(Date()) instead of trying to parse the Date().toString().
-            Progress Box no longer works. needs to be added back in via a aSync Task for the db_syncing.
                 (had issues trying to attach to windows from the service thread, due to 'Context' complications.)
             Update Recurssion. (updating the same rows every time they change). (I THINK it occurs in bookings.)
             Updating version seems to lose Resources & doors. ?
@@ -102,6 +101,11 @@ KEY:
                 some item deletion done! 
                 more icons!
                 Fixed the bad image behaviour!
+                Hold/Free Time switch, free time hides the Hold Fee radios, as well as the prorata check boxes.
+                Membership complete "Add Tag" doesn't work. Resolved, needs testing.
+                Removed the tabs, as they were ocasionally throwing errors when combo'd with the Nav Drawer. 
+                After manual checkin, we force a new update (so they show in the last-visitors).
+                Fixed issue with Gallery multiple images show up as profile, even when only one is.
 
             TODO:
                 Handle permissions/Roles for different staff, to limit what certain staff can see.
@@ -115,12 +119,10 @@ KEY:
                 Issue with sync table: the servertime isn't being set correctly.
                 Fix the PollingHandler running on the UI thread. (blocking etc).
                 Improve Performance of the Booking Overview page.
-                Membership complete "Add Tag" doesn't work. Resolved, needs testing.
-                Do an app walkthrough
+*               Do an app walkthrough --TOO HARD BASKET FOR THE MOMENT.
                 Make the sync process more robust by checking that each function returns 0 or more. 
                     If we get less than 0 than we've encountered an error, try continuing but don't update the "last_sync" time..?
                 Complete Dru's list of changes. --this is mostly done.
-                Update Last Visitors on Manual Check In .. ?
                 Finish payment_against stuff.
                 Some kind of UI/form for adding various types of stuff.
                     which we can then use to help resolve conflicts.
@@ -130,17 +132,17 @@ KEY:
                     if membershipcount = 1 then default;    --Done
                     if membershipcount = 2 then prompt;     --Done
                     if membershipcount = 0 then prompt for payment? --TODO...?
-                    How do we handle casuals?
-                Gallery seems to behaive weirdly (multiple images show up as profile, even when only one is..?)
-                Bug with removing member from class. It sometimes gets really odd. Look at whats causing it (weird issue with the list binding?)
+                    We add casuals as members..?
+                Bug with removing member from class. It sometimes gets really odd. --UNABLE TO REPRODUCE.
                 Set all the toasts to go through the Services.app so that they take into consideration user settings.
                 Show further details in class View when tablet-horizontal.
-                Hold/Free Time switch, free time hides the Hold Fee radios, as well as the prorata check boxes. --CHNAGES MADE. TEST THEY WORK.
                 Colours might need tinkered with.
                 REDO the sync service/handling to match the following:
                     http://developer.android.com/training/sync-adapters/creating-sync-adapter.html
                 Delete Doors needs handling (insertion into deleted_records) in GymMaster.
                 payment_against: need someone to make sense of it. the numbers don't seem to add up.
+				Redo the Settings Activity at somepoint to work with fragments..
+		
     
     v119:
             Altered the add Member process.

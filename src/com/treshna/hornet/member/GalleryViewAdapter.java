@@ -3,6 +3,7 @@ package com.treshna.hornet.member;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -41,6 +42,14 @@ public class GalleryViewAdapter extends SimpleCursorAdapter implements OnClickLi
 	
 	private static final String TAG = "GALLERY";
 	
+	private static class ViewHolder {
+		
+		public ViewHolder() {};
+		ImageView image;
+		TextView takenView;
+		CheckBox checkbox;
+	}
+	
 	@SuppressWarnings("deprecation")
 	public GalleryViewAdapter(MemberGalleryFragment frag, int layout, Cursor c,
 			String[] from, int[] to, int imageWidth, GridView parent ) {
@@ -54,62 +63,70 @@ public class GalleryViewAdapter extends SimpleCursorAdapter implements OnClickLi
 	}
 	
 	@Override
-	public Cursor swapCursor(Cursor c) {
+	public void changeCursor(Cursor c) {
+		super.changeCursor(c);
 		this.cur = c;
-		
-		return super.swapCursor(c);
 	}
 	
 	@Override
-	public void changeCursorAndColumns(Cursor c, String[] from, int[] to) {
-		this.cur = c;
-		super.changeCursorAndColumns(c, from, to);
-	}
-	
-	@Override
-	public void bindView(View rowLayout, Context context, Cursor cursor){
-		super.bindView(rowLayout, context, cursor);
-		
-		ImageView image = (ImageView) rowLayout.findViewById(R.id.member_gallery_image);
-		TextView takenView = (TextView) rowLayout.findViewById(R.id.date);
-		CheckBox checkbox = (CheckBox) rowLayout.findViewById(R.id.is_profile);
-		
-		if (checkbox == null) {
-
-		} else {
-			checkbox.setId(cursor.getInt(cursor.getColumnIndex(ContentDescriptor.Image.Cols.ID)));
-			checkbox.setTag(cursor.getInt(cursor.getColumnIndex(ContentDescriptor.Image.Cols.MID)));
-			checkbox.setOnCheckedChangeListener(this);
+	public View getView(int position, View convertView, ViewGroup parent) {
+		super.getView(position, convertView, parent);
+		ViewHolder vh;
+		cur.moveToPosition(position);
+		if (convertView == null) {
+			//inflate a convertView
+			LayoutInflater inflater = parentfrag.getActivity().getLayoutInflater();
+			convertView = inflater.inflate(R.layout.row_member_gallery, null);
+			vh = new ViewHolder();
+			vh.image = (ImageView) convertView.findViewById(R.id.member_gallery_image);
+			vh.takenView = (TextView) convertView.findViewById(R.id.date);
+			vh.checkbox = (CheckBox) convertView.findViewById(R.id.is_profile);
 			
-			if (cursor.getInt(cursor.getColumnIndex(ContentDescriptor.Image.Cols.IS_PROFILE)) == 1) {
-				checkbox.setChecked(true);
-			}
-		}
-		if (takenView == null) {
-			//Log.e("GALLERY", "TEXT VIEW NULL TOO ... ?");
+			convertView.setTag(vh);
 		} else {
-			if (!cursor.isNull(cursor.getColumnIndex(ContentDescriptor.Image.Cols.DATE))) {
-				Date date = new Date(cursor.getLong(cursor.getColumnIndex(ContentDescriptor.Image.Cols.DATE)));
-				takenView.setText("Taken: "+Services.DateToString(date));
-			} else {
-				takenView.setVisibility(View.GONE);
-			}
+			vh = (ViewHolder) convertView.getTag();
 		}
 		
-	    ArrayList<String> tag = new ArrayList<String>();
-	    tag.add(cursor.getString(cursor.getColumnIndex(ContentDescriptor.Image.Cols.IID)));
-	    tag.add(cursor.getString(cursor.getColumnIndex(ContentDescriptor.Image.Cols.MID)));
+		if (vh.checkbox != null) { //i guess this is because sometime the view is outside the visible area, which means its null?
+			//because of the way grids/lists implement view recycling?
+			vh.checkbox.setId(cur.getInt(cur.getColumnIndex(ContentDescriptor.Image.Cols.ID)));
+			vh.checkbox.setTag(cur.getInt(cur.getColumnIndex(ContentDescriptor.Image.Cols.MID)));
+			vh.checkbox.setOnCheckedChangeListener(this);
+			
+			if (cur.getInt(cur.getColumnIndex(ContentDescriptor.Image.Cols.IS_PROFILE)) == 1) {
+				vh.checkbox.setChecked(true);
+			} else {
+				vh.checkbox.setChecked(false);
+			}
+		}
+	
+		if (vh.takenView != null) {
+			if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.Image.Cols.DATE))) {
+				Date date = new Date(cur.getLong(cur.getColumnIndex(ContentDescriptor.Image.Cols.DATE)));
+				vh.takenView.setText("Taken: "+Services.DateToString(date));
+			} else {
+				vh.takenView.setVisibility(View.GONE);
+			}
+		}
+
+		ArrayList<String> tag = new ArrayList<String>();
+	    tag.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Image.Cols.IID)));
+	    tag.add(cur.getString(cur.getColumnIndex(ContentDescriptor.Image.Cols.MID)));
 	    
 		String imgDir = context.getExternalFilesDir(null)+"/"+tag.get(0)+"_"+tag.get(1)+".jpg";
 		File imgFile = new File(imgDir);
 				
 		if (imgFile.exists() == true) {
-			new BitmapLoader(imgFile,image,imageWidth,imageWidth, Integer.parseInt(tag.get(1)));		   
-		    image.setTag(tag);
-		    image.setOnClickListener(this);
+			new BitmapLoader(imgFile,vh.image,imageWidth,imageWidth, Integer.parseInt(tag.get(1)));		   
+		    vh.image.setTag(tag);
+		    vh.image.setOnClickListener(this);
+		} else {
+			vh.image.setImageBitmap(null);
 		}
+		
+		return convertView;
 	}
-
+	
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {

@@ -125,7 +125,7 @@ public class NFCActivity extends ActionBarActivity {
     	values.put(ContentDescriptor.PendingUploads.Cols.ROWID, rowid);
     	contentResolver.insert(ContentDescriptor.PendingUploads.CONTENT_URI, values);
     	//start sync here as well
-
+    	Log.d(this.getClass().getName(), "We're swiping the TAG. if we got here, no-one else attempted to handle the TAG read.");
 		Intent updateInt = new Intent(this, HornetDBService.class);
 		updateInt.putExtra(Services.Statics.KEY, Services.Statics.SWIPE);
 		this.startService(updateInt);

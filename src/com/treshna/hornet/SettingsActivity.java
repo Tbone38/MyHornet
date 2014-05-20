@@ -155,13 +155,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		// Bind the summaries of EditText/List/Dialog/Ringtone preferences to
 		// their values. When their values change, their summaries are updated
 		// to reflect the new value, per the Android Design guidelines.
-		/*bindPreferenceSummaryToValue(findPreference("address"));
-		bindPreferenceSummaryToValue(findPreference("port"));
-		bindPreferenceSummaryToValue(findPreference("database"));
-		bindPreferenceSummaryToValue(findPreference("username"));
-		bindPreferenceSummaryToValue(findPreference("password"));*/
 		bindPreferenceSummaryToValue(findPreference("door"));
-		//bindPreferenceSummaryToValue(findPreference("resourcelist"));
 		bindPreferenceSummaryToValue(findPreference("sync_frequency"));
 	}
 	
