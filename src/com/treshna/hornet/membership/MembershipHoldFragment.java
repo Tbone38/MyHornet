@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
@@ -113,7 +114,11 @@ public class MembershipHoldFragment extends Fragment implements OnClickListener,
 		startdate.setText(sdatevalue);
 		
 		TextView enddate = (TextView) view.findViewById(R.id.hold_enddate);
-		enddate.setText(cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.ENDDATE)));
+		edatevalue = cur.getString(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.ENDDATE));
+		enddate.setText(edatevalue);
+
+		TextView duration = (TextView) view.findViewById(R.id.hold_duration);
+		duration.setText(calcDuration(sdatevalue, edatevalue));
 		
 		String holdfee = null;
 		if (!cur.isNull(cur.getColumnIndex(ContentDescriptor.MembershipSuspend.Cols.HOLDFEE))) {
@@ -237,7 +242,9 @@ public class MembershipHoldFragment extends Fragment implements OnClickListener,
 	
 	private void setupDate(){
 		TextView startdate = (TextView) view.findViewById(R.id.startdate);
+		LinearLayout end_button = (LinearLayout) view.findViewById(R.id.hold_endrow);
 		TextView enddate = (TextView) view.findViewById(R.id.hold_enddate);
+		TextView duration = (TextView) view.findViewById(R.id.hold_duration);
 		
 		if (sdatevalue != null) {
 			startdate.setText(sdatevalue);
@@ -247,8 +254,8 @@ public class MembershipHoldFragment extends Fragment implements OnClickListener,
 		}
 		
 		if (edatevalue != null) {
-			
-			enddate.setText(edatevalue+"	-	"+calcDuration(sdatevalue, edatevalue));
+			enddate.setText(edatevalue);
+			duration.setText(calcDuration(sdatevalue, edatevalue));
 		} else {
 		}
 		
@@ -257,8 +264,10 @@ public class MembershipHoldFragment extends Fragment implements OnClickListener,
 		startdate.setClickable(true);
 		startdate.setOnClickListener(this);
 		
-		enddate.setClickable(true);
-		enddate.setOnClickListener(this);
+		/*enddate.setClickable(true);
+		enddate.setOnClickListener(this);*/
+		end_button.setClickable(true);
+		end_button.setOnClickListener(this);
 		
 		TextView membername = (TextView) view.findViewById(R.id.membername);
 		
@@ -303,7 +312,7 @@ public class MembershipHoldFragment extends Fragment implements OnClickListener,
 			
 			break;
 		}
-		case (R.id.hold_enddate):{
+		case (R.id.hold_endrow):{
 			edatePicker.show(this.getChildFragmentManager(), "edatePicker");
 			break;
 		}
