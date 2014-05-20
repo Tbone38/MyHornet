@@ -79,10 +79,8 @@ public class ReportDateOptionsFragment extends Fragment implements DatePickerFra
 		Button createButton =  (Button) view.findViewById(R.id.btnCreateReport);
 		Button columnOptionsButton =  (Button) view.findViewById(R.id.btnColumnOptions);
 		LinearLayout layout = (LinearLayout) view.findViewById(R.id.dateOptions);
-		if (layout.getTag().toString().compareTo("Large") == 0) {
-			btnStartButton = (Button) view.findViewById(R.id.btnSelectStartDate);
-			btnEndButton = (Button) view.findViewById(R.id.btnSelectEndDate);
-		}
+		btnStartButton = (Button) view.findViewById(R.id.btnSelectStartDate);
+		btnEndButton = (Button) view.findViewById(R.id.btnSelectEndDate);
 		Bundle fragmentData = getArguments();
 		reportNameTxt.setText(fragmentData.getString("report_name").trim());
 		firstFilterTitle = (TextView) view.findViewById(R.id.firstFilterTitle);
@@ -93,9 +91,6 @@ public class ReportDateOptionsFragment extends Fragment implements DatePickerFra
 		setUpQuickSelectSpinner();
 		getReportFilterFieldsByReportId();
 
-		
-		if (layout.getTag().toString().compareTo("Large") == 0) {
-			
 			btnStartButton.setOnClickListener(new View.OnClickListener() {
 
 				@Override
@@ -113,11 +108,7 @@ public class ReportDateOptionsFragment extends Fragment implements DatePickerFra
 				}
 				
 			});		
-		}
 	
-		
-		
-		
 		createButton.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
@@ -411,11 +402,12 @@ public class ReportDateOptionsFragment extends Fragment implements DatePickerFra
 			
 		} else if (selectedOption.compareTo("Last 30 Days")== 0) {
 			
-			selectedStartDate = resetDateByNumOfMonths ( -1, startDateText);
+			selectedStartDate = resetDateByNumOfDays ( -30, startDateText);
 			
 	    } else if (selectedOption.compareTo("Last Calendar Month")== 0) {
 			
 			selectedStartDate = resetDateToStartOfLastMonth(startDateText);
+			selectedEndDate = resetDateToEndOfLastMonth(endDateText);
 			
 		} else if (selectedOption.compareTo("This Month")== 0) {
 			
@@ -423,7 +415,11 @@ public class ReportDateOptionsFragment extends Fragment implements DatePickerFra
 			
 		} else if (selectedOption.compareTo("Today")== 0) {
 			
-			selectedStartDate = setStartDateToToday(startDateText);
+			selectedStartDate = setDateToToday(startDateText);
+		}
+		//Ensures end-date is set to today...
+		if (selectedOption.compareTo("Last Calendar Month")!= 0) {
+			selectedEndDate = setDateToToday(endDateText);
 		}
 	}
 	
@@ -434,6 +430,18 @@ public class ReportDateOptionsFragment extends Fragment implements DatePickerFra
 		 Calendar cal = Calendar.getInstance();
 		 cal.setTime(selectedDate);
 		 cal.add(Calendar.MONTH, numOfMonths);
+		 selectedDate = cal.getTime();
+		 setDateTextView(dateDisplayView, selectedDate);
+		 return selectedDate;
+		
+	}
+	
+	private Date  resetDateByNumOfDays ( int numOfDays, TextView dateDisplayView) {
+		
+		 Date selectedDate = new Date(); 
+		 Calendar cal = Calendar.getInstance();
+		 cal.setTime(selectedDate);
+		 cal.add(Calendar.DAY_OF_YEAR, numOfDays);
 		 selectedDate = cal.getTime();
 		 setDateTextView(dateDisplayView, selectedDate);
 		 return selectedDate;
@@ -466,7 +474,20 @@ public class ReportDateOptionsFragment extends Fragment implements DatePickerFra
 		
 	}
 	
-	private Date setStartDateToToday(TextView dateDisplayView) {
+	private Date resetDateToEndOfLastMonth(TextView dateDisplayView) {
+			
+		 Date selectedDate = new Date(); 
+		 Calendar cal = Calendar.getInstance();
+		 cal.setTime(selectedDate); 
+		 cal.add(Calendar.MONTH, -1);
+		 cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(cal.DAY_OF_MONTH));
+		 selectedDate = cal.getTime();
+		 setDateTextView(dateDisplayView, selectedDate);
+		 return selectedDate;
+		
+	}
+	
+	private Date setDateToToday(TextView dateDisplayView) {
 		
 		 Date selectedDate = new Date(); 
 		 setDateTextView(dateDisplayView, selectedDate);

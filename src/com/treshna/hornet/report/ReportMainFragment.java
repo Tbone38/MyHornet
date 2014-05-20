@@ -28,6 +28,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.util.Patterns;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -35,6 +36,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -70,6 +73,7 @@ public class ReportMainFragment extends ListFragment {
 	private String secondFilter = null;
 	private Button btnEmailCSV = null;
 	private String finalQuery = null;
+	private TextView retrievedTextView = null;
 	private Date startDate = null;
 	private Date endDate = null;
 	private Button btnEmail = null;
@@ -142,17 +146,7 @@ public class ReportMainFragment extends ListFragment {
 		}
 	   return reportIds;
 	}
-	
-	private boolean columnsFieldsContainsTable(String tableName) {
 		
-		for (HashMap<String,String> columnsMap : columnsMapList ){
-			if (columnsMap.get("field").toString().contains(tableName + ".")){
-				return true;
-			}
-		}
-		return false;
-	}
-	
 	private boolean columnsContainName(String columnName) {
 		
 		for (HashMap<String,String> columnsMap : columnsMapList ){
@@ -167,10 +161,10 @@ public class ReportMainFragment extends ListFragment {
 	private void  getEmailAddressesByIds() {
 		String tableName = null;
 		
-		if (columnsContainName("Member ID") || columnsFieldsContainsTable("member")) {
+		if (columnsContainName("Member ID") || joiningTablesContainsName("member")) {
 			tableName = "member";
 		} 
-		else if (columnsFieldsContainsTable("enquiry")) {
+		else if (joiningTablesContainsName("enquiry")) {
 			tableName = "enquiry";
 		}
 		
@@ -287,12 +281,12 @@ public class ReportMainFragment extends ListFragment {
 	
 			if (isSelected) {
 				//Adding the member.id column where other columns join the member table
-				if (columnsFieldsContainsTable("member") && !isMemberIdAdded) {
+				if (joiningTablesContainsName("member") && !isMemberIdAdded) {
 					queryBuilder.append("member.id AS \"MemberID\", ");
 					isMemberIdAdded = true;
 				}
 				//Adding the enquiry.id column where other columns join the enquiry table
-				if (columnsFieldsContainsTable("enquiry") && !isEnquiryIdAdded) {
+				if (joiningTablesContainsName("enquiry") && !isEnquiryIdAdded) {
 					queryBuilder.append("enquiry.enquiry_id AS \"Enquiry Id\", ");
 					isEnquiryIdAdded = true;
 				}
@@ -325,14 +319,12 @@ public class ReportMainFragment extends ListFragment {
 				reportFunctionWithDateParams =  queryFunctionParamsCut + "()";
 			}
 			queryBuilder.append(reportFunctionWithDateParams);
-			queryBuilder.append("As fun ");
+			queryBuilder.append(" As fun ");
 			
 			
-			for (HashMap<String,String> joinsMap : joiningTablesMapList ){
-				for (Map.Entry<String,String> field: joinsMap.entrySet()){
-					queryBuilder.append(field.getValue());
+			for (HashMap<String,String> joinsMap : joiningTablesMapList ){			
+					queryBuilder.append(joinsMap.get("joining_query"));
 					queryBuilder.append(' ');	
-				}
 			}
 			
 			boolean firstFilterAdded = false;
@@ -422,7 +414,7 @@ public class ReportMainFragment extends ListFragment {
 				}
 				
 			});
-		if ((columnsContainName("Member ID") || columnsFieldsContainsTable("member") || columnsFieldsContainsTable("enquiry")) && resultMapList.size() > 0) {
+		if ((columnsContainName("Member ID") || joiningTablesContainsName("member") || joiningTablesContainsName("enquiry")) && resultMapList.size() > 0) {
 			btnEmail.setVisibility(View.VISIBLE);
 		}
 		if (resultMapList.size() > 0) {
@@ -432,9 +424,7 @@ public class ReportMainFragment extends ListFragment {
 	    buildColumnHeaders();
 	    
 		ListAdapter listAdapter = new ArrayAdapter<LinkedHashMap<String,String>>(getActivity(),R.layout.report_main_row,
-				this.resultMapList){
-
-
+				this.resultMapList) {
 					@Override
 					public View getView(int position, View convertView,
 							ViewGroup parent) {
@@ -448,7 +438,7 @@ public class ReportMainFragment extends ListFragment {
 					}
 					linLayout.setOrientation(LinearLayout.HORIZONTAL);
 					AbsListView.LayoutParams listLayoutParams = new AbsListView.LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT);
-					LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams( LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT );
+					LinearLayout.LayoutParams layoutParams = null;
 					linLayout.setLayoutParams(listLayoutParams);
 					HashMap<String,String> dataRow = this.getItem(position);
 					removeSpacesFromPhoneNumbers(dataRow);
@@ -456,7 +446,7 @@ public class ReportMainFragment extends ListFragment {
 					for (Entry<String,String> col : dataRow.entrySet()){
 						if (!isColumnAllNull(col.getKey().toString())) {
 							
-						  	layoutParams = new LinearLayout.LayoutParams( 0,LayoutParams.WRAP_CONTENT,3);
+						  	layoutParams = new LinearLayout.LayoutParams( 0,LayoutParams.MATCH_PARENT,3);
 							//Dynamically generate text views for each column name..
 							textView =  new TextView(getActivity());
 							String field = col.getKey().toString();
@@ -464,16 +454,18 @@ public class ReportMainFragment extends ListFragment {
 								textView.setId(2);
 							}
 							if (field.compareTo("MemberID")== 0){
-								textView.setVisibility(android.view.View.GONE);
+								textView.setVisibility(View.GONE);
 							}
 							if (col.getValue() != null && col.getValue().toString().matches(numValueRegex)) {
-								textView.setGravity(Gravity.RIGHT);										
+								textView.setGravity(Gravity.RIGHT);
+								
 								if ((getActivity().getApplicationContext().getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE) {
 									textView.setPadding(0, 0, 60, 0);
 								} else {
 									textView.setPadding(0, 0, 10, 0);
 								}										
 							}
+							
 							layoutParams.setMargins(10, 0, 0, 0);									
 							textView.setLayoutParams(layoutParams);
 							textView.setText(col.getValue());
@@ -485,14 +477,17 @@ public class ReportMainFragment extends ListFragment {
 							}
 							linLayout.addView(textView);									
 						}
-					}	
-						
-						return linLayout;
 					}
-												
+					
+						return linLayout;
+						
+					}							
 		        };
+		        
 		this.setListAdapter(listAdapter);
+		
 	  }
+	
 	
  private boolean isAnyRowAllNums(String colName){
 		for (HashMap<String,String> dataRow: resultMapList){
@@ -623,6 +618,18 @@ private void buildColumnHeaders() {
 		textView.setLayoutParams(layoutParams);
 		textView.setText(contentString);
 		return textView;
+	}
+	
+	private boolean joiningTablesContainsName(String tableName) {
+		
+		for (HashMap<String,String> joiningTableMap : joiningTablesMapList) {
+			
+			if (joiningTableMap.get("table_name").compareTo(tableName)==0 ) {
+				return true;
+				
+			}
+		}	
+		return false;	
 	}
 	
 	private boolean columnsContainsTableAndField(String tableAndFieldName){

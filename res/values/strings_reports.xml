@@ -18,8 +18,8 @@
     <string name="report_column_options_title">Report Column Options</string>
     <string name="report_create_btn_title">Create Report</string>
     <string name="report_date_spinner_title">Select Quick Option</string>
-    <string name="report_btn_email">Email Everyone</string>
-    <string name="report_btn_email_csv">Email Report As CSV</string>
+    <string name="report_btn_email">Email Everyone </string>
+    <string name="report_btn_email_csv">Email Report As CSV </string>
     <string name="report_first_filter_spinner">First Filter</string>
     <string name="report_second_filter_spinner">Second Filter</string>
              

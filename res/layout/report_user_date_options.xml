@@ -58,7 +58,7 @@
 		       
 		</LinearLayout>
 		
-		<LinearLayout
+		<!-- <LinearLayout
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
 		    android:layout_gravity="center"
@@ -66,7 +66,7 @@
 		    android:background="#EEF2A5"
 		    android:orientation="horizontal" >
 		       		        
-		    <TextView
+		     <TextView
 			    android:id="@+id/startDateTxt"
 			    android:layout_width="wrap_content"
 			    android:layout_height="wrap_content"
@@ -80,10 +80,10 @@
 		        android:paddingLeft="15dp"
 		        android:layout_height="wrap_content"
 		        android:textSize="15sp"
-		        android:textStyle="bold" /> 
-		</LinearLayout>
+		        android:textStyle="bold" />  
+		</LinearLayout> -->
 		
-		<!-- <RelativeLayout 
+		 <RelativeLayout 
 				    android:layout_width="wrap_content"
 				    android:layout_height="wrap_content"
 				    android:padding="10dp"
@@ -132,7 +132,7 @@
 			       android:text="@string/end_date_btn" /> 
 			  
    
-		</RelativeLayout> -->
+		</RelativeLayout> 
 		
 		
 		

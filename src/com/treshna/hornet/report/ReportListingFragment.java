@@ -199,20 +199,19 @@ public class ReportListingFragment extends ListFragment {
 						  	layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 							//Dynamically generate text views for each column name..
 							textView =  new TextView(getActivity());
-							layoutParams.setMargins(35, 0, 0, 10);
+							layoutParams.setMargins(35, 0, 25, 15);
+							//textView.setPadding(0, 0, 25, 25);
 							textView.setLayoutParams(layoutParams);
 							textView.setText(col.getValue());
 							linLayout.addView(textView);
 							
 						}
 						
-
 				}	
 					
 					return linLayout;
 				}
-					
-					
+									
 			};
 					
 			this.setListAdapter(listAdapter);

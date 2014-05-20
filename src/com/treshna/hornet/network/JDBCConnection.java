@@ -1281,9 +1281,7 @@ public class JDBCConnection {
     public ResultSet getEmailAddressesByIds(Integer []ids, String tableName) throws SQLException {
     	String query = null;
     	String idString = "";
-     	
-
-    	
+     	   	
     	if (tableName.compareTo("enquiry")== 0) {
     		
     		query = "Select enquiry_id, email from " + tableName + " where enquiry_id in (";
@@ -1410,7 +1408,7 @@ public class JDBCConnection {
     	return this.pStatement.executeQuery();
     }
     public ResultSet getJoiningTablesByFunctionName(String functionName) throws SQLException {
-    	String query = "Select joining_query from report_function_table where function_name = ?";
+    	String query = "Select table_name, joining_query from report_function_table where function_name = ?";
     	this.pStatement = con.prepareStatement(query);
     	this.pStatement.setString(1,functionName);
     	return this.pStatement.executeQuery();
