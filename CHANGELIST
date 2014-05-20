@@ -106,6 +106,7 @@ KEY:
                 Membership complete "Add Tag" doesn't work. Resolved, needs testing.
                 Removed the tabs, as they were ocasionally throwing errors when combo'd with the Nav Drawer. 
                 After manual checkin, we force a new update (so they show in the last-visitors).
+                Fixed issue with Gallery multiple images show up as profile, even when only one is.
 
             TODO:
                 Handle permissions/Roles for different staff, to limit what certain staff can see.
@@ -133,7 +134,6 @@ KEY:
                     if membershipcount = 2 then prompt;     --Done
                     if membershipcount = 0 then prompt for payment? --TODO...?
                     How do we handle casuals?
-*               Gallery seems to behaive weirdly (multiple images show up as profile, even when only one is..?) --This might be fixed..?
 *               Bug with removing member from class. It sometimes gets really odd. Look at whats causing it (weird issue with the list binding?)
                 Set all the toasts to go through the Services.app so that they take into consideration user settings.
                 Show further details in class View when tablet-horizontal.
