@@ -444,7 +444,7 @@ public class BookingAddFragment extends Fragment implements OnClickListener, OnM
 					switch (inscount){
 					case(0):{
 						//update failed, probably no ID's available. consider syncing again.
-						getActivity().finish();
+						getActivity().onBackPressed();
 						}
 					case(-1):{
 						//incorrect time slot set. highlight end time.

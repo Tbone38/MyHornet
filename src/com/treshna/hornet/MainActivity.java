@@ -129,11 +129,15 @@ public class MainActivity extends NFCActivity {
         if (savedInstanceState == null) { //needs to be done after the super.OnCreate call.
         	try {
         		FragmentManager fm = this.getSupportFragmentManager();
-        		genTabs();
+        		fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        		FragmentTransaction ft = fm.beginTransaction();
+    			ft.replace(R.id.content_view, new MembersFindSuperFragment(), "findmember");
+    			ft.commit();
+        		//genTabs();
         		cFragment = fm.findFragmentByTag("findmember");
-            	addTabs();
-            	ActionBar ab = this.getSupportActionBar();
-                ab.setSelectedNavigationItem(selectedTab);
+            	//addTabs();
+            	//ActionBar ab = this.getSupportActionBar();
+                //ab.setSelectedNavigationItem(selectedTab);
             } catch (IllegalStateException e) {
             	//we've already attached the tabs.
             	Log.w(TAG, "IllegalStateException thrown", e);
@@ -495,9 +499,7 @@ public class MainActivity extends NFCActivity {
 	
 	@Override
 	public void onBackPressed() {
-		//this needs some minor tweaks. consider adding a queue.
-		//also: this is disgusting. MAKE IT LOOK NICE.
-		if (cFragment instanceof BookingsListSuperFragment) {
+		/*if (cFragment instanceof BookingsListSuperFragment) {
 			BookingsListSuperFragment f = (BookingsListSuperFragment) cFragment;
 			if (f.getCurrentFragment() instanceof BookingsOverviewFragment) {
 				//do normal back pop
@@ -521,7 +523,8 @@ public class MainActivity extends NFCActivity {
 			ab.setSelectedNavigationItem(0);
 		} else {
 			super.onBackPressed();
-		}
+		}*/
+		super.onBackPressed();
 	}
 	
 	@Override

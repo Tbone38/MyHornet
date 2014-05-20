@@ -103,6 +103,9 @@ KEY:
                 more icons!
                 Fixed the bad image behaviour!
                 Hold/Free Time switch, free time hides the Hold Fee radios, as well as the prorata check boxes.
+                Membership complete "Add Tag" doesn't work. Resolved, needs testing.
+                Removed the tabs, as they were ocasionally throwing errors when combo'd with the Nav Drawer. 
+                After manual checkin, we force a new update (so they show in the last-visitors).
 
             TODO:
                 Handle permissions/Roles for different staff, to limit what certain staff can see.
@@ -116,12 +119,10 @@ KEY:
                 Issue with sync table: the servertime isn't being set correctly.
                 Fix the PollingHandler running on the UI thread. (blocking etc).
                 Improve Performance of the Booking Overview page.
-*               Membership complete "Add Tag" doesn't work. Resolved, needs testing.                                
-*               Do an app walkthrough
+*               Do an app walkthrough --TOO HARD BASKET FOR THE MOMENT.
                 Make the sync process more robust by checking that each function returns 0 or more. 
                     If we get less than 0 than we've encountered an error, try continuing but don't update the "last_sync" time..?
                 Complete Dru's list of changes. --this is mostly done.
-*                Update Last Visitors on Manual Check In .. ?
                 Finish payment_against stuff.
                 Some kind of UI/form for adding various types of stuff.
                     which we can then use to help resolve conflicts.
@@ -132,7 +133,7 @@ KEY:
                     if membershipcount = 2 then prompt;     --Done
                     if membershipcount = 0 then prompt for payment? --TODO...?
                     How do we handle casuals?
-*               Gallery seems to behaive weirdly (multiple images show up as profile, even when only one is..?)
+*               Gallery seems to behaive weirdly (multiple images show up as profile, even when only one is..?) --This might be fixed..?
 *               Bug with removing member from class. It sometimes gets really odd. Look at whats causing it (weird issue with the list binding?)
                 Set all the toasts to go through the Services.app so that they take into consideration user settings.
                 Show further details in class View when tablet-horizontal.
@@ -141,6 +142,7 @@ KEY:
                     http://developer.android.com/training/sync-adapters/creating-sync-adapter.html
                 Delete Doors needs handling (insertion into deleted_records) in GymMaster.
                 payment_against: need someone to make sense of it. the numbers don't seem to add up.
+*               Check/Fix auto-sync.
     
     v119:
             Altered the add Member process.

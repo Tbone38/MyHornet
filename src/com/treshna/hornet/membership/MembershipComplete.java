@@ -58,6 +58,7 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 		 page = setupView();
 		 
 		 ((MainActivity) this.getActivity()).setTitle("Confirm Membership");
+		 ((MainActivity) this.getActivity()).setTagListener(this, "memberDetails");
 		 
 		 return page;
 	}
@@ -147,11 +148,11 @@ public class MembershipComplete extends Fragment implements OnClickListener, Tag
 		case (R.id.button_accept):{
 			//should do actual insertion here.
 			insertMembership(results);
-			getActivity().finish();
+			getActivity().onBackPressed();
 			break;
 		}
 		case (R.id.button_cancel):{
-			getActivity().finish();
+			getActivity().onBackPressed();
 			break;
 		}
 		case (R.id.button_addphoto_row):{

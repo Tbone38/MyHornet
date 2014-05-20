@@ -345,7 +345,7 @@ public class MembershipAdd extends Fragment implements OnClickListener, DatePick
 			break;
 		}
 		case (R.id.cancelbutton):{
-			getActivity().finish();
+			getActivity().onBackPressed();
 			break;
 		}
 		}

@@ -11,6 +11,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.os.AsyncTask;
@@ -270,6 +271,9 @@ public class MemberVisitHistoryFragment extends Fragment implements TagFoundList
 		protected void onPostExecute(Boolean success) {
 			progress.dismiss();
 			if (success) {
+				Intent updateInt = new Intent(getActivity(), HornetDBService.class);
+	            updateInt.putExtra(Services.Statics.KEY, Services.Statics.FREQUENT_SYNC);
+	            getActivity().startService(updateInt);
 			} else {
 				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 				builder.setTitle("Error Occurred")

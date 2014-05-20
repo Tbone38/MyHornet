@@ -360,7 +360,7 @@ public class BookingDetailsFragment extends Fragment implements OnClickListener 
 					
 					contentResolver.delete(ContentDescriptor.BookingTime.CONTENT_URI, ContentDescriptor.BookingTime.Cols.BID+" = ?",
 							new String[] {bookingID});
-					getActivity().finish();
+					getActivity().onBackPressed();
 
 				}});
 		      alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
