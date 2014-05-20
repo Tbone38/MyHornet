@@ -20,7 +20,6 @@ KEY:
             Sometimes app needs to restart for the roll menu item to show up.
             Dates need to be handled better. Currently they're breaking on Dru's phone because the default format (Date().toString()) returns differently.
                 Fix is to call SimpleDateFormat.format(Date()) instead of trying to parse the Date().toString().
-            Progress Box no longer works. needs to be added back in via a aSync Task for the db_syncing.
                 (had issues trying to attach to windows from the service thread, due to 'Context' complications.)
             Update Recurssion. (updating the same rows every time they change). (I THINK it occurs in bookings.)
             Updating version seems to lose Resources & doors. ?
