@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.treshna.hornet.services.FileHandler;
 import com.treshna.hornet.services.Services;
 import com.treshna.hornet.sqlite.ContentDescriptor.AppConfig;
 import com.treshna.hornet.sqlite.ContentDescriptor.BillingHistory;
@@ -372,6 +373,8 @@ public class HornetDatabase extends SQLiteOpenHelper {
 				break;
 			}
 			case (96):{
+				FileHandler fh = new FileHandler(this.theContext);
+				fh.clearDirectory(); //we're clearing all the images, because we need to redownload then.
 				UpdateDatabase.NinetySix.patchNinetySix(db);
 				break;
 			}

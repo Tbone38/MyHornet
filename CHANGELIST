@@ -142,6 +142,7 @@ KEY:
                 Delete Doors needs handling (insertion into deleted_records) in GymMaster.
                 payment_against: need someone to make sense of it. the numbers don't seem to add up.
 				Redo the Settings Activity at somepoint to work with fragments..
+*				I think the images all need to be dropped between updating to v119. think its fixed. needs testing.
 		
     
     v119:

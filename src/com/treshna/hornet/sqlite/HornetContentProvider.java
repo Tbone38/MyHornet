@@ -259,11 +259,10 @@ public class HornetContentProvider extends ContentProvider {
         	Cursor cur = db.query(ContentDescriptor.Image.NAME, new String[] {ContentDescriptor.Image.Cols.IID,  ContentDescriptor.Image.Cols.MID},
         			selection, selectionArgs, null, null, null);
         	while (cur.moveToNext()) {
-        		if (fh.deleteFile(cur.getString(0)+"_"+cur.getString(1)+".jpg")) {
-        			rows += db.delete(ContentDescriptor.Image.NAME, ContentDescriptor.Image.Cols.IID+" = ?",
-        					new String[] {cur.getString(0)});
-        		}
+        		fh.deleteFile(cur.getString(0)+"_"+cur.getString(1)+".jpg");
         	}
+        	cur.close();
+        	rows = db.delete(ContentDescriptor.Image.NAME, selection, selectionArgs);
         	return rows;
         }
         case ContentDescriptor.PaymentAgainst.PATH_TOKEN:{
