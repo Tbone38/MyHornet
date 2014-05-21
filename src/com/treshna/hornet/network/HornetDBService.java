@@ -3358,9 +3358,9 @@ public ArrayList<LinkedHashMap<String, String>>  getReportDataByDateRange(Contex
 			   for (int i = 1; i <= resultMeta.getColumnCount(); i++)				     
 				   
 			   {		   
-				   if (index == 0) {
+				   //if (index == 0) {
 					   System.out.println("Column Name:" +resultMeta.getColumnName(i) + " Value: " +result.getString(resultMeta.getColumnName(i)));
-				   }
+				   //}
 				   resultMap.put(resultMeta.getColumnName(i), result.getString(resultMeta.getColumnName(i)));		
 			   }
 			   
