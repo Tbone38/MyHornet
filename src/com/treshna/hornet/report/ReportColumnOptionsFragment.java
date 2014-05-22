@@ -65,9 +65,10 @@ public class ReportColumnOptionsFragment extends ListFragment {
 		reportId =  fragmentData.getInt("report_id", 0);
 		reportFunctionName = fragmentData.getString("report_function_name");
 		reportName = fragmentData.getString("report_name");
+		TextView reportNameTxt = (TextView) view.findViewById(R.id.report_column_options_report_name);
+		reportNameTxt.setText(reportName);
 		
 		Button createBtn = (Button) view.findViewById(R.id.btnCreateReport);
-
 	    createBtn.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
@@ -110,20 +111,24 @@ public class ReportColumnOptionsFragment extends ListFragment {
 						CheckBox columnBox  = null;
 						convertView  = inflater.inflate(R.layout.report_column_options_row, null);			
 						
-						for (Entry<String,String> row : dataRow.entrySet()){							
-							//Attaching a tag with column name value to the checkBox
-
+						for (Entry<String,String> row : dataRow.entrySet()){
 							
+							//Attaching a tag with column name value to the checkBox							
 							if (row.getKey().toString().compareTo("report_field_id")== 0){
 								columnBox = (CheckBox) convertView.findViewById(R.id.column_checkBox);
-								columnBox.setTag(row.getValue());	
+								columnBox.setTag(row.getValue());
 								colCheckBoxes.add(columnBox);
 							
-							}			
-							
+							}
+														
 							if (row.getKey().toString().compareTo("column_name")== 0){
 								columnName	 = (TextView) convertView.findViewById(R.id.report_column_name);							
-								columnName.setText(row.getValue());																			 																
+								columnName.setText(row.getValue());
+								//Forcing the "Member ID" (if exists) to be checked - to enable email-all and member-details functions
+								if (row.getValue().compareTo("Member ID")==0) {
+									columnBox.setChecked(true);
+									columnBox.setEnabled(false);
+								}
 								
 							}
 							

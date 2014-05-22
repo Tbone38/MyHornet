@@ -43,6 +43,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -272,7 +274,7 @@ public class ReportMainFragment extends ListFragment {
 		
 		queryBuilder.append("SELECT ");
 		for (HashMap<String,String> columnsMap : columnsMapList ) {
-			//Check if coming from column options..
+			//Check if coming from column options..	
 			if (callingActivity.compareTo("column_options")== 0) {
 				isSelected = false;
 				if (this.isColumnSelected(Integer.parseInt(columnsMap.get("column_id")))) {
@@ -414,7 +416,8 @@ public class ReportMainFragment extends ListFragment {
 					}
 				}
 				
-			});
+		});
+			
 		if ((columnsContainName("Member ID") || joiningTablesContainsName("member") || joiningTablesContainsName("enquiry")) && resultMapList.size() > 0) {
 			btnEmail.setVisibility(View.VISIBLE);
 		}
@@ -431,6 +434,7 @@ public class ReportMainFragment extends ListFragment {
 							ViewGroup parent) {
 					//Dynamically binding column names to textView text
 					TextView textView  = null;
+					ImageView imageView = null;
 					
 					LinearLayout linLayout = new LinearLayout(getActivity());
 					//Adding zebra striping on alternate rows
@@ -445,38 +449,67 @@ public class ReportMainFragment extends ListFragment {
 					removeSpacesFromPhoneNumbers(dataRow);
 					int columnIndex = 0;
 					for (Entry<String,String> col : dataRow.entrySet()){
+						
 						if (!isColumnAllNull(col.getKey().toString())) {
 							
-						  	layoutParams = new LinearLayout.LayoutParams( 0,LayoutParams.MATCH_PARENT,3);
+						  	layoutParams = new LinearLayout.LayoutParams(0,LayoutParams.MATCH_PARENT,3);
 							//Dynamically generate text views for each column name..
-							textView =  new TextView(getActivity());
-							String field = col.getKey().toString();
-							if (field.compareTo("Member ID")== 0 || field.compareTo("MemberID")== 0) {
-								textView.setId(2);
-							}
-							if (field.compareTo("MemberID")== 0){
-								textView.setVisibility(View.GONE);
-							}
-							if (col.getValue() != null && col.getValue().toString().matches(numValueRegex)) {
-								textView.setGravity(Gravity.RIGHT);
+
+							if (col.getKey().compareTo("Happy")== 0) {
 								
-								if ((getActivity().getApplicationContext().getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE) {
-									textView.setPadding(0, 0, 60, 0);
-								} else {
-									textView.setPadding(0, 0, 40, 0);
-								}										
+								imageView = new ImageView(getContext());
+								
+								if (col.getValue() != null) {
+									
+									if (col.getValue().compareTo(":(") == 0) {
+
+										imageView.setImageResource(R.drawable.face_sad);
+										
+									} else if (col.getValue().compareTo(":|") == 0) {
+										
+										imageView.setImageResource(R.drawable.face_plain);
+										
+									} else if (col.getValue().compareTo(":)") == 0) {
+
+										imageView.setImageResource(R.drawable.face_smile);
+									}
+										imageView.setLayoutParams(layoutParams);
+										imageView.setScaleType(ScaleType.FIT_START);
+										linLayout.addView(imageView);
+								}
+								
+							} else {
+								
+								textView =  new TextView(getActivity());
+								String field = col.getKey().toString();
+								if (field.compareTo("Member ID")== 0 || field.compareTo("MemberID")== 0) {
+									textView.setId(2);
+								}
+								if (field.compareTo("MemberID")== 0){
+									textView.setVisibility(View.GONE);
+								}
+								if (col.getValue() != null && col.getValue().toString().matches(numValueRegex)) {
+									textView.setGravity(Gravity.RIGHT);
+									
+									if ((getActivity().getApplicationContext().getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE) {
+										textView.setPadding(0, 0, 60, 0);
+									} else {
+										textView.setPadding(0, 0, 40, 0);
+									}										
+								}
+								
+								layoutParams.setMargins(10, 0, 0, 0);									
+								textView.setLayoutParams(layoutParams);
+								textView.setText(col.getValue());
+								if (columnIndex % 2 == 0){
+									textView.setBackgroundColor(getResources().getColor(R.color.report_column_pale_red));
+								}
+								if (textView.getVisibility() == View.VISIBLE){
+									columnIndex++;
+								}
+								linLayout.addView(textView);	
 							}
-							
-							layoutParams.setMargins(10, 0, 0, 0);									
-							textView.setLayoutParams(layoutParams);
-							textView.setText(col.getValue());
-							if (columnIndex % 2 == 0){
-								textView.setBackgroundColor(getResources().getColor(R.color.report_column_pale_red));
-							}
-							if (textView.getVisibility() == View.VISIBLE){
-								columnIndex++;
-							}
-							linLayout.addView(textView);									
+															
 						}
 					}
 					
@@ -490,7 +523,7 @@ public class ReportMainFragment extends ListFragment {
 	  }
 	
 	
-  private boolean isAnyRowAllNums(String colName) {
+ private boolean isAnyRowAllNums(String colName) {
 	 
 		for (HashMap<String,String> dataRow: resultMapList){
 			if (dataRow.get(colName) != null)
@@ -499,7 +532,7 @@ public class ReportMainFragment extends ListFragment {
 				}
 		}
 	  return false;
-   }
+  }
  
  private void removeSpacesFromPhoneNumbers(HashMap<String,String> dataRow){
 		//Remove spaces from phone numbers..
@@ -517,7 +550,7 @@ public class ReportMainFragment extends ListFragment {
 	
 	
  @Override
-public void onPause() {
+ public void onPause() {
 	super.onPause();
 	  if (progress != null && progress.isShowing()) {
 		  //progress.hide();
@@ -525,10 +558,10 @@ public void onPause() {
 		  progress = null;
 	  }
 	 getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-}
+ }
 
 
-private void setOrientation(HashMap<String,String> dataRow) {
+ private void setOrientation(HashMap<String,String> dataRow) {
 	 
 		//Forcing landscape view for reports with greater than 5 columns..
 		int maxProtraitColumns = 5;
@@ -554,9 +587,9 @@ private void setOrientation(HashMap<String,String> dataRow) {
 			
 		}
 		
-}
+ }
 	
-private void buildColumnHeaders() {
+ private void buildColumnHeaders() {
 	
 			LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams( LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT );
 			LinearLayout reportColumnHeadingLayout = null;
@@ -647,7 +680,7 @@ private void buildColumnHeaders() {
 	
 	private boolean isColumnAllNull(String colName) {
 		HashMap<String,Integer> colNullCount = new HashMap<String,Integer>();
-		 //Bug fix blocking of all collumns with a single row of data.
+		 //Bug fix blocking of all collums with a single row of data.
 		 if (resultMapList.size() != 1) {
 			for (HashMap<String,String> dataRow: resultMapList){
 						
@@ -691,7 +724,8 @@ private void buildColumnHeaders() {
 		syncColumns.execute(null,null);
 		
 	}
-	 private void showQueryThreadFailedDialogue() {
+	
+	private void showQueryThreadFailedDialogue() {
 		 
 			if (getActivity() != null) {
 				

@@ -6,7 +6,8 @@
     <LinearLayout
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    android:gravity="center"   
+	    android:gravity="center"
+	    android:orientation="vertical"   
 	    android:background="@color/report_heading_background_green"  > 
         <TextView
             android:id="@+id/report_column_options_title"
@@ -14,7 +15,17 @@
             android:layout_height="wrap_content"
             android:textSize="@dimen/report_title_text_size"
             android:text="@string/report_column_options_title" />
-	</LinearLayout>
+	</LinearLayout>	       
+		<TextView
+	       android:id="@+id/report_column_options_report_name"
+	       android:layout_width="match_parent"
+	       android:layout_height="wrap_content"
+	       android:textSize="25sp"
+	       android:textStyle="bold"
+	       android:background="@color/report_column_background_blue"
+	       android:padding="10dp"
+	       android:layout_gravity="center_horizontal"
+	       android:gravity="center_horizontal"/>
         <ListView
             android:id="@android:id/list"
             android:layout_width="match_parent"
